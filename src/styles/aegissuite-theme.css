@@ -1,0 +1,523 @@
+/* AegisSuite Modern Theme - Based on Dashboard Design */
+:root {
+  /* Primary Colors - AegisSuite Blue */
+  --aegis-primary: #0a2463;
+  --aegis-primary-light: #1e40af;
+  --aegis-primary-dark: #1e3a8a;
+  
+  /* Secondary Colors */
+  --aegis-success: #5ab453;
+  --aegis-warning: #f97316;
+  --aegis-info: #3b82f6;
+  --aegis-purple: #8b5cf6;
+  
+  /* Background Colors */
+  --aegis-bg-primary: #ffffff;
+  --aegis-bg-secondary: #f9fafb;
+  --aegis-bg-tertiary: #f3f4f6;
+  
+  /* Text Colors */
+  --aegis-text-primary: #111827;
+  --aegis-text-secondary: #6b7280;
+  --aegis-text-tertiary: #9ca3af;
+  
+  /* Border Colors */
+  --aegis-border-light: #e5e7eb;
+  --aegis-border-medium: #d1d5db;
+  
+  /* Shadow Colors */
+  --aegis-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --aegis-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --aegis-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  
+  /* Spacing */
+  --aegis-spacing-xs: 0.25rem;
+  --aegis-spacing-sm: 0.5rem;
+  --aegis-spacing-md: 1rem;
+  --aegis-spacing-lg: 1.5rem;
+  --aegis-spacing-xl: 2rem;
+  --aegis-spacing-2xl: 3rem;
+  
+  /* Border Radius */
+  --aegis-radius-sm: 0.375rem;
+  --aegis-radius-md: 0.5rem;
+  --aegis-radius-lg: 0.75rem;
+  --aegis-radius-xl: 1rem;
+  
+  /* Transitions */
+  --aegis-transition-fast: 150ms ease-in-out;
+  --aegis-transition-normal: 250ms ease-in-out;
+  --aegis-transition-slow: 350ms ease-in-out;
+}
+
+/* Modern Button Styles */
+.aegis-btn-primary {
+  background: linear-gradient(135deg, var(--aegis-primary) 0%, var(--aegis-primary-light) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--aegis-radius-md);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all var(--aegis-transition-normal);
+  cursor: pointer;
+  box-shadow: var(--aegis-shadow-sm);
+}
+
+.aegis-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--aegis-shadow-md);
+}
+
+.aegis-btn-secondary {
+  background: var(--aegis-bg-primary);
+  color: var(--aegis-text-primary);
+  border: 1px solid var(--aegis-border-medium);
+  border-radius: var(--aegis-radius-md);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all var(--aegis-transition-normal);
+  cursor: pointer;
+}
+
+.aegis-btn-secondary:hover {
+  background: var(--aegis-bg-secondary);
+  border-color: var(--aegis-primary);
+}
+
+/* Modern Card Styles */
+.aegis-card {
+  background: var(--aegis-bg-primary);
+  border-radius: var(--aegis-radius-lg);
+  box-shadow: var(--aegis-shadow-sm);
+  border: 1px solid var(--aegis-border-light);
+  transition: all var(--aegis-transition-normal);
+  overflow: hidden;
+}
+
+.aegis-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--aegis-shadow-md);
+}
+
+.aegis-card-header {
+  padding: var(--aegis-spacing-lg);
+  border-bottom: 1px solid var(--aegis-border-light);
+  background: var(--aegis-bg-secondary);
+}
+
+.aegis-card-body {
+  padding: var(--aegis-spacing-lg);
+}
+
+.aegis-card-footer {
+  padding: var(--aegis-spacing-lg);
+  border-top: 1px solid var(--aegis-border-light);
+  background: var(--aegis-bg-secondary);
+}
+
+/* Metric Cards */
+.aegis-metric-card {
+  background: var(--aegis-bg-primary);
+  border-radius: var(--aegis-radius-lg);
+  padding: var(--aegis-spacing-lg);
+  box-shadow: var(--aegis-shadow-sm);
+  border: 1px solid var(--aegis-border-light);
+  transition: all var(--aegis-transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.aegis-metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--aegis-primary) 0%, var(--aegis-primary-light) 100%);
+}
+
+.aegis-metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--aegis-shadow-md);
+}
+
+.aegis-metric-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--aegis-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--aegis-spacing-md);
+}
+
+.aegis-metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--aegis-text-primary);
+  line-height: 1;
+  margin-bottom: var(--aegis-spacing-xs);
+}
+
+.aegis-metric-label {
+  font-size: 0.875rem;
+  color: var(--aegis-text-secondary);
+  font-weight: 500;
+}
+
+.aegis-metric-trend {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: var(--aegis-spacing-xs);
+}
+
+.aegis-metric-trend.positive {
+  color: var(--aegis-success);
+}
+
+.aegis-metric-trend.negative {
+  color: #ef4444;
+}
+
+/* Sidebar Styles */
+.aegis-sidebar {
+  background: var(--aegis-bg-primary);
+  border-right: 1px solid var(--aegis-border-light);
+  box-shadow: var(--aegis-shadow-sm);
+}
+
+.aegis-sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin: 0.25rem 0.5rem;
+  border-radius: var(--aegis-radius-md);
+  color: var(--aegis-text-secondary);
+  text-decoration: none;
+  transition: all var(--aegis-transition-normal);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.aegis-sidebar-item:hover {
+  background: var(--aegis-bg-secondary);
+  color: var(--aegis-text-primary);
+  transform: translateX(2px);
+}
+
+.aegis-sidebar-item.active {
+  background: var(--aegis-primary);
+  color: white;
+  box-shadow: var(--aegis-shadow-sm);
+}
+
+.aegis-sidebar-item.active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: var(--aegis-primary-light);
+  border-radius: 2px 0 0 2px;
+}
+
+/* Input Styles */
+.aegis-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--aegis-border-medium);
+  border-radius: var(--aegis-radius-md);
+  background: var(--aegis-bg-primary);
+  color: var(--aegis-text-primary);
+  font-size: 0.875rem;
+  transition: all var(--aegis-transition-normal);
+}
+
+.aegis-input:focus {
+  outline: none;
+  border-color: var(--aegis-primary);
+  box-shadow: 0 0 0 3px rgb(10 90 120 / 0.1);
+}
+
+.aegis-input::placeholder {
+  color: var(--aegis-text-tertiary);
+}
+
+/* Badge Styles */
+.aegis-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.aegis-badge-primary {
+  background: var(--aegis-primary);
+  color: white;
+}
+
+.aegis-badge-success {
+  background: var(--aegis-success);
+  color: white;
+}
+
+.aegis-badge-warning {
+  background: var(--aegis-warning);
+  color: white;
+}
+
+.aegis-badge-info {
+  background: var(--aegis-info);
+  color: white;
+}
+
+/* Table Styles */
+.aegis-table {
+  width: 100%;
+  background: var(--aegis-bg-primary);
+  border-radius: var(--aegis-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--aegis-shadow-sm);
+  border: 1px solid var(--aegis-border-light);
+}
+
+.aegis-table th {
+  background: var(--aegis-bg-secondary);
+  color: var(--aegis-text-secondary);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--aegis-border-light);
+}
+
+.aegis-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--aegis-border-light);
+  color: var(--aegis-text-primary);
+  font-size: 0.875rem;
+}
+
+.aegis-table tr:hover {
+  background: var(--aegis-bg-secondary);
+}
+
+/* Header Styles */
+.aegis-header {
+  background: var(--aegis-bg-primary);
+  border-bottom: 1px solid var(--aegis-border-light);
+  box-shadow: var(--aegis-shadow-sm);
+  padding: 1rem 1.5rem;
+}
+
+.aegis-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 100%;
+}
+
+.aegis-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.aegis-logo-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--aegis-primary);
+  border-radius: var(--aegis-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.aegis-logo-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--aegis-primary);
+}
+
+.aegis-logo-subtitle {
+  font-size: 0.875rem;
+  color: var(--aegis-text-secondary);
+  font-weight: 500;
+}
+
+/* Search Bar */
+.aegis-search {
+  position: relative;
+  max-width: 24rem;
+  width: 100%;
+}
+
+.aegis-search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid var(--aegis-border-medium);
+  border-radius: 9999px;
+  background: var(--aegis-bg-secondary);
+  color: var(--aegis-text-primary);
+  font-size: 0.875rem;
+  transition: all var(--aegis-transition-normal);
+}
+
+.aegis-search-input:focus {
+  outline: none;
+  border-color: var(--aegis-primary);
+  background: var(--aegis-bg-primary);
+  box-shadow: 0 0 0 3px rgb(10 90 120 / 0.1);
+}
+
+.aegis-search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--aegis-text-tertiary);
+}
+
+/* User Profile */
+.aegis-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.aegis-user-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--aegis-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.aegis-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.aegis-user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--aegis-text-primary);
+}
+
+.aegis-user-role {
+  font-size: 0.75rem;
+  color: var(--aegis-text-secondary);
+}
+
+/* Notification Badge */
+.aegis-notification-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--aegis-bg-secondary);
+  color: var(--aegis-text-secondary);
+  transition: all var(--aegis-transition-normal);
+  cursor: pointer;
+}
+
+.aegis-notification-badge:hover {
+  background: var(--aegis-bg-tertiary);
+  color: var(--aegis-text-primary);
+}
+
+.aegis-notification-badge::after {
+  content: '';
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 2px solid var(--aegis-bg-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .aegis-sidebar {
+    transform: translateX(-100%);
+    transition: transform var(--aegis-transition-normal);
+  }
+  
+  .aegis-sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .aegis-header-content {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .aegis-search {
+    max-width: 100%;
+  }
+}
+
+/* Animation Classes */
+.aegis-fade-in {
+  animation: fadeIn var(--aegis-transition-slow) ease-in-out;
+}
+
+.aegis-slide-up {
+  animation: slideUp var(--aegis-transition-slow) ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* Utility Classes */
+.aegis-text-primary { color: var(--aegis-text-primary); }
+.aegis-text-secondary { color: var(--aegis-text-secondary); }
+.aegis-text-tertiary { color: var(--aegis-text-tertiary); }
+
+.aegis-bg-primary { background: var(--aegis-bg-primary); }
+.aegis-bg-secondary { background: var(--aegis-bg-secondary); }
+.aegis-bg-tertiary { background: var(--aegis-bg-tertiary); }
+
+.aegis-border { border: 1px solid var(--aegis-border-light); }
+.aegis-border-medium { border: 1px solid var(--aegis-border-medium); }
+
+.aegis-shadow-sm { box-shadow: var(--aegis-shadow-sm); }
+.aegis-shadow-md { box-shadow: var(--aegis-shadow-md); }
+.aegis-shadow-lg { box-shadow: var(--aegis-shadow-lg); }

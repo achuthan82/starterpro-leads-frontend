@@ -1,0 +1,208 @@
+/* AegisSuite Theme Variables */
+:root {
+  --atoll: #0a2463;
+  --aegis-gold: #f4d03f;
+  --ecru-white: #fbfbf5;
+  --fern: #5ab453;
+  --atlantis: #92c933;
+  --shadow-green: #99bac0;
+  --deco: #cddf8f;
+  --botticelli: #c9e0e5;
+  --beryl-green: #d5e5c3;
+  --waterloo: #7e8494;
+  --gray-suit: #bcb9c6;
+}
+
+button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
+  cursor: pointer;
+}
+
+/* ShieldNest Design Components */
+.shieldnest-bg {
+  background-color: var(--ecru-white);
+}
+
+.shieldnest-bg1 {
+  background-color: #0a2463;
+}
+
+.shieldnest-bg2 {
+  background-color: #f4d03f;
+}
+
+.shieldnest-bg3 {
+  background-color: #f4d03f;
+}
+
+.shieldnest-metric-card {
+  background: linear-gradient(135deg, var(--ecru-white) 0%, var(--botticelli) 100%);
+  border: 1px solid var(--shadow-green);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.shieldnest-metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(10, 90, 120, 0.15);
+}
+
+.shieldnest-gradient-btn {
+  background: linear-gradient(135deg, var(--fern) 0%, var(--atlantis) 100%);
+  transition: all 0.3s ease;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+}
+
+.shieldnest-gradient-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.shieldnest-primary-btn {
+  background: linear-gradient(135deg, var(--atoll) 0%, var(--aegis-gold) 100%);
+  transition: all 0.3s ease;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+}
+
+.shieldnest-primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.shieldnest-tab-active {
+  background: linear-gradient(135deg, var(--atoll) 0%, var(--aegis-gold) 100%);
+  color: white;
+}
+
+.shieldnest-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--shadow-green);
+  transition: all 0.3s ease;
+}
+
+.shieldnest-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.shieldnest-input {
+  border: 2px solid var(--botticelli);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  padding: 0.75rem;
+}
+
+.shieldnest-input:focus {
+  border-color: var(--atoll);
+  outline: none;
+}
+
+.shieldnest-input.active {
+  border-color: var(--atoll);
+  background-color: #eff6ff;
+}
+
+/* Status badges */
+.shieldnest-badge-1 { background-color: var(--atoll); color: white; }
+.shieldnest-badge-2 { background-color: var(--atoll); color: white; }
+.shieldnest-badge-3 { background-color: var(--atlantis); color: white; }
+.shieldnest-badge-4 { background-color: #f97316; color: white; }
+.shieldnest-badge-5 { background-color: #8b5cf6; color: white; }
+.shieldnest-badge-6 { background-color: #3b82f6; color: white; }
+.shieldnest-badge-7 { background-color: var(--fern); color: white; }
+.shieldnest-badge-8 { background-color: var(--waterloo); color: white; }
+.shieldnest-badge-9 { background-color: var(--gray-suit); color: white; }
+.shieldnest-badge-10 { background-color: #ef4444; color: white; }
+.shieldnest-badge-11 { background-color: #374151; color: white; }
+.shieldnest-badge-12 { background-color: #4e1515; color: white; }
+.shieldnest-badge-13 { background-color: #10151d; color: white; }
+
+.status-badge {
+  border-radius: 9999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.status-badge:hover {
+  opacity: 0.8;
+}
+
+/* Table enhancements */
+.shieldnest-table {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.shieldnest-table th {
+  background-color: #f9fafb;
+  color: var(--waterloo);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.shieldnest-table tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Text colors */
+.text-atoll { color: var(--atoll); }
+.text-aegis-gold { color: var(--aegis-gold); }
+.text-fern { color: var(--fern); }
+.text-atlantis { color: var(--atlantis); }
+.text-waterloo { color: var(--waterloo); }
+
+/* Background colors */
+.bg-atoll { background-color: var(--atoll); }
+.bg-aegis-gold { background-color: var(--aegis-gold); }
+.bg-fern { background-color: var(--fern); }
+.bg-atlantis { background-color: var(--atlantis); }
+.bg-botticelli { background-color: var(--botticelli); }
+.bg-beryl-green { background-color: var(--beryl-green); }
+.bg-ecru-white { background-color: var(--ecru-white); }
+
+/* AegisSuite gradient backgrounds */
+.bg-aegis-gradient {
+  background: linear-gradient(135deg, var(--atoll) 0%, var(--aegis-gold) 100%);
+}
+
+.bg-aegis-gradient-reverse {
+  background: linear-gradient(135deg, var(--aegis-gold) 0%, var(--atoll) 100%);
+} 
+
+.shieldnest-gradient-column { 
+  background: linear-gradient(135deg, #fbfbf5 0%, #c9e0e5 100%);
+  border: 1px solid #99bac0;
+}
+
+.shieldnest-white-column { 
+  background: #ffffff;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.shieldnest-shadow {
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+header + main { background: rgb(249 250 251 / 1); }
+
+.react-pagination a{ display: inline-block; }
