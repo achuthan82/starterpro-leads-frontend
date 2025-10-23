@@ -182,7 +182,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
 
   return (
     <div
-      className="flex w-64 flex-col border-r border-gray-200 bg-white shadow-lg"
+      className="flex w-64 flex-col border-r border-gray-200 bg-white shadow-lg "
       style={{ overflow: "auto" }}
     >
       <div className="border-b border-gray-200 p-6">
@@ -193,7 +193,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
               alt="Logo"
               style={{ maxWidth: "100%", height: "auto", objectFit: "contain" }}
             />
-            <p className="text-sm text-gray-600 text-center">
+            <p className="text-sm text-gray-600 text-center mt-4 ">
               {userRole === "admin" ? "Admin Portal" : "Agent Portal"}
             </p>
           </div>
