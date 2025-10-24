@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { Spinner } from "components/ui";
 import authService from "utils/authService";
 import { Card } from "components/ui";
-import Logo from "assets/app-logo/logo-text-black.svg?.react";
+import Logo from "assets/app-logo/logo-text.svg?.react";
 
 // Validation schema
 const schema = yup.object().shape({
@@ -71,7 +71,7 @@ const ForgotPassword = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-100vh flex grid min-h-screen w-full grow grid-cols-1 place-items-center items-center justify-center bg-[linear-gradient(135deg,_rgb(10,36,99)_0%,_rgb(30,58,138)_25%,_rgb(45,55,72)_50%,_rgb(30,58,138)_75%,_rgb(10,36,99)_100%)]">
+      <div className="min-h-100vh flex grid min-h-screen w-full grow grid-cols-1 place-items-center items-center justify-center bg-[#f2f2f2]">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <div className="mb-1 inline-flex items-center justify-center">
@@ -92,9 +92,9 @@ const ForgotPassword = () => {
             </h2>
 
             {/* Message */}
-            <p className="mb-8 text-gray-200">
+            <p className="mb-8 text-gray-600">
               We&apos;ve sent a password reset link to{" "}
-              <strong className="text-gray-300">{submittedEmail}</strong>
+              <strong className="text-gray-600">{submittedEmail}</strong>
             </p>
 
             {/* Tip Box */}
@@ -150,7 +150,7 @@ const ForgotPassword = () => {
   }
 
   return (
-    <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[linear-gradient(135deg,_rgb(10,36,99)_0%,_rgb(30,58,138)_25%,_rgb(45,55,72)_50%,_rgb(30,58,138)_75%,_rgb(10,36,99)_100%)]">
+    <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[#f2f2f2]">
       <div className="w-full max-w-[28rem] p-4 sm:px-5">
         <div className="text-center">
           {/* <Logo className="mx-auto size-16" /> */}
@@ -162,7 +162,7 @@ const ForgotPassword = () => {
             />
           </div>
           <div className="">
-            <p className="text-gray-200">
+            <p className="text-gray-600">
               Mortgage Protection Lead Management System
             </p>
           </div>
@@ -219,9 +219,9 @@ const ForgotPassword = () => {
           </form>
         </Card>
 
-        <div className="dark:text-dark-300 mt-8 flex justify-center text-xs text-gray-400">
+        <div className="dark:text-dark-300 mt-8 flex justify-center text-xs text-gray-600">
           <a href="##">Privacy Notice</a>
-          <div className="dark:bg-dark-500 mx-2.5 my-0.5 w-px bg-gray-200"></div>
+          <div className="dark:bg-dark-500 mx-2.5 my-0.5 w-px bg-gray-200 text-gray-600"></div>
           <a href="##">Term of service</a>
         </div>
       </div>
