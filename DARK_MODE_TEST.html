@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode Test - AegisSuite</title>
+    <style>
+        /* Import actual theme styles */
+        @import url('./src/styles/shieldnest-theme.css');
+        @import url('./src/styles/aegissuite-theme.css');
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            padding: 2rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        /* Light mode */
+        body {
+            background-color: #f9fafb;
+            color: #111827;
+        }
+        
+        /* Dark mode */
+        .dark body {
+            background-color: #111827;
+            color: #f9fafb;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .toggle-button {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #0a2463 0%, #f4d03f 100%);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .toggle-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dark .toggle-button {
+            background: linear-gradient(135deg, #3b82f6 0%, #fbbf24 100%);
+        }
+        
+        .section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid;
+        }
+        
+        .section-title {
+            border-bottom-color: #e5e7eb;
+        }
+        
+        .dark .section-title {
+            border-bottom-color: #374151;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .test-item {
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            background: white;
+        }
+        
+        .dark .test-item {
+            border-color: #374151;
+            background: #1f2937;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-button" onclick="toggleDarkMode()">
+        🌓 Toggle Dark Mode
+    </button>
+    
+    <div class="container">
+        <h1 style="text-align: center; margin-bottom: 2rem;">AegisSuite Dark Mode Test Suite</h1>
+        
+        <!-- ShieldNest Components -->
+        <div class="section">
+            <h2 class="section-title">ShieldNest Components</h2>
+            
+            <div class="grid">
+                <!-- Metric Card -->
+                <div class="shieldnest-metric-card">
+                    <h3>Metric Card</h3>
+                    <p class="text-2xl font-bold">1,234</p>
+                    <p class="text-sm">Total Leads</p>
+                </div>
+                
+                <!-- White Column -->
+                <div class="shieldnest-white-column" style="padding: 1.5rem;">
+                    <h3>White Column</h3>
+                    <p>This card should have proper contrast in both modes.</p>
+                </div>
+                
+                <!-- Gradient Column -->
+                <div class="shieldnest-gradient-column" style="padding: 1.5rem;">
+                    <h3>Gradient Column</h3>
+                    <p>This has a gradient background.</p>
+                </div>
+            </div>
+            
+            <!-- Buttons -->
+            <div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Buttons</h3>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="shieldnest-primary-btn">Primary Button</button>
+                    <button class="shieldnest-gradient-btn">Gradient Button</button>
+                </div>
+            </div>
+            
+            <!-- Inputs -->
+            <div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Input Fields</h3>
+                <input type="text" class="shieldnest-input" placeholder="Type something..." style="width: 100%; max-width: 400px;">
+            </div>
+            
+            <!-- Status Badges -->
+            <div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Status Badges</h3>
+                <div class="status-grid">
+                    <span class="shieldnest-badge-1 status-badge">First Call</span>
+                    <span class="shieldnest-badge-2 status-badge">Second Call</span>
+                    <span class="shieldnest-badge-3 status-badge">Third Call</span>
+                    <span class="shieldnest-badge-4 status-badge">Sold</span>
+                    <span class="shieldnest-badge-5 status-badge">Not Interested</span>
+                    <span class="shieldnest-badge-6 status-badge">Text</span>
+                    <span class="shieldnest-badge-7 status-badge">Appointment</span>
+                    <span class="shieldnest-badge-8 status-badge">Sit/No Sale</span>
+                    <span class="shieldnest-badge-9 status-badge">No Show</span>
+                    <span class="shieldnest-badge-10 status-badge">DNC</span>
+                </div>
+            </div>
+            
+            <!-- Table -->
+            <div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Table</h3>
+                <table class="shieldnest-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>John Doe</td>
+                            <td><span class="shieldnest-badge-4 status-badge">Sold</span></td>
+                            <td>2025-10-23</td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Jane Smith</td>
+                            <td><span class="shieldnest-badge-1 status-badge">First Call</span></td>
+                            <td>2025-10-22</td>
+                        </tr>
+                        <tr>
+                            <td>003</td>
+                            <td>Bob Johnson</td>
+                            <td><span class="shieldnest-badge-7 status-badge">Appointment</span></td>
+                            <td>2025-10-21</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- AegisSuite Components -->
+        <div class="section">
+            <h2 class="section-title">AegisSuite Components</h2>
+            
+            <div class="grid">
+                <!-- Standard Card -->
+                <div class="aegis-card">
+                    <div class="aegis-card-header">
+                        <h3>Card Header</h3>
+                    </div>
+                    <div class="aegis-card-body">
+                        <p>This is a standard AegisSuite card with header, body, and footer sections.</p>
+                    </div>
+                    <div class="aegis-card-footer">
+                        <p style="font-size: 0.875rem; color: var(--aegis-text-secondary);">Card Footer</p>
+                    </div>
+                </div>
+                
+                <!-- Metric Card -->
+                <div class="aegis-metric-card">
+                    <div class="aegis-metric-value">542</div>
+                    <div class="aegis-metric-label">Active Leads</div>
+                    <div class="aegis-metric-trend positive">↑ 12% from last month</div>
+                </div>
+                
+                <!-- Another Metric -->
+                <div class="aegis-metric-card">
+                    <div class="aegis-metric-value">$45,230</div>
+                    <div class="aegis-metric-label">Revenue</div>
+                    <div class="aegis-metric-trend positive">↑ 8% from last month</div>
+                </div>
+            </div>
+            
+            <!-- Buttons -->
+            <div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Buttons</h3>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="aegis-btn-primary">Primary Button</button>
+                    <button class="aegis-btn-secondary">Secondary Button</button>
+                </div>
+            </div>
+            
+            <!-- Input -->
+            <div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Input Field</h3>
+                <input type="text" class="aegis-input" placeholder="Enter text..." style="max-width: 400px;">
+            </div>
+            
+            <!-- Badges -->
+            <div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Badges</h3>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <span class="aegis-badge aegis-badge-primary">Primary</span>
+                    <span class="aegis-badge aegis-badge-success">Success</span>
+                    <span class="aegis-badge aegis-badge-warning">Warning</span>
+                    <span class="aegis-badge aegis-badge-info">Info</span>
+                </div>
+            </div>
+            
+            <!-- Table -->
+            <div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Table</h3>
+                <table class="aegis-table">
+                    <thead>
+                        <tr>
+                            <th>Agent</th>
+                            <th>Leads</th>
+                            <th>Conversion</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sarah Williams</td>
+                            <td>45</td>
+                            <td>67%</td>
+                            <td><span class="aegis-badge aegis-badge-success">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>Mike Chen</td>
+                            <td>38</td>
+                            <td>72%</td>
+                            <td><span class="aegis-badge aegis-badge-success">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>Emily Davis</td>
+                            <td>52</td>
+                            <td>81%</td>
+                            <td><span class="aegis-badge aegis-badge-success">Active</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Test Results -->
+        <div class="section">
+            <h2 class="section-title">Visibility Checklist</h2>
+            <div class="test-item">
+                <h3 style="margin-bottom: 1rem;">✓ Elements to Verify:</h3>
+                <ul style="list-style: disc; margin-left: 1.5rem; line-height: 1.8;">
+                    <li>All text is clearly readable</li>
+                    <li>Cards have visible borders and backgrounds</li>
+                    <li>Buttons have proper contrast and hover states</li>
+                    <li>Input fields are visible and show focus states</li>
+                    <li>Badges are legible with good contrast</li>
+                    <li>Table headers and rows are distinguishable</li>
+                    <li>Hover effects work on interactive elements</li>
+                    <li>Shadows provide depth without being too harsh</li>
+                    <li>No "invisible" text or elements</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            
+            // Show current mode
+            const isDark = html.classList.contains('dark');
+            console.log(`Dark mode: ${isDark ? 'ON' : 'OFF'}`);
+        }
+        
+        // Initialize - check if system prefers dark mode
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            console.log('System prefers dark mode - already enabled');
+        }
+    </script>
+</body>
+</html>
+

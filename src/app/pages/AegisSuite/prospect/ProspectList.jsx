@@ -71,18 +71,18 @@ const ProspectList = () => {
     getProspectList(currentPage);
   }, [currentPage]);
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)]">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
       <SharedSidebar currentPath="/prospect" />
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="border-b border-gray-200 bg-white p-6 shadow-sm">
+        <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--color-atoll)]">
+              <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
                 Prospect
               </h1>
-              <p className="mt-1 text-gray-600">Manage your Prospect</p>
+              <p className="mt-1 text-gray-600 dark:text-gray-300">Manage your Prospect</p>
             </div>
           </div>
         </header>
@@ -95,10 +95,10 @@ const ProspectList = () => {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
                       Total Users
                     </p>
-                    <p className="mt-2 text-3xl font-bold text-gray-900">5</p>
+                    <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">5</p>
                   </div>
                   <div className="shieldnest-bg1 flex h-12 w-12 items-center justify-center rounded-full">
                     <UserGroupIcon className="h-6 w-6 text-white" />
@@ -113,10 +113,10 @@ const ProspectList = () => {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
                       Active Users
                     </p>
-                    <p className="mt-2 text-3xl font-bold text-gray-900">12</p>
+                    <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">12</p>
                   </div>
                   <div className="shieldnest-bg2 flex h-12 w-12 items-center justify-center rounded-full">
                     <CheckCircleIcon className="h-6 w-6 text-white" />
@@ -131,10 +131,10 @@ const ProspectList = () => {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
                       Inactive Users
                     </p>
-                    <p className="mt-2 text-3xl font-bold text-gray-900">1</p>
+                    <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">1</p>
                   </div>
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-600">
                     <ExclamationTriangleIcon className="h-6 w-6 text-white" />
@@ -145,7 +145,7 @@ const ProspectList = () => {
           </div> */}
           {/* {selected.length > 0 && (
             <div className="mt-4 mb-4">
-              <Card className="bg-white p-6">
+              <Card className="bg-white dark:bg-gray-800 p-6">
                 <div className="flex w-full justify-end gap-3">
                   <Button color="success" onClick={() => setIsModalOpen(true)}>
                     <CheckCircleIcon className="mr-1 size-5 stroke-2" />
@@ -164,32 +164,32 @@ const ProspectList = () => {
             <Card className="shieldnest-shadow overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-50 dark:bg-gray-700">
                     <tr>
-                      {/* <th className="min-w-[60px] px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      {/* <th className="min-w-[60px] px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-400 uppercase">
                         <input
                           type="checkbox"
                           checked={selected.length === users.length}
                           onChange={(event) => handleSelectAll(event)}
-                          className="h-4 w-4 rounded border-gray-300 text-[var(--color-atoll)] focus:ring-[var(--color-atoll)]"
+                          className="h-4 w-4 rounded border-gray-300 text-[var(--color-atoll)] dark:text-blue-400 focus:ring-[var(--color-atoll)]"
                           title="Select All"
                         />
                       </th> */}
-                      <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-400 uppercase">
                         User
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-400 uppercase">
                         Contact
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-400 uppercase">
                         Agency
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-400 uppercase">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 bg-white">
+                  <tbody className="divide-y divide-gray-200 bg-white dark:bg-gray-800">
                     {loading ? (
                       <tr>
                         <td colSpan="6" className="px-6 py-4 text-center">
@@ -203,14 +203,14 @@ const ProspectList = () => {
                       <tr>
                         <td
                           colSpan="6"
-                          className="px-6 py-4 text-center text-gray-500"
+                          className="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
                         >
                           No users found
                         </td>
                       </tr>
                     ) : (
                       users.map((user) => (
-                        <tr key={user.id} className="hover:bg-gray-50">
+                        <tr key={user.id} className="hover:bg-gray-50 dark:bg-gray-700">
                           {/* <td className="px-6 py-4 whitespace-nowrap">
                             <input
                               type="checkbox"
@@ -219,7 +219,7 @@ const ProspectList = () => {
                                 handleSelection(user, event);
                                 //   handlePrintLead(event, lead);
                               }}
-                              className="h-4 w-4 rounded border-gray-300 text-[var(--color-atoll)] focus:ring-[var(--color-atoll)]"
+                              className="h-4 w-4 rounded border-gray-300 text-[var(--color-atoll)] dark:text-blue-400 focus:ring-[var(--color-atoll)]"
                             />
                           </td> */}
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -245,23 +245,23 @@ const ProspectList = () => {
                                 );
                               })()}
                               <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900">
+                                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                   {user.name}
                                 </div>
-                                {/* <div className="text-sm text-gray-500">ID: {user.id}</div> */}
-                                <div className="text-sm text-gray-900">
+                                {/* <div className="text-sm text-gray-500 dark:text-gray-400">ID: {user.id}</div> */}
+                                <div className="text-sm text-gray-900 dark:text-gray-100">
                                   {user.email}
                                 </div>
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
                               {user.phone || "N/A"}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
                               {user.agency_name || "N/A"}
                             </div>
                           </td>
@@ -302,7 +302,7 @@ const ProspectList = () => {
                 </table>
               </div>
               {totalPages > 1 && (
-                <div className="border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <div className="text-sm text-gray-700">
@@ -310,7 +310,7 @@ const ProspectList = () => {
                         {Math.min(currentPage * 10, totalUsers)} of {totalUsers}{" "}
                         users
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
                         Page {currentPage} of {totalPages}
                       </div>
                     </div>
@@ -318,7 +318,7 @@ const ProspectList = () => {
                       <button
                         onClick={() => setCurrentPage(1)}
                         disabled={currentPage === 1}
-                        className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 dark:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         First
                       </button>
@@ -327,7 +327,7 @@ const ProspectList = () => {
                           setCurrentPage((prev) => Math.max(prev - 1, 1))
                         }
                         disabled={currentPage === 1}
-                        className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 dark:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         Previous
                       </button>
@@ -355,7 +355,7 @@ const ProspectList = () => {
                                 className={`rounded px-3 py-1 text-sm ${
                                   currentPage === pageNum
                                     ? "bg-[var(--color-atoll)] text-white"
-                                    : "border border-gray-300 hover:bg-gray-50"
+                                    : "border border-gray-300 hover:bg-gray-50 dark:bg-gray-700"
                                 }`}
                               >
                                 {pageNum}
@@ -372,14 +372,14 @@ const ProspectList = () => {
                           )
                         }
                         disabled={currentPage === totalPages}
-                        className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 dark:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         Next
                       </button>
                       <button
                         onClick={() => setCurrentPage(totalPages)}
                         disabled={currentPage === totalPages}
-                        className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 dark:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         Last
                       </button>

@@ -167,18 +167,18 @@ const ReportsContent = () => {
   );
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)]">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
       <SharedSidebar currentPath="/reports" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-[#0a2463]">Reports</h1>
-              <p className="text-gray-600 mt-1">Generate and download reports</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">Generate and download reports</p>
             </div>
           </div>
         </header>
@@ -194,7 +194,7 @@ const ReportsContent = () => {
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'reports'
                       ? 'border-[#0a2463] text-[#0a2463]'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300 dark:border-gray-600'
                   }`}
                 >
                   <ChartBarIcon className="w-5 h-5 inline mr-2" />
@@ -205,7 +205,7 @@ const ReportsContent = () => {
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'downloads'
                       ? 'border-[#0a2463] text-[#0a2463]'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300 dark:border-gray-600'
                   }`}
                 >
                   <ArrowDownTrayIcon className="w-5 h-5 inline mr-2" />
@@ -221,7 +221,7 @@ const ReportsContent = () => {
           )}
 
           {activeTab === 'downloads' && (
-            <Card className="p-6 bg-white shieldnest-shadow overflow-hidden rounded-xl">
+            <Card className="p-6 bg-white dark:bg-gray-800 shieldnest-shadow overflow-hidden rounded-xl">
               <div className="max-w-2xl mx-auto">
                 <h3 className="text-lg font-semibold text-[#0a2463] mb-6">Download Files</h3>
                 
@@ -237,7 +237,7 @@ const ReportsContent = () => {
 
                 {/* Choose Type Dropdown */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     Choose Type
                   </label>
                   {/* <div className="relative">
@@ -246,7 +246,7 @@ const ReportsContent = () => {
                       placeholder="Search categories..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#0a2463] focus:outline-none mb-2"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] focus:outline-none mb-2"
                     />
                     <MagnifyingGlassIcon className="absolute right-3 top-2.5 w-4 h-4 text-gray-400" />
                   </div> */}
@@ -254,7 +254,7 @@ const ReportsContent = () => {
                   <select
                     value={selectedType}
                     onChange={(e) => handleTypeChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#0a2463] focus:outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] focus:outline-none"
                   >
                     <option value="">Select a category</option>
                     {filteredCategoryOptions.map((category) => (
@@ -271,7 +271,7 @@ const ReportsContent = () => {
 
                 {/* Choose Campaign Dropdown */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     Choose Campaign
                   </label>
                   <div className="relative">
@@ -279,7 +279,7 @@ const ReportsContent = () => {
                       value={selectedCampaign}
                       onChange={(e) => {console.log(e); setSelectedCampaign(e.target.value)}}
                       disabled={!selectedType || isLoadingCampaigns}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-[#0a2463] focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                     >
                       <option value="">
                         {isLoadingCampaigns ? 'Loading campaigns...' : 'Select a campaign'}

@@ -131,18 +131,18 @@ const Campaigns = () => {
   const totalRevenue = campaigns.reduce((sum, c) => sum + c.revenue, 0);
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)]">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
       <SharedSidebar currentPath="/campaigns" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--color-atoll)]">My Campaigns</h1>
-              <p className="text-gray-600 mt-1">Manage and track your marketing campaigns</p>
+              <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">My Campaigns</h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">Manage and track your marketing campaigns</p>
             </div>
             <div className="flex items-center space-x-3">
               <select
@@ -173,8 +173,8 @@ const Campaigns = () => {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Budget</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">${totalBudget.toLocaleString()}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Budget</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">${totalBudget.toLocaleString()}</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                 <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -188,9 +188,9 @@ const Campaigns = () => {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Amount Spent</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">${totalSpent.toLocaleString()}</p>
-                <p className="text-sm text-gray-500">{((totalSpent / totalBudget) * 100).toFixed(1)}% of budget</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Amount Spent</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">${totalSpent.toLocaleString()}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{((totalSpent / totalBudget) * 100).toFixed(1)}% of budget</p>
               </div>
               <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
                 <svg className="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
@@ -203,8 +203,8 @@ const Campaigns = () => {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Leads</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{totalLeads.toLocaleString()}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Leads</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">{totalLeads.toLocaleString()}</p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                 <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -217,8 +217,8 @@ const Campaigns = () => {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">${totalRevenue.toLocaleString()}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Revenue</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">${totalRevenue.toLocaleString()}</p>
                 <p className="text-sm text-green-600">
                   {totalSpent > 0 ? `${((totalRevenue / totalSpent) * 100).toFixed(0)}% ROI` : 'N/A'}
                 </p>
@@ -241,13 +241,13 @@ const Campaigns = () => {
                   <div className="flex items-center space-x-3">
                     <div className="text-2xl">{getTypeIcon(campaign.type)}</div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{campaign.name}</h3>
-                      <p className="text-sm text-gray-500">{campaign.type}</p>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{campaign.name}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{campaign.type}</p>
                     </div>
                   </div>
                   <button
                     onClick={() => setSelectedCampaign(campaign)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 dark:text-gray-300"
                   >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
@@ -264,15 +264,15 @@ const Campaigns = () => {
                   </span>
                 </div>
 
-                <p className="text-sm text-gray-600 mb-4">{campaign.description}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{campaign.description}</p>
 
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-500">Budget</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Budget</span>
                     <span className="text-sm font-medium">${campaign.budget.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-500">Spent</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Spent</span>
                     <span className="text-sm font-medium">${campaign.spent.toLocaleString()}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -283,18 +283,18 @@ const Campaigns = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-4 pt-2">
                     <div>
-                      <p className="text-sm text-gray-500">Leads</p>
-                      <p className="text-lg font-bold text-gray-900">{campaign.leads}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Leads</p>
+                      <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{campaign.leads}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Revenue</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Revenue</p>
                       <p className="text-lg font-bold text-green-600">${campaign.revenue.toLocaleString()}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <div className="flex justify-between text-xs text-gray-500">
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
                     <span>{campaign.startDate}</span>
                     <span>{campaign.endDate}</span>
                   </div>
@@ -303,10 +303,10 @@ const Campaigns = () => {
 
               <div className="bg-gray-50 px-6 py-3">
                 <div className="flex justify-between items-center">
-                  <button className="text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80 text-sm font-medium">
+                  <button className="text-[var(--color-atoll)] dark:text-blue-400 hover:text-[var(--color-atoll)] dark:text-blue-400/80 text-sm font-medium">
                     View Details
                   </button>
-                  <button className="text-gray-500 hover:text-gray-700 text-sm">
+                  <button className="text-gray-500 dark:text-gray-400 hover:text-gray-700 text-sm">
                     Edit
                   </button>
                 </div>
@@ -320,16 +320,16 @@ const Campaigns = () => {
       {/* Campaign Detail Modal */}
       {selectedCampaign && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-lg bg-white mb-10">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-lg bg-white dark:bg-gray-800 mb-10">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center space-x-4">
                 <div className="text-3xl">{getTypeIcon(selectedCampaign.type)}</div>
                 <div>
-                  <h3 className="text-2xl font-bold text-[var(--color-atoll)]">{selectedCampaign.name}</h3>
-                  <p className="text-gray-600">{selectedCampaign.type} Campaign</p>
+                  <h3 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">{selectedCampaign.name}</h3>
+                  <p className="text-gray-600 dark:text-gray-300">{selectedCampaign.type} Campaign</p>
                 </div>
               </div>
-              <button onClick={() => setSelectedCampaign(null)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setSelectedCampaign(null)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
@@ -339,15 +339,15 @@ const Campaigns = () => {
             <div className="py-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="text-lg font-semibold text-[var(--color-atoll)] mb-4">Campaign Details</h4>
+                  <h4 className="text-lg font-semibold text-[var(--color-atoll)] dark:text-blue-400 mb-4">Campaign Details</h4>
                   <div className="space-y-3">
                     <div>
                       <p className="text-sm font-medium text-gray-700">Description</p>
-                      <p className="text-gray-600">{selectedCampaign.description}</p>
+                      <p className="text-gray-600 dark:text-gray-300">{selectedCampaign.description}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-700">Duration</p>
-                      <p className="text-gray-600">{selectedCampaign.startDate} - {selectedCampaign.endDate}</p>
+                      <p className="text-gray-600 dark:text-gray-300">{selectedCampaign.startDate} - {selectedCampaign.endDate}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-700">Target Territories</p>
@@ -363,30 +363,30 @@ const Campaigns = () => {
                 </div>
                 
                 <div>
-                  <h4 className="text-lg font-semibold text-[var(--color-atoll)] mb-4">Performance Metrics</h4>
+                  <h4 className="text-lg font-semibold text-[var(--color-atoll)] dark:text-blue-400 mb-4">Performance Metrics</h4>
                   <div className="space-y-4">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Budget Allocated</span>
+                      <span className="text-gray-600 dark:text-gray-300">Budget Allocated</span>
                       <span className="font-medium">${selectedCampaign.budget.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Amount Spent</span>
+                      <span className="text-gray-600 dark:text-gray-300">Amount Spent</span>
                       <span className="font-medium">${selectedCampaign.spent.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Leads Generated</span>
+                      <span className="text-gray-600 dark:text-gray-300">Leads Generated</span>
                       <span className="font-medium">{selectedCampaign.leads.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Conversions</span>
+                      <span className="text-gray-600 dark:text-gray-300">Conversions</span>
                       <span className="font-medium">{selectedCampaign.conversions}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Revenue Generated</span>
+                      <span className="text-gray-600 dark:text-gray-300">Revenue Generated</span>
                       <span className="font-medium text-green-600">${selectedCampaign.revenue.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">ROI</span>
+                      <span className="text-gray-600 dark:text-gray-300">ROI</span>
                       <span className="font-medium">
                         {selectedCampaign.spent > 0 ? `${((selectedCampaign.revenue / selectedCampaign.spent) * 100).toFixed(0)}%` : 'N/A'}
                       </span>
@@ -396,7 +396,7 @@ const Campaigns = () => {
               </div>
             </div>
             
-            <div className="flex justify-end pt-4 border-t border-gray-200 space-x-3">
+            <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700 space-x-3">
               <button 
                 onClick={() => setSelectedCampaign(null)}
                 className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"

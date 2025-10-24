@@ -180,18 +180,18 @@ const AgentManagement = () => {
   // const activeAgents = agents.filter(a => a.is_active).length;
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)]">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
       <SharedSidebar currentPath="/admin/agents" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--color-atoll)]">Agent Management</h1>
-              <p className="text-gray-600 mt-1">Manage insurance agents and their performance</p>
+              <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Agent Management</h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">Manage insurance agents and their performance</p>
             </div>
             {/* <div className="flex items-center space-x-3">
               <button 
@@ -212,8 +212,8 @@ const AgentManagement = () => {
             <Card className="p-6 shieldnest-white-column" style={{ borderLeft: `5px solid ${randomColors[0]}` }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Agents</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{totalAgents || 'N/A'}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Agents</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{totalAgents || 'N/A'}</p>
                 </div>
                 <div className="w-12 h-12 shieldnest-bg1 rounded-full flex items-center justify-center">
                   <UserGroupIcon className="w-6 h-6 text-white" />
@@ -224,8 +224,8 @@ const AgentManagement = () => {
             <Card className="p-6 shieldnest-white-column" style={{ borderLeft: `5px solid ${randomColors[1]}` }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Active Agents</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{activeAgents || 'N/A'}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Active Agents</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{activeAgents || 'N/A'}</p>
                 </div>
                 <div className="w-12 h-12 shieldnest-bg2 rounded-full flex items-center justify-center">
                   <CheckCircleIcon className="w-6 h-6 text-white" />
@@ -236,8 +236,8 @@ const AgentManagement = () => {
             <Card className="p-6 shieldnest-white-column" style={{ borderLeft: `5px solid ${randomColors[2]}` }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Leads</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{leadDetails?.completed + leadDetails?.incomplete}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Leads</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{leadDetails?.completed + leadDetails?.incomplete}</p>
                 </div>
                 <div className="w-12 h-12 shieldnest-bg3 rounded-full flex items-center justify-center">
                   {/* <svg className="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
@@ -252,8 +252,8 @@ const AgentManagement = () => {
             <Card className="p-6 shieldnest-white-column" style={{ borderLeft: `5px solid oklch(64.6% 0.222 41.116)` }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Avg Conversion Rate</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{(((leadDetails?.sold)/(leadDetails?.sold + leadDetails?.completed + leadDetails?.incomplete)) * 100).toFixed(2) || 0}%</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Avg Conversion Rate</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{(((leadDetails?.sold)/(leadDetails?.sold + leadDetails?.completed + leadDetails?.incomplete)) * 100).toFixed(2) || 0}%</p>
                 </div>
                 <div className="w-12 h-12 bg-orange-600 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -265,7 +265,7 @@ const AgentManagement = () => {
           </div>
 
           {/* Filters and Search */}
-          <Card className="p-6 mb-6 bg-white">
+          <Card className="p-6 mb-6 bg-white dark:bg-gray-800">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -321,17 +321,17 @@ const AgentManagement = () => {
           <Card className="overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agent</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Performance</th> */}
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Territories</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Agent</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Contact</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Performance</th> */}
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Territories</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
                   {loading ? (
                     <tr>
                       <td colSpan="6" className="px-6 py-4 text-center">
@@ -343,13 +343,13 @@ const AgentManagement = () => {
                     </tr>
                   ) : filteredAgents.length === 0 ? (
                     <tr>
-                      <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                      <td colSpan="6" className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                         No agents found
                       </td>
                     </tr>
                   ) : (
                     filteredAgents.map((agent) => (
-                      <tr key={agent.id} className="hover:bg-gray-50">
+                      <tr key={agent.id} className="hover:bg-gray-50 dark:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
                           {/* <div className="flex items-center">
                             <div className="w-10 h-10 bg-[var(--color-atoll)] rounded-full flex items-center justify-center">
@@ -358,8 +358,8 @@ const AgentManagement = () => {
                               </span>
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{agent.name}</div>
-                              <div className="text-sm text-gray-500">ID: {agent.id}</div>
+                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{agent.name}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">ID: {agent.id}</div>
                             </div>
                           </div> */}
 
@@ -383,22 +383,22 @@ const AgentManagement = () => {
                               );
                             })()}
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{agent.name}</div>
-                              <div className="text-sm text-gray-500">ID: {agent.id}</div>
+                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{agent.name}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">ID: {agent.id}</div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{agent.email}</div>
-                          <div className="text-sm text-gray-500">{agent.phone}</div>
+                          <div className="text-sm text-gray-900 dark:text-gray-100">{agent.email}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{agent.phone}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeClass(agent.is_active ? 'active' : 'inactive')}`}>
                             {agent.is_active ? 'Active' : 'Inactive'}
                           </span>
-                          {/* <div className="text-xs text-gray-500 mt-1">{agent.role || 'Agent'}</div> */}
+                          {/* <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{agent.role || 'Agent'}</div> */}
                         </td>
-                        {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                           <div>Leads: {agent.totalLeads || 0}</div>
                           <div>Conversions: {agent.conversions || 0}</div>
                           <div className="text-green-600">Rate: {agent.conversionRate || 0}%</div>
@@ -416,7 +416,7 @@ const AgentManagement = () => {
                           <div className="flex flex-col space-y-1">
                             <button
                               onClick={() => handleViewLeads(agent.id, agent.user_id)}
-                              className="text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80 text-xs flex items-center space-x-1"
+                              className="text-[var(--color-atoll)] dark:text-blue-400 hover:text-[var(--color-atoll)] dark:text-blue-400/80 text-xs flex items-center space-x-1"
                             >
                               <EyeIcon className="w-3 h-3" />
                               <span>View Leads</span>
@@ -439,13 +439,13 @@ const AgentManagement = () => {
 
             {/* Enhanced Pagination */}
             {totalPages > 1 && (
-              <div className="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+              <div className="bg-white dark:bg-gray-800 px-4 py-3 border-t border-gray-200 dark:border-gray-700 sm:px-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="text-sm text-gray-700">
                       Showing {((currentPage - 1) * 10) + 1} to {Math.min(currentPage * 10, totalAgents)} of {totalAgents} agents
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
                       Page {currentPage} of {totalPages}
                     </div>
                   </div>
@@ -453,14 +453,14 @@ const AgentManagement = () => {
                     <button
                       onClick={() => setCurrentPage(1)}
                       disabled={currentPage === 1}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:bg-gray-700"
                     >
                       First
                     </button>
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                       disabled={currentPage === 1}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:bg-gray-700"
                     >
                       Previous
                     </button>
@@ -485,7 +485,7 @@ const AgentManagement = () => {
                             onClick={() => setCurrentPage(pageNum)}
                             className={`px-3 py-1 text-sm rounded ${currentPage === pageNum
                                 ? 'bg-[var(--color-atoll)] text-white'
-                                : 'border border-gray-300 hover:bg-gray-50'
+                                : 'border border-gray-300 hover:bg-gray-50 dark:bg-gray-700'
                               }`}
                           >
                             {pageNum}
@@ -497,14 +497,14 @@ const AgentManagement = () => {
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                       disabled={currentPage === totalPages}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:bg-gray-700"
                     >
                       Next
                     </button>
                     <button
                       onClick={() => setCurrentPage(totalPages)}
                       disabled={currentPage === totalPages}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:bg-gray-700"
                     >
                       Last
                     </button>
@@ -519,18 +519,18 @@ const AgentManagement = () => {
       {/* Agent Detail Modal */}
       {selectedAgent && (
         <div className="fixed inset-0 bg-gray-600/65 overflow-y-auto h-full w-full z-50" style={{ width: ' 100vw' }}>
-          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-lg bg-white mb-10">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-lg bg-white dark:bg-gray-800 mb-10">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 bg-[var(--color-atoll)] rounded-full flex items-center justify-center">
                   <span className="text-white font-bold text-xl">{selectedAgent.avatar}</span>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-[var(--color-atoll)]">{selectedAgent.name}</h3>
-                  <p className="text-gray-600">{selectedAgent.role} • {selectedAgent.id}</p>
+                  <h3 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">{selectedAgent.name}</h3>
+                  <p className="text-gray-600 dark:text-gray-300">{selectedAgent.role} • {selectedAgent.id}</p>
                 </div>
               </div>
-              <button onClick={() => setSelectedAgent(null)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setSelectedAgent(null)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300">
                 <XMarkIcon className="w-6 h-6" />
               </button>
             </div>
@@ -538,7 +538,7 @@ const AgentManagement = () => {
             <div className="py-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="text-lg font-semibold text-[var(--color-atoll)] mb-4">Contact Information</h4>
+                  <h4 className="text-lg font-semibold text-[var(--color-atoll)] dark:text-blue-400 mb-4">Contact Information</h4>
                   <div className="space-y-3">
                     <div className="flex items-center space-x-3">
                       <EnvelopeIcon className="w-5 h-5 text-gray-400" />
@@ -560,26 +560,26 @@ const AgentManagement = () => {
                 </div>
 
                 <div>
-                  <h4 className="text-lg font-semibold text-[var(--color-atoll)] mb-4">Performance Metrics</h4>
+                  <h4 className="text-lg font-semibold text-[var(--color-atoll)] dark:text-blue-400 mb-4">Performance Metrics</h4>
                   <div className="space-y-4">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Total Leads</span>
+                      <span className="text-gray-600 dark:text-gray-300">Total Leads</span>
                       <span className="font-medium">{selectedAgent.totalLeads.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Conversions</span>
+                      <span className="text-gray-600 dark:text-gray-300">Conversions</span>
                       <span className="font-medium">{selectedAgent.conversions}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Revenue Generated</span>
+                      <span className="text-gray-600 dark:text-gray-300">Revenue Generated</span>
                       <span className="font-medium text-green-600">${selectedAgent.revenue.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Conversion Rate</span>
+                      <span className="text-gray-600 dark:text-gray-300">Conversion Rate</span>
                       <span className="font-medium">{selectedAgent.conversionRate}%</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Last Login</span>
+                      <span className="text-gray-600 dark:text-gray-300">Last Login</span>
                       <span className="font-medium">{selectedAgent.lastLogin}</span>
                     </div>
                   </div>
@@ -587,10 +587,10 @@ const AgentManagement = () => {
               </div>
             </div>
 
-            <div className="flex justify-end pt-4 border-t border-gray-200 space-x-3">
+            <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700 space-x-3">
               <button
                 onClick={() => setSelectedAgent(null)}
-                className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700"
               >
                 Close
               </button>

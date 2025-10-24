@@ -404,16 +404,16 @@ useEffect(() => {
   console.log(paginatedData)
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)]">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       <SharedSidebar currentPath="/admin/users" />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--color-atoll)]">User Management</h1>
-              <p className="text-gray-600 mt-1">Manage your team members and their access permissions</p>
+              <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">User Management</h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your team members and their access permissions</p>
             </div>
             <div className="flex items-center space-x-3">
               <button
@@ -434,8 +434,8 @@ useEffect(() => {
             <Card className=" p-6 shieldnest-white-column" style={{ borderLeft: `5px solid ${randomColors[0]}` }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Users</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{userCounts?.active + userCounts?.inactive}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Users</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{userCounts?.active + userCounts?.inactive}</p>
                 </div>
                 <div className="w-12 h-12 shieldnest-bg1 rounded-full flex items-center justify-center">
                   <UserGroupIcon className="w-6 h-6 text-white" />
@@ -446,8 +446,8 @@ useEffect(() => {
             <Card className=" p-6 shieldnest-white-column" style={{ borderLeft: `5px solid ${randomColors[1]}` }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Active Users</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{userCounts?.active}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Active Users</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{userCounts?.active}</p>
                 </div>
                 <div className="w-12 h-12 shieldnest-bg2 rounded-full flex items-center justify-center">
                   <CheckCircleIcon className="w-6 h-6 text-white" />
@@ -458,8 +458,8 @@ useEffect(() => {
             <Card className="p-6 shieldnest-white-column" style={{ borderLeft: `5px solid oklch(57.7% 0.245 27.325)` }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Inactive Users</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{userCounts?.inactive}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Inactive Users</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{userCounts?.inactive}</p>
                 </div>
                 <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
                   <ExclamationTriangleIcon className="w-6 h-6 text-white" />
@@ -470,8 +470,8 @@ useEffect(() => {
             {/* <Card className="p-6 shieldnest-white-column" style={{ borderLeft: `5px solid ${randomColors[2]}` }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Agents</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{users.filter(u => u.role?.toLowerCase() === 'agent').length}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Agents</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{users.filter(u => u.role?.toLowerCase() === 'agent').length}</p>
                 </div>
                 <div className="w-12 h-12 shieldnest-bg3 rounded-full flex items-center justify-center">
                   <UserPlusIcon className="w-6 h-6 text-white" />
@@ -481,7 +481,7 @@ useEffect(() => {
           </div>
 
           {/* Filters and Search */}
-          <Card className="p-6 mb-6 bg-white">
+          <Card className="p-6 mb-6 bg-white dark:bg-gray-800">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -528,29 +528,29 @@ useEffect(() => {
           <Card className="overflow-hidden shieldnest-shadow">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       User
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Contact
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Role & Status
                     </th>
-                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Territory
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Last Login
                     </th> */}
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
                   {loading ? (
                     <tr>
                       <td colSpan="6" className="px-6 py-4 text-center">
@@ -562,13 +562,13 @@ useEffect(() => {
                     </tr>
                   ) : users.length === 0 ? (
                     <tr>
-                      <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                      <td colSpan="6" className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                         No users found
                       </td>
                     </tr>
                   ) : (
                     users.map((user) => (
-                      <tr key={user.id} className="hover:bg-gray-50">
+                      <tr key={user.id} className="hover:bg-gray-50 dark:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             {(() => {
@@ -585,14 +585,14 @@ useEffect(() => {
                               );
                             })()}
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                              {/* <div className="text-sm text-gray-500">ID: {user.id}</div> */}
-                              <div className="text-sm text-gray-900">{user.email}</div>
+                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{user.name}</div>
+                              {/* <div className="text-sm text-gray-500 dark:text-gray-400">ID: {user.id}</div> */}
+                              <div className="text-sm text-gray-900 dark:text-gray-100">{user.email}</div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">{user.phone || 'N/A'}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{user.phone || 'N/A'}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex flex-col space-y-1">
@@ -600,17 +600,17 @@ useEffect(() => {
                             {getStatusBadge(user)}
                           </div>
                         </td>
-                        {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                           {user.territory || 'Not assigned'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                           {user.lastLogin || user.last_login || 'Never'}
                         </td> */}
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex flex-col space-y-1">
                             <button
                               onClick={() => handleEdit(user)}
-                              className="text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80 text-xs flex items-center space-x-1"
+                              className="text-[var(--color-atoll)] dark:text-blue-400 hover:text-[var(--color-atoll)] dark:text-blue-400/80 text-xs flex items-center space-x-1"
                             >
                               <PencilIcon className="w-3 h-3" />
                               <span>Edit</span>
@@ -618,7 +618,7 @@ useEffect(() => {
                             {
                               !user.registered && <button
                               onClick={() => handleInvite(user)}
-                              className="text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80 text-xs flex items-center space-x-1"
+                              className="text-[var(--color-atoll)] dark:text-blue-400 hover:text-[var(--color-atoll)] dark:text-blue-400/80 text-xs flex items-center space-x-1"
                             > 
                             {
                               inviteLoadingId !== user.id ? <><EnvelopeIcon className="w-3 h-3" />
@@ -675,13 +675,13 @@ useEffect(() => {
 
             {/* Enhanced Pagination */}
             {/* {totalPages > 1 && (
-              <div className="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+              <div className="bg-white dark:bg-gray-800 px-4 py-3 border-t border-gray-200 dark:border-gray-700 sm:px-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="text-sm text-gray-700">
                       Showing {((currentPage - 1) * 10) + 1} to {Math.min(currentPage * 10, paginatedData)} of {paginatedData} users
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
                       Page {currentPage} of {totalPages}
                     </div>
                   </div>
@@ -689,14 +689,14 @@ useEffect(() => {
                     <button
                       onClick={() => setCurrentPage(1)}
                       disabled={currentPage === 1}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:bg-gray-700"
                     >
                       First
                     </button>
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                       disabled={currentPage === 1}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:bg-gray-700"
                     >
                       Previous
                     </button> */}
@@ -722,7 +722,7 @@ useEffect(() => {
                             className={`px-3 py-1 text-sm rounded ${
                               currentPage === pageNum
                                 ? 'bg-[var(--color-atoll)] text-white'
-                                : 'border border-gray-300 hover:bg-gray-50'
+                                : 'border border-gray-300 hover:bg-gray-50 dark:bg-gray-700'
                             }`}
                           >
                             {pageNum}
@@ -734,14 +734,14 @@ useEffect(() => {
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                       disabled={currentPage === totalPages}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:bg-gray-700"
                     >
                       Next
                     </button>
                     <button
                       onClick={() => setCurrentPage(totalPages)}
                       disabled={currentPage === totalPages}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:bg-gray-700"
                     >
                       Last
                     </button>
@@ -764,26 +764,26 @@ useEffect(() => {
           onClick={cancelStatusChange}
         >
           <div 
-            className="bg-white rounded-lg p-6 max-w-md w-full mx-4"
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center mb-4">
               <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
                 <ExclamationTriangleIcon className="w-6 h-6 text-yellow-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Confirm {confirmationData.action}
               </h3>
             </div>
             
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               {confirmationData.message}
             </p>
             
             <div className="flex justify-end space-x-3">
               <button
                 onClick={cancelStatusChange}
-                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-gray-600 dark:text-gray-300 border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 transition-colors"
               >
                 Cancel
               </button>

@@ -50,6 +50,39 @@
   --aegis-transition-slow: 350ms ease-in-out;
 }
 
+/* Dark Mode Theme Variables */
+.dark {
+  /* Primary Colors - Lighter for dark mode */
+  --aegis-primary: #3b82f6;
+  --aegis-primary-light: #60a5fa;
+  --aegis-primary-dark: #2563eb;
+  
+  /* Secondary Colors - Adjusted for dark mode */
+  --aegis-success: #4ade80;
+  --aegis-warning: #fb923c;
+  --aegis-info: #60a5fa;
+  --aegis-purple: #a78bfa;
+  
+  /* Background Colors - Dark theme */
+  --aegis-bg-primary: #1f2937;
+  --aegis-bg-secondary: #111827;
+  --aegis-bg-tertiary: #374151;
+  
+  /* Text Colors - Light on dark */
+  --aegis-text-primary: #f9fafb;
+  --aegis-text-secondary: #d1d5db;
+  --aegis-text-tertiary: #9ca3af;
+  
+  /* Border Colors - Subtle on dark */
+  --aegis-border-light: #374151;
+  --aegis-border-medium: #4b5563;
+  
+  /* Shadow Colors - Stronger for dark mode */
+  --aegis-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --aegis-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --aegis-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+}
+
 /* Modern Button Styles */
 .aegis-btn-primary {
   background: linear-gradient(135deg, var(--aegis-primary) 0%, var(--aegis-primary-light) 100%);

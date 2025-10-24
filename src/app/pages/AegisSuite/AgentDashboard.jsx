@@ -119,18 +119,18 @@ const AgentDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)]">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
       <SharedSidebar currentPath="/agent-dashboard" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--color-atoll)]">Dashboard Overview</h1>
-              <p className="text-sm text-gray-600 mt-1">Welcome back, {userData?.name}! Here&apos;s your lead summary for today.</p>
+              <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Dashboard Overview</h1>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Welcome back, {userData?.name}! Here&apos;s your lead summary for today.</p>
             </div>
             {/* <div className="flex items-center space-x-4">
               <button 
@@ -156,21 +156,21 @@ const AgentDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {metricsLoading ? (
               Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="bg-gradient-to-br from-white to-slate-100 border border-slate-200 rounded-xl p-6 flex flex-col justify-between min-h-[120px]">
+                <div key={index} className="bg-gradient-to-br from-white to-slate-100 dark:from-gray-700 dark:to-gray-800 border border-slate-200 dark:border-gray-600 rounded-xl p-6 flex flex-col justify-between min-h-[120px]">
                   <div className="animate-pulse">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-8 bg-gray-200 rounded w-1/2 mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-3/4 mb-2"></div>
+                    <div className="h-8 bg-gray-200 dark:bg-gray-600 rounded w-1/2 mb-2"></div>
+                    <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-1/3"></div>
                   </div>
                 </div>
               ))
             ) : metricsError ? (
               <div className="col-span-4">
-                <div className="bg-gradient-to-br from-white to-slate-100 border border-slate-200 rounded-xl p-6 text-center text-red-600">
+                <div className="bg-gradient-to-br from-white to-slate-100 dark:from-gray-700 dark:to-gray-800 border border-slate-200 dark:border-gray-600 rounded-xl p-6 text-center text-red-600 dark:text-red-400">
                   <p>{metricsError}</p>
                   <button 
                     onClick={fetchMetricsData}
-                    className="mt-2 text-sm text-blue-600 hover:text-blue-800 underline"
+                    className="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
                   >
                     Try again
                   </button>
@@ -180,10 +180,10 @@ const AgentDashboard = () => {
               getMetrics().map((metric, index) => (
                 <div key={index} className="shieldnest-gradient-column rounded-xl p-6 flex items-center justify-between min-h-[120px]">
                   <div className="flex flex-col justify-between h-full">
-                    <p className="text-base font-medium text-slate-700 mb-1">{metric.title}</p>
-                    <p className="text-3xl font-bold text-slate-800 mb-1">{metric.value}</p>
+                    <p className="text-base font-medium text-slate-700 dark:text-slate-300 mb-1">{metric.title}</p>
+                    <p className="text-3xl font-bold text-slate-800 dark:text-white mb-1">{metric.value}</p>
                     {metric.change && metric.change !== '+0%' && (
-                      <p className={`text-sm mt-2 font-medium ${metric.changeType === 'positive' ? 'text-green-600' : 'text-red-500'}`}>{metric.change}</p>
+                      <p className={`text-sm mt-2 font-medium ${metric.changeType === 'positive' ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>{metric.change}</p>
                     )}
                   </div>
                   <div className={`flex items-center justify-center w-12 h-12 rounded-full ml-4 ${metric.color}`}>
@@ -195,16 +195,16 @@ const AgentDashboard = () => {
           </div>
 
           {/* Recent Leads Table */}
-          <Card className="overflow-hidden bg-white border-none shieldnest-shadow">
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <Card className="overflow-hidden bg-white dark:bg-gray-800 border-none shieldnest-shadow">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-[var(--color-atoll)]">Recent Leads</h3>
-                <p className="text-sm text-gray-600 mt-1">Latest leads requiring your attention</p>
+                <h3 className="text-lg font-semibold text-[var(--color-atoll)] dark:text-blue-400">Recent Leads</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Latest leads requiring your attention</p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">Show</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">Show</span>
                 <select
-                  className="border rounded px-2 py-1"
+                  className="border rounded px-2 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
                   value={limit}
                   onChange={e => setLimit(Number(e.target.value))}
                 >
@@ -212,29 +212,29 @@ const AgentDashboard = () => {
                     <option key={opt} value={opt}>{opt}</option>
                   ))}
                 </select>
-                <span className="text-sm text-gray-600">leads</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">leads</span>
               </div>
             </div>
             <div className="overflow-x-auto">
               {leadsLoading ? (
-                <div className="text-center py-8">Loading...</div>
+                <div className="text-center py-8 text-gray-900 dark:text-gray-100">Loading...</div>
               ) : leadsError ? (
                 // <div className="text-red-500 bg-red-100 p-4 rounded-md">{leadsError}</div>
-                <div className="text-yellow-500 p-4 rounded-md">No Recent Leads</div>
+                <div className="text-yellow-500 dark:text-yellow-400 p-4 rounded-md">No Recent Leads</div>
               ) : (
                 <table className="w-full">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-50 dark:bg-gray-700">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Lead
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Territory
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Date Time
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Status
                       </th>
                       {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -242,9 +242,9 @@ const AgentDashboard = () => {
                       </th> */}
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {recentLeads.map((lead) => (
-                      <tr key={lead.id} className="hover:bg-gray-50">
+                      <tr key={lead.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             {/* <div className="w-10 h-10 bg-[var(--color-atoll)] rounded-full flex items-center justify-center">
@@ -270,17 +270,17 @@ const AgentDashboard = () => {
                               );
                             })()}
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{lead.full_name}</div>
-                              <div className="text-sm text-gray-500">ID: {lead.mortgage_id}</div>
+                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{lead.full_name}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">ID: {lead.mortgage_id}</div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{lead.city}</div>
-                          <div className="text-sm text-gray-500">{lead.state}</div>
+                          <div className="text-sm text-gray-900 dark:text-gray-100">{lead.city}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{lead.state}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{lead.call_in_date_time}</div>
+                          <div className="text-sm text-gray-900 dark:text-gray-100">{lead.call_in_date_time}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full shieldnest-badge-${(lead.lead_status)}`}>

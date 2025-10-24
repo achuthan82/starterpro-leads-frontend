@@ -128,18 +128,18 @@ const ManagePromoCode = () => {
   }
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)]">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       <SharedSidebar currentPath="/admin/promo-codes" />
 
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Header */}
-        <header className="border-b border-gray-200 bg-white p-6 shadow-sm">
+        <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--color-atoll)]">
+              <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
                 Manage Promo Codes
               </h1>
-              <p className="mt-1 text-gray-600">
+              <p className="mt-1 text-gray-600 dark:text-gray-300">
                 Create and manage promotional codes for your platform
               </p>
             </div>

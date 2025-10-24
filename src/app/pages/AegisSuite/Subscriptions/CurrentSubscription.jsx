@@ -19,8 +19,8 @@ const CurrentSubscription = ({ subscription, fetchSubscription }) => {
                 {/* <Button variant='outline' onClick={() => navigate('/shieldnest/subscriptions/cancel')}>Click to navigate</Button> */}
             </div>
                 <div className="text-center p-8">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">No Subscription Found</h3>
-                    <p className="mt-2 text-sm text-gray-500">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 dark:text-white">No Subscription Found</h3>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                         You do not have an active subscription. Please choose a plan from the available plans below.
                     </p>
                 </div>
@@ -66,7 +66,7 @@ const CurrentSubscription = ({ subscription, fetchSubscription }) => {
                 </div>
             </div> */}
 
-            <Card className="bg-white">
+            <Card className="bg-white dark:bg-gray-800">
                 <div className="p-6">
                     <div className="flex justify-between items-start">
                         <div>
@@ -78,34 +78,34 @@ const CurrentSubscription = ({ subscription, fetchSubscription }) => {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                         <div>
-                            <h4 className="text-gray-500 dark:text-gray-400">Plan</h4>
+                            <h4 className="text-gray-500 dark:text-gray-400 dark:text-gray-400">Plan</h4>
                             <p className="text-lg font-semibold">{subscription?.title}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                            <p className="text-sm text-gray-600 dark:text-gray-300 dark:text-gray-300">
                                 {/*isWeekly ? 'Weekly' : 'Monthly'*/} Weekly mailer subscription
                             </p>
                         </div>
                         <div>
-                            <h4 className="text-gray-500 dark:text-gray-400">Billing Cycle</h4>
+                            <h4 className="text-gray-500 dark:text-gray-400 dark:text-gray-400">Billing Cycle</h4>
                             <p className="text-lg font-semibold">
                                 ${subscription?.net_price}
                                 <span className="text-sm">/week</span>
                             </p>
                             {subscription?.status === 'active' && (
-                                <p className="text-sm text-gray-600 dark:text-gray-300">
+                                <p className="text-sm text-gray-600 dark:text-gray-300 dark:text-gray-300">
                                     Next billing: {getNextWednesday()}
                                 </p>
                             )}
                         </div>
                         <div>
                             <div className="flex justify-between items-center">
-                                <h4 className="text-gray-500 dark:text-gray-400">States</h4>
-                                {subscription?.status === 'active' && <PencilIcon className='w-4 h-4 text-gray-500 dark:text-gray-400' onClick={() => setIsModalOpen(true)} />}
+                                <h4 className="text-gray-500 dark:text-gray-400 dark:text-gray-400">States</h4>
+                                {subscription?.status === 'active' && <PencilIcon className='w-4 h-4 text-gray-500 dark:text-gray-400 dark:text-gray-400' onClick={() => setIsModalOpen(true)} />}
                             </div>
                             <div className="flex flex-wrap gap-2 mt-2">
                                 {subscription?.states_chosen && subscription?.states_chosen.length > 0 ? (
                                     subscription?.states_chosen.map((state) => <Tag key={state}>{state}</Tag>)
                                 ) : (
-                                    <p className="text-sm text-gray-500">No states chosen.</p>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">No states chosen.</p>
                                 )}
                             </div>
                         </div>

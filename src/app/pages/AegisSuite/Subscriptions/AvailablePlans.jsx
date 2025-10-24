@@ -65,7 +65,7 @@ const AvailablePlans = ({ subscription }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {plans && plans.length > 0 ? plans.map((plan) => (
-          <Card key={plan.id} className="flex flex-col bg-white overflow-hidden">
+          <Card key={plan.id} className="flex flex-col bg-white dark:bg-gray-800 overflow-hidden">
             <div className="p-6 flex-grow">
               <h3 className="text-xl font-semibold" style={{ color: '#0a2463' }}>{plan.title}</h3>
               <div className="mt-4">
@@ -121,7 +121,7 @@ const AvailablePlans = ({ subscription }) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <DialogPanel className=" scrollbar-sm relative flex w-full overflow-y-auto max-w-xxl origin-top flex-col overflow-hidden rounded-lg bg-white transition-all duration-300 dark:bg-dark-700">
+            <DialogPanel className=" scrollbar-sm relative flex w-full overflow-y-auto max-w-xxl origin-top flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-800 transition-all duration-300 dark:bg-dark-700">
               <div className="flex justify-end">
                 <span onClick={close} className='cursor-pointer'>
                   <XMarkIcon className="size-10.5" />
@@ -161,7 +161,7 @@ const AvailablePlans = ({ subscription }) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <DialogPanel className="scrollbar-sm relative flex max-w-md flex-col overflow-y-auto rounded-lg bg-white px-4 py-10 text-center transition-opacity duration-300 dark:bg-dark-700 sm:px-5">
+            <DialogPanel className="scrollbar-sm relative flex max-w-md flex-col overflow-y-auto rounded-lg bg-white dark:bg-gray-800 px-4 py-10 text-center transition-opacity duration-300 dark:bg-dark-700 sm:px-5">
               <XCircleIcon className="mx-auto inline size-28 shrink-0 text-error" />
 
               <div className="mt-4">

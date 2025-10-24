@@ -353,11 +353,11 @@ const OrdersTab = () => {
   return (
     <div className="space-y-6">
       {/* Filters and Search */}
-      <Card className="bg-white p-6">
+      <Card className="bg-white dark:bg-gray-800 p-6">
         <div className="flex flex-col justify-between gap-4 lg:flex-row">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-gray-300">
                 {totalRecords > 0 &&
                   `Showing ${currentPage * perPage + 1}-${Math.min((currentPage + 1) * perPage, totalRecords)} of ${totalRecords} orders`}
               </span>
@@ -394,7 +394,7 @@ const OrdersTab = () => {
                 className={`flex items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                   orders.length === 0
                     ? "cursor-not-allowed border-gray-300 text-gray-400"
-                    : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                    : "border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-700"
                 }`}
               >
                 <ArrowDownTrayIcon className="h-4 w-4" />
@@ -415,41 +415,41 @@ const OrdersTab = () => {
       )}
 
       {/* Orders Table */}
-      <Card className="overflow-hidden bg-white">
+      <Card className="overflow-hidden bg-white dark:bg-gray-800">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase w-12">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-400 uppercase w-12">
                   {/* Expand/Collapse column */}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-400 uppercase">
                   Order ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-400 uppercase">
                   Amount Received
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-400 uppercase">
                   Total Amount
                 </th>
-                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Discounted Price
                 </th> */}
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-400 uppercase">
                   Payment Status
                 </th>
-                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Stripe Payment ID
                 </th> */}
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-400 uppercase">
                   Created At
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-400 uppercase">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-gray-200 bg-white dark:bg-gray-800">
               {loading ? (
                 <tr>
                   <td colSpan="8" className="px-6 py-4 text-center">
@@ -463,7 +463,7 @@ const OrdersTab = () => {
                 <tr>
                   <td
                     colSpan="8"
-                    className="px-6 py-4 text-center text-gray-500"
+                    className="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
                   >
                     No orders found. Try adjusting your search or filters.
                   </td>
@@ -476,7 +476,7 @@ const OrdersTab = () => {
                   return (
                     <>
                       {/* Main order row */}
-                      <tr key={order.id} className="hover:bg-gray-50">
+                      <tr key={order.id} className="hover:bg-gray-50 dark:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
                           {items.length > 0 && (
                             <button
@@ -485,25 +485,25 @@ const OrdersTab = () => {
                               title={isExpanded ? "Collapse items" : "Expand items"}
                             >
                               {isExpanded ? (
-                                <ChevronUpIcon className="h-4 w-4 text-gray-600" />
+                                <ChevronUpIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                               ) : (
-                                <ChevronDownIcon className="h-4 w-4 text-gray-600" />
+                                <ChevronDownIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                               )}
                             </button>
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             {order.id}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-gray-900 dark:text-gray-100">
                             {formatCurrency(order.amount_received)}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-gray-900 dark:text-gray-100">
                             {formatCurrency(order.total_amount)}
                           </div>
                         </td>
@@ -511,7 +511,7 @@ const OrdersTab = () => {
                           {getPaymentStatusBadge(order.payment_status)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-gray-900 dark:text-gray-100">
                             {formatDate(order.created_at)}
                           </div>
                         </td>
@@ -532,57 +532,57 @@ const OrdersTab = () => {
                       
                       {/* Expanded items row */}
                       {isExpanded && items.length > 0 && (
-                        <tr key={`${order.id}-items`} className="bg-gray-50">
+                        <tr key={`${order.id}-items`} className="bg-gray-50 dark:bg-gray-700">
                           <td colSpan="8" className="px-6 py-4">
                             <div className="ml-4">
-                              <h4 className="text-sm font-medium text-gray-900 mb-3">
+                              <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
                                 Invoice Items ({items.length} items)
                               </h4>
                               <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200">
                                   <thead className="bg-gray-100">
                                     <tr>
-                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Title
                                       </th>
-                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Description
                                       </th>
-                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         State
                                       </th>
-                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Quantity
                                       </th>
-                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Unit Price
                                       </th>
-                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Subtotal
                                       </th>
                                     </tr>
                                   </thead>
-                                  <tbody className="bg-white divide-y divide-gray-200">
+                                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
                                     {items.map((item, index) => (
-                                      <tr key={index} className="hover:bg-gray-50">
-                                        <td className="px-4 py-2 text-sm text-gray-900">
+                                      <tr key={index} className="hover:bg-gray-50 dark:bg-gray-700">
+                                        <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
                                           {item.title || "N/A"}
                                         </td>
-                                        <td className="px-4 py-2 text-sm text-gray-900">
+                                        <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
                                           <div className="max-w-xs truncate" title={item.description}>
                                             {item.description || "N/A"}
                                           </div>
                                         </td>
-                                        <td className="px-4 py-2 text-sm text-gray-900">
+                                        <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
                                           {item.state || "N/A"}
                                         </td>
-                                        <td className="px-4 py-2 text-sm text-gray-900">
+                                        <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
                                           {item.quantity || 0}
                                         </td>
-                                        <td className="px-4 py-2 text-sm text-gray-900">
+                                        <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
                                           {formatCurrency(item.unit_price || 0)}
                                         </td>
-                                        <td className="px-4 py-2 text-sm text-gray-900 font-medium">
+                                        <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100 font-medium">
                                           {formatCurrency(item.subtotal || 0)}
                                         </td>
                                       </tr>
@@ -604,7 +604,7 @@ const OrdersTab = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="border-t border-gray-200 bg-gray-50 px-6 py-3">
+          <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 px-6 py-3">
             <ReactPaginate
               previousLabel={<ChevronLeftIcon className="h-4 w-4" />}
               nextLabel={<ChevronRightIcon className="h-4 w-4" />}

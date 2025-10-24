@@ -394,23 +394,23 @@ const FileUpload = () => {
   return (
     <RoleGuard allowedRoles="admin">
       <div>
-        <div className="flex h-screen bg-[var(--color-ecru-white)]">
+        <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
           <SharedSidebar currentPath="admin/file-upload" />
         <div className="flex flex-1 flex-col overflow-hidden">
-          <header className="border-b border-gray-200 bg-white p-6 shadow-sm">
+          <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-[var(--color-atoll)]">
+                <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
                   Upload Leads
                 </h1>
-                <p className="mt-1 text-gray-600">Upload New Leads</p>
+                <p className="mt-1 text-gray-600 dark:text-gray-300">Upload New Leads</p>
               </div>
             </div>
           </header>
           <div className="mt-4 p-4">
-            <Card className="bg-white p-3">
+            <Card className="bg-white dark:bg-gray-800 p-3">
               <div className="border-b border-neutral-400 py-2">
-                <h4 className="text-lg font-medium text-gray-900">
+                <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   {" "}
                   Upload Lead Data With Mortgage
                 </h4>
@@ -492,7 +492,7 @@ const FileUpload = () => {
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <DialogPanel className="scrollbar-sm max-w-xxl dark:bg-dark-700 relative flex w-full origin-top flex-col overflow-hidden overflow-y-auto rounded-lg bg-white transition-all duration-300">
+                <DialogPanel className="scrollbar-sm max-w-xxl dark:bg-dark-700 relative flex w-full origin-top flex-col overflow-hidden overflow-y-auto rounded-lg bg-white dark:bg-gray-800 transition-all duration-300">
                   <div className="flex justify-end">
                     <span onClick={close} className="cursor-pointer">
                       <XMarkIcon className="size-7" />

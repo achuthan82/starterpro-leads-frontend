@@ -23,15 +23,15 @@ const Support = () => {
   }, []);
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <SharedSidebar currentPath="/support" />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900">
           <div className="container mx-auto px-6 py-8">
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">Support</h1>
-              <p className="mt-2 text-gray-600">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Support</h1>
+              <p className="mt-2 text-gray-600 dark:text-gray-300">
                 Redirecting you to our support portal...
               </p>
             </div>
@@ -41,10 +41,10 @@ const Support = () => {
                 <QuestionMarkCircleIcon className="h-16 w-16 text-blue-500" />
                 
                 <div className="space-y-2">
-                  <h2 className="text-xl font-semibold text-gray-900">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                     Opening Support Portal
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 dark:text-gray-300">
                     You are being redirected to our support portal where you can:
                   </p>
                 </div>

@@ -13,6 +13,18 @@
   --gray-suit: #bcb9c6;
 }
 
+/* Dark Mode Theme Variables */
+.dark {
+  --atoll-dark: #1e3a8a;
+  --aegis-gold-dark: #fbbf24;
+  --ecru-white-dark: #1f2937;
+  --fern-dark: #4ade80;
+  --atlantis-dark: #a3e635;
+  --shadow-green-dark: #6b7280;
+  --botticelli-dark: #374151;
+  --waterloo-dark: #9ca3af;
+}
+
 button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
   cursor: pointer;
 }
@@ -22,16 +34,32 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
   background-color: var(--ecru-white);
 }
 
+.dark .shieldnest-bg {
+  background-color: #1f2937;
+}
+
 .shieldnest-bg1 {
   background-color: #0a2463;
+}
+
+.dark .shieldnest-bg1 {
+  background-color: #1e3a8a;
 }
 
 .shieldnest-bg2 {
   background-color: #f4d03f;
 }
 
+.dark .shieldnest-bg2 {
+  background-color: #fbbf24;
+}
+
 .shieldnest-bg3 {
   background-color: #f4d03f;
+}
+
+.dark .shieldnest-bg3 {
+  background-color: #fbbf24;
 }
 
 .shieldnest-metric-card {
@@ -43,9 +71,19 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+.dark .shieldnest-metric-card {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  border: 1px solid #4b5563;
+  color: #e5e7eb;
+}
+
 .shieldnest-metric-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(10, 90, 120, 0.15);
+}
+
+.dark .shieldnest-metric-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .shieldnest-gradient-btn {
@@ -93,9 +131,19 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
   transition: all 0.3s ease;
 }
 
+.dark .shieldnest-card {
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: #e5e7eb;
+}
+
 .shieldnest-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.dark .shieldnest-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .shieldnest-input {
@@ -105,14 +153,30 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
   padding: 0.75rem;
 }
 
+.dark .shieldnest-input {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #e5e7eb;
+}
+
 .shieldnest-input:focus {
   border-color: var(--atoll);
   outline: none;
 }
 
+.dark .shieldnest-input:focus {
+  border-color: #60a5fa;
+  background-color: #1f2937;
+}
+
 .shieldnest-input.active {
   border-color: var(--atoll);
   background-color: #eff6ff;
+}
+
+.dark .shieldnest-input.active {
+  border-color: #60a5fa;
+  background-color: #1e3a8a;
 }
 
 /* Status badges */
@@ -151,6 +215,11 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+.dark .shieldnest-table {
+  background: #1f2937;
+  color: #e5e7eb;
+}
+
 .shieldnest-table th {
   background-color: #f9fafb;
   color: var(--waterloo);
@@ -160,8 +229,17 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
   letter-spacing: 0.05em;
 }
 
+.dark .shieldnest-table th {
+  background-color: #374151;
+  color: #9ca3af;
+}
+
 .shieldnest-table tr:hover {
   background-color: #f8fafc;
+}
+
+.dark .shieldnest-table tr:hover {
+  background-color: #374151;
 }
 
 /* Text colors */
@@ -194,15 +272,33 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
   border: 1px solid #99bac0;
 }
 
+.dark .shieldnest-gradient-column { 
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  border: 1px solid #4b5563;
+  color: #e5e7eb;
+}
+
 .shieldnest-white-column { 
   background: #ffffff;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.dark .shieldnest-white-column { 
+  background: #1f2937;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  color: #e5e7eb;
 }
 
 .shieldnest-shadow {
   box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
+.dark .shieldnest-shadow {
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+}
+
 header + main { background: rgb(249 250 251 / 1); }
+
+.dark header + main { background: #111827; }
 
 .react-pagination a{ display: inline-block; }

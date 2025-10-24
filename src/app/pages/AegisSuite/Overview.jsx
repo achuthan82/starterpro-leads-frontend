@@ -95,13 +95,13 @@ const Overview = () => {
             <div className="flex justify-center space-x-4">
               <Link
                 to="/agent-dashboard"
-                className="bg-white text-[#0a2463] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                className="bg-white dark:bg-gray-800 text-[#0a2463] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
               >
                 Access Dashboard
               </Link>
               <Link
                 to="/marketplace"
-                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-[#0a2463] transition-colors"
+                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white dark:bg-gray-800 hover:text-[#0a2463] transition-colors"
               >
                 Browse Marketplace
               </Link>
@@ -117,8 +117,8 @@ const Overview = () => {
             <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">{stat.label}</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{stat.value}</p>
                 </div>
                 <div className={`p-3 rounded-lg ${stat.color}`}>
                   <stat.icon className="w-6 h-6" />
@@ -153,10 +153,10 @@ const Overview = () => {
 
               {/* Content */}
               <div className="p-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Key Features</h4>
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Key Features</h4>
                 <ul className="space-y-2 mb-6">
                   {feature.features.map((item, itemIndex) => (
-                    <li key={itemIndex} className="flex items-center text-gray-600">
+                    <li key={itemIndex} className="flex items-center text-gray-600 dark:text-gray-300">
                       <div className="w-2 h-2 bg-[#f4d03f] rounded-full mr-3"></div>
                       {item}
                     </li>

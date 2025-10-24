@@ -43,19 +43,19 @@ const Marketplace = () => {
 
   return (
     <CartProvider>
-      <div className="flex h-screen bg-[var(--color-ecru-white)]">
+      <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
         {/* Sidebar */}
         <SharedSidebar currentPath="/marketplace" />
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header */}
-          <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+          <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
             <div className="px-0">
               <div className="flex justify-between items-center flex-wrap gap-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-[#0a2463]">Starterpro Lead Marketplace</h1>
-                  <p className="text-gray-600 mt-1">Premium Insurance Leads at Your Fingertips</p>
+                  <h1 className="text-2xl font-bold text-[#0a2463] dark:text-blue-400">Starterpro Lead Marketplace</h1>
+                  <p className="text-gray-600 dark:text-gray-300 mt-1">Premium Insurance Leads at Your Fingertips</p>
                 </div>
                 
                 {/* <div className="flex gap-8 items-center">
@@ -79,8 +79,8 @@ const Marketplace = () => {
           {/* Main Content */}
           <main className="flex-1 overflow-auto px-6 py-8">
             <LeadStateFilter selected={selectedStates} onChange={setSelectedStates} />
-            {pricingLoading && <div>Loading pricing...</div>}
-            {pricingError && <div className="text-red-500">{pricingError}</div>}
+            {pricingLoading && <div className="text-gray-900 dark:text-gray-100">Loading pricing...</div>}
+            {pricingError && <div className="text-red-500 dark:text-red-400">{pricingError}</div>}
             {!pricingLoading && !pricingError && (
               <LeadStateList
                 selectedStates={selectedStates}

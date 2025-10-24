@@ -354,18 +354,18 @@ const SubscriptionPlans = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)]">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
       <SharedSidebar currentPath="/admin/subscriptions" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-[#0a2463]">Subscription Plans</h1>
-              <p className="text-gray-600 mt-1">Manage subscription plans and pricing</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">Manage subscription plans and pricing</p>
             </div>
             <div className="flex items-center space-x-3">
               <button
@@ -385,7 +385,7 @@ const SubscriptionPlans = () => {
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <Spinner size="lg" />
-                <p className="mt-4 text-gray-600">Loading subscription plans...</p>
+                <p className="mt-4 text-gray-600 dark:text-gray-300">Loading subscription plans...</p>
               </div>
             </div>
           ) : error ? (
@@ -396,8 +396,8 @@ const SubscriptionPlans = () => {
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Error Loading Data</h3>
-                <p className="text-gray-600 mb-4">{error}</p>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Error Loading Data</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">{error}</p>
                 <button
                   onClick={() => {
                     setError(null);
@@ -417,8 +417,8 @@ const SubscriptionPlans = () => {
                 <Card className="shieldnest-white-column p-6" style={{ borderLeft: `5px solid ${randomColors[0]}` }}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Total Subscribers</p>
-                      <p className="text-3xl font-bold text-gray-900 mt-2">{totalSubscribers}</p>
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Subscribers</p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{totalSubscribers}</p>
                     </div>
                     <div className="w-12 h-12 rounded-full flex items-center justify-center shieldnest-bg1">
                       <UserGroupIcon className="w-6 h-6 text-white" />
@@ -429,8 +429,8 @@ const SubscriptionPlans = () => {
                 <Card className="shieldnest-white-column p-6" style={{ borderLeft: `5px solid ${randomColors[1]}` }}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Weekly Revenue</p>
-                      <p className="text-3xl font-bold text-gray-900 mt-2">${totalRevenue.toLocaleString()}</p>
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Weekly Revenue</p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">${totalRevenue.toLocaleString()}</p>
                     </div>
                     <div className="w-12 h-12 rounded-full flex items-center justify-center shieldnest-bg2">
                       <CurrencyDollarIcon className="w-6 h-6 text-white" />
@@ -441,9 +441,9 @@ const SubscriptionPlans = () => {
                 <Card className="shieldnest-white-column p-6" style={{ borderLeft: `5px solid ${randomColors[2]}` }}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Average Revenue Per User</p>
-                      <p className="text-3xl font-bold text-gray-900 mt-2">${avgRevenuePerUser.toFixed(0)}</p>
-                      {/* <p className="text-sm text-gray-500 mt-1">Average Revenue Per User</p> */}
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Average Revenue Per User</p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">${avgRevenuePerUser.toFixed(0)}</p>
+                      {/* <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Average Revenue Per User</p> */}
                     </div>
                     <div className="w-12 h-12 rounded-full flex items-center justify-center shieldnest-bg3">
                       <CreditCardIcon className="w-6 h-6 text-white" />
@@ -451,7 +451,7 @@ const SubscriptionPlans = () => {
                   </div>
                 </Card>
 
-                <h3 className="text-3xl font-bold text-gray-900 mb-0 mt-2">Available Plans</h3>
+                <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-0 mt-2">Available Plans</h3>
               </div>
 
               {/* Subscription Plans */}
@@ -461,8 +461,8 @@ const SubscriptionPlans = () => {
                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <CreditCardIcon className="w-8 h-8 text-gray-400" />
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No Subscription Plans</h3>
-                    <p className="text-gray-600">No subscription plans found.</p>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No Subscription Plans</h3>
+                    <p className="text-gray-600 dark:text-gray-300">No subscription plans found.</p>
                   </div>
                 </div>
               ) : (
@@ -470,7 +470,7 @@ const SubscriptionPlans = () => {
                   {plans.map((plan) => {
                     const colorClasses = getColorClasses(plan.color);
                     return (
-                      <Card key={plan.id} className={`relative overflow-hidden bg-white ${/*plan.popular ? 'ring-2 ring-[#f4d03f]' : ''*/ ''}`}>
+                      <Card key={plan.id} className={`relative overflow-hidden bg-white dark:bg-gray-800 ${/*plan.popular ? 'ring-2 ring-[#f4d03f]' : ''*/ ''}`}>
                         {/*plan.popular && (
                     <div className="absolute top-0 left-0 right-0 bg-[#f4d03f] text-white text-center py-2 text-sm font-medium">
                       Most Popular
@@ -480,23 +480,23 @@ const SubscriptionPlans = () => {
                         <div className={`p-6 ${/*plan.popular ? 'pt-16' : ''*/ ''}`}>
                           {/* Plan Header */}
                           <div className="text-center mb-6">
-                            <h3 className="text-xl font-bold text-gray-900 mb-2" style={{ color: '#0a2463' }}>{plan.name}</h3>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2" style={{ color: '#0a2463' }}>{plan.name}</h3>
                             <div className="flex items-baseline justify-center mb-2">
-                              <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
-                              <span className="text-gray-500 ml-1">/{plan.billingCycle}</span>
+                              <span className="text-4xl font-bold text-gray-900 dark:text-gray-100">${plan.price}</span>
+                              <span className="text-gray-500 dark:text-gray-400 ml-1">/{plan.billingCycle}</span>
                             </div>
-                            <p className="text-gray-600 text-sm">{plan.description}</p>
+                            <p className="text-gray-600 dark:text-gray-300 text-sm">{plan.description}</p>
                           </div>
 
                           {/* Subscriber Stats */}
                           <div className={`${colorClasses.bg} ${colorClasses.border} border rounded-lg p-4 mb-6`}>
                             <div className="flex justify-between items-center">
                               <div>
-                                <p className="text-sm text-gray-600">Subscribers</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">Subscribers</p>
                                 <p className={`text-2xl font-bold ${colorClasses.text}`}>{plan.subscribers}</p>
                               </div>
                               <div>
-                                <p className="text-sm text-gray-600">Revenue</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">Revenue</p>
                                 <p className={`text-2xl font-bold ${colorClasses.text}`}>${plan.revenue}</p>
                               </div>
                             </div>
@@ -504,12 +504,12 @@ const SubscriptionPlans = () => {
 
                           {/* Features 
                     <div className="mb-6">
-                      <h4 className="font-semibold text-gray-900 mb-3">Features</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Features</h4>
                       <ul className="space-y-2">
                         {plan.features.map((feature, index) => (
                           <li key={index} className="flex items-start space-x-3">
                             <CheckIcon className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span className="text-gray-600 text-sm">{feature}</span>
+                            <span className="text-gray-600 dark:text-gray-300 text-sm">{feature}</span>
                           </li>
                         ))}
                       </ul>
@@ -518,12 +518,12 @@ const SubscriptionPlans = () => {
                           {/* Limitations 
                     {plan.limitations.length > 0 && (
                       <div className="mb-6">
-                        <h4 className="font-semibold text-gray-900 mb-3">Limitations</h4>
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Limitations</h4>
                         <ul className="space-y-2">
                           {plan.limitations.map((limitation, index) => (
                             <li key={index} className="flex items-start space-x-3">
                               <XMarkIcon className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                              <span className="text-gray-600 text-sm">{limitation}</span>
+                              <span className="text-gray-600 dark:text-gray-300 text-sm">{limitation}</span>
                             </li>
                           ))}
                         </ul>
@@ -564,7 +564,7 @@ const SubscriptionPlans = () => {
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" />
           </TransitionChild>
           <TransitionChild as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-            <DialogPanel className="relative w-full max-w-lg rounded-2xl bg-white shadow-xl px-6 py-8 transition-all sm:px-8">
+            <DialogPanel className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-gray-800 shadow-xl px-6 py-8 transition-all sm:px-8">
               <DialogTitle as="h3" className="text-2xl text-center font-semibold text-gray-800 mb-6">Create Subscription Plan</DialogTitle>
               <form onSubmit={handleCreatePlanSubmit}>
                 <div className="mb-4">
@@ -620,7 +620,7 @@ const SubscriptionPlans = () => {
                 </div>
 
                 <div className="flex items-center justify-end space-x-3">
-                  <button type="button" onClick={() => { setShowCreateModal(false); setCreateForm({ title: '', description: '', quantity: 0, unit_price: 0, category: '', source: '' }); setCreateErrors({ title: '', description: '', quantity: '', unit_price: '', category: '', source: '' }); }} className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Cancel</button>
+                  <button type="button" onClick={() => { setShowCreateModal(false); setCreateForm({ title: '', description: '', quantity: 0, unit_price: 0, category: '', source: '' }); setCreateErrors({ title: '', description: '', quantity: '', unit_price: '', category: '', source: '' }); }} className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700">Cancel</button>
                   <button type="submit" disabled={createLoading} className={`px-4 py-2 text-sm rounded-md bg-[#0a2463] text-white hover:bg-[#0a1a4a] flex items-center justify-center ${createLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>{createLoading ? (<span className="flex items-center"><svg className="animate-spin h-4 w-4 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>Creating...</span>) : 'Create Plan'}</button>
                 </div>
               </form>
@@ -635,7 +635,7 @@ const SubscriptionPlans = () => {
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" />
           </TransitionChild>
           <TransitionChild as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-            <DialogPanel className="relative w-full max-w-lg rounded-2xl bg-white shadow-xl px-6 py-8 transition-all sm:px-8">
+            <DialogPanel className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-gray-800 shadow-xl px-6 py-8 transition-all sm:px-8">
               <DialogTitle as="h3" className="text-2xl text-center font-semibold text-gray-800 mb-6">Edit Subscription Plan</DialogTitle>
               <form onSubmit={handleEditPlanSubmit}>
                 <div className="mb-4">
@@ -690,7 +690,7 @@ const SubscriptionPlans = () => {
                   {editErrors.source && <p className="text-red-500 text-xs mt-1">{editErrors.source}</p>}
                 </div>
                 <div className="flex items-center justify-end space-x-3">
-                  <button type="button" onClick={() => setShowEditModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Cancel</button>
+                  <button type="button" onClick={() => setShowEditModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700">Cancel</button>
                   <button type="submit" disabled={editLoading} className={`px-4 py-2 text-sm rounded-md bg-[#0a2463] text-white hover:bg-[#0a1a4a] flex items-center justify-center ${editLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>{editLoading ? (<span className="flex items-center"><svg className="animate-spin h-4 w-4 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>Updating...</span>) : 'Update Plan'}</button>
                 </div>
               </form>
@@ -705,11 +705,11 @@ const SubscriptionPlans = () => {
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" />
           </TransitionChild>
           <TransitionChild as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-            <DialogPanel className="relative w-full max-w-md rounded-2xl bg-white shadow-xl px-6 py-8 transition-all sm:px-8">
+            <DialogPanel className="relative w-full max-w-md rounded-2xl bg-white dark:bg-gray-800 shadow-xl px-6 py-8 transition-all sm:px-8">
               <DialogTitle as="h3" className="text-xl text-center font-semibold text-gray-800 mb-6">Deactivate Plan</DialogTitle>
               <p className="text-center text-gray-700 mb-6">Are you sure you want to deactivate this plan? This action cannot be undone.</p>
               <div className="flex items-center justify-end space-x-3">
-                <button type="button" onClick={() => setShowDeleteModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Cancel</button>
+                <button type="button" onClick={() => setShowDeleteModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700">Cancel</button>
                 <button type="button" onClick={handleDeletePlan} disabled={deleteLoading} className={`px-4 py-2 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 flex items-center justify-center ${deleteLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>{deleteLoading ? (<span className="flex items-center"><svg className="animate-spin h-4 w-4 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>Deactivating...</span>) : 'Deactivate'}</button>
               </div>
             </DialogPanel>

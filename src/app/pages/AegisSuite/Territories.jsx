@@ -39,11 +39,11 @@ const Territories = () => {
   
   const getStatusBadgeClass = (status) => {
     const classes = {
-      active: 'bg-green-100 text-green-800',
-      pending: 'bg-yellow-100 text-yellow-800',
-      inactive: 'bg-red-100 text-red-800'
+      active: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400',
+      pending: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400',
+      inactive: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
     };
-    return classes[status] || 'bg-gray-100 text-gray-800';
+    return classes[status] || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100';
   };
 
   const getStatusLabel = (status) => {
@@ -108,7 +108,7 @@ const Territories = () => {
       //   change: '+0%',
       //   changeType: 'positive',
       //   icon: CurrencyDollarIcon,
-      //   color: 'bg-gray-100 text-gray-500'
+      //   color: 'bg-gray-100 text-gray-500 dark:text-gray-400'
       // }
     ];
   };
@@ -203,18 +203,18 @@ const Territories = () => {
   console.log('territories', territories);
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)]">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
       <SharedSidebar currentPath="/territories" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+        <header className="bg-white dark:bg-gray-800 dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--color-atoll)]">Mailing Territories</h1>
-              <p className="text-gray-600 mt-1">Manage your sales territories and coverage areas</p>
+              <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Mailing Territories</h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your sales territories and coverage areas</p>
             </div>
             {/* <div className="flex items-center space-x-3">
               <button className="bg-[#f4d03f] text-white px-4 py-2 rounded-lg hover:bg-[#e6c035] transition-colors flex items-center space-x-2">
@@ -231,7 +231,7 @@ const Territories = () => {
         <main className="flex-1 overflow-auto p-6">
           {/* Tabs */}
           <div className="mb-6">
-            <div className="border-b border-gray-200">
+            <div className="border-b border-gray-200 dark:border-gray-700">
               <nav className="-mb-px flex space-x-8">
                 {tabs.map((tab) => (
                   <button
@@ -239,7 +239,7 @@ const Territories = () => {
                     onClick={() => handleTabChange(tab.id)}
                     className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === tab.id
                       ? 'border-[var(--color-atoll)] text-[var(--color-atoll)]'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 hover:border-gray-300'
                       }`}
                   >
                     {tab.label}
@@ -252,7 +252,7 @@ const Territories = () => {
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <Spinner size="lg" />
-                <p className="mt-4 text-gray-600">Loading territories...</p>
+                <p className="mt-4 text-gray-600 dark:text-gray-300">Loading territories...</p>
               </div>
             </div>
           ) : error ? (
@@ -263,8 +263,8 @@ const Territories = () => {
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Error Loading Data</h3>
-                <p className="text-gray-600 mb-4">{error}</p>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Error Loading Data</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">{error}</p>
                 <button 
                   onClick={() => window.location.reload()} 
                   className="bg-[var(--color-atoll)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-atoll)]/90 transition-colors"
@@ -280,8 +280,8 @@ const Territories = () => {
                 {/* <Card className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Active Territories</p>
-                      <p className="text-2xl font-bold text-gray-900 mt-1">
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Active Territories</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
                         {territories.filter(t => t.status === 'active').length}
                       </p>
                     </div>
@@ -296,8 +296,8 @@ const Territories = () => {
           {/* <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Leads</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Leads</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
                   {territories.reduce((sum, t) => sum + t.leads, 0).toLocaleString()}
                 </p>
               </div>
@@ -312,8 +312,8 @@ const Territories = () => {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Revenue</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
                   ${territories.reduce((sum, t) => sum + t.revenue, 0).toLocaleString()}
                 </p>
               </div>
@@ -329,8 +329,8 @@ const Territories = () => {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Avg Conversion Rate</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Avg Conversion Rate</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
                   {(territories.filter(t => t.status === 'active').reduce((sum, t) => sum + t.conversionRate, 0) / territories.filter(t => t.status === 'active').length).toFixed(1)}%
                 </p>
               </div>
@@ -394,8 +394,8 @@ const Territories = () => {
                   <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No {activeTab === 'active' ? 'Active' : 'Inactive'} Territories Found</h3>
-              <p className="text-gray-600">You don&apos;t have any territories assigned yet.</p>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No {activeTab === 'active' ? 'Active' : 'Inactive'} Territories Found</h3>
+              <p className="text-gray-600 dark:text-gray-300">You don&apos;t have any territories assigned yet.</p>
             </div>
           </div>
         ) : (
@@ -431,7 +431,7 @@ const Territories = () => {
                       <span className="text-white font-bold text-lg">{territory.code}</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{territory.name}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{territory.name}</h3>
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeClass(territory.status)}`}>
                         {getStatusLabel(territory.status)}
                       </span>
@@ -439,7 +439,7 @@ const Territories = () => {
                   </div>
                   <button
                     onClick={() => setSelectedTerritory(territory)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 dark:text-gray-300"
                   >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
@@ -449,25 +449,25 @@ const Territories = () => {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <p className="text-sm text-gray-500">Leads {territory.completed}</p>
-                    <p className="text-xl font-bold text-gray-900">{territory.leads.toLocaleString()}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Leads {territory.completed}</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{territory.leads.toLocaleString()}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Conversions</p>
-                    <p className="text-xl font-bold text-gray-900">{territory.conversions}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Conversions</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{territory.conversions}</p>
                   </div>
                   {/* <div>
-                    <p className="text-sm text-gray-500">Revenue</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Revenue</p>
                     <p className="text-xl font-bold text-green-600">${territory.revenue.toLocaleString()}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Rate</p>
-                    <p className="text-xl font-bold text-gray-900">{territory.conversionRate}%</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Rate</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{territory.conversionRate}%</p>
                   </div> */}
                 </div>
 
                 {/* <div className="mb-4">
-                  <p className="text-sm text-gray-500 mb-2">Top Cities</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Top Cities</p>
                   <div className="flex flex-wrap gap-1">
                     {territory.cities.length > 0 ? (
                       <>
@@ -488,7 +488,7 @@ const Territories = () => {
                   </div>
                 </div> 
 
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 dark:text-gray-400">
                   Last activity: {territory.lastActivity}
                 </div>*/}
               </div>
@@ -498,7 +498,7 @@ const Territories = () => {
                   <button className="text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80 text-sm font-medium">
                     View Details
                   </button>
-                  <button className="text-gray-500 hover:text-gray-700 text-sm">
+                  <button className="text-gray-500 dark:text-gray-400 hover:text-gray-700 text-sm">
                     Edit
                   </button>
                 </div>
@@ -541,10 +541,10 @@ const Territories = () => {
       {/* Territory Detail Modal */}
       {selectedTerritory && (
         <div className="fixed inset-0 bg-gray-600/65 overflow-y-auto h-full w-full z-50" style={{width:' 100vw'}}>
-          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-lg bg-white mb-10">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-lg bg-white dark:bg-gray-800 mb-10">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-2xl font-bold text-[var(--color-atoll)]">{selectedTerritory.name} Territory</h3>
-              <button onClick={() => setSelectedTerritory(null)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setSelectedTerritory(null)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
@@ -591,19 +591,19 @@ const Territories = () => {
                   <h4 className="text-lg font-semibold text-[var(--color-atoll)] mb-4">Performance Metrics</h4>
                   <div className="space-y-4">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Total Leads</span>
+                      <span className="text-gray-600 dark:text-gray-300">Total Leads</span>
                       <span className="font-medium">{selectedTerritory.leads.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Conversions</span>
+                      <span className="text-gray-600 dark:text-gray-300">Conversions</span>
                       <span className="font-medium">{selectedTerritory.conversions}</span>
                     </div>
                     {/* <div className="flex justify-between">
-                      <span className="text-gray-600">Revenue Generated</span>
+                      <span className="text-gray-600 dark:text-gray-300">Revenue Generated</span>
                       <span className="font-medium text-green-600">${selectedTerritory.revenue.toLocaleString()}</span>
                     </div> */}
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Conversion Rate</span>
+                      <span className="text-gray-600 dark:text-gray-300">Conversion Rate</span>
                       <span className="font-medium">{selectedTerritory.conversionRate}%</span>
                     </div>
                   </div>
@@ -611,7 +611,7 @@ const Territories = () => {
               </div>
             </div>
             
-            <div className="flex justify-end pt-4 border-t border-gray-200 space-x-3">
+            <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700 space-x-3">
               <button 
                 onClick={() => setSelectedTerritory(null)}
                 className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"

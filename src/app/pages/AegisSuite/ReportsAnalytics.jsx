@@ -101,7 +101,7 @@ const ReportsAnalytics = () => {
       purple: 'bg-blue-50 text-[#0a2463]',
       orange: 'bg-yellow-50 text-[#f4d03f]'
     };
-    return colors[color] || 'bg-gray-50 text-gray-600';
+    return colors[color] || 'bg-gray-50 text-gray-600 dark:text-gray-300';
   };
 
   const handleExportReport = () => {
@@ -109,18 +109,18 @@ const ReportsAnalytics = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)]">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
       <SharedSidebar currentPath="/reports" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-[#0a2463]">Reports & Analytics</h1>
-              <p className="text-gray-600 mt-1">Performance insights and data analysis</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">Performance insights and data analysis</p>
             </div>
             <div className="flex items-center space-x-3">
               <select
@@ -153,8 +153,8 @@ const ReportsAnalytics = () => {
               <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</p>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-300">{stat.title}</p>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{stat.value}</p>
                     <div className="flex items-center mt-2">
                       {stat.changeType === 'positive' ? (
                         <TrendingUpIcon className="w-4 h-4 text-green-500 mr-1" />
@@ -166,7 +166,7 @@ const ReportsAnalytics = () => {
                       }`}>
                         {stat.change}
                       </span>
-                      <span className="text-sm text-gray-500 ml-1">vs last period</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">vs last period</span>
                     </div>
                   </div>
                   <div className={`p-3 rounded-lg ${getColorClasses(stat.color)}`}>
@@ -210,7 +210,7 @@ const ReportsAnalytics = () => {
                         }}
                         title={`${data.month}: ${data.leads} leads`}
                       ></div>
-                      <div className="mt-2 text-xs text-gray-600 text-center">
+                      <div className="mt-2 text-xs text-gray-600 dark:text-gray-300 text-center">
                         <div className="font-medium">{data.month}</div>
                         <div>{data.leads}</div>
                       </div>
@@ -228,8 +228,8 @@ const ReportsAnalytics = () => {
                   <div key={index} className="flex items-center">
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium text-gray-900">{source.source}</span>
-                        <span className="text-sm text-gray-600">{source.leads} leads</span>
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{source.source}</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">{source.leads} leads</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
@@ -237,7 +237,7 @@ const ReportsAnalytics = () => {
                           style={{ width: `${source.percentage}%` }}
                         ></div>
                       </div>
-                      <div className="text-xs text-gray-500 mt-1">{source.percentage}%</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{source.percentage}%</div>
                     </div>
                   </div>
                 ))}
@@ -247,45 +247,45 @@ const ReportsAnalytics = () => {
 
           {/* Territory Performance */}
           <Card className="mb-8">
-            <div className="p-6 border-b border-gray-200">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-[#0a2463]">Territory Performance</h3>
-              <p className="text-sm text-gray-600 mt-1">Performance breakdown by territory</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Performance breakdown by territory</p>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Territory
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Total Leads
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Conversions
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Revenue
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Conversion Rate
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Performance
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
                   {territoryData.map((territory, index) => (
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{territory.territory}</div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{territory.territory}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{territory.leads.toLocaleString()}</div>
+                        <div className="text-sm text-gray-900 dark:text-gray-100">{territory.leads.toLocaleString()}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{territory.conversions}</div>
+                        <div className="text-sm text-gray-900 dark:text-gray-100">{territory.conversions}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-green-600">
@@ -293,7 +293,7 @@ const ReportsAnalytics = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{territory.rate}%</div>
+                        <div className="text-sm text-gray-900 dark:text-gray-100">{territory.rate}%</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
@@ -303,7 +303,7 @@ const ReportsAnalytics = () => {
                               style={{ width: `${(territory.rate / 25) * 100}%` }}
                             ></div>
                           </div>
-                          <span className="text-sm text-gray-600">{territory.rate}%</span>
+                          <span className="text-sm text-gray-600 dark:text-gray-300">{territory.rate}%</span>
                         </div>
                       </td>
                     </tr>
@@ -323,19 +323,19 @@ const ReportsAnalytics = () => {
               </div>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Total Calls</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Total Calls</span>
                   <span className="text-sm font-medium">1,247</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Answered</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Answered</span>
                   <span className="text-sm font-medium text-green-600">892 (71.5%)</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Avg Duration</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Avg Duration</span>
                   <span className="text-sm font-medium">4:32</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Appointments Set</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Appointments Set</span>
                   <span className="text-sm font-medium text-purple-600">156</span>
                 </div>
               </div>
@@ -352,19 +352,19 @@ const ReportsAnalytics = () => {
               </div>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Emails Sent</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Emails Sent</span>
                   <span className="text-sm font-medium">3,456</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Open Rate</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Open Rate</span>
                   <span className="text-sm font-medium text-green-600">34.2%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Click Rate</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Click Rate</span>
                   <span className="text-sm font-medium">8.7%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Responses</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Responses</span>
                   <span className="text-sm font-medium text-purple-600">234</span>
                 </div>
               </div>
@@ -379,23 +379,23 @@ const ReportsAnalytics = () => {
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-600">Monthly Leads</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Monthly Leads</span>
                     <span className="text-sm font-medium">2,847 / 3,000</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div className="bg-[#f4d03f] h-2 rounded-full transition-all duration-300" style={{ width: '94.9%' }}></div>
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">94.9% complete</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">94.9% complete</div>
                 </div>
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-600">Revenue Target</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Revenue Target</span>
                     <span className="text-sm font-medium">$89.3K / $100K</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div className="bg-[#0a2463] h-2 rounded-full transition-all duration-300" style={{ width: '89.3%' }}></div>
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">89.3% complete</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">89.3% complete</div>
                 </div>
               </div>
             </Card>

@@ -111,7 +111,7 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <DialogPanel className="scrollbar-sm relative flex max-w-lg flex-col overflow-y-auto rounded-lg bg-white px-4 py-6 text-center transition-opacity duration-300 dark:bg-dark-700 sm:px-5">
+          <DialogPanel className="scrollbar-sm relative flex max-w-lg flex-col overflow-y-auto rounded-lg bg-white dark:bg-gray-800 px-4 py-6 text-center transition-opacity duration-300 dark:bg-dark-700 sm:px-5">
             <DialogTitle as="h3" className="text-xl font-bold text-left mb-4">
               {state ? `${state} - Lead Age Variants` : 'Lead Age Variants'}
             </DialogTitle>
@@ -147,16 +147,16 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
                       <div className="flex justify-between items-center mb-2">
                         <div>
                           <span className="font-bold text-lg">{group.month}+</span>
-                          <span className="ml-2 text-gray-500 text-sm">Month Old</span>
+                          <span className="ml-2 text-gray-500 dark:text-gray-400 text-sm">Month Old</span>
                         </div>
                         <span className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeColor}`}>{available} available</span>
                       </div>
-                      <div className="mb-2 text-xs text-gray-500">Add Leads</div>
+                      <div className="mb-2 text-xs text-gray-500 dark:text-gray-400">Add Leads</div>
                       <div className="flex items-center gap-4 mb-2">
                         <div className="flex-1">
                           <div className="text-green-700 font-semibold">Completed Leads({group?.completed ? group.completed : 0})</div>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-gray-500">{completedPrice !== null ? `$${completedPrice} per lead` : 'N/A'}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">{completedPrice !== null ? `$${completedPrice} per lead` : 'N/A'}</span>
                             <Button size="xs" onClick={() => handleQtyChange(ageId, 'completed', (qty.completed || 0) - 1, group.completed)}>-</Button>
                             <input type="number" min={0} max={group.gold} value={qty.completed || 0} onChange={e => handleQtyChange(ageId, 'completed', Number(e.target.value), group.completed)} className="w-10 text-center border rounded" />
                             <Button size="xs" onClick={() => handleQtyChange(ageId, 'completed', (qty.completed || 0) + 1, group.completed)}>+</Button>
@@ -165,7 +165,7 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
                         <div className="flex-1">
                           <div className="text-yellow-700 font-semibold">Incomplete Leads({group?.incomplete ? group.incomplete : 0})</div>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-gray-500">{incompletePrice !== null ? `$${incompletePrice} per lead` : 'N/A'}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">{incompletePrice !== null ? `$${incompletePrice} per lead` : 'N/A'}</span>
                             <Button size="xs" onClick={() => handleQtyChange(ageId, 'incomplete', (qty.incomplete || 0) - 1, group.incomplete)}>-</Button>
                             <input type="number" min={0} max={group.incomplete} value={qty.incomplete || 0} onChange={e => handleQtyChange(ageId, 'incomplete', Number(e.target.value), group.incomplete)} className="w-10 text-center border rounded" />
                             <Button size="xs" onClick={() => handleQtyChange(ageId, 'incomplete', (qty.incomplete || 0) + 1, group.incomplete)}>+</Button>

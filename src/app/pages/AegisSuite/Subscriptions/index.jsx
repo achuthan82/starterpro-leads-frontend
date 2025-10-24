@@ -54,17 +54,17 @@ const Subscriptions = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)]">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
       <SharedSidebar currentPath="/subscriptions" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--color-atoll)]">Subscriptions</h1>
-            <p className="text-gray-600 mt-1">Manage your subscriptions</p>
+            <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Subscriptions</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your subscriptions</p>
           </div>
         </header>
 
@@ -72,7 +72,7 @@ const Subscriptions = () => {
         <main className="flex-1 overflow-auto p-6">
         {loading && <Spinner />}
 
-        {error && <div className="text-red-500 bg-red-100 p-4 rounded-md">{error}</div>}
+        {error && <div className="text-red-500 dark:text-red-400 bg-red-100 dark:bg-red-900/20 p-4 rounded-md">{error}</div>}
 
         {!loading && !error && (
           <TabGroup>

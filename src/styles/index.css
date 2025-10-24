@@ -7,6 +7,7 @@
 @import "./app/index.css" layer(components);
 @import "./shieldnest-theme.css" layer(components);
 @import "./aegissuite-theme.css" layer(components);
+@import "./dark-mode-utils.css" layer(components);
 
 @import "tailwindcss";
 

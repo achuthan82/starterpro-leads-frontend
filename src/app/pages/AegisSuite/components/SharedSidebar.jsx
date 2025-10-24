@@ -182,18 +182,19 @@ const SharedSidebar = ({ currentPath = "" }) => {
 
   return (
     <div
-      className="flex w-64 flex-col border-r border-gray-200 bg-white shadow-lg"
+      className="flex w-64 flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg"
       style={{ overflow: "auto" }}
     >
-      <div className="border-b border-gray-200 p-6">
+      <div className="border-b border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center space-x-3">
           <div>
             <img
               src={Logo}
               alt="Logo"
               style={{ maxWidth: "100%", height: "auto", objectFit: "contain" }}
+              className="dark:brightness-200"
             />
-            <p className="text-sm text-gray-600 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
               {userRole === "admin" ? "Admin Portal" : "Agent Portal"}
             </p>
           </div>
@@ -234,8 +235,8 @@ const SharedSidebar = ({ currentPath = "" }) => {
                 className={`flex w-full items-center space-x-3 rounded-lg p-3 text-left transition-all duration-200 ${
                   currentPath === item.href ||
                   window.location.pathname === item.href
-                    ? "bg-[#0a2463] text-white"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    ? "bg-[#0a2463] dark:bg-blue-600 text-white"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
                 }`}
               >
                 <item.icon className="h-5 w-5" />
@@ -248,8 +249,8 @@ const SharedSidebar = ({ currentPath = "" }) => {
           {userRole === "admin" && (
             <div key={`admin-section-${forceUpdate}`}>
               <li className="pt-4">
-                <div className="border-t border-gray-200 pt-4">
-                  <p className="mb-3 text-xs font-semibold tracking-wider text-gray-400 uppercase">
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                  <p className="mb-3 text-xs font-semibold tracking-wider text-gray-400 dark:text-gray-500 uppercase">
                     Administration
                   </p>
                 </div>
@@ -261,8 +262,8 @@ const SharedSidebar = ({ currentPath = "" }) => {
                     className={`flex w-full items-center space-x-3 rounded-lg p-3 text-left transition-all duration-200 ${
                       currentPath === item.href ||
                       window.location.pathname === item.href
-                        ? "bg-[#0a2463] text-white"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        ? "bg-[#0a2463] dark:bg-blue-600 text-white"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
                     <item.icon className="h-5 w-5" />
@@ -275,22 +276,22 @@ const SharedSidebar = ({ currentPath = "" }) => {
         </ul>
       </nav>
 
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-gray-200 dark:border-gray-700 p-4">
         <div className="mb-4 flex items-center space-x-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0a2463]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0a2463] dark:bg-blue-600">
             <span className="text-sm font-medium text-white">
               {getUserInitials(userName)}
             </span>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-900">{userName}</p>
-            <p className="text-xs text-gray-500 capitalize">{userRole}</p>
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{userName}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{userRole}</p>
           </div>
         </div>
         <div className="space-y-2">
           <button
             onClick={handleLogout}
-            className="flex w-full items-center justify-center rounded-lg p-2 text-sm text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600"
+            className="flex w-full items-center justify-center rounded-lg p-2 text-sm text-gray-600 dark:text-gray-300 transition-colors hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
           >
             <ArrowRightStartOnRectangleIcon className="mr-2 h-4 w-4" />
             Sign Out
