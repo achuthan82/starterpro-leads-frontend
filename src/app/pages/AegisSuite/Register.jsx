@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Spinner } from "components/ui";
 import authService from "utils/authService";
-import Logo from "assets/app-logo/logo-text-black.svg?.react";
+import Logo from "assets/app-logo/logo-text.svg?.react";
 
 // import Logo from "assets/appLogo.svg?react";
 // import DashboardMeet from "assets/illustrations/dashboard-meet.svg?react";
@@ -128,7 +128,7 @@ export default function Register() {
   }, [])*/
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0a2463]">
+    <div className="flex min-h-screen items-center justify-center bg-[#f2f2f2]">
       <div className="mx-auto w-full max-w-md px-4">
         {/* Logo and Brand */}
         {/* <div className="text-center mb-8">
