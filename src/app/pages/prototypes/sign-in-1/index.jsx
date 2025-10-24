@@ -11,7 +11,7 @@ import { getUserRole } from "configs/auth.config";
 // import {logo} from "../../../../assets/app-logo/logo-text.svg"
 // Local Imports
 // import Logo from "assets/appLogo.svg?react";
-import Logo from "assets/app-logo/logo-text-black.svg?.react";
+import Logo from "assets/app-logo/logo-text.svg?.react";
 
 import { Card, Input } from "components/ui";
 
@@ -154,16 +154,17 @@ export default function SignInV1() {
     setIsLoading(false);
   };
   return (
-    <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[linear-gradient(135deg,_rgb(10,36,99)_0%,_rgb(30,58,138)_25%,_rgb(45,55,72)_50%,_rgb(30,58,138)_75%,_rgb(10,36,99)_100%)]">
+    <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[#f2f2f2]">
+      {/* // <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[linear-gradient(135deg,_rgb(10,36,99)_0%,_rgb(30,58,138)_25%,_rgb(45,55,72)_50%,_rgb(30,58,138)_75%,_rgb(10,36,99)_100%)]"> */}
       <div className="w-full max-w-[28rem] p-4 sm:px-5">
         <div className="text-center">
           {/* <Logo className="mx-auto size-16" /> */}
-          <div className="mb-1 inline-flex  items-center justify-center">
-          {/* <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-yellow-200/50 bg-gradient-to-br from-white to-yellow-50 shadow-2xl"> */}
+          <div className="mb-1 inline-flex items-center justify-center">
+            {/* <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-yellow-200/50 bg-gradient-to-br from-white to-yellow-50 shadow-2xl"> */}
             <img
               src={Logo}
               alt="Logo"
-              style={{maxWidth:'60%', height:'auto', objectFit:'contain'}}
+              style={{ maxWidth: "60%", height: "auto", objectFit: "contain" }}
               // className="h-30 w-30"
               // className="h-25 w-25 object-contain"
             />
@@ -175,7 +176,7 @@ export default function SignInV1() {
                 Suite
               </span>
             </h1> */}
-            <p className="text-gray-200">
+            <p className="text-gray-700">
               Mortgage Protection Lead Management System
             </p>
           </div>
@@ -405,21 +406,21 @@ export default function SignInV1() {
         <div className="mt-8 flex items-center justify-center gap-8 text-center">
           <div>
             <div className="text-2xl font-bold text-yellow-400">10,000+</div>
-            <p className="text-xs text-gray-300">Active Users</p>
+            <p className="text-xs text-gray-800">Active Users</p>
           </div>
           <div>
             <div className="text-2xl font-bold text-yellow-400">4.9/5</div>
-            <p className="text-xs text-gray-300">User Rating</p>
+            <p className="text-xs text-gray-800">User Rating</p>
           </div>
           <div>
             <div className="text-2xl font-bold text-yellow-400">847%</div>
-            <p className="text-xs text-gray-300">Avg ROI</p>
+            <p className="text-xs text-gray-800">Avg ROI</p>
           </div>
         </div>
 
-        <div className="dark:text-dark-300 mt-8 flex justify-center text-xs text-gray-400">
+        <div className="dark:text-dark-300 mt-8 flex justify-center text-xs text-gray-700">
           <a href="##">Privacy Notice</a>
-          <div className="dark:bg-dark-500 mx-2.5 my-0.5 w-px bg-gray-200"></div>
+          <div className="dark:bg-dark-500 mx-2.5 my-0.5 w-px bg-gray-200 text-gray-700"></div>
           <a href="##">Term of service</a>
         </div>
       </div>

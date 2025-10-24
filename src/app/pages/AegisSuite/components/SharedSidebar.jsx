@@ -194,7 +194,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
               style={{ maxWidth: "100%", height: "auto", objectFit: "contain" }}
               className="dark:brightness-200"
             />
-            <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-4 text-center">
               {userRole === "admin" ? "Admin Portal" : "Agent Portal"}
             </p>
           </div>
