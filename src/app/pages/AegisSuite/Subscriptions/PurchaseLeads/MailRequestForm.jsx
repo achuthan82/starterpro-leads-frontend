@@ -355,12 +355,12 @@ export default function MailerRequestForm({ selectedPlan, plans }) {
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
             </svg>
           </div> */}
-          {/* <img src="/Aegis Suite-icon.png" alt="Aegis Suite Logo" style={{ maxWidth: 130, marginBottom: 20, marginRight: 'auto', marginLeft: 'auto' }} /> */}
+          {/* <img src="/StarterPro-icon.png" alt="StarterPro Logo" style={{ maxWidth: 130, marginBottom: 20, marginRight: 'auto', marginLeft: 'auto' }} /> */}
           <h2 className="mb-1" style={{ fontWeight: 700 }}>
             FIRST-TIME REQUEST FORM
           </h2>
           <p style={{ fontSize: 15 }}>
-            Mailing services are provided by Aegis Suite. Please fill out this
+            Mailing services are provided by StarterPro. Please fill out this
             form to request your mailer services. Your mailing partner will
             contact you right after.
           </p>
@@ -369,7 +369,7 @@ export default function MailerRequestForm({ selectedPlan, plans }) {
           {/* Section 1 */}
           <div className="mb-6">
             <h5 className="mb-2 text-lg font-semibold">
-              What is the Aegis Suite Mailer Program?
+              What is the StarterPro Mailer Program?
             </h5>
             <p className="mb-3 text-sm">
               Our mailer program consists of printing first-time homeowner data
@@ -778,20 +778,20 @@ export default function MailerRequestForm({ selectedPlan, plans }) {
                   />
                 )}
               />
-              , agree to the Terms and Conditions set forth by Aegis Suite. I
+              , agree to the Terms and Conditions set forth by StarterPro. I
               agree that all sales are final and as is. I agree that I will not
               be refunded under any circumstances. I agree that I will email
-              Aegis Suite team on admin@Aegis Suiteleads.com, within 12hrs or
+              StarterPro team on admin@StarterProleads.com, within 12hrs or
               less, if I want to make any changes to my order (for example:
               change states to mail to, or increase mailer from 3,000 to 5,000).
               I understand that if I do not communicate order changes, then
-              Aegis Suite will fulfill the services based on what I am
+              StarterPro will fulfill the services based on what I am
               requesting on this form today. I also understand I am waiving my
               right to dispute this charge with my bank for claims or actions
               not received by cardholder or other similar claim or non-service.
-              Aegis Suite accepts no responsibility for any issues arising from
+              StarterPro accepts no responsibility for any issues arising from
               calling the leads, booking appointments, or any issues concerning
-              the leads or the mailers. Aegis Suite is simply mailing the
+              the leads or the mailers. StarterPro is simply mailing the
               mailers for you with data obtained from public data sources. I
               understand I am required to comply with all applicable laws
               including but not limited to those governing insurance sales. I
@@ -802,19 +802,19 @@ export default function MailerRequestForm({ selectedPlan, plans }) {
               fully read and agree to the terms and conditions on Aegis
               Suiteleads.com (
               <a
-                href="https://Aegis Suiteleads.com/terms-and-conditions/"
+                href="https://StarterProleads.com/terms-and-conditions/"
                 className="text-blue-600 underline"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                https://Aegis Suiteleads.com/terms-and-conditions/
+                https://StarterProleads.com/terms-and-conditions/
               </a>
               ).
             </p>
 
             <p className="mb-4 text-sm">
               I hereby confirm that I have read all the terms and conditions of
-              this Jotform Request for the Aegis Suite Mailer program.
+              this Jotform Request for the StarterPro Mailer program.
             </p>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

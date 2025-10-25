@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import { EyeIcon, EyeSlashIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { Spinner, Card } from "components/ui";
 import authService from 'utils/authService';
+import Logo from "assets/app-logo/logo-text.svg?.react";
 
 // Validation schema
 const passwordRules = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[A-Z])(?=.*[!@#$%^&*()_\-+={}[\];':"\\|,.<>/?])\S{8,}$/;
@@ -171,10 +172,17 @@ const ResetPassword = () => {
   }
 
   return (
-    <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[linear-gradient(135deg,_rgb(10,36,99)_0%,_rgb(30,58,138)_25%,_rgb(45,55,72)_50%,_rgb(30,58,138)_75%,_rgb(10,36,99)_100%)]">
+    <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[#f2f2f2]">
       <div className="w-full max-w-[28rem] p-4 sm:px-5">
         <div className="text-center">
-          <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-yellow-200/50 bg-gradient-to-br from-white to-yellow-50 shadow-2xl">
+          <div className="mb-1 inline-flex items-center justify-center">
+            <img
+              src={Logo}
+              alt="Logo"
+              style={{ maxWidth: "60%", height: "auto", objectFit: "contain" }}
+            />
+          </div>
+          {/* <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-yellow-200/50 bg-gradient-to-br from-white to-yellow-50 shadow-2xl">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -189,8 +197,8 @@ const ResetPassword = () => {
             >
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
             </svg>
-          </div>
-          <div className="">
+          </div> */}
+          {/* <div className="">
             <h1 className="font-montserrat mb-2 text-4xl font-black text-white">
               <span className="text-white">Aegis</span>
               <span className="bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-200 bg-clip-text text-transparent">
@@ -200,7 +208,7 @@ const ResetPassword = () => {
             <p className="text-gray-200">
               Mortgage Protection Lead Management System
             </p>
-          </div>
+          </div> */}
         </div>
         <Card className="mt-5 max-w-[28rem] rounded-lg bg-white p-5 lg:p-8">
           <form onSubmit={handleSubmit(onSubmit)}>
