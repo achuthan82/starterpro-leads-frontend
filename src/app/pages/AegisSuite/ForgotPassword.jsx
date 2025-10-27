@@ -71,7 +71,7 @@ const ForgotPassword = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-100vh flex grid min-h-screen w-full grow grid-cols-1 place-items-center items-center justify-center bg-[#f2f2f2]">
+      <div className="min-h-100vh flex grid min-h-screen w-full grow grid-cols-1 place-items-center items-center justify-center bg-[#f2f2f2] dark:bg-gray-900">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <div className="mb-1 inline-flex items-center justify-center">
@@ -87,19 +87,19 @@ const ForgotPassword = () => {
             </div>
 
             {/* Header */}
-            <h2 className="mb-2 bg-gradient-to-r from-[#b8860b] via-[#d4af37] to-[#ffd700] bg-clip-text text-3xl font-extrabold text-transparent">
+            <h2 className="mb-2 bg-gradient-to-r from-[#b8860b] via-[#d4af37] to-[#ffd700] dark:from-yellow-400 dark:via-yellow-500 dark:to-yellow-600 bg-clip-text text-3xl font-extrabold text-transparent">
               Check your email
             </h2>
 
             {/* Message */}
-            <p className="mb-8 text-gray-600">
+            <p className="mb-8 text-gray-600 dark:text-gray-300">
               We&apos;ve sent a password reset link to{" "}
-              <strong className="text-gray-600">{submittedEmail}</strong>
+              <strong className="text-gray-600 dark:text-gray-200">{submittedEmail}</strong>
             </p>
 
             {/* Tip Box */}
-            <div className="mb-6 rounded-lg border border-yellow-300 bg-yellow-50 p-4">
-              <p className="text-sm text-yellow-800">
+            <div className="mb-6 rounded-lg border border-yellow-300 dark:border-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 p-4">
+              <p className="text-sm text-yellow-800 dark:text-yellow-400">
                 If you don&apos;t see the email in your inbox, check your spam
                 folder.
               </p>
@@ -109,7 +109,7 @@ const ForgotPassword = () => {
             <div className="space-y-4">
               <Link
                 to="/login"
-                className="group flex w-full justify-center rounded-full px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                className="group flex w-full justify-center rounded-full px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                 style={{
                   background:
                     "linear-gradient(to right, #b8860b, #d4af37, #ffd700)",
@@ -138,7 +138,7 @@ const ForgotPassword = () => {
                   setIsSubmitted(false);
                   setSubmittedEmail("");
                 }}
-                className="flex w-full justify-center rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:bg-gray-50 focus:ring-2 focus:ring-[#d4af37] focus:ring-offset-2 focus:outline-none"
+                className="flex w-full justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-2 focus:ring-[#d4af37] dark:focus:ring-yellow-500 focus:ring-offset-2 focus:outline-none"
               >
                 Try another email
               </button>
@@ -150,7 +150,7 @@ const ForgotPassword = () => {
   }
 
   return (
-    <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[#f2f2f2]">
+    <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[#f2f2f2] dark:bg-gray-900">
       <div className="w-full max-w-[28rem] p-4 sm:px-5">
         <div className="text-center">
           {/* <Logo className="mx-auto size-16" /> */}
@@ -162,30 +162,30 @@ const ForgotPassword = () => {
             />
           </div>
           <div className="">
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Mortgage Protection Lead Management System
             </p>
           </div>
         </div>
-        <Card className="mt-5 max-w-[28rem] rounded-lg bg-white p-5 lg:p-8">
+        <Card className="mt-5 max-w-[28rem] rounded-lg bg-white dark:bg-gray-800 p-5 lg:p-8">
           <form onSubmit={handleSubmit(onSubmit)}>
             {error && (
-              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-700 dark:text-red-400">
                 {error}
               </div>
             )}
             <div className="mb-6 text-center">
-              <h2 className="font-montserrat mb-2 text-2xl font-bold text-gray-900">
+              <h2 className="font-montserrat mb-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
                 Forgot Password?
               </h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 No worries, we&apos;ll help you get back in.
               </p>
             </div>
             <div className="space-y-4">
               <label
                 htmlFor="email"
-                className="mb-2 block text-sm font-medium text-gray-700"
+                className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200"
               >
                 Email address
               </label>
@@ -194,14 +194,14 @@ const ForgotPassword = () => {
                 name="email"
                 type="email"
                 {...register("email")}
-                className={`w-full border px-3 py-2 ${errors.email ? "border-red-400" : "border-gray-300"} rounded-lg placeholder-gray-400 shadow-sm focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none`}
+                className={`w-full border px-3 py-2 ${errors.email ? "border-red-400 dark:border-red-600" : "border-gray-300 dark:border-gray-600"} rounded-lg placeholder-gray-400 dark:placeholder-gray-500 shadow-sm focus:border-[var(--color-atoll)] dark:focus:border-blue-500 focus:ring-2 focus:ring-[var(--color-atoll)] dark:focus:ring-blue-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100`}
                 placeholder="Enter your email"
               />
             </div>
 
             <button
               type="submit"
-              className="group mt-5 flex w-full transform items-center justify-center rounded-full px-6 py-3.5 font-bold text-gray-900 transition-all hover:-translate-y-0.5 hover:shadow-xl"
+              className="group mt-5 flex w-full transform items-center justify-center rounded-full px-6 py-3.5 font-bold text-gray-900 dark:text-white transition-all hover:-translate-y-0.5 hover:shadow-xl"
               style={{
                 background:
                   "linear-gradient(to right, #b8860b, #d4af37, #ffd700)",
@@ -219,9 +219,9 @@ const ForgotPassword = () => {
           </form>
         </Card>
 
-        <div className="dark:text-dark-300 mt-8 flex justify-center text-xs text-gray-600">
+        <div className="mt-8 flex justify-center text-xs text-gray-600 dark:text-gray-300">
           <a href="##">Privacy Notice</a>
-          <div className="dark:bg-dark-500 mx-2.5 my-0.5 w-px bg-gray-200 text-gray-600"></div>
+          <div className="mx-2.5 my-0.5 w-px bg-gray-200 dark:bg-gray-500 text-gray-600"></div>
           <a href="##">Term of service</a>
         </div>
       </div>

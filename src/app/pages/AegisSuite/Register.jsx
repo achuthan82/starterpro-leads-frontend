@@ -128,7 +128,7 @@ export default function Register() {
   }, [])*/
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f2f2f2]">
+    <div className="flex min-h-screen items-center justify-center bg-[#f2f2f2] dark:bg-gray-900">
       <div className="mx-auto w-full max-w-md px-4">
         {/* Logo and Brand */}
         {/* <div className="text-center mb-8">
@@ -168,30 +168,30 @@ export default function Register() {
           />
         </div>
         {/* Register Form Card */}
-        <div className="rounded-lg bg-white p-8 shadow-xl">
+        <div className="rounded-lg bg-white dark:bg-gray-800 p-8 shadow-xl">
           <div className="mb-8 text-center">
-            <h2 className="mb-2 text-2xl font-bold text-[#0a2463]">
+            <h2 className="mb-2 text-2xl font-bold text-[#0a2463] dark:text-blue-400">
               Create your account
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Complete your registration to access Starterpro Leads
             </p>
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {error && (
-              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-700 dark:text-red-400">
                 {error}
               </div>
             )}
             {success && (
-              <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+              <div className="rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 p-3 text-sm text-green-700 dark:text-green-400">
                 Registration successful! Redirecting to login...
               </div>
             )}
             <div>
               <label
                 htmlFor="name"
-                className="mb-2 block text-sm font-medium text-[#0a2463]"
+                className="mb-2 block text-sm font-medium text-[#0a2463] dark:text-blue-400"
               >
                 Name
               </label>
@@ -200,12 +200,12 @@ export default function Register() {
                 name="name"
                 type="text"
                 {...register("name")}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-colors focus:border-[#0a2463] focus:ring-2 focus:ring-[#0a2463]"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 transition-colors focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                 placeholder="Enter your name"
                 defaultValue={registeredName}
               />
               {errors.name && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-500 dark:text-red-400">
                   {errors.name.message}
                 </p>
               )}
@@ -213,7 +213,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="agency_name"
-                className="mb-2 block text-sm font-medium text-[#0a2463]"
+                className="mb-2 block text-sm font-medium text-[#0a2463] dark:text-blue-400"
               >
                 Agency Name
               </label>
@@ -222,12 +222,12 @@ export default function Register() {
                 name="agency_name"
                 type="text"
                 {...register("agency_name")}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-colors focus:border-[#0a2463] focus:ring-2 focus:ring-[#0a2463]"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 transition-colors focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                 placeholder="Enter your agency name"
                 defaultValue={agencyName}
               />
               {errors.agency_name && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-500 dark:text-red-400">
                   {errors.agency_name.message}
                 </p>
               )}
@@ -235,7 +235,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="phone"
-                className="mb-2 block text-sm font-medium text-[#0a2463]"
+                className="mb-2 block text-sm font-medium text-[#0a2463] dark:text-blue-400"
               >
                 Phone
               </label>
@@ -244,12 +244,12 @@ export default function Register() {
                 name="phone"
                 type="text"
                 {...register("phone")}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-colors focus:border-[#0a2463] focus:ring-2 focus:ring-[#0a2463]"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 transition-colors focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                 placeholder="Enter your US phone number"
                 defaultValue={registeredPhone}
               />
               {errors.phone && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-500 dark:text-red-400">
                   {errors.phone.message}
                 </p>
               )}
@@ -257,7 +257,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="password"
-                className="mb-2 block text-sm font-medium text-[#0a2463]"
+                className="mb-2 block text-sm font-medium text-[#0a2463] dark:text-blue-400"
               >
                 Password
               </label>
@@ -277,7 +277,7 @@ export default function Register() {
                       e.preventDefault();
                     }
                   }}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 transition-colors focus:border-[#0a2463] focus:ring-2 focus:ring-[#0a2463]"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 pr-10 transition-colors focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                   placeholder="Enter your password"
                 />
                 <button
@@ -286,14 +286,14 @@ export default function Register() {
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
                   {showPassword ? (
-                    <EyeSlashIcon className="h-4 w-4 text-gray-400" />
+                    <EyeSlashIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   ) : (
-                    <EyeIcon className="h-4 w-4 text-gray-400" />
+                    <EyeIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   )}
                 </button>
               </div>
               {errors.password && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-500 dark:text-red-400">
                   {errors.password.message}
                 </p>
               )}
@@ -301,7 +301,7 @@ export default function Register() {
             <div>
               <label
                 htmlFor="confirm_password"
-                className="mb-2 block text-sm font-medium text-[#0a2463]"
+                className="mb-2 block text-sm font-medium text-[#0a2463] dark:text-blue-400"
               >
                 Confirm Password
               </label>
@@ -321,7 +321,7 @@ export default function Register() {
                       e.preventDefault();
                     }
                   }}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 transition-colors focus:border-[#0a2463] focus:ring-2 focus:ring-[#0a2463]"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 pr-10 transition-colors focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                   placeholder="Repeat your password"
                 />
                 <button
@@ -330,14 +330,14 @@ export default function Register() {
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
                   {showConfirmPassword ? (
-                    <EyeSlashIcon className="h-4 w-4 text-gray-400" />
+                    <EyeSlashIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   ) : (
-                    <EyeIcon className="h-4 w-4 text-gray-400" />
+                    <EyeIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   )}
                 </button>
               </div>
               {errors.confirm_password && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-xs text-red-500 dark:text-red-400">
                   {errors.confirm_password.message}
                 </p>
               )}
@@ -346,7 +346,7 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={isLoading || alreadyLoggedIn}
-                className="w-full rounded-lg bg-gradient-to-b from-[#f4d03f] to-[#e6c23a] px-4 py-3 font-semibold text-white transition-all duration-200 hover:from-[#e6c23a] hover:to-[#d4b82a] disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-lg bg-gradient-to-b from-[#f4d03f] to-[#e6c23a] dark:from-blue-600 dark:to-blue-700 px-4 py-3 font-semibold text-white transition-all duration-200 hover:from-[#e6c23a] hover:to-[#d4b82a] dark:hover:from-blue-700 dark:hover:to-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
@@ -359,12 +359,12 @@ export default function Register() {
               </button>
             </div>
             <div className="text-center">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-gray-300">
                 Already have an account?{" "}
               </span>
               <Link
                 to="/login"
-                className="text-sm text-[#0a2463] transition-colors duration-200 hover:text-[#0a1a4a]"
+                className="text-sm text-[#0a2463] dark:text-blue-400 transition-colors duration-200 hover:text-[#0a1a4a] dark:hover:text-blue-300"
               >
                 Sign In
               </Link>
@@ -373,7 +373,7 @@ export default function Register() {
 
           {/* Footer */}
           <div className="mt-8 text-center">
-            <p className="text-xs text-white/80">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               © 2025 AegisSuite. All rights reserved.
             </p>
           </div>

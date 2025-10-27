@@ -92,21 +92,21 @@ const ResetPassword = () => {
 
   if (isSuccess) {
     return (
-      <div className="min-h-100vh flex grid min-h-screen w-full grow grid-cols-1 place-items-center items-center justify-center bg-[linear-gradient(135deg,_rgb(10,36,99)_0%,_rgb(30,58,138)_25%,_rgb(45,55,72)_50%,_rgb(30,58,138)_75%,_rgb(10,36,99)_100%)]">
+      <div className="min-h-100vh flex grid min-h-screen w-full grow grid-cols-1 place-items-center items-center justify-center bg-[linear-gradient(135deg,_rgb(10,36,99)_0%,_rgb(30,58,138)_25%,_rgb(45,55,72)_50%,_rgb(30,58,138)_75%,_rgb(10,36,99)_100%)] dark:bg-gray-900">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-yellow-200/50 bg-gradient-to-br from-white to-yellow-50 shadow-2xl">
-              <CheckIcon className="h-12 w-12 text-green-600" />
+            <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-yellow-200/50 dark:border-green-400/50 bg-gradient-to-br from-white to-yellow-50 dark:from-gray-700 dark:to-green-500/20 shadow-2xl">
+              <CheckIcon className="h-12 w-12 text-green-600 dark:text-green-400" />
             </div>
-            <h2 className="mb-2 bg-gradient-to-r from-[#b8860b] via-[#d4af37] to-[#ffd700] bg-clip-text text-3xl font-extrabold text-transparent">
+            <h2 className="mb-2 bg-gradient-to-r from-[#b8860b] via-[#d4af37] to-[#ffd700] dark:from-yellow-400 dark:via-yellow-500 dark:to-yellow-600 bg-clip-text text-3xl font-extrabold text-transparent">
               Password reset successful!
             </h2>
-            <p className="mb-8 text-gray-200">
+            <p className="mb-8 text-gray-200 dark:text-gray-300">
               Your password has been successfully reset. You can now sign in with your new password.
             </p>
             <Link
               to="/login"
-              className="group flex w-full justify-center rounded-full px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+              className="group flex w-full justify-center rounded-full px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
               style={{
                 background:
                   "linear-gradient(to right, #b8860b, #d4af37, #ffd700)",
@@ -122,10 +122,10 @@ const ResetPassword = () => {
 
   if (!token) {
     return (
-      <div className="min-h-100vh flex grid min-h-screen w-full grow grid-cols-1 place-items-center items-center justify-center bg-[linear-gradient(135deg,_rgb(10,36,99)_0%,_rgb(30,58,138)_25%,_rgb(45,55,72)_50%,_rgb(30,58,138)_75%,_rgb(10,36,99)_100%)]">
+      <div className="min-h-100vh flex grid min-h-screen w-full grow grid-cols-1 place-items-center items-center justify-center bg-[linear-gradient(135deg,_rgb(10,36,99)_0%,_rgb(30,58,138)_25%,_rgb(45,55,72)_50%,_rgb(30,58,138)_75%,_rgb(10,36,99)_100%)] dark:bg-gray-900">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-yellow-200/50 bg-gradient-to-br from-white to-yellow-50 shadow-2xl">
+            <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-yellow-200/50 dark:border-red-400/50 bg-gradient-to-br from-white to-yellow-50 dark:from-gray-700 dark:to-red-500/20 shadow-2xl">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -136,21 +136,21 @@ const ResetPassword = () => {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-aegis-navy h-12 w-12"
+                className="text-[#0a2463] dark:text-red-400 h-12 w-12"
               >
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
               </svg>
             </div>
-            <h2 className="mb-2 bg-gradient-to-r from-[#b8860b] via-[#d4af37] to-[#ffd700] bg-clip-text text-3xl font-extrabold text-transparent">
+            <h2 className="mb-2 bg-gradient-to-r from-[#b8860b] via-[#d4af37] to-[#ffd700] dark:from-red-400 dark:via-red-500 dark:to-red-600 bg-clip-text text-3xl font-extrabold text-transparent">
               Invalid reset link
             </h2>
-            <p className="mb-8 text-gray-200">
+            <p className="mb-8 text-gray-200 dark:text-gray-300">
               This password reset link is invalid or has expired.
             </p>
             <div className="space-y-4">
               <Link
                 to="/forgot-password"
-                className="group flex w-full justify-center rounded-full px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                className="group flex w-full justify-center rounded-full px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                 style={{
                   background:
                     "linear-gradient(to right, #b8860b, #d4af37, #ffd700)",
@@ -160,7 +160,7 @@ const ResetPassword = () => {
               </Link>
               <Link
                 to="/login"
-                className="flex w-full justify-center rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:bg-gray-50 focus:ring-2 focus:ring-[#d4af37] focus:ring-offset-2 focus:outline-none"
+                className="flex w-full justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-2 focus:ring-[#d4af37] dark:focus:ring-yellow-500 focus:ring-offset-2 focus:outline-none"
               >
                 Back to login
               </Link>
@@ -172,7 +172,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[#f2f2f2]">
+    <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[#f2f2f2] dark:bg-gray-900">
       <div className="w-full max-w-[28rem] p-4 sm:px-5">
         <div className="text-center">
           <div className="mb-1 inline-flex items-center justify-center">
@@ -210,18 +210,18 @@ const ResetPassword = () => {
             </p>
           </div> */}
         </div>
-        <Card className="mt-5 max-w-[28rem] rounded-lg bg-white p-5 lg:p-8">
+        <Card className="mt-5 max-w-[28rem] rounded-lg bg-white dark:bg-gray-800 p-5 lg:p-8">
           <form onSubmit={handleSubmit(onSubmit)}>
             {error && (
-              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-700 dark:text-red-400">
                 {error}
               </div>
             )}
             <div className="mb-6 text-center">
-              <h2 className="font-montserrat mb-2 text-2xl font-bold text-gray-900">
+              <h2 className="font-montserrat mb-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
                 Reset Password
               </h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Enter your new password below.
               </p>
             </div>
@@ -229,7 +229,7 @@ const ResetPassword = () => {
             <div className="space-y-4">
               <label
                 htmlFor="new_password"
-                className="mb-2 block text-sm font-medium text-gray-700"
+                className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200"
               >
                 New Password
               </label>
@@ -249,7 +249,7 @@ const ResetPassword = () => {
                     }
                   }}
                   {...register('new_password')}
-                  className={`w-full border px-3 py-2 ${errors.new_password ? "border-red-400" : "border-gray-300"} rounded-lg placeholder-gray-400 shadow-sm focus:border-[#0a2463] focus:ring-2 focus:ring-[#0a2463] focus:outline-none pr-10`}
+                  className={`w-full border px-3 py-2 ${errors.new_password ? "border-red-400 dark:border-red-600" : "border-gray-300 dark:border-gray-600"} rounded-lg placeholder-gray-400 dark:placeholder-gray-500 shadow-sm focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 focus:outline-none pr-10 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100`}
                   placeholder="Enter new password"
                 />
                 <button
@@ -258,19 +258,19 @@ const ResetPassword = () => {
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
                   {showPassword ? (
-                    <EyeSlashIcon className="h-4 w-4 text-gray-400" />
+                    <EyeSlashIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   ) : (
-                    <EyeIcon className="h-4 w-4 text-gray-400" />
+                    <EyeIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   )}
                 </button>
               </div>
-              {errors.new_password && <p className="text-xs text-red-500 mt-1">{errors.new_password.message}</p>}
+              {errors.new_password && <p className="text-xs text-red-500 dark:text-red-400 mt-1">{errors.new_password.message}</p>}
             </div>
 
             <div className="space-y-4">
               <label
                 htmlFor="confirm_password"
-                className="mb-2 block text-sm font-medium text-gray-700"
+                className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200"
               >
                 Confirm New Password
               </label>
@@ -290,7 +290,7 @@ const ResetPassword = () => {
                     }
                   }}
                   {...register('confirm_password')}
-                  className={`w-full border px-3 py-2 ${errors.confirm_password ? "border-red-400" : "border-gray-300"} rounded-lg placeholder-gray-400 shadow-sm focus:border-[#0a2463] focus:ring-2 focus:ring-[#0a2463] focus:outline-none pr-10`}
+                  className={`w-full border px-3 py-2 ${errors.confirm_password ? "border-red-400 dark:border-red-600" : "border-gray-300 dark:border-gray-600"} rounded-lg placeholder-gray-400 dark:placeholder-gray-500 shadow-sm focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 focus:outline-none pr-10 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100`}
                   placeholder="Confirm new password"
                 />
                 <button
@@ -299,18 +299,18 @@ const ResetPassword = () => {
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
                   {showConfirmPassword ? (
-                    <EyeSlashIcon className="h-4 w-4 text-gray-400" />
+                    <EyeSlashIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   ) : (
-                    <EyeIcon className="h-4 w-4 text-gray-400" />
+                    <EyeIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   )}
                 </button>
               </div>
-              {errors.confirm_password && <p className="text-xs text-red-500 mt-1">{errors.confirm_password.message}</p>}
+              {errors.confirm_password && <p className="text-xs text-red-500 dark:text-red-400 mt-1">{errors.confirm_password.message}</p>}
             </div>
 
             <button
               type="submit"
-              className="group mt-5 flex w-full transform items-center justify-center rounded-full px-6 py-3.5 font-bold text-gray-900 transition-all hover:-translate-y-0.5 hover:shadow-xl"
+              className="group mt-5 flex w-full transform items-center justify-center rounded-full px-6 py-3.5 font-bold text-gray-900 dark:text-white transition-all hover:-translate-y-0.5 hover:shadow-xl"
               style={{
                 background:
                   "linear-gradient(to right, #b8860b, #d4af37, #ffd700)",
@@ -329,9 +329,9 @@ const ResetPassword = () => {
           </form>
         </Card>
 
-        <div className="dark:text-dark-300 mt-8 flex justify-center text-xs text-gray-400">
+        <div className="mt-8 flex justify-center text-xs text-gray-400 dark:text-gray-300">
           <a href="##">Privacy Notice</a>
-          <div className="dark:bg-dark-500 mx-2.5 my-0.5 w-px bg-gray-200"></div>
+          <div className="mx-2.5 my-0.5 w-px bg-gray-200 dark:bg-gray-500"></div>
           <a href="##">Term of service</a>
         </div>
       </div>

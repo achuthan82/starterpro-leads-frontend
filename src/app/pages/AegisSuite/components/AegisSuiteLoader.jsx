@@ -34,16 +34,16 @@ const AegisSuiteLoader = ({ size = 'md', text = 'Loading...' }) => {
 
       {/* Loading Text */}
       {text && (
-        <div className={`${textSizeClasses[size]} font-medium text-[var(--color-atoll)] animate-pulse`}>
+        <div className={`${textSizeClasses[size]} font-medium text-[var(--color-atoll)] dark:text-blue-400 animate-pulse`}>
           {text}
         </div>
       )}
 
       {/* Animated Dots */}
       <div className="flex space-x-1">
-        <div className="w-2 h-2 bg-[var(--color-atoll)] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-        <div className="w-2 h-2 bg-[var(--color-atoll)] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-        <div className="w-2 h-2 bg-[var(--color-atoll)] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+        <div className="w-2 h-2 bg-[var(--color-atoll)] dark:bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+        <div className="w-2 h-2 bg-[var(--color-atoll)] dark:bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+        <div className="w-2 h-2 bg-[var(--color-atoll)] dark:bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
       </div>
     </div>
   );

@@ -171,10 +171,10 @@ const Login = () => {
   };*/
 
   return (
-    <div className="min-h-screen bg-[#0a2463]">
+    <div className="min-h-screen bg-[#0a2463] dark:bg-gray-900">
       <div className="flex min-h-full">
         {/* Left side - Branding */}
-        <div className="hidden lg:flex lg:w-1/2 bg-[#0a2463] relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 bg-[#0a2463] dark:bg-gray-900 relative overflow-hidden">
           <div className="flex flex-col justify-center px-12 text-white z-10">
             {/* Logo and Brand */}
             <div className="mb-8">
@@ -256,12 +256,12 @@ const Login = () => {
         </div>
 
         {/* Right side - Login Form */}
-        <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24 bg-white/95 backdrop-blur-sm">
+        <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             {/* Header */}
             <div className="text-center lg:text-left mb-8">
               <div className="flex items-center justify-center lg:justify-start mb-6 lg:hidden">
-                <div className="w-12 h-12 bg-gradient-to-br from-white to-yellow-50 border-2 border-yellow-200/50 rounded-2xl flex items-center justify-center mr-3 shadow-xl">
+                <div className="w-12 h-12 bg-gradient-to-br from-white to-yellow-50 dark:from-gray-700 dark:to-yellow-500/20 border-2 border-yellow-200/50 dark:border-yellow-400/50 rounded-2xl flex items-center justify-center mr-3 shadow-xl">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -272,20 +272,20 @@ const Login = () => {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="text-aegis-navy h-6 w-6"
+                    className="text-[#0a2463] dark:text-blue-400 h-6 w-6"
                   >
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
                   </svg>
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-[#0a2463]">
-                    <span className="text-[#0a2463]">Aegis</span>
-                    <span className="bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-200 bg-clip-text text-transparent">Suite</span>
+                  <h1 className="text-2xl font-bold text-[#0a2463] dark:text-blue-400">
+                    <span className="text-[#0a2463] dark:text-blue-400">Aegis</span>
+                    <span className="bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-200 dark:from-yellow-400 dark:via-yellow-500 dark:to-yellow-600 bg-clip-text text-transparent">Suite</span>
                   </h1>
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-[#0a2463] lg:text-3xl">Sign in to your account</h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <h2 className="text-2xl font-bold text-[#0a2463] dark:text-blue-400 lg:text-3xl">Sign in to your account</h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
                 Access your insurance lead management dashboard
               </p>
             </div>
@@ -336,13 +336,13 @@ const Login = () => {
             {/* Login Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-400">
                   {error}
                 </div>
               )}
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-[#0a2463] mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-[#0a2463] dark:text-blue-400 mb-2">
                   Email address
                 </label>
                 <input
@@ -352,13 +352,13 @@ const Login = () => {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a2463] focus:border-[#0a2463] transition-colors"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 focus:border-[#0a2463] dark:focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                   placeholder="Enter your email"
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-[#0a2463] mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-[#0a2463] dark:text-blue-400 mb-2">
                   Password
                 </label>
                 <div className="relative">
@@ -369,7 +369,7 @@ const Login = () => {
                     required
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0a2463] focus:border-[#0a2463] transition-colors"
+                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 focus:border-[#0a2463] dark:focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                     placeholder="Enter your password"
                   />
                   <button
@@ -378,9 +378,9 @@ const Login = () => {
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   >
                     {showPassword ? (
-                      <EyeSlashIcon className="h-4 w-4 text-gray-400" />
+                      <EyeSlashIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                     ) : (
-                      <EyeIcon className="h-4 w-4 text-gray-400" />
+                      <EyeIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                     )}
                   </button>
                 </div>
@@ -390,7 +390,7 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-b from-[#f4d03f] to-[#e6c23a] text-white font-semibold py-3 px-4 rounded-lg hover:from-[#e6c23a] hover:to-[#d4b82a] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-b from-[#f4d03f] to-[#e6c23a] dark:from-blue-600 dark:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg hover:from-[#e6c23a] hover:to-[#d4b82a] dark:hover:from-blue-700 dark:hover:to-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <div className="flex items-center justify-center">
@@ -406,7 +406,7 @@ const Login = () => {
               <div className="text-center">
                 <Link
                   to="/forgot-password"
-                  className="text-sm text-[#0a2463] hover:text-[#0a1a4a] transition-colors duration-200"
+                  className="text-sm text-[#0a2463] dark:text-blue-400 hover:text-[#0a1a4a] dark:hover:text-blue-300 transition-colors duration-200"
                 >
                   Forgot your password?
                 </Link>
@@ -415,7 +415,7 @@ const Login = () => {
 
             {/* Footer */}
             <div className="mt-8 text-center">
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 © 2025 AegisSuite. All rights reserved.
               </p>
             </div>
