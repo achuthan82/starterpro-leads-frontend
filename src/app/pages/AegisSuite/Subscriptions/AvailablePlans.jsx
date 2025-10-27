@@ -18,7 +18,7 @@ const AvailablePlans = ({ subscription }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState('')
-  const [isOpen, { open, close }] = useDisclosure(false);
+  const [isOpen, { open, close }] = useDisclosure(true);
   const [isAlertOpen, { open: alertOpen, close: alertClose }] = useDisclosure(false);
   const [pagination, setPagination] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
@@ -121,10 +121,10 @@ const AvailablePlans = ({ subscription }) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <DialogPanel className=" scrollbar-sm relative flex w-full overflow-y-auto max-w-xxl origin-top flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-800 transition-all duration-300 dark:bg-dark-700">
+            <DialogPanel className=" scrollbar-sm relative flex w-full overflow-y-auto max-w-xxl origin-top flex-col overflow-hidden rounded-lg bg-[#000000] dark:bg-gray-800 transition-all duration-300 dark:bg-dark-700">
               <div className="flex justify-end">
                 <span onClick={close} className='cursor-pointer'>
-                  <XMarkIcon className="size-10.5" />
+                  <XMarkIcon className="size-7" stroke='#fff'/>
                 </span>
               </div>
               <PurchaseLeads selectedPlan={selectedPlan} plans={plans}/>

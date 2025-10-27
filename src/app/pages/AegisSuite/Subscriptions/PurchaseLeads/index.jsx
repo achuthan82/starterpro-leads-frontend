@@ -1,6 +1,6 @@
 // import {Card} from 'components/ui'
 // import { useParams } from "react-router";
-import MailerRequestForm from "./MailRequestForm";
+import MailerRequestForm from "./MailRequestFormNew";
 
 
 const PurchaseLeads = ({selectedPlan, plans}) => {
