@@ -968,8 +968,8 @@ const LeadManagement = () => {
                     onClick={() => downloadCsv()}
                     disabled={selectedLeads.length === 0}
                     className={`px-4 py-2 rounded-lg border transition-colors flex items-center space-x-2 ${selectedLeads.length === 0
-                      ? 'border-gray-300 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                      : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700'
+                      ? 'border-gray-300 text-gray-400 dark:text-gray-100 cursor-not-allowed'
+                      : 'border-gray-300 text-gray-700 dark:text-gray-100  hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700'
                       }`}
                   >
                     <ArrowDownTrayIcon className="w-4 h-4" />
@@ -981,8 +981,8 @@ const LeadManagement = () => {
                     onClick={() => downloadAgentLeads()}
                     // style={{ backgroundColor: 'var(--atoll)' }}
                     className={`px-4 py-2 rounded-lg border transition-colors flex items-center space-x-2 ${totalRecords < 1
-                      ? 'border-gray-300 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                      : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700'
+                      ? 'border-gray-300 text-gray-400 dark:text-gray-100 cursor-not-allowed'
+                      : 'border-gray-300 text-gray-700 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700'
                       }`}
                   >
                     <ArrowDownTrayIcon className="w-4 h-4" />
@@ -991,7 +991,7 @@ const LeadManagement = () => {
                   {selectedLeads.length > 0 && (
                     <button
                       onClick={() => setShowBulkStatusModal(true)}
-                      className="bg-[#0a2463] text-white px-4 py-2 rounded-lg hover:bg-[#0a2463]/90 transition-colors flex items-center space-x-2"
+                      className="bg-[#0a2463] dark:bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-[#0a2463]/90 transition-colors flex items-center space-x-2"
                     >
                       <span>Update Status ({selectedLeads.length})</span>
                     </button>
@@ -1130,10 +1130,10 @@ const LeadManagement = () => {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800">
                       {leads.length === 0 ? (
                         <tr>
-                          <td colSpan="20" className="px-6 py-8 text-center text-gray-500">
+                          <td colSpan="20" className="px-6 py-8 text-center text-gray-500 dark:text-gray-100">
                             No leads found. Try adjusting your search or filters.
                           </td>
                         </tr>
@@ -1175,7 +1175,7 @@ const LeadManagement = () => {
                                 })()}
                                 <div className="ml-4">
                                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{lead.full_name}</div>
-                                  {!purchased && <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">ID: {lead.identifier || lead.mortgage_id || lead.assignee_id || ''}</div>}
+                                  {!purchased && <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-100">ID: {lead.identifier || lead.mortgage_id || lead.assignee_id || ''}</div>}
                                 </div>
                               </div>
                             </td>

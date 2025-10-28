@@ -67,7 +67,7 @@ const AvailablePlans = ({ subscription }) => {
         {plans && plans.length > 0 ? plans.map((plan) => (
           <Card key={plan.id} className="flex flex-col bg-white dark:bg-gray-800 overflow-hidden">
             <div className="p-6 flex-grow">
-              <h3 className="text-xl font-semibold" style={{ color: '#0a2463' }}>{plan.title}</h3>
+              <h3 className="text-xl font-semibold text-[#031746] dark:text-[#4d7cff]" >{plan.title}</h3>
               <div className="mt-4">
                 <span className="text-4xl font-bold">${plan.unit_price}</span>
                 <span className="text-gray-500">/{plan.quantity}</span>
@@ -121,7 +121,7 @@ const AvailablePlans = ({ subscription }) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <DialogPanel className=" scrollbar-sm relative flex w-full overflow-y-auto max-w-xxl origin-top flex-col overflow-hidden rounded-lg bg-[#000000] dark:bg-gray-800 transition-all duration-300 dark:bg-dark-700">
+            <DialogPanel className=" scrollbar-sm relative flex w-full overflow-y-auto max-w-xxl origin-top flex-col overflow-hidden rounded-lg bg-[#000000] dark:bg-[#000000] transition-all duration-300 ">
               <div className="flex justify-end">
                 <span onClick={close} className='cursor-pointer'>
                   <XMarkIcon className="size-7" stroke='#fff'/>

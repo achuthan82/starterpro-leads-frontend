@@ -29,9 +29,9 @@ const LeadStateFilter = ({ selected, onChange }) => {
   }, []);
 
   return (
-    <Card className="mb-8 bg-white">
+    <Card className="mb-8 bg-white dark:bg-gray-800">
       <div className="p-6">
-        <h2 className="text-xl font-semibold text-[#0a2463] mb-4">Find Your Perfect Leads</h2>
+        <h2 className="text-xl font-semibold text-[#0a2463] mb-4 dark:text-gray-100">Find Your Perfect Leads</h2>
         {loading ? <Spinner /> : (
           <Select
             isMulti

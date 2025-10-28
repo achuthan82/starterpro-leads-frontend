@@ -28,7 +28,7 @@ const MailRequestFormNew = () => {
         </div>
         <form
           onSubmit={handleSubmit}
-          className="w-full max-w-3xl space-y-8 rounded-2xl bg-neutral-100 p-8 text-neutral-900 shadow-lg"
+          className="w-full max-w-3xl space-y-8 rounded-2xl bg-[#d7d7da] p-8 text-neutral-900 shadow-lg"
         >
           <div className="space-y-4">
             <h1 className="text-center text-2xl font-bold">

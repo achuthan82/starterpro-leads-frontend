@@ -154,7 +154,7 @@ export default function SignInV1() {
     setIsLoading(false);
   };
   return (
-    <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[#f2f2f2]">
+    <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[#f2f2f2] dark:bg-gray-900">
       {/* // <main className="min-h-100vh grid w-full grow grid-cols-1 place-items-center bg-[linear-gradient(135deg,_rgb(10,36,99)_0%,_rgb(30,58,138)_25%,_rgb(45,55,72)_50%,_rgb(30,58,138)_75%,_rgb(10,36,99)_100%)]"> */}
       <div className="w-full max-w-[28rem] p-4 sm:px-5">
         <div className="text-center">
@@ -176,12 +176,12 @@ export default function SignInV1() {
                 Suite
               </span>
             </h1> */}
-            <p className="text-gray-700">
+            <p className="text-gray-700 dark:text-gray-300">
               Mortgage Protection Lead Management System
             </p>
           </div>
         </div>
-        <Card className="mt-1 max-w-[28rem] rounded-lg bg-white p-5 lg:p-8">
+        <Card className="mt-1 max-w-[28rem] rounded-lg bg-white dark:bg-gray-800 p-5 lg:p-8">
           <form onSubmit={handleSubmit}>
             {error && (
               <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
@@ -189,10 +189,10 @@ export default function SignInV1() {
               </div>
             )}
             <div className="mb-6 text-center">
-              <h2 className="font-montserrat mb-2 text-2xl font-bold text-gray-900">
+              <h2 className="font-montserrat mb-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
                 Agency Dashboard Access
               </h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-100">
                 Manage your agency and team
               </p>
             </div>
@@ -279,7 +279,7 @@ export default function SignInV1() {
                     <path d="M20 6 9 17l-5-5"></path>
                   </svg>
                 </div>
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 dark:text-gray-100">
                   14-day free trial included
                 </span>
               </div>
@@ -300,7 +300,7 @@ export default function SignInV1() {
                     <path d="M20 6 9 17l-5-5"></path>
                   </svg>
                 </div>
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 dark:text-gray-100">
                   No credit card required
                 </span>
               </div>
@@ -345,7 +345,7 @@ export default function SignInV1() {
                   type="checkbox"
                   className="text-aegis-gold focus:ring-aegis-gold h-4 w-4 rounded border-gray-300"
                 />
-                <span className="ml-2 text-sm text-gray-600">Remember me</span>
+                <span className="ml-2 text-sm text-gray-600 dark:text-gray-100">Remember me</span>
               </label>
               <Link
                 to="/forgot-password"
@@ -355,7 +355,7 @@ export default function SignInV1() {
               </Link>
             </div>
             <div className="mt-6 border-t border-gray-200 pt-6">
-              <p className="text-center text-sm text-gray-600">
+              <p className="text-center text-sm text-gray-600 dark:text-gray-100">
                 Don&apos;t have an account?{" "}
                 <a
                   href="#"
@@ -381,7 +381,7 @@ export default function SignInV1() {
                 >
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
                 </svg>
-                <span>Bank-Level Security</span>
+                <span className="dark:text-gray-100">Bank-Level Security</span>
               </div>
               <div className="flex items-center gap-1">
                 <svg
@@ -398,12 +398,12 @@ export default function SignInV1() {
                 >
                   <path d="M20 6 9 17l-5-5"></path>
                 </svg>
-                <span>SOC 2 Compliant</span>
+                <span className="dark:text-gray-100">SOC 2 Compliant</span>
               </div>
             </div>
           </form>
         </Card>
-        <div className="mt-8 flex items-center justify-center gap-8 text-center">
+        {/* <div className="mt-8 flex items-center justify-center gap-8 text-center">
           <div>
             <div className="text-2xl font-bold text-yellow-400">10,000+</div>
             <p className="text-xs text-gray-800">Active Users</p>
@@ -416,11 +416,11 @@ export default function SignInV1() {
             <div className="text-2xl font-bold text-yellow-400">847%</div>
             <p className="text-xs text-gray-800">Avg ROI</p>
           </div>
-        </div>
+        </div> */}
 
-        <div className="dark:text-dark-300 mt-8 flex justify-center text-xs text-gray-700">
+        <div className="dark:text-dark-300 mt-8 flex justify-center text-xs text-gray-700 dark:text-gray-100">
           <a href="##">Privacy Notice</a>
-          <div className="dark:bg-dark-500 mx-2.5 my-0.5 w-px bg-gray-200 text-gray-700"></div>
+          <div className="dark:bg-dark-500 mx-2.5 my-0.5 w-px bg-gray-200 text-gray-700 dark:text-gray-100"></div>
           <a href="##">Term of service</a>
         </div>
       </div>

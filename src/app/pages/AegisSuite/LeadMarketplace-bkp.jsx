@@ -177,9 +177,9 @@ const LeadMarketplace = () => {
         {/* Main Content */}
         <main className="flex-1 overflow-auto px-6 py-8">
         {/* Filter Section */}
-        <Card className="mb-8">
+        <Card className="mb-8 dark:bg-gray-800">
           <div className="p-6">
-            <h2 className="text-xl font-semibold text-[var(--color-atoll)] mb-4">Find Your Perfect Leads</h2>
+            <h2 className="text-xl font-semibold text-[var(--color-atoll)] mb-4 dark:text-gray-100">Find Your Perfect Leads</h2>
             
             {/* Search Box */}
             <div className="relative mb-4">

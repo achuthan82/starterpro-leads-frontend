@@ -325,7 +325,7 @@ const SubscriptionsTab = () => {
   return (
     <div className="space-y-6">
       {/* Filters and Search */}
-      <Card className="bg-white p-6">
+      <Card className="bg-white dark:bg-gray-700 p-6">
         <div className="flex flex-col justify-between gap-4 lg:flex-row">
           {/* Search */}
           {/* <div className="flex-1">
@@ -403,49 +403,49 @@ const SubscriptionsTab = () => {
       )}
 
       {/* Subscriptions Table */}
-      <Card className="overflow-hidden bg-white">
+      <Card className="overflow-hidden bg-white dark:bg-gray-700">
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
+          <table className="w-full dark:bg-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-100 uppercase">
                   Subscription ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500  dark:text-gray-100 uppercase">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500  dark:text-gray-100 uppercase">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500  dark:text-gray-100 uppercase">
                   Net Price
                 </th>
                 {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Discounted Price
                 </th> */}
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500  dark:text-gray-100 uppercase">
                   States Chosen
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500  dark:text-gray-100 uppercase">
                   Started At
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
               {loading ? (
-                <tr>
+                <tr className="dark:bg-gray-700">
                   <td colSpan="8" className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center">
                       <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900"></div>
-                      <span className="ml-2">Loading subscriptions...</span>
+                      <span className="ml-2 dark:text-gray-100">Loading subscriptions...</span>
                     </div>
                   </td>
                 </tr>
               ) : subscriptions.length === 0 ? (
-                <tr>
+                <tr className="dark:bg-gray-700">
                   <td
                     colSpan="8"
-                    className="px-6 py-4 text-center text-gray-500"
+                    className="px-6 py-4 text-center text-gray-500 dark:text-gray-100"
                   >
                     No subscriptions found. Try adjusting your search or
                     filters.
@@ -458,20 +458,20 @@ const SubscriptionsTab = () => {
                     className="hover:bg-gray-50"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {subscription.stripe_subscription_id || subscription.id}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-gray-900 dark:text-gray-100">
                         {subscription.name}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap dark:text-gray-100">
                       {getSubscriptionStatusBadge(subscription.status)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-gray-900 dark:text-gray-100">
                         {formatCurrency(subscription.net_price)}
                       </div>
                     </td>
@@ -480,14 +480,14 @@ const SubscriptionsTab = () => {
                     </td> */}
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div
-                        className="max-w-xs truncate text-sm text-gray-900"
+                        className="max-w-xs truncate text-sm text-gray-900 dark:text-gray-100"
                         title={formatStates(subscription.states_chosen)}
                       >
                         {formatStates(subscription.states_chosen)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-gray-900 dark:text-gray-100">
                         {formatDate(subscription.started_at)}
                       </div>
                     </td>

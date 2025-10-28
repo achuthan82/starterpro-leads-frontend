@@ -50,7 +50,7 @@ const LeadStateList = ({ selectedStates = [], onViewLeads, pricingData }) => {
     <div>
       <div className="flex justify-between items-center mb-4">
         <div>
-          <span className="text-gray-700 font-medium">Showing page {page} of {totalPages || 1}</span>
+          <span className="text-gray-700 font-medium dark:text-gray-100">Showing page {page} of {totalPages || 1}</span>
         </div>
         <div className="flex items-center gap-2">
           <span>Per page:</span>

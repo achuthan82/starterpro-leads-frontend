@@ -88,7 +88,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
     },
     {
       id: "marketplace",
-      label: "Marketplace",
+      label: "Lead Bank",
       icon: ShoppingCartIcon,
       href: "/marketplace",
     },
