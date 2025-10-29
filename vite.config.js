@@ -11,4 +11,7 @@ export default defineConfig({
   plugins: [react(), jsconfigPaths(), svgr(),
   eslint(), tailwindcss(),
   ],
+  // server: {
+  //       port: 3000, // Set the desired port here
+  // },
 })

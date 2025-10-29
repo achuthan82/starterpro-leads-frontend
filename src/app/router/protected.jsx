@@ -189,6 +189,14 @@ const protectedRoutes = {
                 ).default,
               }),
             },
+             {
+              path: "admin/power-dialer",
+              lazy: async () => ({
+                Component: (
+              await import("app/pages/powerDialer/PowerDialer")
+                ).default,
+              }),
+            },
             {
               path: "admin/users",
               lazy: async () => ({

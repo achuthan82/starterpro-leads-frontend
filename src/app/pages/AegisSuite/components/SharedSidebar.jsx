@@ -18,6 +18,7 @@ import {
   // QuestionMarkCircleIcon,
   // ChartBarSquareIcon,
   SpeakerWaveIcon,
+  PhoneIcon
 } from "@heroicons/react/24/outline";
 import Logo from "assets/app-logo/logo-text.svg?.react";
 import { useNavigate } from "react-router";
@@ -118,6 +119,12 @@ const SharedSidebar = ({ currentPath = "" }) => {
 
   // Admin-only menu items
   const adminItems = [
+    {
+      id: "power-dialer",
+      label: "Power Dialer",
+      icon: PhoneIcon,
+      href: "/admin/power-dialer",
+    },
     {
       id: "admin-agents",
       label: "Agent Management",
