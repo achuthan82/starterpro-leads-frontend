@@ -13,7 +13,7 @@ const CartButton = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
-      className="fixed top-4 right-8 z-50 bg-[#0a2463] text-white rounded-full shadow-lg flex items-center justify-center w-16 h-16 hover:bg-[#0a1a4a] transition-colors"
+      className="fixed top-4 right-8 z-50 bg-[#0a2463] dark:bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center w-16 h-16 hover:bg-[#0a1a4a] dark:hover:bg-blue-700 transition-colors"
       aria-label="View Cart"
     >
       {/* <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
@@ -23,7 +23,7 @@ const CartButton = ({ onClick }) => {
       </svg> */}
       <ShoppingCartIcon className="w-8 h-8 text-white" />
 
-      <span className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+      <span className="absolute top-2 right-2 bg-green-500 dark:bg-green-600 text-white text-xs font-bold rounded-full px-2 py-0.5">
         {loading ? '...' : totalCount}
       </span>
     </button>

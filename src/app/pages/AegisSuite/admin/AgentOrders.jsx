@@ -237,16 +237,16 @@ const AgentOrders = () => {
   // Show error state
   if (error && !userId) {
     return (
-      <div className="flex h-screen bg-[var(--color-ecru-white)]">
+      <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
         <SharedSidebar currentPath="/admin/agents" />
         <div className="flex-1 flex items-center justify-center">
           <Card className="p-8 max-w-md mx-auto text-center">
             <ExclamationTriangleIcon className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Navigation Error</h3>
-            <p className="text-gray-600 mb-4">{error}</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Navigation Error</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">{error}</p>
             <button
               onClick={() => navigate('/admin/agents')}
-              className="bg-[var(--color-atoll)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-atoll)]/90"
+              className="bg-[var(--color-atoll)] dark:bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-[var(--color-atoll)]/90 dark:hover:bg-blue-700"
             >
               Back to Agent Management
             </button>
@@ -257,27 +257,27 @@ const AgentOrders = () => {
   }
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)]">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
       <SharedSidebar currentPath="/admin/agents" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => navigate('/admin/agents')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
-                <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
+                <ArrowLeftIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-[var(--color-atoll)]">
+                <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
                   Orders & Subscriptions
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-gray-600 dark:text-gray-300 mt-1">
                   {agent?.name} - View purchases and subscriptions
                 </p>
               </div>
@@ -329,8 +329,8 @@ const AgentOrders = () => {
               onClick={() => handleTabChange('orders')}
               className={`px-6 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2 ${
                 activeTab === 'orders'
-                  ? 'bg-[var(--color-atoll)] text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-[var(--color-atoll)] dark:bg-blue-600 text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               <ShoppingBagIcon className="w-5 h-5" />
@@ -340,8 +340,8 @@ const AgentOrders = () => {
               onClick={() => handleTabChange('subscriptions')}
               className={`px-6 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2 ${
                 activeTab === 'subscriptions'
-                  ? 'bg-[var(--color-atoll)] text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-[var(--color-atoll)] dark:bg-blue-600 text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               <CreditCardIcon className="w-5 h-5" />
@@ -357,24 +357,24 @@ const AgentOrders = () => {
                 <div className="flex-1">
                   {
                     activeTab !== 'orders' && <div className="relative">
-                    <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500" />
                     <input
                       type="text"
                       placeholder={`Search ${activeTab}...`}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className={`w-full pl-10 pr-20 py-2 border rounded-lg focus:border-[var(--color-atoll)] focus:outline-none ${
-                        searchTerm.trim() ? 'border-[var(--color-atoll)] bg-blue-50' : 'border-gray-300'
+                      className={`w-full pl-10 pr-20 py-2 border rounded-lg focus:border-[var(--color-atoll)] focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
+                        searchTerm.trim() ? 'border-[var(--color-atoll)] dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'
                       }`}
                     />
                     {searchTerm.trim() && (
-                      <div className="absolute right-16 top-1/2 transform -translate-y-1/2 text-xs text-[var(--color-atoll)] font-medium">
+                      <div className="absolute right-16 top-1/2 transform -translate-y-1/2 text-xs text-[var(--color-atoll)] dark:text-blue-400 font-medium">
                         Active
                       </div>
                     )}
                     <button 
                       onClick={handleSearch}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80 font-medium"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--color-atoll)] dark:text-blue-400 hover:text-[var(--color-atoll)]/80 dark:hover:text-blue-300 font-medium"
                     >
                       Search
                     </button>
@@ -385,11 +385,11 @@ const AgentOrders = () => {
 
                 {/* Filters */}
                 <div className="flex items-center space-x-3">
-                  <FunnelIcon className="w-5 h-5 text-gray-400" />
+                  <FunnelIcon className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                   <select
                     value={statusFilter}
                     onChange={(e) => {setStatusFilter(e.target.value); setCurrentPage(1); fetchAgentOrders(1, perPage, e.target.value) }}
-                    className="border border-gray-300 rounded-lg px-3 py-2 focus:border-[var(--color-atoll)] focus:outline-none"
+                    className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:border-[var(--color-atoll)] focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   >
                     <option value="all">All Status</option>
                     {activeTab === 'orders' ? (
@@ -411,7 +411,7 @@ const AgentOrders = () => {
                   <select
                     value={perPage}
                     onChange={(e) => handlePerPageChange(parseInt(e.target.value))}
-                    className="border border-gray-300 rounded-lg px-3 py-2 focus:border-[var(--color-atoll)] focus:outline-none"
+                    className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:border-[var(--color-atoll)] focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   >
                     <option value={10}>10 per page</option>
                     <option value={25}>25 per page</option>
@@ -421,8 +421,8 @@ const AgentOrders = () => {
               </div>
 
               {/* Info Row */}
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
-                <span className="text-sm text-gray-600">
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <span className="text-sm text-gray-600 dark:text-gray-300">
                   {totalRecords > 0 && (
                     <>Showing {((currentPage - 1) * perPage) + 1}-{Math.min(currentPage * perPage, totalRecords)} of {totalRecords} {activeTab}</>
                   )}
@@ -433,56 +433,56 @@ const AgentOrders = () => {
 
           {/* Error Message */}
           {error && userId && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600">{error}</p>
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-red-600 dark:text-red-400">{error}</p>
             </div>
           )}
 
           {/* Data Table */}
           <Card className="overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       {activeTab === 'orders' ? `Order` : 'Subscription'}
                     </th>
-                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       {activeTab === 'orders' ? 'Product' : 'Plan'}
                     </th> */}
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Amount
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {loading ? (
                     <tr>
                       <td colSpan="6" className="px-6 py-8 text-center">
-                        <div className="flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+                        <div className="flex items-center justify-center text-gray-900 dark:text-gray-100">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 dark:border-gray-100"></div>
                           <span className="ml-2">Loading {activeTab}...</span>
                         </div>
                       </td>
                     </tr>
                   ) : filteredData.length === 0 ? (
                     <tr>
-                      <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan="6" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                         No {activeTab} found for this agent
                         {searchTerm && (
                           <div className="mt-2">
                             <button
                               onClick={() => {setSearchTerm(''); handleSearch();}}
-                              className="text-[var(--color-atoll)] hover:underline text-sm"
+                              className="text-[var(--color-atoll)] dark:text-blue-400 hover:underline text-sm"
                             >
                               Clear search
                             </button>
@@ -492,29 +492,29 @@ const AgentOrders = () => {
                     </tr>
                   ) : (
                     filteredData.map((item, index) => (
-                      <tr key={item.id || index} className="hover:bg-gray-50">
+                      <tr key={item.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
                               {activeTab === 'orders' ? (
-                                <ShoppingBagIcon className="w-5 h-5 text-gray-600" />
+                                <ShoppingBagIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                               ) : (
-                                <CreditCardIcon className="w-5 h-5 text-gray-600" />
+                                <CreditCardIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                               )}
                             </div>
                             <div className="ml-4">
-                              {/* <div className="text-sm font-medium text-gray-900">
+                              {/* <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                 #{item.id || item.acknowledgement_id || 'N/A'}
                               </div> */}
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
                                 {activeTab === 'orders' ? 'Order' : 'Subscription'}
                                 {activeTab === 'orders' && (
-                                  <div className="text-xs text-gray-500">
+                                  <div className="text-xs text-gray-500 dark:text-gray-400">
                                     #{item.id || item.stripe_payment_id || 'N/A'}
                                   </div>
                                 )}
                                 {activeTab === 'subscriptions' && (
-                                  <div className="text-xs text-gray-500">
+                                  <div className="text-xs text-gray-500 dark:text-gray-400">
                                     #{item.name || item.stripe_subscription_id || 'N/A'}
                                   </div>
                                 )}
@@ -530,14 +530,14 @@ const AgentOrders = () => {
                             {item.description || item.plan_description || ''}
                           </div>
                         </td> */}
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                           {activeTab !== 'subscriptions' &&
                           <div className="font-medium">
                             ${item.amount_received || 0}
                           </div>
                           }
                           {activeTab === 'subscriptions' && item.billing_cycle && (
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
                               per {item.billing_cycle}
                             </div>
                           )}
@@ -552,7 +552,7 @@ const AgentOrders = () => {
                             {item.payment_status || item.status || 'pending'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                           <div className="flex items-center space-x-1">
                             <CalendarIcon className="w-4 h-4" />
                             <span>
@@ -565,7 +565,7 @@ const AgentOrders = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <button
                             onClick={() => handleViewOrder(item)}
-                            className="text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80 flex items-center space-x-1"
+                            className="text-[var(--color-atoll)] dark:text-blue-400 hover:text-[var(--color-atoll)]/80 dark:hover:text-blue-300 flex items-center space-x-1"
                           >
                             <EyeIcon className="w-4 h-4" />
                             <span>View</span>
@@ -580,8 +580,8 @@ const AgentOrders = () => {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="bg-white px-6 py-3 border-t border-gray-200 flex items-center justify-between">
-                <div className="text-sm text-gray-700">
+              <div className="bg-white dark:bg-gray-800 px-6 py-3 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <div className="text-sm text-gray-700 dark:text-gray-300">
                   Showing {((currentPage - 1) * perPage) + 1} to {Math.min(currentPage * perPage, totalRecords)} of {totalRecords} results (Page {currentPage} of {totalPages})
                 </div>
                 
@@ -591,8 +591,8 @@ const AgentOrders = () => {
                     disabled={currentPage <= 1}
                     className={`px-3 py-1 rounded border ${
                       currentPage <= 1
-                        ? 'border-gray-300 text-gray-400 cursor-not-allowed'
-                        : 'border-gray-300 text-gray-700 hover:bg-gray-100'
+                        ? 'border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   >
                     <ChevronLeftIcon className="w-4 h-4" />
@@ -617,8 +617,8 @@ const AgentOrders = () => {
                         onClick={() => handlePageChange(pageNum)}
                         className={`px-3 py-1 rounded border ${
                           currentPage === pageNum
-                            ? 'border-[var(--color-atoll)] bg-[var(--color-atoll)] text-white'
-                            : 'border-gray-300 text-gray-700 hover:bg-gray-100'
+                            ? 'border-[var(--color-atoll)] dark:border-blue-500 bg-[var(--color-atoll)] dark:bg-blue-600 text-white'
+                            : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
                         {pageNum}
@@ -631,8 +631,8 @@ const AgentOrders = () => {
                     disabled={currentPage >= totalPages}
                     className={`px-3 py-1 rounded border ${
                       currentPage >= totalPages
-                        ? 'border-gray-300 text-gray-400 cursor-not-allowed'
-                        : 'border-gray-300 text-gray-700 hover:bg-gray-100'
+                        ? 'border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   >
                     <ChevronRightIcon className="w-4 h-4" />
@@ -646,16 +646,16 @@ const AgentOrders = () => {
 
       {/* Order Details Modal */}
       {showOrderModal && selectedOrder && (
-        <div className="fixed inset-0 bg-gray-600/65 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-2xl shadow-lg rounded-lg bg-white mb-10">
+        <div className="fixed inset-0 bg-gray-600/65 dark:bg-black/75 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-10 mx-auto p-5 border border-gray-200 dark:border-gray-700 w-11/12 max-w-2xl shadow-lg rounded-lg bg-white dark:bg-gray-800 mb-10">
             {/* Modal Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-gray-200">
-              <h3 className="text-xl font-semibold text-[var(--color-atoll)]">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-semibold text-[var(--color-atoll)] dark:text-blue-400">
                 {activeTab === 'orders' ? 'Order Details' : 'Subscription Details'}
               </h3>
               <button 
                 onClick={handleCloseOrderModal} 
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -669,13 +669,13 @@ const AgentOrders = () => {
                 {/* Order/Subscription ID */}
                 {
                   activeTab !== 'subscriptions' ? (<div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600">ID:</span>
-                  <span className="text-sm text-gray-900">#{selectedOrder.id || selectedOrder.stripe_payment_id || 'N/A'}</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">ID:</span>
+                  <span className="text-sm text-gray-900 dark:text-gray-100">#{selectedOrder.id || selectedOrder.stripe_payment_id || 'N/A'}</span>
                 </div>
                 ) : (
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">ID:</span>
-                    <span className="text-sm text-gray-900">#{selectedOrder.acknowledgment_id || selectedOrder.stripe_subscription_id || 'N/A'}</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">ID:</span>
+                    <span className="text-sm text-gray-900 dark:text-gray-100">#{selectedOrder.acknowledgment_id || selectedOrder.stripe_subscription_id || 'N/A'}</span>
                   </div>
                 )}
               
@@ -693,38 +693,38 @@ const AgentOrders = () => {
                 {/* Plan */}
                 {selectedOrder.name && (
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">Plan:</span>
-                    <span className="text-sm text-gray-900">{selectedOrder.name}</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Plan:</span>
+                    <span className="text-sm text-gray-900 dark:text-gray-100">{selectedOrder.name}</span>
                   </div>
                 )}
 
                 {/* Category */}
                 {selectedOrder.category && (
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">Category:</span>
-                    <span className="text-sm text-gray-900">{selectedOrder.category}</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Category:</span>
+                    <span className="text-sm text-gray-900 dark:text-gray-100">{selectedOrder.category}</span>
                   </div>
                 )}
 
                 {/* Source */}
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600">Source:</span>
-                  <span className="text-sm text-gray-900">{selectedOrder.source || 'NEW MTG'}</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Source:</span>
+                  <span className="text-sm text-gray-900 dark:text-gray-100">{selectedOrder.source || 'NEW MTG'}</span>
                 </div>
 
                 {/* States */}
                 {selectedOrder.states_chosen && selectedOrder.states_chosen.length > 0 && (
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">States Chosen:</span>
-                    <span className="text-sm text-gray-900">{selectedOrder.states_chosen.join(', ')}</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">States Chosen:</span>
+                    <span className="text-sm text-gray-900 dark:text-gray-100">{selectedOrder.states_chosen.join(', ')}</span>
                   </div>
                 )}
 
                 {/* Fresh Leads (for orders) */}
                 {activeTab === 'orders' && (
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">Fresh Leads:</span>
-                    <span className="text-sm text-gray-900">
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Fresh Leads:</span>
+                    <span className="text-sm text-gray-900 dark:text-gray-100">
                       {selectedOrder.is_fresh_leads || selectedOrder.fresh_leads ? 'Yes' : 'No'}
                     </span>
                   </div>
@@ -733,8 +733,8 @@ const AgentOrders = () => {
                 {/* Quantity (for orders) */}
                 {activeTab === 'orders' && selectedOrder.quantity && (
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">Quantity:</span>
-                    <span className="text-sm text-gray-900">{selectedOrder.quantity}</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Quantity:</span>
+                    <span className="text-sm text-gray-900 dark:text-gray-100">{selectedOrder.quantity}</span>
                   </div>
                 )}
 
@@ -744,26 +744,26 @@ const AgentOrders = () => {
                 {/* Orginal Price */}
                   {selectedOrder.net_price && (
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-600">Net Price:</span>
-                      <p className="text-sm text-gray-900">${selectedOrder.net_price}</p>
+                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Net Price:</span>
+                      <p className="text-sm text-gray-900 dark:text-gray-100">${selectedOrder.net_price}</p>
                     </div>
                   )}
 
                   {/* Discount Price */}
                   {selectedOrder.discounted_price && (
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-600">Discount Price:</span>
-                      <p className="text-sm text-gray-900">${selectedOrder.discounted_price}</p>
+                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Discount Price:</span>
+                      <p className="text-sm text-gray-900 dark:text-gray-100">${selectedOrder.discounted_price}</p>
                     </div>
                   )}
 
                   {/* Amount Received */}
                   {selectedOrder?.amount_received && (
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                       Amount Received:
                     </span>
-                    <span className="text-sm text-gray-900 font-semibold">
+                    <span className="text-sm text-gray-900 dark:text-gray-100 font-semibold">
                       ${selectedOrder.amount_received || '0'}
                     </span>
                   </div>
@@ -779,10 +779,10 @@ const AgentOrders = () => {
 
                 {/* Date */}
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     {activeTab === 'orders' ? 'Order Date:' : 'Created Date:'}
                   </span>
-                  <span className="text-sm text-gray-900">
+                  <span className="text-sm text-gray-900 dark:text-gray-100">
                     {selectedOrder.created_at || selectedOrder.start_date
                       ? new Date(selectedOrder.created_at).toLocaleDateString()
                       : 'N/A'}
@@ -792,10 +792,10 @@ const AgentOrders = () => {
                 {/* Start Date */}
                 {selectedOrder.started_at && (
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                    Started At
                   </span>
-                  <span className="text-sm text-gray-900">
+                  <span className="text-sm text-gray-900 dark:text-gray-100">
                     {selectedOrder.started_at
                       ? new Date(selectedOrder.started_at).toLocaleDateString()
                       : 'N/A'}
@@ -806,10 +806,10 @@ const AgentOrders = () => {
                 {/* Cancel Date */}
                 {(selectedOrder.cancel_at || selectedOrder.cancelled_at) && (
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Cancel Date:
                   </span>
-                  <span className="text-sm text-gray-900">
+                  <span className="text-sm text-gray-900 dark:text-gray-100">
                     {selectedOrder.cancel_at || selectedOrder.cancelled_at
                       ? new Date(selectedOrder.cancel_at || selectedOrder.cancelled_at).toLocaleDateString()
                       : 'N/A'}
@@ -820,16 +820,16 @@ const AgentOrders = () => {
                 {/* Cancel Reason */}
                 {(selectedOrder.cancel_reason || selectedOrder.cancellation_reason) && (
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">Cancel Reason:</span>
-                    <p className="text-sm text-gray-900">{selectedOrder.cancel_reason || selectedOrder.cancellation_reason}</p>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Cancel Reason:</span>
+                    <p className="text-sm text-gray-900 dark:text-gray-100">{selectedOrder.cancel_reason || selectedOrder.cancellation_reason}</p>
                   </div>
                 )}
 
                 {/* Description */}
                 {selectedOrder.description && (
-                  <div className="border-t border-gray-200 pt-4">
-                    <span className="text-sm font-medium text-gray-600 block mb-2">Description:</span>
-                    <p className="text-sm text-gray-900">{selectedOrder.description}</p>
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400 block mb-2">Description:</span>
+                    <p className="text-sm text-gray-900 dark:text-gray-100">{selectedOrder.description}</p>
                   </div>
                 )}
 
@@ -838,16 +838,16 @@ const AgentOrders = () => {
                   <>
                     {selectedOrder.end_date && (
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-gray-600">End Date:</span>
-                        <span className="text-sm text-gray-900">
+                        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">End Date:</span>
+                        <span className="text-sm text-gray-900 dark:text-gray-100">
                           {new Date(selectedOrder.end_date).toLocaleDateString()}
                         </span>
                       </div>
                     )}
                     {selectedOrder.next_billing_date && (
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-gray-600">Next Billing:</span>
-                        <span className="text-sm text-gray-900">
+                        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Next Billing:</span>
+                        <span className="text-sm text-gray-900 dark:text-gray-100">
                           {new Date(selectedOrder.next_billing_date).toLocaleDateString()}
                         </span>
                       </div>
@@ -858,10 +858,10 @@ const AgentOrders = () => {
             </div>
 
             {/* Modal Footer */}
-            <div className="flex items-center justify-end pt-4 border-t border-gray-200">
+            <div className="flex items-center justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
               <button 
                 onClick={handleCloseOrderModal}
-                className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 Close
               </button>

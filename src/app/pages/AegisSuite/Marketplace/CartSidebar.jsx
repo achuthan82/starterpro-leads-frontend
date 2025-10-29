@@ -176,32 +176,32 @@ const CartSidebar = ({ open, onClose }) => {
 
   return (
     <div
-      className={`fixed top-0 right-0 h-full w-96 max-w-full bg-white shadow-2xl z-[200] transform transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}
+      className={`fixed top-0 right-0 h-full w-96 max-w-full bg-white dark:bg-gray-800 shadow-2xl z-[200] transform transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}
       style={{ boxShadow: open ? 'rgba(0,0,0,0.2) -4px 0px 24px' : 'none' }}
     >
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-xl font-bold text-[#0a2463]">Your Cart</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-[#0a2463] dark:text-blue-400">Your Cart</h2>
+          <button onClick={onClose} className="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-2xl">&times;</button>
         </div>
         <div className="flex-1 overflow-y-auto p-4">
           {loading ? (
-            <div className="text-center py-8">Loading...</div>
+            <div className="text-center py-8 text-gray-900 dark:text-gray-100">Loading...</div>
           ) : error ? (
-            <div className="text-red-500 bg-red-100 p-4 rounded-md">{error}</div>
+            <div className="text-red-500 dark:text-red-400 bg-red-100 dark:bg-red-900/20 p-4 rounded-md">{error}</div>
           ) : cart.length === 0 ? (
-            <div className="text-center text-gray-500 py-12">Your cart is empty.</div>
+            <div className="text-center text-gray-500 dark:text-gray-400 py-12">Your cart is empty.</div>
           ) : (
             <ul className="space-y-4">
               {cart.map(item => (
-                <li key={item.id} className="border rounded-lg p-4 flex flex-col gap-2 bg-gray-50">
+                <li key={item.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex flex-col gap-2 bg-gray-50 dark:bg-gray-700">
                   <div className="flex justify-between items-center">
                     <div>
-                      <div className="font-semibold text-gray-800">{item.state || item.state_code}</div>
-                      <div className="text-xs text-gray-500">Month: {item.month} | {item.completed ? 'Completed' : 'Incomplete'}</div>
+                      <div className="font-semibold text-gray-800 dark:text-gray-100">{item.state || item.state_code}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Month: {item.month} | {item.completed ? 'Completed' : 'Incomplete'}</div>
                     </div>
                     <button
-                      className="text-red-500 hover:text-red-700 text-lg"
+                      className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-lg"
                       onClick={() => removeFromCart(item.id)}
                       title="Remove"
                     >
@@ -209,55 +209,55 @@ const CartSidebar = ({ open, onClose }) => {
                     </button>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm">Qty:</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Qty:</span>
                     <input
                       type="number"
                       min={1}
                       value={pendingQuantities[item.id] ?? item.quantity}
                       onChange={e => handleInputChange(item.id, e.target.value === '' ? '' : Number(e.target.value))}
-                      className="w-16 border rounded px-2 py-1 text-center"
+                      className="w-16 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-center bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
                       disabled={loading}
                     />
                     <button
-                      className={`ml-2 px-3 py-1 rounded bg-[#0a2463] text-white text-xs font-semibold ${pendingQuantities[item.id] === item.quantity || !pendingQuantities[item.id] || isNaN(pendingQuantities[item.id]) || Number(pendingQuantities[item.id]) < 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0a1a4a]'}`}
+                      className={`ml-2 px-3 py-1 rounded bg-[#0a2463] dark:bg-blue-600 text-white text-xs font-semibold ${pendingQuantities[item.id] === item.quantity || !pendingQuantities[item.id] || isNaN(pendingQuantities[item.id]) || Number(pendingQuantities[item.id]) < 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0a1a4a] dark:hover:bg-blue-700'}`}
                       disabled={pendingQuantities[item.id] === item.quantity || !pendingQuantities[item.id] || isNaN(pendingQuantities[item.id]) || Number(pendingQuantities[item.id]) < 1 || loading}
                       onClick={() => handleUpdate(item.id)}
                     >
                       Update
                     </button>
-                    <span className="ml-auto font-semibold text-[#0a2463]">${item.unit_price} each</span>
+                    <span className="ml-auto font-semibold text-[#0a2463] dark:text-blue-400">${item.unit_price} each</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs mt-1">
-                    <span className="text-gray-500">Available stock:</span>
-                    <span className="font-semibold text-gray-800">{stock[item.id]?.stock ?? '...'}</span>
-                    {stockError[item.id] && <span className="text-red-500 ml-2">{stockError[item.id]}</span>}
+                    <span className="text-gray-500 dark:text-gray-400">Available stock:</span>
+                    <span className="font-semibold text-gray-800 dark:text-gray-200">{stock[item.id]?.stock ?? '...'}</span>
+                    {stockError[item.id] && <span className="text-red-500 dark:text-red-400 ml-2">{stockError[item.id]}</span>}
                   </div>
-                  <div className="flex justify-end text-sm text-gray-600">
-                    Total: <span className="ml-2 font-bold text-gray-800">${(item.unit_price * item.quantity).toFixed(2)}</span>
+                  <div className="flex justify-end text-sm text-gray-600 dark:text-gray-300">
+                    Total: <span className="ml-2 font-bold text-gray-800 dark:text-gray-100">${(item.unit_price * item.quantity).toFixed(2)}</span>
                   </div>
                 </li>
               ))}
             </ul>
           )}
         </div>
-        <div className="p-4 border-t bg-gray-50">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
           <div className="flex flex-col gap-1 mb-2">
             <div className="flex justify-between items-center">
-              <span className="font-semibold text-base">Subtotal:</span>
-              <span className="text-base font-bold text-gray-700">${roundedGrandTotal}</span>
+              <span className="font-semibold text-base text-gray-900 dark:text-gray-100">Subtotal:</span>
+              <span className="text-base font-bold text-gray-700 dark:text-gray-200">${roundedGrandTotal}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="font-semibold text-base">Commission (3%):</span>
-              <span className="text-base font-bold text-gray-700">${commission}</span>
+              <span className="font-semibold text-base text-gray-900 dark:text-gray-100">Commission (3%):</span>
+              <span className="text-base font-bold text-gray-700 dark:text-gray-200">${commission}</span>
             </div>
             <div className="flex justify-between items-center mt-1">
-              <span className="font-semibold text-lg">Total:</span>
-              <span className="text-xl font-bold text-[#0a2463]">${roundedTotalWithCommission}</span>
+              <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">Total:</span>
+              <span className="text-xl font-bold text-[#0a2463] dark:text-blue-400">${roundedTotalWithCommission}</span>
             </div>
           </div>
-          {checkoutError && <div className="text-red-500 text-sm mb-2">{checkoutError}</div>}
+          {checkoutError && <div className="text-red-500 dark:text-red-400 text-sm mb-2">{checkoutError}</div>}
           <button
-            className="w-full bg-[#0a2463] text-white font-bold py-3 rounded-lg hover:bg-[#0a1a4a] transition-colors text-lg"
+            className="w-full bg-[#0a2463] dark:bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-[#0a1a4a] dark:hover:bg-blue-700 transition-colors text-lg disabled:opacity-50"
             disabled={cart.length === 0 || loading || checkoutLoading}
             onClick={handleCheckout}
           >
