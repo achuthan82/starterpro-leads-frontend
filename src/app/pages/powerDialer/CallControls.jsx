@@ -1,109 +1,81 @@
-import { useState } from "react";
-import {
-  DocumentTextIcon,
-  ChatBubbleLeftEllipsisIcon,
-} from "@heroicons/react/24/solid";
+import { MicrophoneIcon, PhoneXMarkIcon, SpeakerWaveIcon } from '@heroicons/react/24/solid';
 
-export default function ScriptTranscriptTabs() {
-  const [activeTab, setActiveTab] = useState("script");
+const CallControls = ({
+  isCallActive,
+  isDialing,
+  isCallEnded,
+  onMakeCall,
+  onHangupCall,
+  selectedLead,
+  callDuration
+}) => {
+  const formatCallDuration = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  if (!selectedLead) {
+    return (
+      <div className="bg-white rounded-xl shadow-md p-6 text-center">
+        <p className="text-gray-500 text-lg font-medium">Ready to Make Calls</p>
+        <p className="text-gray-400 text-sm mt-1">Select a lead from the list to start calling</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full bg-white rounded-xl shadow p-4">
-      {/* Tabs Header */}
-      <div className="flex space-x-4 border-b pb-2 mb-4">
-        <button
-          onClick={() => setActiveTab("script")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-t-lg font-medium transition ${
-            activeTab === "script"
-              ? "bg-blue-100 text-blue-700 border-b-2 border-blue-500"
-              : "text-gray-600 hover:text-blue-500"
-          }`}
-        >
-          <DocumentTextIcon className="w-5 h-5" />
-          Script
-        </button>
-
-        <button
-          onClick={() => setActiveTab("transcript")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-t-lg font-medium transition ${
-            activeTab === "transcript"
-              ? "bg-blue-100 text-blue-700 border-b-2 border-blue-500"
-              : "text-gray-600 hover:text-blue-500"
-          }`}
-        >
-          <ChatBubbleLeftEllipsisIcon className="w-5 h-5" />
-          Live Transcript
-        </button>
+    <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-sm mx-auto text-center">
+      {/* Profile Circle */}
+      <div className="flex flex-col items-center mb-4">
+        <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-3">
+          <span className="text-blue-600 font-bold text-xl">{selectedLead.initials}</span>
+        </div>
+        <h3 className="font-semibold text-gray-900 text-lg">{selectedLead.name}</h3>
+        <p className="text-gray-600 text-sm">{selectedLead.phone}</p>
+        <p className="text-gray-500 text-sm mt-1">Calling from: (305) 123-4567</p>
       </div>
 
-      {/* Tab Content */}
-      {activeTab === "script" && (
-        <div className="space-y-3">
-          <h2 className="font-semibold text-lg text-gray-700">Call Script</h2>
-
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2">
-            {[
-              "Opening",
-              "Qualification",
-              "Objections",
-              "Closing",
-              "Follow-up",
-              "Appointment",
-              "Voicemail",
-              "Referral",
-            ].map((tag) => (
-              <span
-                key={tag}
-                className="text-xs font-medium px-2 py-1 rounded-md"
-                style={{
-                  backgroundColor:
-                    tag === "Opening"
-                      ? "#E0E7FF"
-                      : tag === "Qualification"
-                      ? "#DCFCE7"
-                      : tag === "Objections"
-                      ? "#FEF9C3"
-                      : tag === "Closing"
-                      ? "#F3E8FF"
-                      : tag === "Follow-up"
-                      ? "#FEE2E2"
-                      : tag === "Appointment"
-                      ? "#DBEAFE"
-                      : tag === "Voicemail"
-                      ? "#F3F4F6"
-                      : "#FCE7F3",
-                  color: "#374151",
-                }}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          {/* Script Text */}
-          <div className="p-3 bg-gray-50 rounded-lg text-sm text-gray-700 leading-relaxed">
-            Hi Michael, this is Sarah Wilson from Aegis Suite. I hope I’m catching you at a good
-            time.
-            <br />
-            <br />
-            I’m calling because you recently responded to our information about mortgage protection
-            insurance. I understand you own a home in FL-33101 and may be interested in protecting
-            your family’s mortgage payments if something unexpected happens to you.
-          </div>
+      {/* Status Label */}
+      {isDialing && (
+        <div className="bg-yellow-100 text-yellow-700 rounded-full px-4 py-1 inline-block font-medium text-sm mb-4">
+          Dialing...
+        </div>
+      )}
+      {isCallActive && (
+        <div className="bg-green-100 text-green-700 rounded-full px-4 py-1 inline-block font-medium text-sm mb-4">
+          Connected • {formatCallDuration(callDuration)}
+        </div>
+      )}
+      {isCallEnded && (
+        <div className="bg-red-100 text-red-700 rounded-full px-4 py-1 inline-block font-medium text-sm mb-4">
+          Call Ended
         </div>
       )}
 
-      {activeTab === "transcript" && (
-        <div className="space-y-3">
-          <h2 className="font-semibold text-lg text-gray-700">Live Transcription</h2>
+      {/* Call Control Buttons */}
+      <div className="flex items-center justify-center gap-6 mt-4">
+        <button className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition">
+          <MicrophoneIcon className="w-6 h-6 text-gray-600" />
+        </button>
 
-          <div className="flex flex-col items-center justify-center text-gray-500 bg-gray-50 p-10 rounded-lg">
-            <ChatBubbleLeftEllipsisIcon className="w-8 h-8 opacity-50 mb-2" />
-            <p>Call transcription will appear here when connected</p>
-          </div>
-        </div>
-      )}
+        <button
+          onClick={isCallActive || isDialing ? onHangupCall : onMakeCall}
+          className={`w-16 h-16 flex items-center justify-center rounded-full shadow-md transition ${
+            isCallActive || isDialing
+              ? 'bg-red-600 hover:bg-red-700'
+              : 'bg-green-600 hover:bg-green-700'
+          }`}
+        >
+          <PhoneXMarkIcon className="w-8 h-8 text-white" />
+        </button>
+
+        <button className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition">
+          <SpeakerWaveIcon className="w-6 h-6 text-gray-600" />
+        </button>
+      </div>
     </div>
   );
-}
+};
+
+export default CallControls;
