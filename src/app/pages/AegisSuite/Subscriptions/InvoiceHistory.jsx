@@ -86,10 +86,10 @@ const InvoiceHistory = ({navigate}) => {
         <>
         {invoiceList && invoiceList.length > 0 ? (
         <Card>
-            <div className="p-6 bg-white shieldnest-shadow overflow-hidden rounded-xl">
+            <div className="p-6 bg-white shieldnest-shadow overflow-hidden rounded-xl dark:bg-gray-800">
                 <div className="flex justify-between items-center mb-4 px-5">
-                    <h2 className="text-2xl font-bold">Invoice History</h2>
-                    <div className="flex items-center gap-2 text-blue-600">
+                    <h2 className="text-2xl font-bold dark:text-gray-100">Invoice History</h2>
+                    <div className="flex items-center gap-2 text-blue-600 dark:text-gray-100">
                         <Button variant="solid" onClick={download} disabled={!pagination || pagination?.total < 1 || loading}>{!loading ? 'Download All' : <Spinner/> }</Button>
                     </div>
                 </div>

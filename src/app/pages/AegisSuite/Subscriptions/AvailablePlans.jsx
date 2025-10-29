@@ -18,7 +18,7 @@ const AvailablePlans = ({ subscription }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState('')
-  const [isOpen, { open, close }] = useDisclosure(true);
+  const [isOpen, { open, close }] = useDisclosure(false);
   const [isAlertOpen, { open: alertOpen, close: alertClose }] = useDisclosure(false);
   const [pagination, setPagination] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
