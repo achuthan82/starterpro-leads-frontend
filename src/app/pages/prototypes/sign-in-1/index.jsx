@@ -176,9 +176,9 @@ export default function SignInV1() {
                 Suite
               </span>
             </h1> */}
-            <p className="text-gray-700 dark:text-gray-300">
+            {/* <p className="text-gray-700 dark:text-gray-300">
               Mortgage Protection Lead Management System
-            </p>
+            </p> */}
           </div>
         </div>
         <Card className="mt-1 max-w-[28rem] rounded-lg bg-white dark:bg-gray-800 p-5 lg:p-8">
@@ -261,7 +261,7 @@ export default function SignInV1() {
                 }
               />
             </div>
-            <div className="mt-4 space-y-2 py-2">
+            {/* <div className="mt-4 space-y-2 py-2">
               <div className="flex items-center gap-2">
                 <div className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-green-500">
                   <svg
@@ -304,7 +304,7 @@ export default function SignInV1() {
                   No credit card required
                 </span>
               </div>
-            </div>
+            </div> */}
             <button
               type="submit"
               className="group mt-5 flex w-full transform items-center justify-center rounded-full px-6 py-3.5 font-bold text-gray-900 transition-all hover:-translate-y-0.5 hover:shadow-xl"
@@ -365,7 +365,7 @@ export default function SignInV1() {
                 </a>
               </p>
             </div>
-            <div className="mt-6 flex items-center justify-center gap-6 text-xs text-gray-500">
+            {/* <div className="mt-6 flex items-center justify-center gap-6 text-xs text-gray-500">
               <div className="flex items-center gap-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -400,7 +400,7 @@ export default function SignInV1() {
                 </svg>
                 <span className="dark:text-gray-100">SOC 2 Compliant</span>
               </div>
-            </div>
+            </div> */}
           </form>
         </Card>
         {/* <div className="mt-8 flex items-center justify-center gap-8 text-center">

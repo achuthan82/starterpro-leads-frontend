@@ -527,11 +527,13 @@ const Territories = () => {
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                                   {territory.name}
                                 </h3>
+                                {activeTab === "active" && (
                                 <span
                                   className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getStatusBadgeClass(territory.status)}`}
                                 >
                                   {getStatusLabel(territory.status)}
                                 </span>
+                                )}
                               </div>
                             </div>
                             <button
@@ -603,13 +605,13 @@ const Territories = () => {
                         </div>
 
                         <div className="bg-gray-50 px-6 py-3">
-                          <div className="flex items-center justify-between">
-                            <button className="text-sm font-medium text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80">
+                          <div className="flex items-center justify-end">
+                            <button onClick={() => setSelectedTerritory(territory)} className="text-sm font-medium text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80">
                               View Details
                             </button>
-                            <button className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                            {/* <button className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400">
                               Edit
-                            </button>
+                            </button> */}
                           </div>
                         </div>
                       </Card>

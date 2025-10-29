@@ -256,7 +256,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
                 </div>
               </li>
               {adminItems.map((item) => (
-                <li key={item.id}>
+                <li key={item.id} className="mt-2">
                   <button
                     onClick={() => navigate(item.href)}
                     className={`flex w-full items-center space-x-3 rounded-lg p-3 text-left transition-all duration-200 ${

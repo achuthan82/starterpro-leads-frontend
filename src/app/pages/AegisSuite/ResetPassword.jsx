@@ -267,7 +267,7 @@ const ResetPassword = () => {
               {errors.new_password && <p className="text-xs text-red-500 dark:text-red-400 mt-1">{errors.new_password.message}</p>}
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 mt-4">
               <label
                 htmlFor="confirm_password"
                 className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200"
