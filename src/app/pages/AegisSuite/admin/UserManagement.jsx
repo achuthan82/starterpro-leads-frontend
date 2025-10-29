@@ -330,9 +330,9 @@ useEffect(() => {
   const getStatusBadge = (status) => {
     const statusCheck = (status.is_active === true && status.registered === true) ? 1 : (status.is_active === false) ? 2 : (status.registered === false) ? 3 : 2
     const statusClasses = {
-      1: {name: 'active', color: 'bg-[#0a2463] text-white'},
+      1: {name: 'active', color: 'bg-green-600 text-white'},
       2: {name: 'inactive', color: 'bg-red-600 text-white'},
-      3: {name: 'pending', color: 'bg-[#f4d03f] text-white'},
+      3: {name: 'pending', color: 'bg-yellow-500 text-white'},
       // 4: {name: 'banned', color: 'bg-gray-600 text-white'}
     };
     
