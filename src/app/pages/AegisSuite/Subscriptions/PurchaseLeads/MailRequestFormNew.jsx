@@ -1,22 +1,159 @@
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import Logo from "assets/app-logo/form-image.png?.react";
 import SignatureCanvas from "react-signature-canvas";
-const MailRequestFormNew = () => {
-  const sigCanvas = useRef();
+import { v4 as uuidv4 } from "uuid";
+import { loadStripe } from "@stripe/stripe-js";
+import { toast } from "sonner";
+import html2canvas from "html2canvas-pro";
+import { JWT_HOST_API, STRIPE_KEY } from "configs/auth.config";
+import axios from "axios";
+import { Button, GhostSpinner} from "components/ui";
+const stripePromise = loadStripe(STRIPE_KEY);
 
+const MailRequestFormNew = ({ selectedPlan }) => {
+  const uuid4 = uuidv4();
+  const token = localStorage.getItem("authToken");
+  const device = localStorage.getItem("device_type");
+
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false)
+  console.log(loading)
+  const sigCanvas = useRef();
   const clearSignature = () => {
     sigCanvas.current.clear();
   };
+  const generateAndSendPDF = async () => {
+    try {
+      const element = document.getElementById("content-id");
+      console.log("element", element);
+      element
+        .querySelectorAll(
+          "div, p, h1, h2, h3, h4, h5, h6, span, a, button, input, textarea, select, option, label, table, th, td, tr, tbody, thead, tfoot, form, fieldset, legend, output, progress, meter, details, summary, dialog, iframe, video, audio, canvas, svg, path, rect, circle, ellipse, line, polyline, polygon, text, tspan, g, use, image, foreignObject, symbol, defs, clipPath, mask, pattern, symbol, defs, clipPath, mask, pattern",
+        )
+        .forEach((el) => {
+          el.style.color = "#222222";
+        });
+      const canvas = await html2canvas(element, {
+        scale: 1.4,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+        color: "#222222",
+      });
 
+      const imgData = canvas.toDataURL("image/png");
+      const config = {
+        method: "post",
+        url: `${JWT_HOST_API}/files/upload/purchase_agreement/${uuid4}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "x-platform": device,
+        },
+        data: { img: imgData },
+      };
+
+      const response = await axios(config);
+      if (response.data.status === 200) {
+        return true;
+      } else {
+        toast.error("Failed to send acknowledgement");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error uploading acknowledgement:", error);
+      toast.error("Error uploading acknowledgement");
+      return false;
+    }
+  };
+
+  const handleStripeCheckout = async () => {
+    setLoading(true);
+    try {
+      const pdfSent = await generateAndSendPDF();
+      console.log(pdfSent);
+      if (!pdfSent) {
+        toast.error("Failed to process agreement. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      const stripe = await stripePromise;
+      if (!total || total <= 0) {
+        throw new Error("Invalid payment amount");
+      }
+      const sts = ["AL", "AZ", "CO", "AR", "FL"];
+      const dt = {
+        success_url: `${window.location.origin.toString()}/subscriptions/success`,
+        cancel_url: `${window.location.origin.toString()}/subscriptions/cancel`,
+        price_id:selectedPlan.stripe_price_id,
+        stripe_product_id: selectedPlan.stripe_product_id,
+        item: {
+          name: selectedPlan?.title,
+          quantity: 1,
+          pricing_id: selectedPlan.id,
+          lead_quantity: selectedPlan.quantity,
+          unit_price: selectedPlan.unit_price,
+          net_price: selectedPlan.net_price,
+          total_amount: total,
+          states: sts,
+        },
+      };
+
+      const config = {
+        method: "post",
+        url: `${JWT_HOST_API}/stripe/create-checkout-session/${uuid4}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "x-platform": device,
+        },
+        data: dt,
+      };
+      const response = await axios(config);
+      console.log("response", response);
+      if (response.data.status === 200) {
+        const session = response?.data?.data;
+        console.log("Checkout session created:", session);
+        sessionStorage.setItem("session_id", session?.session_id);
+        sessionStorage.setItem("subscription_amount", session?.amount_total);
+        const result = await stripe.redirectToCheckout({
+          sessionId: session?.session_id,
+        }); 
+        if (result.error) {
+          throw new Error(result.error.message);
+        }
+      } else if (response.data.status === 401) {
+        toast.error(response.data.message);
+      } else if (response.data.status === 204) {
+        return null;
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      if (error && error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error(
+          "This Service is not available at the moment..please try again later",
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     const signatureData = sigCanvas.current.toDataURL();
     console.log("Signature Data URL:", signatureData);
-    alert("Form submitted!");
+    handleStripeCheckout();
   };
+  useEffect(() => {
+    if (selectedPlan) {
+      setTotal(selectedPlan.net_price);
+    }
+  }, [selectedPlan]);
 
   return (
-    <div>
+    <div id="content-id">
       <div className="flex min-h-screen flex-col items-center px-4 py-12 text-white">
         {" "}
         <div className="mb-10">
@@ -202,12 +339,25 @@ const MailRequestFormNew = () => {
           </div>
 
           <div className="flex justify-center pt-4">
-            <button
+            <Button
+              color="primary"
+              size="lg"
+              type="submit"
+              disabled={loading}
+            >
+                 {loading ? (
+                    <>
+                      <GhostSpinner className="mr-1 size-4 border-2" />
+                      <span className="text-white">Loading</span>
+                    </>
+                  ) : 'Continue'}
+            </Button>
+            {/* <button
               type="submit"
               className="rounded-lg bg-blue-600 px-8 py-3 font-semibold text-white shadow-md transition hover:bg-blue-700"
             >
-              Submit
-            </button>
+              {loading ? 'Processing' : 'Submit'}
+            </button> */}
           </div>
         </form>
       </div>
