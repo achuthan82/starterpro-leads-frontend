@@ -895,7 +895,7 @@ const LeadManagement = () => {
                   <select
                     value={filters.lead_status}
                     onChange={(e) => handleFilterChange('lead_status', e.target.value)}
-                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] focus:outline-none"
+                    className="rounded-lg border border-[#75150b] dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white px-3 py-2 focus:border-[#75150b] focus:outline-none"
                   >
                     <option value="all">All Statuses</option>
                     {LEAD_STATUSES.map(status => (
@@ -905,7 +905,7 @@ const LeadManagement = () => {
                   <select
                     value={filters.state}
                     onChange={(e) => handleFilterChange('state', e.target.value)}
-                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] focus:outline-none"
+                    className="rounded-lg border border-[#75150b] dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white px-3 py-2 focus:border-[#75150b] focus:outline-none"
                   >
                     <option value="all">All States</option>
                     {states.map(status => (
@@ -1200,11 +1200,14 @@ const LeadManagement = () => {
                             </td> */}
 
                             {/* Registered Date */}
-                            <td className="px-3 py-4 whitespace-nowrap">
+                            {
+                              activeTab !== 'mailed' &&   <td className="px-3 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900 dark:text-gray-100">
                                 {lead.call_in_date_time || ''}
                               </div>
                             </td>
+                            }
+                          
 
                             {/* Lead Status */}
                             <td className="px-3 py-4 whitespace-nowrap">

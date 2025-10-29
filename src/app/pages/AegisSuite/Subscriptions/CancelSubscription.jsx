@@ -24,7 +24,7 @@ const CancelSubscription = ({ isOpen, close, subscriptionId, fetchSubscription }
     const submitData = (data) => {
         setLoading(true)
         subscriptionService.cancelSubscription(subscriptionId, data.reason).then((response) => {
-            if (response.data.status_code === 200) {
+            if (response.data.status === 200) {
                 fetchSubscription()
                 close()
                 toast.success(response?.data?.message || 'Subscription cancellation request has been submitted please wait for a while')

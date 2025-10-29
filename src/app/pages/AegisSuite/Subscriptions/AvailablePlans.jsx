@@ -24,11 +24,11 @@ const AvailablePlans = ({ subscription }) => {
   const [currentPage, setCurrentPage] = useState(1)
 
   // console.log(subscription, 'subscription')
-  const selectPlan = (id) => {
+  const selectPlan = (plan) => {
     if (subscription && subscription?.status === 'active') {
       alertOpen()
     } else {
-      setSelectedPlan(id)
+      setSelectedPlan(plan)
       open()
     }
   }
@@ -74,7 +74,7 @@ const AvailablePlans = ({ subscription }) => {
               </div>
             </div>
             <div className="p-3 bg-gray-50 dark:bg-dark-800" style={{ backgroundColor: '#0a2463', color: '#fff' }}>
-              <Button variant="solid" color="primary" className="w-full" onClick={() => selectPlan(plan.id)}>
+              <Button variant="solid" color="primary" className="w-full" onClick={() => selectPlan(plan)}>
                 Subscribe
               </Button>
             </div>

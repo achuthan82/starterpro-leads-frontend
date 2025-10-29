@@ -81,14 +81,14 @@ const CurrentSubscription = ({ subscription, fetchSubscription }) => {
                             <h4 className="text-gray-500 dark:text-gray-400 dark:text-gray-400">Plan</h4>
                             <p className="text-lg font-semibold">{subscription?.title}</p>
                             <p className="text-sm text-gray-600 dark:text-gray-300 dark:text-gray-300">
-                                {/*isWeekly ? 'Weekly' : 'Monthly'*/} Weekly mailer subscription
+                                {/*isWeekly ? 'Weekly' : 'Monthly'*/} Monthly mailer subscription
                             </p>
                         </div>
                         <div>
                             <h4 className="text-gray-500 dark:text-gray-400 dark:text-gray-400">Billing Cycle</h4>
                             <p className="text-lg font-semibold">
                                 ${subscription?.net_price}
-                                <span className="text-sm">/week</span>
+                                <span className="text-sm">/month</span>
                             </p>
                             {subscription?.status === 'active' && (
                                 <p className="text-sm text-gray-600 dark:text-gray-300 dark:text-gray-300">
