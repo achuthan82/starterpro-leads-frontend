@@ -343,14 +343,14 @@ const InvoiceTemplate = () => {
                     <div className="flex justify-between items-center">
                         <div className="text-xs text-gray-500">
                             <p>This invoice was generated electronically and is valid without signature.</p>
-                            <p>ShieldNest Insurance Services LLC • Tax ID: 12-3456789</p>
+                            <p>StarterProLeads Insurance Services LLC • Tax ID: 12-3456789</p>
                         </div>
                         <div className="text-right">
                             <p className="text-sm font-medium text-atoll">Questions?</p>
                             <p className="text-xs text-gray-600">Call (555) 123-4567</p>
                             <p className="text-xs text-gray-600">
-                                <a href="mailto:support@shieldnest.com" className="text-blue-600 underline">
-                                    support@shieldnest.com
+                                <a href="mailto:support@starterproleads.com" className="text-blue-600 underline">
+                                    support@starterproleads.com
                                 </a>
                             </p>
                         </div>

@@ -454,8 +454,8 @@ const PromoSection = ({
                 <tr>
                   <td colSpan="7" className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center">
-                      <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900"></div>
-                      <span className="ml-2">Loading promo codes...</span>
+                      <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900 dark:border-gray-100"></div>
+                      <span className="ml-2 text-gray-900 dark:text-gray-100">Loading promo codes...</span>
                     </div>
                   </td>
                 </tr>

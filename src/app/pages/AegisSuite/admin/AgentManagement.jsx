@@ -336,8 +336,8 @@ const AgentManagement = () => {
                     <tr>
                       <td colSpan="6" className="px-6 py-4 text-center">
                         <div className="flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
-                          <span className="ml-2">Loading agents...</span>
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 dark:border-gray-100"></div>
+                          <span className="ml-2 text-gray-900 dark:text-gray-100">Loading agents...</span>
                         </div>
                       </td>
                     </tr>
