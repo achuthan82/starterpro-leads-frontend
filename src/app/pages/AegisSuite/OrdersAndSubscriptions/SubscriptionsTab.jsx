@@ -342,7 +342,7 @@ const SubscriptionsTab = () => {
           </div> */}
           <div className=" flex items-center justify-between ">
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-gray-100">
                 {totalRecords > 0 &&
                   `Showing ${currentPage * perPage + 1}-${Math.min((currentPage + 1) * perPage, totalRecords)} of ${totalRecords} subscriptions`}
               </span>
@@ -381,8 +381,8 @@ const SubscriptionsTab = () => {
                 disabled={subscriptions.length === 0}
                 className={`flex items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                   subscriptions.length === 0
-                    ? "cursor-not-allowed border-gray-300 text-gray-400"
-                    : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                    ? "cursor-not-allowed border-gray-300 text-gray-100"
+                    : "border-gray-300 text-gray-700  "
                 }`}
               >
                 <ArrowDownTrayIcon className="h-4 w-4" />
@@ -431,7 +431,7 @@ const SubscriptionsTab = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-gray-200 ">
               {loading ? (
                 <tr className="dark:bg-gray-700">
                   <td colSpan="8" className="px-6 py-4 text-center">
@@ -455,7 +455,7 @@ const SubscriptionsTab = () => {
                 subscriptions.map((subscription) => (
                   <tr
                     key={subscription.stripe_subscription_id || subscription.id}
-                    className="hover:bg-gray-50"
+                    // className="hover:bg-gray-50"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900 dark:text-gray-100">

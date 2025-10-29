@@ -76,7 +76,7 @@ const AnalyticsDashboard = () => {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Analytics & Reports</h2>
         <DatePicker
-          className='bg-white'
+          className='bg-white dark:bg-gray-800'
           options={{
             mode: 'range',
             dateFormat: 'm-d-Y',
@@ -93,7 +93,7 @@ const AnalyticsDashboard = () => {
           placeholder="Date Range"
         />
       </div>
-      <SummaryCards summary={summary} loading={loading} error={error} />
+       <SummaryCards summary={summary} loading={loading} error={error} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <LeadPerformanceFunnel funnel={funnel} loading={loading} error={error} />
         <TerritoryPerformanceAnalytics territory={territory} loading={loading} error={error} stateMap={stateMap} />

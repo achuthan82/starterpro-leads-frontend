@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import html2canvas from "html2canvas-pro";
 import { JWT_HOST_API, STRIPE_KEY } from "configs/auth.config";
 import axios from "axios";
-import { Button, GhostSpinner} from "components/ui";
+import { Button, GhostSpinner } from "components/ui";
 const stripePromise = loadStripe(STRIPE_KEY);
 
 const MailRequestFormNew = ({ selectedPlan }) => {
@@ -16,8 +16,8 @@ const MailRequestFormNew = ({ selectedPlan }) => {
   const device = localStorage.getItem("device_type");
 
   const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(false)
-  console.log(loading)
+  const [loading, setLoading] = useState(false);
+  console.log(loading);
   const sigCanvas = useRef();
   const clearSignature = () => {
     sigCanvas.current.clear();
@@ -85,7 +85,7 @@ const MailRequestFormNew = ({ selectedPlan }) => {
       const dt = {
         success_url: `${window.location.origin.toString()}/subscriptions/success`,
         cancel_url: `${window.location.origin.toString()}/subscriptions/cancel`,
-        price_id:selectedPlan.stripe_price_id,
+        price_id: selectedPlan.stripe_price_id,
         stripe_product_id: selectedPlan.stripe_product_id,
         item: {
           name: selectedPlan?.title,
@@ -117,7 +117,7 @@ const MailRequestFormNew = ({ selectedPlan }) => {
         sessionStorage.setItem("subscription_amount", session?.amount_total);
         const result = await stripe.redirectToCheckout({
           sessionId: session?.session_id,
-        }); 
+        });
         if (result.error) {
           throw new Error(result.error.message);
         }
@@ -339,18 +339,15 @@ const MailRequestFormNew = ({ selectedPlan }) => {
           </div>
 
           <div className="flex justify-center pt-4">
-            <Button
-              color="primary"
-              size="lg"
-              type="submit"
-              disabled={loading}
-            >
-                 {loading ? (
-                    <>
-                      <GhostSpinner className="mr-1 size-4 border-2" />
-                      <span className="text-white">Loading</span>
-                    </>
-                  ) : 'Continue'}
+            <Button color="primary" size="lg" type="submit" disabled={loading}>
+              {loading ? (
+                <>
+                  <GhostSpinner className="mr-1 size-4 border-2" />
+                  <span className="text-white">Loading</span>
+                </>
+              ) : (
+                "Continue"
+              )}
             </Button>
             {/* <button
               type="submit"

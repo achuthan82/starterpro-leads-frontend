@@ -17,6 +17,7 @@ import RoleGuard from "middleware/RoleGuard";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import leadUploadService from "utils/leadUploadService";
+import { getReactSelectDarkModeStyles } from "utils/reactSelectDarkMode";
 const FileUpload = () => {
   const { handleSubmit } = useForm({});
   const DB_HEADERS = [
@@ -259,10 +260,10 @@ const FileUpload = () => {
       .uploadLeads(type, formData)
       .then((response) => {
         if (response.data.status === 200) {
-          toast.success('Successfully uploaded')
+          toast.success("Successfully uploaded");
           setTemplates([]);
           setLoading(false);
-          close()
+          close();
           setFiles([]);
           setCSVHeaders([]);
           // setTemplates([{value: 'new', label: 'NEW'}])
@@ -365,21 +366,20 @@ const FileUpload = () => {
       });
   };
   const handleClose = () => {
-              setTemplates([]);
-          setLoading(false);
-          close()
-          setFiles([]);
-          setCSVHeaders([]);
-          // setTemplates([{value: 'new', label: 'NEW'}])
-          setTemplateData([]);
-          setTemplate(false);
-          setTemplateName("");
-          // setTempName('')
-          setEditFlag(false);
-          // setTemplateId('')
-          setNewTemplate(false);
-
-  }
+    setTemplates([]);
+    setLoading(false);
+    close();
+    setFiles([]);
+    setCSVHeaders([]);
+    // setTemplates([{value: 'new', label: 'NEW'}])
+    setTemplateData([]);
+    setTemplate(false);
+    setTemplateName("");
+    // setTempName('')
+    setEditFlag(false);
+    // setTemplateId('')
+    setNewTemplate(false);
+  };
   useEffect(() => {
     if (!templateData || !CSVHeaders.length) return;
     templateData.map((element) => {
@@ -396,262 +396,273 @@ const FileUpload = () => {
       <div>
         <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
           <SharedSidebar currentPath="admin/file-upload" />
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
-                  Upload Leads
-                </h1>
-                <p className="mt-1 text-gray-600 dark:text-gray-300">Upload New Leads</p>
-              </div>
-            </div>
-          </header>
-          <div className="mt-4 p-4">
-            <Card className="bg-white dark:bg-gray-800 p-3">
-              <div className="border-b border-neutral-400 py-2">
-                <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  {" "}
-                  Upload Lead Data With Mortgage
-                </h4>
-              </div>
-              <div className="mt-4 flex items-center space-x-2">
-                <Input
-                  placeholder="Enter Campaign Id"
-                  onChange={(event) => setCampaign(event.target.value)}
-                />
-                <Select
-                  id="country"
-                  placeholder="Choose Type"
-                  isClearable={false}
-                  //   className="react-select customised-select me-1"
-                  classNamePrefix="select"
-                  menuPlacement="top"
-                  //   theme={selectThemeColors}
-                  options={types}
-                  onChange={handleType}
-                />
-              </div>
-              <div className="mt-4" style={{ position: "relative" }}>
-                {(!campaign || !type) && (
-                  <div
-                    className="overlay"
-                    style={{
-                      position: "absolute",
-                      left: "0",
-                      width: "100%",
-                      height: "100%",
-                      background: "rgba(255,255,255,0.75",
-                      zIndex: "3",
-                    }}
-                  ></div>
-                )}
-                <div {...getRootProps({ className: "dropzone" })}>
-                  <input {...getInputProps()} />
-                  <div
-                    className="flex flex-col items-center justify-center"
-                    style={{ border: "1px dashed", padding: "4rem" }}
-                  >
-                    <CloudArrowUpIcon className="size-30" />
-                    <h5>Drop Files here or click to upload</h5>
-                    <p className="text-secondary">
-                      Drop files here or click{" "}
-                      <a href="/" onClick={(e) => e.preventDefault()}>
-                        browse
-                      </a>{" "}
-                      thorough your machine
-                    </p>
-                  </div>
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <header className="border-b border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
+                    Upload Leads
+                  </h1>
+                  <p className="mt-1 text-gray-600 dark:text-gray-300">
+                    Upload New Leads
+                  </p>
                 </div>
               </div>
-            </Card>
-          </div>
-          <Transition appear show={isOpen} as={Fragment}>
-            <Dialog
-              as="div"
-              className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden px-4 py-6 sm:px-5"
-              onClose={handleClose}
-            >
-              <TransitionChild
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0"
-                enterTo="opacity-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-              >
-                <div className="absolute inset-0 bg-gray-900/50 transition-opacity dark:bg-black/40" />
-              </TransitionChild>
-              <TransitionChild
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0"
-                enterTo="opacity-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-              >
-                <DialogPanel className="scrollbar-sm max-w-xxl dark:bg-dark-700 relative flex w-full origin-top flex-col overflow-hidden overflow-y-auto rounded-lg bg-white dark:bg-gray-800 transition-all duration-300">
-                  <div className="flex justify-end">
-                    <span onClick={close} className="cursor-pointer">
-                      <XMarkIcon className="size-7" />
-                    </span>
-                  </div>
-                  <div className="mt-4 text-center">
-                    <DialogTitle
-                      as="h3"
-                      className="dark:text-dark-100 text-2xl text-gray-800"
+            </header>
+            <div className="mt-4 p-4">
+              <Card className="bg-white p-3 dark:bg-gray-800">
+                <div className="border-b border-neutral-400 py-2">
+                  <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    {" "}
+                    Upload Lead Data With Mortgage
+                  </h4>
+                </div>
+                <div className="mt-4 flex items-center space-x-2">
+                  <Input
+                    className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+                    placeholder="Enter Campaign Id"
+                    onChange={(event) => setCampaign(event.target.value)}
+                  />
+                  <Select
+                    id="country"
+                    placeholder="Choose Type"
+                    isClearable={false}
+                    styles={getReactSelectDarkModeStyles()}
+                    //   className="react-select customised-select me-1"
+                    classNamePrefix="select"
+                    menuPlacement="top"
+                    //   theme={selectThemeColors}
+                    options={types}
+                    onChange={handleType}
+                  />
+                </div>
+                <div className="mt-4" style={{ position: "relative" }}>
+                  {(!campaign || !type) && (
+                    <div
+                      className="overlay bg-[rgba(255,255,255,0.75)] dark:bg-[rgba(10,36,99,0.6)]"
+                      style={{
+                        position: "absolute",
+                        left: "0",
+                        width: "100%",
+                        height: "100%",
+                        // background: "rgba(255,255,255,0.75)",
+                        zIndex: "3",
+                      }}
+                    ></div>
+                  )}
+                  <div {...getRootProps({ className: "dropzone" })}>
+                    <input {...getInputProps()} />
+                    <div
+                      className="flex flex-col items-center justify-center"
+                      style={{ border: "1px dashed", padding: "4rem" }}
                     >
-                      Upload New Lead
-                    </DialogTitle>
+                      <CloudArrowUpIcon className="size-30" />
+                      <h5>Drop Files here or click to upload</h5>
+                      <p className="text-secondary">
+                        Drop files here or click{" "}
+                        <a href="/" onClick={(e) => e.preventDefault()}>
+                          browse
+                        </a>{" "}
+                        thorough your machine
+                      </p>
+                    </div>
                   </div>
-                  <form onSubmit={handleSubmit(submitData)} className="p-6">
-                    <div className="mt-3 grid w-full gap-4">
-                      {/* Template selection */}
-                      <div className="col-span-12">
-                        <div className="grid grid-cols-12 items-center gap-2">
-                          <div className="col-span-4">
-                            <label className="mb-1 block text-left text-sm font-medium">
-                              Select Template{" "}
-                              <span className="text-red-500">*</span>
-                            </label>
-                          </div>
-                          <div className="col-span-8">
-                            <Select
-                              className="react-select w-full"
-                              classNamePrefix="select"
-                              name="template"
-                              options={templates}
-                              onChange={(e) => templateHandler(e)}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* New template input */}
-                      {newTemplate && (
+                </div>
+              </Card>
+            </div>
+            <Transition appear show={isOpen} as={Fragment}>
+              <Dialog
+                as="div"
+                className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden px-4 py-6 sm:px-5"
+                onClose={handleClose}
+              >
+                <TransitionChild
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <div className="absolute inset-0 bg-gray-900/50 transition-opacity dark:bg-black/40" />
+                </TransitionChild>
+                <TransitionChild
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <DialogPanel className="scrollbar-sm max-w-xxl dark:bg-dark-700 relative flex w-full origin-top flex-col overflow-hidden overflow-y-auto rounded-lg bg-white transition-all duration-300 dark:bg-gray-800">
+                    <div className="flex justify-end">
+                      <span onClick={close} className="cursor-pointer">
+                        <XMarkIcon className="size-7" />
+                      </span>
+                    </div>
+                    <div className="mt-4 text-center">
+                      <DialogTitle
+                        as="h3"
+                        className="dark:text-dark-100 text-2xl text-gray-800"
+                      >
+                        Upload New Lead
+                      </DialogTitle>
+                    </div>
+                    <form onSubmit={handleSubmit(submitData)} className="p-6">
+                      <div className="mt-3 grid w-full gap-4">
+                        {/* Template selection */}
                         <div className="col-span-12">
                           <div className="grid grid-cols-12 items-center gap-2">
                             <div className="col-span-4">
-                              <label
-                                className="mb-1 block text-left text-sm font-medium"
-                                htmlFor="name"
-                              >
-                                Template Name
+                              <label className="mb-1 block text-left text-sm font-medium">
+                                Select Template{" "}
+                                <span className="text-red-500">*</span>
                               </label>
                             </div>
                             <div className="col-span-8">
-                              <Input
-                                id="name"
-                                name="name"
-                                placeholder="Template 1"
-                                onChange={(e) =>
-                                  setTemplateName(e.target.value)
-                                }
+                              <Select
+                                className="react-select w-full"
+                                classNamePrefix="select"
+                                name="template"
+                                options={templates}
+                                onChange={(e) => templateHandler(e)}
                               />
                             </div>
                           </div>
                         </div>
-                      )}
-                    </div>
-                    <div>
-                      <p className="mt-4 text-lg font-semibold">
-                        Table Headings
-                      </p>
-                    </div>
-                    {/* DB Headers mapping */}
-                    <div className="mt-4 grid w-full gap-4">
-                      {!template &&
-                        DB_HEADERS.map((element, idx) => (
-                          <div key={idx} className="col-span-12">
+
+                        {/* New template input */}
+                        {newTemplate && (
+                          <div className="col-span-12">
                             <div className="grid grid-cols-12 items-center gap-2">
                               <div className="col-span-4">
-                                <label className="mb-1 block text-left text-sm font-medium">
-                                  {element}
+                                <label
+                                  className="mb-1 block text-left text-sm font-medium"
+                                  htmlFor="name"
+                                >
+                                  Template Name
                                 </label>
                               </div>
                               <div className="col-span-8">
-                                <Select
-                                  className="react-select w-full"
-                                  classNamePrefix="select"
-                                  name={element}
-                                  options={CSVHeaders}
-                                  onChange={(e) => handleHeaders(e, element)}
-                                  isOptionDisabled={(option) => option.selected}
+                                <Input
+                                  id="name"
+                                  name="name"
+                                  placeholder="Template 1"
+                                  onChange={(e) =>
+                                    setTemplateName(e.target.value)
+                                  }
                                 />
                               </div>
                             </div>
-                            <hr className="hr-bottom mt-2" />
                           </div>
-                        ))}
-                      {template &&
-                        templateData.map((element, idx) => {
-                          const index = CSVHeaders.findIndex(
-                            (header) =>
-                              header.value === Object.values(element)[0],
-                          );
-                          return (
+                        )}
+                      </div>
+                      <div>
+                        <p className="mt-4 text-lg font-semibold">
+                          Table Headings
+                        </p>
+                      </div>
+                      {/* DB Headers mapping */}
+                      <div className="mt-4 grid w-full gap-4">
+                        {!template &&
+                          DB_HEADERS.map((element, idx) => (
                             <div key={idx} className="col-span-12">
                               <div className="grid grid-cols-12 items-center gap-2">
                                 <div className="col-span-4">
                                   <label className="mb-1 block text-left text-sm font-medium">
-                                    {Object.keys(element)[0]}
+                                    {element}
                                   </label>
                                 </div>
-
                                 <div className="col-span-8">
                                   <Select
-                                    className="react-select"
+                                    className="react-select w-full"
                                     classNamePrefix="select"
-                                    name={Object.keys(element)[0]}
-                                    value={index > -1 ? CSVHeaders[index] : ""}
+                                    name={element}
                                     options={CSVHeaders}
-                                    onChange={(e) =>
-                                      handleHeaders(e, Object.keys(element)[0])
-                                    }
+                                    onChange={(e) => handleHeaders(e, element)}
                                     isOptionDisabled={(option) =>
                                       option.selected
                                     }
                                   />
                                 </div>
                               </div>
-                              <hr className="hr-bottom" />
+                              <hr className="hr-bottom mt-2" />
                             </div>
-                          );
-                        })}
-                    </div>
-                    <div className="mt-4 flex justify-center gap-4">
-                      <Button
-                        type="submit"
-                        className="mr-1"
-                        color="primary"
-                        disabled={loading}
-                      >
-                        {loading && (
-                          <GhostSpinner className="size-4 border-2" />
-                        )}{" "}
-                        Submit
-                      </Button>
-                      <Button
-                        type="reset"
-                        color="secondary"
-                        outline
-                        onClick={() => {
-                          // clearAll()
-                        }}
-                      >
-                        Discard
-                      </Button>
-                    </div>
-                  </form>
-                </DialogPanel>
-              </TransitionChild>
-            </Dialog>
-          </Transition>
+                          ))}
+                        {template &&
+                          templateData.map((element, idx) => {
+                            const index = CSVHeaders.findIndex(
+                              (header) =>
+                                header.value === Object.values(element)[0],
+                            );
+                            return (
+                              <div key={idx} className="col-span-12">
+                                <div className="grid grid-cols-12 items-center gap-2">
+                                  <div className="col-span-4">
+                                    <label className="mb-1 block text-left text-sm font-medium">
+                                      {Object.keys(element)[0]}
+                                    </label>
+                                  </div>
+
+                                  <div className="col-span-8">
+                                    <Select
+                                      className="react-select"
+                                      classNamePrefix="select"
+                                      name={Object.keys(element)[0]}
+                                      value={
+                                        index > -1 ? CSVHeaders[index] : ""
+                                      }
+                                      options={CSVHeaders}
+                                      onChange={(e) =>
+                                        handleHeaders(
+                                          e,
+                                          Object.keys(element)[0],
+                                        )
+                                      }
+                                      isOptionDisabled={(option) =>
+                                        option.selected
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                                <hr className="hr-bottom" />
+                              </div>
+                            );
+                          })}
+                      </div>
+                      <div className="mt-4 flex justify-center gap-4">
+                        <Button
+                          type="submit"
+                          className="mr-1"
+                          color="primary"
+                          disabled={loading}
+                        >
+                          {loading && (
+                            <GhostSpinner className="size-4 border-2" />
+                          )}{" "}
+                          Submit
+                        </Button>
+                        <Button
+                          type="reset"
+                          color="secondary"
+                          outline
+                          onClick={() => {
+                            // clearAll()
+                          }}
+                        >
+                          Discard
+                        </Button>
+                      </div>
+                    </form>
+                  </DialogPanel>
+                </TransitionChild>
+              </Dialog>
+            </Transition>
+          </div>
         </div>
       </div>
-    </div>
     </RoleGuard>
   );
 };

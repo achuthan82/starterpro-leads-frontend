@@ -14,10 +14,10 @@ import {
   MapIcon,
   ShoppingBagIcon,
   CloudArrowUpIcon,
-  TagIcon,
+  // TagIcon,
   // QuestionMarkCircleIcon,
   // ChartBarSquareIcon,
-  SpeakerWaveIcon,
+  // SpeakerWaveIcon,
 } from "@heroicons/react/24/outline";
 import Logo from "assets/app-logo/logo-text.svg?.react";
 import { useNavigate } from "react-router";
@@ -148,12 +148,12 @@ const SharedSidebar = ({ currentPath = "" }) => {
       icon: ClockIcon,
       href: "/admin/purchase-history",
     },
-    {
-      id: "admin-promo-codes",
-      label: "Manage Promo Code",
-      icon: TagIcon,
-      href: "/admin/promo-codes",
-    },
+    // {
+    //   id: "admin-promo-codes",
+    //   label: "Manage Promo Code",
+    //   icon: TagIcon,
+    //   href: "/admin/promo-codes",
+    // },
     {
       id: "reports",
       label: "Reports & Analytics",
@@ -172,12 +172,12 @@ const SharedSidebar = ({ currentPath = "" }) => {
       icon: CheckBadgeIcon,
       href: "/prospect",
     },
-    {
-      id: "campaign",
-      label: "Campaign",
-      icon: SpeakerWaveIcon,
-      href: "/campaign",
-    },
+    // {
+    //   id: "campaign",
+    //   label: "Campaign",
+    //   icon: SpeakerWaveIcon,
+    //   href: "/campaign",
+    // },
   ];
 
   return (

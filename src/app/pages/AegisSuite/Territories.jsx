@@ -490,7 +490,8 @@ const Territories = () => {
                     <div className="flex items-center gap-2">
                       <span>Per page:</span>
                       <select
-                        className="rounded border px-2 py-1"
+                        className="dark:border-dark-600 dark:bg-dark-700 rounded-lg border border-[#75150b] bg-white px-3 py-2 text-gray-900 focus:border-[#75150b] focus:outline-none dark:text-white"
+                        // className="rounded border px-2 py-1"
                         value={perPage}
                         onChange={(e) => {
                           setPerPage(Number(e.target.value));
