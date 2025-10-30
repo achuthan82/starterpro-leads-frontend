@@ -47,12 +47,12 @@ const PreviousSubscriptions = () => {
     return (
         <div>
             <Card>
-                <div className={`p-6 ${previousList.length > 0 ? 'bg-white shieldnest-shadow' : 'bg-transparent'} overflow-hidden rounded-xl`}>
+                <div className={`p-6 ${previousList.length > 0 ? 'bg-white shieldnest-shadow' : 'bg-transparent'} overflow-hidden rounded-xl dark:bg-gray-800 dark:border-gray-700`}>
                     {
                         loading ? <Spinner /> : (
                             <>
                             {previousList && previousList.length > 0 ? (
-                            <Table className="w-full text-left">
+                            <Table className="w-full text-left dark:border-gray-700 dark:bg-gray-800">
                                 <THead>
                                     <Tr>
                                         <Th>Subscription Name</Th>

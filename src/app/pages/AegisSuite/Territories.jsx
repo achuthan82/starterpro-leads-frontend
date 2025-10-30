@@ -605,9 +605,9 @@ const Territories = () => {
                 </div>*/}
                         </div>
 
-                        <div className="bg-gray-50 px-6 py-3">
+                        <div className="bg-gray-50 px-6 py-3 dark:bg-gray-800 dark:border-gray-700">
                           <div className="flex items-center justify-end">
-                            <button onClick={() => setSelectedTerritory(territory)} className="text-sm font-medium text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80">
+                            <button onClick={() => setSelectedTerritory(territory)} className="text-sm font-medium text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80 dark:text-blue-400 dark:hover:text-blue-400/80">
                               View Details
                             </button>
                             {/* <button className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400">
@@ -660,7 +660,7 @@ const Territories = () => {
         >
           <div className="relative top-10 mx-auto mb-10 w-11/12 max-w-4xl rounded-lg border bg-white p-5 shadow-lg dark:bg-gray-800">
             <div className="flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
-              <h3 className="text-2xl font-bold text-[var(--color-atoll)]">
+              <h3 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
                 {selectedTerritory.name} Territory
               </h3>
               <button
@@ -684,12 +684,12 @@ const Territories = () => {
             <div className="py-6">
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <div>
-                  <h4 className="mb-4 text-lg font-semibold text-[var(--color-atoll)]">
+                  <h4 className="mb-4 text-lg font-semibold text-[var(--color-atoll)] dark:text-blue-400">
                     Coverage Areas
                   </h4>
                   <div className="space-y-3">
                     <div>
-                      <p className="text-sm font-medium text-gray-700">
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-100">
                         Cities
                       </p>
                       <div className="mt-1 flex flex-wrap gap-2">
@@ -710,7 +710,7 @@ const Territories = () => {
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-700">
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-100">
                         ZIP Codes
                       </p>
                       <div className="mt-1 flex flex-wrap gap-2">
@@ -734,7 +734,7 @@ const Territories = () => {
                 </div>
 
                 <div>
-                  <h4 className="mb-4 text-lg font-semibold text-[var(--color-atoll)]">
+                  <h4 className="mb-4 text-lg font-semibold text-[var(--color-atoll)] dark:text-blue-400">
                     Performance Metrics
                   </h4>
                   <div className="space-y-4">
@@ -774,7 +774,7 @@ const Territories = () => {
             <div className="flex justify-end space-x-3 border-t border-gray-200 pt-4 dark:border-gray-700">
               <button
                 onClick={() => setSelectedTerritory(null)}
-                className="rounded-md border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50"
+                className="rounded-md border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
               >
                 Close
               </button>

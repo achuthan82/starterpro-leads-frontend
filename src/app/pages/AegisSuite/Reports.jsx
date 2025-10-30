@@ -187,13 +187,13 @@ const ReportsContent = () => {
         <main className="flex-1 overflow-auto p-6">
           {/* Tabs */}
           <div className="mb-6">
-            <div className="border-b border-gray-200">
+            <div className="border-b border-gray-200 dark:border-gray-700">
               <nav className="-mb-px flex space-x-8">
                 <button
                   onClick={() => setActiveTab('reports')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'reports'
-                      ? 'border-[#0a2463] dark:border-blue-400 text-[#0a2463] dark:text-blue-400 dark:text-blue-400'
-                      : 'border-transparent text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                      ? 'border-[#0a2463] dark:border-blue-400 text-[#0a2463] dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
                 >
                   <ChartBarIcon className="w-5 h-5 inline mr-2" />
@@ -202,8 +202,8 @@ const ReportsContent = () => {
                 <button
                   onClick={() => setActiveTab('downloads')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'downloads'
-                      ? 'border-[#0a2463] dark:border-blue-400 text-[#0a2463] dark:text-blue-400 dark:text-blue-400'
-                      : 'border-transparent text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                      ? 'border-[#0a2463] dark:border-blue-400 text-[#0a2463] dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
                 >
                   <ArrowDownTrayIcon className="w-5 h-5 inline mr-2" />
@@ -221,14 +221,14 @@ const ReportsContent = () => {
           {activeTab === 'downloads' && (
             <Card className="p-6 bg-white dark:bg-gray-800 shieldnest-shadow overflow-hidden rounded-xl">
               <div className="max-w-2xl mx-auto">
-                <h3 className="text-lg font-semibold text-[#0a2463] mb-6">Download Files</h3>
+                <h3 className="text-lg dark:text-blue-400 font-semibold text-[#0a2463] mb-6">Download Files</h3>
                 
                 {/* Error Message */}
                 {error && (
-                  <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                     <div className="flex items-center">
-                      <ExclamationTriangleIcon className="w-5 h-5 text-red-400 mr-2" />
-                      <span className="text-red-700">{error}</span>
+                      <ExclamationTriangleIcon className="w-5 h-5 text-red-400 dark:text-red-500 mr-2" />
+                      <span className="text-red-700 dark:text-red-400">{error}</span>
                     </div>
                   </div>
                 )}
@@ -252,7 +252,7 @@ const ReportsContent = () => {
                   <select
                     value={selectedType}
                     onChange={(e) => handleTypeChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] focus:outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:border-[#0a2463] dark:focus:border-blue-400 focus:outline-none"
                   >
                     <option value="">Select a category</option>
                     {filteredCategoryOptions.map((category) => (
@@ -277,7 +277,7 @@ const ReportsContent = () => {
                       value={selectedCampaign}
                       onChange={(e) => {console.log(e); setSelectedCampaign(e.target.value)}}
                       disabled={!selectedType || isLoadingCampaigns}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:border-[#0a2463] dark:focus:border-blue-400 focus:outline-none disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
                     >
                       <option value="">
                         {isLoadingCampaigns ? 'Loading campaigns...' : 'Select a campaign'}
@@ -290,7 +290,7 @@ const ReportsContent = () => {
                     </select>
                     {isLoadingCampaigns && (
                       <div className="absolute right-3 top-2.5">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#0a2463]"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#0a2463] dark:border-blue-400"></div>
                       </div>
                     )}
                   </div>
@@ -301,7 +301,7 @@ const ReportsContent = () => {
                   <button
                     onClick={handleDownload}
                     disabled={!selectedType || !selectedCampaign || isDownloading}
-                    className="flex items-center px-6 py-3 bg-[#0a2463] text-white rounded-lg hover:bg-[#0a2463]/90 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center px-6 py-3 bg-[#0a2463] dark:bg-blue-500 text-white rounded-lg hover:bg-[#0a2463]/90 dark:hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-500 disabled:cursor-not-allowed transition-colors"
                   >
                     {isDownloading ? (
                       <>

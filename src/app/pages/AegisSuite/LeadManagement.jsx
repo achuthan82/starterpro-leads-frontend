@@ -776,7 +776,7 @@ const LeadManagement = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 dark:border-gray-700 p-6">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-[#0a2463] dark:text-blue-400">Lead Management</h1>
@@ -849,15 +849,15 @@ const LeadManagement = () => {
 
           {/* Tabs */}
           <div className="mb-6">
-            <div className="border-b border-gray-200 dark:border-gray-700 dark:border-gray-700 flex justify-between">
+            <div className="border-b border-gray-200 dark:border-gray-700 flex justify-between">
               <nav className="-mb-px flex space-x-8">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => handleTabChange(tab.id)}
                     className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === tab.id
-                      ? 'border-[#0a2463] dark:border-blue-400 text-[#0a2463] dark:text-blue-400 dark:text-blue-400'
-                      : 'border-transparent text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                      ? 'border-[#0a2463] dark:border-blue-400 text-[#0a2463] dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                       }`}
                   >
                     {tab.label} ({tab.count})
@@ -877,13 +877,13 @@ const LeadManagement = () => {
                 {/* Search */}
                 <div className="flex-1">
                   <div className="relative">
-                    <MagnifyingGlassIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500 cursor-pointer" onClick={handleSearch} />
+                    <MagnifyingGlassIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-400 cursor-pointer" onClick={handleSearch} />
                     <input
                       type="text"
                       placeholder="Search by  Name..."
                       value={searchTerm}
                       onChange={(e) => { setSearchTerm(e.target.value); handleFilterChange('name', e.target.value) }}
-                      className={`w-full pl-10 pr-20 py-2 border rounded-lg focus:border-[#0a2463] focus:outline-none ${searchTerm.trim() ? 'border-[#0a2463] bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300'
+                      className={`w-full pl-10 pr-20 py-2 border rounded-lg focus:border-[#0a2463] dark:focus:border-blue-400 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 ${searchTerm.trim() ? 'border-[#0a2463] dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'
                         }`}
                     />
                   </div>
@@ -895,7 +895,7 @@ const LeadManagement = () => {
                   <select
                     value={filters.lead_status}
                     onChange={(e) => handleFilterChange('lead_status', e.target.value)}
-                    className="rounded-lg border border-[#75150b] dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white px-3 py-2 focus:border-[#75150b] focus:outline-none"
+                    className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:border-[#0a2463] dark:focus:border-blue-400 focus:outline-none"
                   >
                     <option value="all">All Statuses</option>
                     {LEAD_STATUSES.map(status => (
@@ -905,7 +905,7 @@ const LeadManagement = () => {
                   <select
                     value={filters.state}
                     onChange={(e) => handleFilterChange('state', e.target.value)}
-                    className="rounded-lg border border-[#75150b] dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white px-3 py-2 focus:border-[#75150b] focus:outline-none"
+                    className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:border-[#0a2463] dark:focus:border-blue-400 focus:outline-none"
                   >
                     <option value="all">All States</option>
                     {states.map(status => (
@@ -933,7 +933,7 @@ const LeadManagement = () => {
                     placeholder="Filter by Campaign"
                     value={filters.campaign}
                     onChange={(e) => handleFilterChange('campaign', e.target.value)}
-                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] focus:outline-none"
+                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] dark:focus:border-blue-400 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                   />
                 </div>
               </div>
@@ -954,7 +954,7 @@ const LeadManagement = () => {
                   <select
                     value={perPage}
                     onChange={(e) => handlePerPageChange(parseInt(e.target.value))}
-                    className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1"
+                    className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value={10}>10 per page</option>
                     <option value={25}>25 per page</option>
@@ -968,8 +968,8 @@ const LeadManagement = () => {
                     onClick={() => downloadCsv()}
                     disabled={selectedLeads.length === 0}
                     className={`px-4 py-2 rounded-lg border transition-colors flex items-center space-x-2 ${selectedLeads.length === 0
-                      ? 'border-gray-300 text-gray-400 dark:text-gray-100 cursor-not-allowed'
-                      : 'border-gray-300 text-gray-700 dark:text-gray-100  hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700'
+                      ? 'border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-50 dark:bg-gray-800'
+                      : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800'
                       }`}
                   >
                     <ArrowDownTrayIcon className="w-4 h-4" />
@@ -981,8 +981,8 @@ const LeadManagement = () => {
                     onClick={() => downloadAgentLeads()}
                     // style={{ backgroundColor: 'var(--atoll)' }}
                     className={`px-4 py-2 rounded-lg border transition-colors flex items-center space-x-2 ${totalRecords < 1
-                      ? 'border-gray-300 text-gray-400 dark:text-gray-100 cursor-not-allowed'
-                      : 'border-gray-300 text-gray-700 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700'
+                      ? 'border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-50 dark:bg-gray-800'
+                      : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800'
                       }`}
                   >
                     <ArrowDownTrayIcon className="w-4 h-4" />
@@ -1032,8 +1032,8 @@ const LeadManagement = () => {
 
             {loading ? (
               <div className="p-8 text-center">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0a2463]"></div>
-                <p className="mt-2 text-gray-600">Loading leads...</p>
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0a2463] dark:border-blue-400"></div>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">Loading leads...</p>
               </div>
             ) : (
               <>
@@ -1056,7 +1056,7 @@ const LeadManagement = () => {
 
                 <div className="flex-1 overflow-auto">
                   <table className="w-full min-w-max">
-                    <thead className="bg-gray-50 dark:bg-gray-700 dark:bg-gray-700">
+                    <thead className="bg-gray-50 dark:bg-gray-700">
                       <tr>
                         <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider min-w-[60px]">
                           <input
@@ -1130,16 +1130,16 @@ const LeadManagement = () => {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800">
+                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                       {leads.length === 0 ? (
                         <tr>
-                          <td colSpan="20" className="px-6 py-8 text-center text-gray-500 dark:text-gray-100">
+                          <td colSpan="20" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                             No leads found. Try adjusting your search or filters.
                           </td>
                         </tr>
                       ) : (
                         leads.map((lead, index) => (
-                          <tr key={lead.assignee_id || index} className="hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700">
+                          <tr key={lead.assignee_id || index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                             {/* Select */}
                             <td className="px-3 py-4 whitespace-nowrap">
                               <input
@@ -1174,18 +1174,20 @@ const LeadManagement = () => {
                                   );
                                 })()}
                                 <div className="ml-4">
-                                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{lead.full_name}</div>
-                                  {!purchased && <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-100">ID: {lead.identifier || lead.mortgage_id || lead.assignee_id || ''}</div>}
+                                  <div className="text-sm font-medium text-gray-900 dark:text-white">{lead.full_name}</div>
+                                  {!purchased && <div className="text-sm text-gray-500 dark:text-gray-400">ID: {lead.identifier || lead.mortgage_id || lead.assignee_id || ''}</div>}
                                 </div>
                               </div>
                             </td>
 
                             {/* Campaign Name */}
+                            {!purchased && 
                             <td className="px-3 py-4 whitespace-nowrap">
-                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              <div className="text-sm font-medium text-gray-900 dark:text-white">
                                 {lead.campaign_name || ''}
                               </div>
                             </td>
+                            }
 
                             {/* Full Name */}
                             {/* <td className="px-3 py-4 whitespace-nowrap">
@@ -1202,7 +1204,7 @@ const LeadManagement = () => {
                             {/* Registered Date */}
                             {
                               activeTab !== 'mailed' &&   <td className="px-3 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900 dark:text-gray-100">
+                              <div className="text-sm text-gray-900 dark:text-white">
                                 {lead.call_in_date_time || ''}
                               </div>
                             </td>
@@ -1233,12 +1235,12 @@ const LeadManagement = () => {
 
                             {/* State */}
                             <td className="px-3 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900 dark:text-gray-100">{lead.state || ''}</div>
+                              <div className="text-sm text-gray-900 dark:text-white">{lead.state || ''}</div>
                             </td>
 
                             {/* Zip */}
                             <td className="px-3 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900 dark:text-gray-100">{lead.zip || lead.zipcode || ''}</div>
+                              <div className="text-sm text-gray-900 dark:text-white">{lead.zip || lead.zipcode || ''}</div>
                             </td>
 
                             {/* Loan Amount */}
@@ -1308,7 +1310,7 @@ const LeadManagement = () => {
                             <td className="px-3 py-4 whitespace-nowrap text-sm font-medium">
                               <button
                                 onClick={() => setSelectedLead(lead)}
-                                className="text-[#0a2463] dark:text-blue-400 hover:text-[#0a2463] dark:text-blue-400/80"
+                                className="text-[#0a2463] dark:text-blue-400 hover:text-[#0a2463]/80 dark:hover:text-blue-300"
                                 title="View Details"
                               >
                                 <EyeIcon className="w-4 h-4" />
@@ -1334,8 +1336,8 @@ const LeadManagement = () => {
                           onClick={() => handlePageChange(currentPage - 1)}
                           disabled={currentPage <= 1}
                           className={`px-3 py-1 rounded border ${currentPage <= 1
-                            ? 'border-gray-300 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                            : 'border-gray-300 text-gray-700 hover:bg-gray-100'
+                            ? 'border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-100 dark:bg-gray-800'
+                            : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 bg-white dark:bg-gray-700'
                             }`}
                         >
                           <ChevronLeftIcon className="w-4 h-4" />
@@ -1359,8 +1361,8 @@ const LeadManagement = () => {
                               key={pageNum}
                               onClick={() => handlePageChange(pageNum)}
                               className={`px-3 py-1 rounded border ${currentPage === pageNum
-                                ? 'border-[#0a2463] bg-[#0a2463] text-white'
-                                : 'border-gray-300 text-gray-700 hover:bg-gray-100'
+                                ? 'border-[#0a2463] dark:border-blue-400 bg-[#0a2463] dark:bg-blue-500 text-white'
+                                : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 bg-white dark:bg-gray-700'
                                 }`}
                             >
                               {pageNum}
@@ -1372,8 +1374,8 @@ const LeadManagement = () => {
                           onClick={() => handlePageChange(currentPage + 1)}
                           disabled={currentPage >= totalPages}
                           className={`px-3 py-1 rounded border ${currentPage >= totalPages
-                            ? 'border-gray-300 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                            : 'border-gray-300 text-gray-700 hover:bg-gray-100'
+                            ? 'border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-100 dark:bg-gray-800'
+                            : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 bg-white dark:bg-gray-700'
                             }`}
                         >
                           <ChevronRightIcon className="w-4 h-4" />
@@ -1449,7 +1451,7 @@ const LeadManagement = () => {
                 {/* Heading */}
                 <DialogTitle
                   as="h3"
-                  className="text-2xl text-center font-semibold text-gray-800 dark:text-gray-100 dark:text-gray-100"
+                  className="text-2xl text-center font-semibold text-gray-800 dark:text-white"
                 >
                   Change Lead Status
                 </DialogTitle>
@@ -1457,15 +1459,15 @@ const LeadManagement = () => {
                 <div className="py-4">
                   <div className="mb-4">
                     <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">Lead: {statusLead.full_name || 'Unknown'}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Current Status: {LEAD_STATUS[statusLead.lead_status] || 'Unknown'}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Current Status: {LEAD_STATUS[statusLead.lead_status] || 'Unknown'}</p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">New Status</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">New Status</label>
                     <select
                       value={newStatus}
                       onChange={(e) => setNewStatus(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] focus:outline-none"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] dark:focus:border-blue-400 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     >
                       <option value="">Select Status</option>
                       {LEAD_STATUSES.map(status => (
@@ -1478,7 +1480,7 @@ const LeadManagement = () => {
                 <div className="flex items-center justify-end pt-4 border-t border-gray-200 dark:border-gray-700 space-x-3">
                   <button
                     onClick={() => setShowStatusModal(false)}
-                    className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700"
+                    className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                   >
                     Cancel
                   </button>
@@ -1486,8 +1488,8 @@ const LeadManagement = () => {
                     onClick={handleStatusChange}
                     disabled={!newStatus || statusLoading}
                     className={`px-4 py-2 text-sm rounded-md ${newStatus && !statusLoading
-                      ? 'bg-[#0a2463] text-white hover:bg-[#0a2463]/90'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      ? 'bg-[#0a2463] dark:bg-blue-500 text-white hover:bg-[#0a2463]/90 dark:hover:bg-blue-600'
+                      : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                       }`}
                   >
                     {statusLoading ? (
@@ -1545,15 +1547,15 @@ const LeadManagement = () => {
                 <div className="py-4">
                   <div className="mb-4">
                     <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">Selected Leads: {selectedLeads.length}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">This will update the status for all selected leads.</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">This will update the status for all selected leads.</p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">New Status</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">New Status</label>
                     <select
                       value={bulkNewStatus}
                       onChange={(e) => setBulkNewStatus(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] focus:outline-none"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-[#0a2463] dark:focus:border-blue-400 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     >
                       <option value="">Select Status</option>
                       {LEAD_STATUSES.map(status => (
@@ -1566,7 +1568,7 @@ const LeadManagement = () => {
                 <div className="flex items-center justify-end pt-4 border-t border-gray-200 dark:border-gray-700 space-x-3">
                   <button
                     onClick={() => setShowBulkStatusModal(false)}
-                    className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700"
+                    className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                   >
                     Cancel
                   </button>
@@ -1574,8 +1576,8 @@ const LeadManagement = () => {
                     onClick={handleBulkStatusChange}
                     disabled={!bulkNewStatus}
                     className={`px-4 py-2 text-sm rounded-md ${bulkNewStatus
-                      ? 'bg-[#0a2463] text-white hover:bg-[#0a2463]/90'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      ? 'bg-[#0a2463] dark:bg-blue-500 text-white hover:bg-[#0a2463]/90 dark:hover:bg-blue-600'
+                      : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                       }`}
                   >
                     Update {selectedLeads.length} Leads

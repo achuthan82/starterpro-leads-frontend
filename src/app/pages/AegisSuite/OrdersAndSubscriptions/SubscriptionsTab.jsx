@@ -365,7 +365,7 @@ const SubscriptionsTab = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => handleStatusChange(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-[var(--color-atoll)] focus:outline-none"
+                className="w-full dark:bg-gray-800 dark:border-gray-700 rounded-lg border border-gray-300 px-3 py-2 focus:border-[var(--color-atoll)] focus:outline-none"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -379,7 +379,7 @@ const SubscriptionsTab = () => {
               <button
                 onClick={exportToCSV}
                 disabled={subscriptions.length === 0}
-                className={`flex items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
+                className={`flex dark:text-white items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                   subscriptions.length === 0
                     ? "cursor-not-allowed border-gray-300 text-gray-100"
                     : "border-gray-300 text-gray-700  "

@@ -379,7 +379,7 @@ const OrdersTab = () => {
               <select
                 value={paymentStatusFilter}
                 onChange={(e) => handlePaymentStatusChange(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-[var(--color-atoll)] focus:outline-none"
+                className="w-full dark:bg-gray-800 dark:border-gray-700 rounded-lg border border-gray-300 px-3 py-2 focus:border-[var(--color-atoll)] focus:outline-none"
               >
                 <option value="all">All Payment Status</option>
                 <option value="succeeded">Succeeded</option>
