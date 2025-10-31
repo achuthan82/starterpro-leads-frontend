@@ -505,7 +505,7 @@ class OrdersService {
           invoiceData.purchase_date || 'NO_PURCHASE_DATE',
           invoiceData.subtotal || 'NO_SUBTOTAL',
           invoiceData.total_amount || 'NO_TOTAL',
-          invoiceData.commission || 'NO_COMMISSION',
+          invoiceData.commission || 'NO_PROCESSING_FEE',
           // Bill to
           billTo.name || 'NO_BILL_NAME',
           billTo.email || 'NO_BILL_EMAIL',

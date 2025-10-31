@@ -868,7 +868,7 @@ const SubscriptionPlans = () => {
                     name="category"
                     value={createForm.category}
                     onChange={handleCreateInputChange}
-                    className="w-full rounded-lg border border-[#75150b] px-3 py-2 focus:ring-2 focus:ring-[#75150b] focus:outline-none"
+                    className="w-full rounded-lg border border-[#75150b] px-3 py-2 dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white"
                   >
                     <option value="">Select Category</option>
                     {categoryOptions.map((opt) => (
@@ -891,7 +891,7 @@ const SubscriptionPlans = () => {
                     name="source"
                     value={createForm.source}
                     onChange={handleCreateInputChange}
-                    className="w-full rounded-lg border border-[#75150b] px-3 py-2 focus:ring-2 focus:ring-[#75150b] focus:outline-none"
+                    className="w-full rounded-lg border border-[#75150b] dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white px-3 py-2"
                   >
                     <option value="">Select Source</option>
                     {sourceOptions.map((opt) => (
@@ -936,7 +936,7 @@ const SubscriptionPlans = () => {
                   <button
                     type="submit"
                     disabled={createLoading}
-                    className={`flex items-center justify-center rounded-md bg-[#0a2463] px-4 py-2 text-sm text-white hover:bg-[#0a1a4a] ${createLoading ? "cursor-not-allowed opacity-60" : ""}`}
+                    className={`flex items-center dark:text-white dark:bg-blue-600 justify-center rounded-md bg-[#0a2463] px-4 py-2 text-sm text-white hover:bg-[#0a1a4a] ${createLoading ? "cursor-not-allowed opacity-60" : ""}`}
                   >
                     {createLoading ? (
                       <span className="flex items-center">
@@ -1008,7 +1008,7 @@ const SubscriptionPlans = () => {
               </DialogTitle>
               <form onSubmit={handleEditPlanSubmit}>
                 <div className="mb-4">
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-100">
                     Title
                   </label>
                   <input
@@ -1025,7 +1025,7 @@ const SubscriptionPlans = () => {
                   )}
                 </div>
                 <div className="mb-4">
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-100">
                     Description
                   </label>
                   <textarea
@@ -1042,7 +1042,7 @@ const SubscriptionPlans = () => {
                   )}
                 </div>
                 <div className="mb-4">
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-100">
                     Mailer Quantity
                   </label>
                   <input
@@ -1060,7 +1060,7 @@ const SubscriptionPlans = () => {
                   )}
                 </div>
                 <div className="mb-4">
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-100">
                     {" "}
                     Price
                   </label>
@@ -1094,7 +1094,7 @@ const SubscriptionPlans = () => {
                   {editErrors.month && <p className="text-red-500 text-xs mt-1">{editErrors.month}</p>}
                 </div> */}
                 <div className="mb-6">
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-100">
                     Category
                   </label>
                   <select
@@ -1117,7 +1117,7 @@ const SubscriptionPlans = () => {
                   )}
                 </div>
                 <div className="mb-6">
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-100">
                     Source
                   </label>
                   <select
@@ -1150,7 +1150,7 @@ const SubscriptionPlans = () => {
                   <button
                     type="submit"
                     disabled={editLoading}
-                    className={`flex items-center justify-center rounded-md bg-[#0a2463] px-4 py-2 text-sm text-white hover:bg-[#0a1a4a] ${editLoading ? "cursor-not-allowed opacity-60" : ""}`}
+                    className={`flex items-center dark:text-white dark:bg-blue-600 justify-center rounded-md bg-[#0a2463] px-4 py-2 text-sm text-white hover:bg-[#0a1a4a] ${editLoading ? "cursor-not-allowed opacity-60" : ""}`}
                   >
                     {editLoading ? (
                       <span className="flex items-center">
@@ -1216,11 +1216,11 @@ const SubscriptionPlans = () => {
             <DialogPanel className="relative w-full max-w-md rounded-2xl bg-white px-6 py-8 shadow-xl transition-all sm:px-8 dark:bg-gray-800">
               <DialogTitle
                 as="h3"
-                className="mb-6 text-center text-xl font-semibold text-gray-800"
+                className="mb-6 text-center text-xl font-semibold text-gray-800 dark:text-gray-100"
               >
                 Deactivate Plan
               </DialogTitle>
-              <p className="mb-6 text-center text-gray-700">
+              <p className="mb-6 text-center text-gray-700 dark:text-gray-100">
                 Are you sure you want to deactivate this plan? This action
                 cannot be undone.
               </p>

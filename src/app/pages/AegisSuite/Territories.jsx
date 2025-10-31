@@ -31,8 +31,8 @@ const Territories = () => {
 
   // Tab configuration
   const tabs = [
-    { id: "active", label: "Active Territories" },
-    { id: "inactive", label: "Inactive Territories" },
+    { id: "active", label: "Active Regions" },
+    { id: "inactive", label: "Inactive Regions" },
   ];
 
   console.log("territories", usaStates);
@@ -85,7 +85,7 @@ const Territories = () => {
 
     return [
       {
-        title: `${activeTab === "active" ? "Active" : "Inactive"} Territories`,
+        title: `${activeTab === "active" ? "Active" : "Inactive"} Regions`,
         value: territories?.length.toString() || "0",
         change: "+0%",
         changeType: "positive",
@@ -233,7 +233,7 @@ const Territories = () => {
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
-      <SharedSidebar currentPath="/territories" />
+      <SharedSidebar currentPath="/regions" />
 
       {/* Main Content */}
       <div className="flex flex-1 flex-col overflow-hidden">
@@ -242,10 +242,10 @@ const Territories = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
-                Mailing Territories
+                Mailing Regions
               </h1>
               <p className="mt-1 text-gray-600 dark:text-gray-300">
-                Manage your sales territories and coverage areas
+                Manage your sales regions and coverage areas
               </p>
             </div>
             {/* <div className="flex items-center space-x-3">
@@ -290,7 +290,7 @@ const Territories = () => {
               <div className="text-center">
                 <Spinner size="lg" />
                 <p className="mt-4 text-gray-600 dark:text-gray-300">
-                  Loading territories...
+                  Loading regions...
                 </p>
               </div>
             </div>
@@ -472,10 +472,10 @@ const Territories = () => {
                     </div>
                     <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
                       No {activeTab === "active" ? "Active" : "Inactive"}{" "}
-                      Territories Found
+                      Regions Found
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300">
-                      You don&apos;t have any territories assigned yet.
+                      You don&apos;t have any regions assigned yet.
                     </p>
                   </div>
                 </div>

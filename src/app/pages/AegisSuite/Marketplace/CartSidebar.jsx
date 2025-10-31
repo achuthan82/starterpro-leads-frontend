@@ -247,7 +247,7 @@ const CartSidebar = ({ open, onClose }) => {
               <span className="text-base font-bold text-gray-700 dark:text-gray-200">${roundedGrandTotal}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="font-semibold text-base text-gray-900 dark:text-gray-100">Commission (3%):</span>
+              <span className="font-semibold text-base text-gray-900 dark:text-gray-100">Processing Fee (3%):</span>
               <span className="text-base font-bold text-gray-700 dark:text-gray-200">${commission}</span>
             </div>
             <div className="flex justify-between items-center mt-1">

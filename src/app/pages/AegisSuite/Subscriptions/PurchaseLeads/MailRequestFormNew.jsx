@@ -323,8 +323,10 @@ const MailRequestFormNew = ({ selectedPlan }) => {
               penColor="black"
               backgroundColor="#f8fafc"
               canvasProps={{
+                width: 700,
+                height: 160,
                 className:
-                  "w-full h-32 border-2 border-neutral-400 rounded-lg bg-neutral-50",
+                  "w-full border-2 border-neutral-400 rounded-lg bg-neutral-50 sigCanvas",
               }}
             />
             <div className="mt-1 flex justify-end space-x-4 text-sm">

@@ -37,8 +37,8 @@ const darkColors = {
   dark200: '#e2e8f0',
   dark100: '#f1f5f9',
   white: '#ffffff',
-  brandPrimary: '#75150b',
-  brandSecondary: '#9c3e43',
+  brandPrimary: '#f4d03f',
+  brandSecondary: '#0a2463',
   red500: '#ef4444',
 };
 
@@ -57,7 +57,7 @@ const lightColors = {
   neutral70: '#374151',
   neutral80: '#1f2937',
   neutral90: '#111827',
-  primary: '#75150b',
+  primary: '#f4d03f',
   primary25: '#fee2e2',
   primary50: '#fecaca',
   primary75: '#fca5a5',

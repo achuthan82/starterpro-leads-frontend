@@ -690,19 +690,19 @@ const AgentLeads = () => {
                   <div className="text-sm text-white/80">Total Leads</div>
                 </div>
                 <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
-                  <div className="text-2xl font-bold text-[#f4d03f]">
+                  <div className="text-2xl font-bold text-white">
                     {summary.goldLeads}
                   </div>
                   <div className="text-sm text-white/80">Completed Leads</div>
                 </div>
                 <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
-                  <div className="text-2xl font-bold text-[#f4d03f]">
+                  <div className="text-2xl font-bold text-white">
                     {summary.partialLeads}
                   </div>
                   <div className="text-sm text-white/80">Incomplete Leads</div>
                 </div>
                 <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
-                  <div className="text-2xl font-bold text-[#f4d03f]">
+                  <div className="text-2xl font-bold text-white">
                     {summary.mailedLeads}
                   </div>
                   <div className="text-sm text-white/80">Mailed Leads</div>

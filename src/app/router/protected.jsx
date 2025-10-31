@@ -96,7 +96,7 @@ const protectedRoutes = {
               }),
             },
             {
-              path: "territories",
+              path: "regions",
               lazy: async () => ({
             Component: (await import("app/pages/AegisSuite/Territories"))
                   .default,
@@ -171,6 +171,14 @@ const protectedRoutes = {
               }),
             },
             {
+              path: "/power-dialer",
+              lazy: async () => ({
+                Component: (
+              await import("app/pages/powerDialer/PowerDialer")
+                ).default,
+              }),
+            },
+            {
               path: "settings",
               lazy: async () => ({
             Component: (await import("app/pages/AegisSuite/Settings"))
@@ -186,14 +194,6 @@ const protectedRoutes = {
                   await import(
                 "app/pages/AegisSuite/admin/AdminAgentManagement"
                   )
-                ).default,
-              }),
-            },
-             {
-              path: "admin/power-dialer",
-              lazy: async () => ({
-                Component: (
-              await import("app/pages/powerDialer/PowerDialer")
                 ).default,
               }),
             },

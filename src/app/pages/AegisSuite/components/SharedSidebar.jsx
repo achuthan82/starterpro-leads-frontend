@@ -82,16 +82,22 @@ const SharedSidebar = ({ currentPath = "" }) => {
       href: "/lead-management",
     },
     {
-      id: "territories",
-      label: "Mailing Territories",
+      id: "regions",
+      label: "Mailing Regions",
       icon: MapIcon,
-      href: "/territories",
+      href: "/regions",
     },
     {
       id: "marketplace",
       label: "Lead Bank",
       icon: ShoppingCartIcon,
       href: "/marketplace",
+    },
+    {
+      id: "power-dialer",
+      label: "Power Dialer",
+      icon: PhoneIcon,
+      href: "/power-dialer",
     },
     {
       id: "orders-subscriptions",
@@ -119,12 +125,6 @@ const SharedSidebar = ({ currentPath = "" }) => {
 
   // Admin-only menu items
   const adminItems = [
-    {
-      id: "power-dialer",
-      label: "Power Dialer",
-      icon: PhoneIcon,
-      href: "/admin/power-dialer",
-    },
     {
       id: "admin-agents",
       label: "Agent Management",

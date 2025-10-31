@@ -287,7 +287,7 @@ const AgentOrders = () => {
 
         {/* Agent Info Banner */}
         {agent && (
-          <div className="bg-gradient-to-r from-[var(--color-atoll)] to-[var(--color-fern)] text-white p-6">
+          <div className="bg-gradient-to-r from-[#0a2463] to-[#f4d03f] text-white p-6">
             <div className="flex items-center space-x-6">
               <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
                 <UserIcon className="w-8 h-8 text-white" />
