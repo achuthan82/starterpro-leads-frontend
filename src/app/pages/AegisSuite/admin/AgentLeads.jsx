@@ -331,7 +331,7 @@ const AgentLeads = () => {
       // setLoading(true);
 
       const combinedFilters = Object.entries(filters).reduce((acc, item) => {
-        if (item[1]) {
+        if (item[1] && item[1] !== 'all') {
           acc[item[0]] = item[1];
         }
         return acc;
@@ -371,6 +371,7 @@ const AgentLeads = () => {
     setFilters({ lead_status: "", state: "", name: "", campaign: "" });
     setCurrentPage(1);
     fetchAgentLeads(1, perPage, tabId, {}, purchased);
+    setPrintLeads([])
   };
   const handleTypeChange = (sts) => {
     setSearchTerm("");

@@ -437,6 +437,7 @@ const LeadManagement = () => {
     setSearchTerm('');
     setFilters({ lead_status: '', state: '', name: '', campaign: '' });
     setCurrentPage(1);
+    setPrintLeads([])
   };
 
   // Handle page change
@@ -865,7 +866,11 @@ const LeadManagement = () => {
                 ))}
               </nav>
               < div className="flex flex-wrap gap-5">
-                <Checkbox  label="View Market Place Leads"  onChange={(event) => {fetchLeads(activeTab, filters, 1, perPage, true, event.target.checked); setPurchased(event.target.checked) ; fetchSummary('market-place')}}/>
+                <Checkbox  label="View Market Place Leads"  onChange={(event) => {fetchLeads(activeTab, filters, 1, perPage, true, event.target.checked); setPurchased(event.target.checked) ;
+                  if (event.target.checked) {
+                  fetchSummary('market-place')} else {
+                    fetchSummary()
+                  }}}/>
               </div>
             </div>
           </div>

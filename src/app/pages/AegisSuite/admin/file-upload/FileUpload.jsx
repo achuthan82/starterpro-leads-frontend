@@ -649,6 +649,7 @@ const FileUpload = () => {
                           color="secondary"
                           outline
                           onClick={() => {
+                            close()
                             // clearAll()
                           }}
                         >

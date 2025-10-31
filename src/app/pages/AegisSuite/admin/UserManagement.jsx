@@ -32,6 +32,7 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('0');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [loaded, setLoaded] = useState(false)
   // const [currentPage, setCurrentPage] = useState(1);
   // const [totalPages, setTotalPages] = useState(1);
   const [paginatedData, setPaginatedData] = useState([]);
@@ -122,7 +123,7 @@ const UserManagement = () => {
   async (page = 1) => {
     try {
       setLoading(true);
-     
+      setLoaded(true)
        const params = {
         page,
         // limit: 10,
@@ -302,13 +303,17 @@ useEffect(() => {
       if (searchTerm !== '') {
         setCurrentPage(1);
         fetchUsers();
-      }
+      } 
     }, 500);
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm, fetchUsers]);
 
-
+  useEffect(() => {
+     if (searchTerm === ''  && loaded) {
+      fetchUsers()
+     }
+  }, [searchTerm])
 
 
   /*const handleStatusChange = async (userId, newStatus) => {

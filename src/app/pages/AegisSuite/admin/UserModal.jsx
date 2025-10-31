@@ -584,8 +584,9 @@ const UserModal = ({
                     </div>
                   ))}
                 </SlideDown>
-
-                <div className="mb-2">
+                 
+                 {
+                  inputFields.length === 0 && <div className="mb-2">
                   <Button
                     // color='pri'
                     type="button"
@@ -597,6 +598,8 @@ const UserModal = ({
                     <span className="hidden sm:inline-block">Add New Type</span>
                   </Button>
                 </div>
+                 }
+                
 
                 <div className="mt-4 w-full pt-4 text-center">
                   <Button
