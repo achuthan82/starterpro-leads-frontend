@@ -14,11 +14,12 @@ import {
   MapIcon,
   ShoppingBagIcon,
   CloudArrowUpIcon,
+  UserCircleIcon,
   // TagIcon,
   // QuestionMarkCircleIcon,
   // ChartBarSquareIcon,
   // SpeakerWaveIcon,
-  PhoneIcon
+  PhoneIcon,
 } from "@heroicons/react/24/outline";
 import Logo from "assets/app-logo/logo-text.svg?.react";
 import { useNavigate } from "react-router";
@@ -26,6 +27,7 @@ import { useAuthContext } from "app/contexts/auth/context";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { CheckBadgeIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
+import { Button } from "components/ui";
 
 const SharedSidebar = ({ currentPath = "" }) => {
   const navigate = useNavigate();
@@ -186,13 +188,15 @@ const SharedSidebar = ({ currentPath = "" }) => {
     //   href: "/campaign",
     // },
   ];
-
+  const handleViewProfile = () => {
+    navigate('/profile-page')
+  };
   return (
     <div
-      className="flex w-64 flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg"
+      className="flex w-64 flex-col border-r border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
       style={{ overflow: "auto" }}
     >
-      <div className="border-b border-gray-200 dark:border-gray-700 p-6">
+      <div className="border-b border-gray-200 p-6 dark:border-gray-700">
         <div className="flex items-center space-x-3">
           <div>
             <img
@@ -201,7 +205,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
               style={{ maxWidth: "100%", height: "auto", objectFit: "contain" }}
               className="dark:brightness-200"
             />
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-4 text-center">
+            <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">
               {userRole === "admin" ? "Admin Portal" : "Agent Portal"}
             </p>
           </div>
@@ -242,8 +246,8 @@ const SharedSidebar = ({ currentPath = "" }) => {
                 className={`flex w-full items-center space-x-3 rounded-lg p-3 text-left transition-all duration-200 ${
                   currentPath === item.href ||
                   window.location.pathname === item.href
-                    ? "bg-[#0a2463] dark:bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
+                    ? "bg-[#0a2463] text-white dark:bg-blue-600"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
                 }`}
               >
                 <item.icon className="h-5 w-5" />
@@ -256,8 +260,8 @@ const SharedSidebar = ({ currentPath = "" }) => {
           {userRole === "admin" && (
             <div key={`admin-section-${forceUpdate}`}>
               <li className="pt-4">
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                  <p className="mb-3 text-xs font-semibold tracking-wider text-gray-400 dark:text-gray-500 uppercase">
+                <div className="border-t border-gray-200 pt-4 dark:border-gray-700">
+                  <p className="mb-3 text-xs font-semibold tracking-wider text-gray-400 uppercase dark:text-gray-500">
                     Administration
                   </p>
                 </div>
@@ -269,8 +273,8 @@ const SharedSidebar = ({ currentPath = "" }) => {
                     className={`flex w-full items-center space-x-3 rounded-lg p-3 text-left transition-all duration-200 ${
                       currentPath === item.href ||
                       window.location.pathname === item.href
-                        ? "bg-[#0a2463] dark:bg-blue-600 text-white"
-                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
+                        ? "bg-[#0a2463] text-white dark:bg-blue-600"
+                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
                     }`}
                   >
                     <item.icon className="h-5 w-5" />
@@ -283,35 +287,51 @@ const SharedSidebar = ({ currentPath = "" }) => {
         </ul>
       </nav>
 
-      <div className="border-t border-gray-200 dark:border-gray-700 p-4">
-        <div className="mb-4 flex items-center space-x-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0a2463] dark:bg-blue-600">
-            <span className="text-sm font-medium text-white">
-              {getUserInitials(userName)}
-            </span>
+      <div className="border-t border-gray-200 p-4 dark:border-gray-700">
+        {/* Profile Section */}
+        <div className="mb-4 flex items-center justify-between">
+          {/* Left side: Avatar + Info */}
+          <div className="flex items-center space-x-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0a2463] dark:bg-blue-600">
+              <span className="text-sm font-medium text-white">
+                {getUserInitials(userName)}
+              </span>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                {userName}
+              </p>
+              <p className="text-xs text-gray-500 capitalize dark:text-gray-400">
+                {userRole}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{userName}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{userRole}</p>
-          </div>
+
+          {/* Right side: Profile icon button */}
+          <Button
+            // color='primary'
+            // variant='outlined'
+            isIcon
+            onClick={handleViewProfile}
+            data-tooltip
+            data-tooltip-variant="info"
+            data-tooltip-content="View Profile"
+            className="p-1 text-gray-500 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+            title="View Profile"
+          >
+            <UserCircleIcon className="h-7 w-7" />
+          </Button>
         </div>
+
+        {/* Action Buttons */}
         <div className="space-y-2">
           <button
             onClick={handleLogout}
-            className="flex w-full items-center justify-center rounded-lg p-2 text-sm text-gray-600 dark:text-gray-300 transition-colors hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
+            className="flex w-full items-center justify-center rounded-lg p-2 text-sm text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-gray-300 dark:hover:bg-red-900/20 dark:hover:text-red-400"
           >
             <ArrowRightStartOnRectangleIcon className="mr-2 h-4 w-4" />
             Sign Out
           </button>
-          {/* <button
-            onClick={() => navigate('/')}
-            className="w-full flex items-center text-sm text-gray-600 hover:text-[#0a2463] transition-colors p-2 rounded-lg hover:bg-gray-50"
-          >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to ShieldNest
-          </button> */}
         </div>
       </div>
     </div>

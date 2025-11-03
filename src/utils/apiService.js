@@ -28,6 +28,7 @@ import promoCodeService from './promoCodeService';
 import revenueService from './revenueService';
 import prospectService from './prospectService';
 import couponService from './couponService';
+import profileService from './profileService';
 import { JWT_HOST_API } from 'configs/auth.config';
 
 // Export individual services
@@ -48,6 +49,7 @@ export {promoCodeService}
 export {revenueService}
 export {prospectService}
 export {couponService}
+export {profileService}
 // Export combined API service object
 const apiService = {
   auth: authService,
@@ -67,6 +69,7 @@ const apiService = {
   revenue:revenueService,
   prospect:prospectService,
   coupon:couponService,
+  profile:profileService
 };
 
 export default apiService;
