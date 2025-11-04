@@ -1,9 +1,9 @@
-import {
-  MicrophoneIcon,
-  PhoneXMarkIcon,
-  SpeakerWaveIcon,
+import { 
+  MicrophoneIcon, 
+  PhoneXMarkIcon, 
+  SpeakerWaveIcon, 
   SpeakerXMarkIcon,
-  NoSymbolIcon
+  NoSymbolIcon 
 } from '@heroicons/react/24/solid';
 import { useState, useEffect, useRef, useCallback } from 'react';
 
@@ -23,20 +23,24 @@ const CallControls = ({
   const [audioPermission, setAudioPermission] = useState(false);
   const audioContextRef = useRef(null);
 
+  // Format call timer
   const formatCallDuration = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Get Twilio call reference
   const getTwilioCall = useCallback(() => {
     return window.currentTwilioCall || currentCall || null;
   }, [currentCall]);
 
+  // Check audio permissions
   useEffect(() => {
     checkAudioPermissions();
   }, []);
 
+  // Sync mute state from Twilio call
   useEffect(() => {
     const call = getTwilioCall();
     if (call && typeof call.isMuted === 'function') {
@@ -44,6 +48,7 @@ const CallControls = ({
     }
   }, [isCallActive, getTwilioCall]);
 
+  // Reset when call ends
   useEffect(() => {
     if (isCallEnded || (!isCallActive && !isDialing)) {
       setIsMuted(false);
@@ -77,12 +82,12 @@ const CallControls = ({
 
   const requestMicrophonePermission = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
           autoGainControl: true
-        }
+        } 
       });
       stream.getTracks().forEach(track => track.stop());
       setAudioPermission(true);
@@ -121,7 +126,7 @@ const CallControls = ({
     }
   };
 
-  // ✅ SPEAKER CONTROL (Twilio SDK)
+  // ✅ SPEAKER CONTROL
   const handleSpeakerToggle = async () => {
     const newSpeakerState = !isSpeakerOn;
     setIsSpeakerOn(newSpeakerState);
@@ -134,32 +139,42 @@ const CallControls = ({
 
   const toggleSpeakerOutput = async (speakerOn) => {
     try {
-      const twilioDevice = window.twilioDevice;
-      if (!twilioDevice || !twilioDevice.audio) {
-        console.warn('No active Twilio Device found for speaker control');
+      const twilioDevice = window.twilioDevice || null;
+      if (!twilioDevice) {
+        console.warn('No active Twilio Device for speaker control');
         return;
       }
 
-      // Request permission to get audio devices
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const outputDevices = devices.filter((d) => d.kind === 'audiooutput');
+      // Twilio manages internal audio elements for incoming/outgoing audio
+      const audioElement = 
+        twilioDevice.audio?.outgoing?._mediaElement ||
+        twilioDevice.audio?.incoming?._mediaElement;
 
-      if (outputDevices.length === 0) {
-        console.warn('No audio output devices available.');
+      if (!audioElement) {
+        console.warn('Twilio audio element not found');
         return;
       }
 
-      const speakerDevice = outputDevices.find((d) => /speaker/i.test(d.label));
+      if (!audioElement.setSinkId) {
+        console.warn('setSinkId() not supported in this browser');
+        return;
+      }
 
-      if (speakerOn && speakerDevice) {
-        // Route to external speaker
-        twilioDevice.audio.speakerDevices.set([speakerDevice.deviceId]);
-        console.log(`✅ Audio routed to speaker: ${speakerDevice.label}`);
+      if (speakerOn) {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const speaker = devices.find(
+          (d) => d.kind === 'audiooutput' && /speaker/i.test(d.label)
+        );
+
+        if (speaker) {
+          await audioElement.setSinkId(speaker.deviceId);
+          console.log(`Audio routed to speaker: ${speaker.label}`);
+        } else {
+          console.warn('No external speaker device found, using default output');
+        }
       } else {
-        // Reset to default
-        twilioDevice.audio.speakerDevices.set(outputDevices.map(d => d.deviceId));
-        console.log('🔄 Audio routed to default output');
+        await audioElement.setSinkId(''); // reset to default (receiver)
+        console.log('Audio routed to default receiver');
       }
     } catch (error) {
       console.error('Speaker toggle failed:', error);
@@ -176,6 +191,7 @@ const CallControls = ({
       .slice(0, 2);
   };
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (audioContextRef.current) {
@@ -184,7 +200,7 @@ const CallControls = ({
     };
   }, []);
 
-  // --- UI ---
+  // --- UI Rendering ---
   if (!selectedLead) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 p-6 text-center">
@@ -199,7 +215,7 @@ const CallControls = ({
       {!audioPermission && (
         <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-lg p-3 mb-4 text-sm">
           <p>Microphone access required</p>
-          <button
+          <button 
             onClick={requestMicrophonePermission}
             className="mt-2 px-3 py-1 bg-yellow-500 text-white rounded text-xs hover:bg-yellow-600"
           >
@@ -208,7 +224,7 @@ const CallControls = ({
         </div>
       )}
 
-      {/* Lead info */}
+      {/* Profile */}
       <div className="flex flex-col items-center mb-4">
         <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-3">
           <span className="text-blue-600 dark:text-blue-400 font-bold text-xl">
@@ -237,7 +253,7 @@ const CallControls = ({
         </div>
       )}
 
-      {/* Indicators */}
+      {/* Audio Indicators */}
       {(isCallActive || isDialing) && (
         <div className="flex justify-center gap-4 mb-4 text-xs">
           <div className={`flex items-center gap-1 px-2 py-1 rounded ${
@@ -255,15 +271,15 @@ const CallControls = ({
         </div>
       )}
 
-      {/* Buttons */}
+      {/* Control Buttons */}
       <div className="flex items-center justify-center gap-6 mt-4">
         {/* Mute */}
-        <button
+        <button 
           onClick={handleMuteToggle}
           disabled={!isCallActive && !isDialing}
           className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200 ${
-            isMuted
-              ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 shadow-inner'
+            isMuted 
+              ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 shadow-inner' 
               : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 shadow-sm'
           } ${(!isCallActive && !isDialing) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           title={isMuted ? 'Unmute microphone' : 'Mute microphone'}
@@ -285,12 +301,12 @@ const CallControls = ({
         </button>
 
         {/* Speaker */}
-        <button
+        <button 
           onClick={handleSpeakerToggle}
           disabled={!isCallActive && !isDialing}
           className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200 ${
-            isSpeakerOn
-              ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400 shadow-inner'
+            isSpeakerOn 
+              ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400 shadow-inner' 
               : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 shadow-sm'
           } ${(!isCallActive && !isDialing) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           title={isSpeakerOn ? 'Switch to receiver' : 'Switch to speaker'}
@@ -298,6 +314,13 @@ const CallControls = ({
           {isSpeakerOn ? <SpeakerWaveIcon className="w-6 h-6" /> : <SpeakerXMarkIcon className="w-6 h-6" />}
         </button>
       </div>
+
+      {(isCallActive || isDialing) && (
+        <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
+          <p>Mute: {isMuted ? 'Microphone is off' : 'Microphone is on'}</p>
+          <p>Speaker: {isSpeakerOn ? 'Loud speaker mode' : 'Receiver mode'}</p>
+        </div>
+      )}
     </div>
   );
 };
