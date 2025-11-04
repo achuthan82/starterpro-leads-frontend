@@ -1,10 +1,6 @@
 import {
-  // UserIcon,
   ChartBarIcon,
   UsersIcon,
-  // MapPinIcon,
-  // CurrencyDollarIcon,
-  // BellIcon,
   CreditCardIcon,
   ShieldCheckIcon,
   ArrowRightStartOnRectangleIcon,
@@ -14,12 +10,9 @@ import {
   MapIcon,
   ShoppingBagIcon,
   CloudArrowUpIcon,
-  UserCircleIcon,
-  // TagIcon,
-  // QuestionMarkCircleIcon,
-  // ChartBarSquareIcon,
-  // SpeakerWaveIcon,
   PhoneIcon,
+  CalendarIcon,
+  EyeIcon,
 } from "@heroicons/react/24/outline";
 import Logo from "assets/app-logo/logo-text.svg?.react";
 import { useNavigate } from "react-router";
@@ -27,7 +20,7 @@ import { useAuthContext } from "app/contexts/auth/context";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { CheckBadgeIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
-import { Button } from "components/ui";
+import {Button} from "components/ui";
 
 const SharedSidebar = ({ currentPath = "" }) => {
   const navigate = useNavigate();
@@ -107,8 +100,12 @@ const SharedSidebar = ({ currentPath = "" }) => {
       icon: ShoppingBagIcon,
       href: "/orders-subscriptions",
     },
-    // { id: 'campaigns', label: 'My Campaigns', icon: BellIcon, href: '/shieldnest/campaigns' },
-    // { id: 'settings', label: 'Settings', icon: UserIcon, href: '/shieldnest/settings' },
+    {
+      id: "appointments",
+      label: "Appointments",
+      icon: CalendarIcon,
+      href: "/appointments",
+    },
     {
       id: "subscriptions",
       label: "Subscriptions",
@@ -116,13 +113,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
       href: "/subscriptions",
       icon: CreditCardIcon,
       iconColor: "text-red-600",
-    },
-    // {
-    //   id: "support",
-    //   label: "Support",
-    //   icon: QuestionMarkCircleIcon,
-    //   href: "/support",
-    // },
+    }
   ];
 
   // Admin-only menu items
@@ -194,7 +185,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
   return (
     <div
       className="flex w-64 flex-col border-r border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
-      style={{ overflow: "auto" }}
+      style={{ overflow: "auto"}}
     >
       <div className="border-b border-gray-200 p-6 dark:border-gray-700">
         <div className="flex items-center space-x-3">
@@ -319,7 +310,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
             className="p-1 text-gray-500 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
             title="View Profile"
           >
-            <UserCircleIcon className="h-7 w-7" />
+            <EyeIcon className="h-4 w-4" />
           </Button>
         </div>
 

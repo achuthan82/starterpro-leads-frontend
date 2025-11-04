@@ -41,6 +41,13 @@ const protectedRoutes = {
           }),
         },
         {
+          path: "appointments",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/appointments/Appointments"))
+              .default,
+          }),
+        },
+        {
           path: "subscriptions",
           lazy: async () => ({
             Component: (await import("app/pages/AegisSuite/Subscriptions"))
