@@ -176,6 +176,9 @@ const UserModal = ({
     if (data?.agency_name) {
       d["agency_name"] = data?.agency_name;
     }
+    if (data?.npn_number) {
+      d["npn"] = data?.npn_number;
+    }
     if (editData !== null) {
       d["edit_agents"] = edit_agents;
       d["remove_agents"] = remove_agents;
@@ -252,6 +255,7 @@ const UserModal = ({
     setValue("name", "");
     setValue("email", "");
     setValue("phone", "");
+    setValue("npn_number", "");
     setValue("user_role", "");
     setValue("agency_name", "");
     setInputFields([{ id: "", auto_generate: false, source: "" }]);
@@ -274,6 +278,7 @@ const UserModal = ({
         (item) => item.value === editData.role_id,
       );
       setValue("name", editData.name);
+      if (editData.npn) setValue("npn_number", editData.npn);
       setValue("phone", editData.phone);
       setValue("email", editData.email);
       if (editData?.agency_name) setValue("agency_name", editData?.agency_name);
@@ -283,6 +288,7 @@ const UserModal = ({
       // setError(null)
       setValue("name", "");
       setValue("phone", "");
+      setValue("npn_number", "");
       setValue("email", "");
       setValue("user_role", "");
       setValue("agency_name", "");
@@ -395,6 +401,40 @@ const UserModal = ({
                     </span>
                   )}
                 </div>
+                {editData !== null && editData.npn !== null && (
+                <div className="w-full">
+                  <label
+                    className="mb-1 block text-left text-sm font-medium"
+                    htmlFor="npn_number"
+                  >
+                    NPN Number
+                  </label>
+                  <Controller
+                    control={control}
+                    name="npn_number"
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        innerRef={field.ref}
+                        autoFocus
+                        type="text"
+                        id="npn_number"
+                        placeholder="NPN Number"
+                        invalid={errors.npn_number}
+                        className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+                        onChange={(event) => {
+                          field.onChange(event);
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.npn_number && (
+                    <span className="text-red-500">
+                      {errors.npn_number.message}
+                    </span>
+                  )}
+                </div>
+                )}
 
                 <div className="w-full">
                   <label

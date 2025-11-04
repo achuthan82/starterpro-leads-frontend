@@ -20,6 +20,7 @@ const passwordRules =
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
   agency_name: yup.string().required("Agency Name is required"),
+  npn_number: yup.string().required("NPN Number is required"),
   phone: yup
     .string()
     .matches(phoneRegExp, "Phone number must be exactly 10 digits")
@@ -43,6 +44,7 @@ export default function Register() {
   const navigate = useNavigate();
   const registeredName = searchParams.get("name") || "";
   const registeredPhone = searchParams.get("phone") || "";
+  const npn_number = searchParams.get("npn") || "";
   const agencyName = searchParams.get("agency_name") || "";
   const params = useParams();
   const register_token = params.token.replace(/\${5}/g, ".");
@@ -63,6 +65,7 @@ export default function Register() {
     defaultValues: {
       name: registeredName,
       agency_name: agencyName,
+      npn_number: npn_number,
       phone: registeredPhone,
       password: "",
       confirm_password: "",
@@ -91,6 +94,7 @@ export default function Register() {
       const payload = {
         name: data.name,
         agency_name: data.agency_name,
+        npn: data.npn_number,
         phone: data.phone,
         password: data.password,
         confirm_password: data.confirm_password,
@@ -229,6 +233,28 @@ export default function Register() {
               {errors.agency_name && (
                 <p className="mt-1 text-xs text-red-500 dark:text-red-400">
                   {errors.agency_name.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="npn_number"
+                className="mb-2 block text-sm font-medium text-[#0a2463] dark:text-blue-400"
+              >
+                NPN Number
+              </label>
+              <input
+                id="npn_number"
+                name="npn_number"
+                type="text"
+                {...register("npn_number")}
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 transition-colors focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                placeholder="Enter your agency name"
+                defaultValue={npn_number}
+              />
+              {errors.npn_number && (
+                <p className="mt-1 text-xs text-red-500 dark:text-red-400">
+                  {errors.npn_number.message}
                 </p>
               )}
             </div>

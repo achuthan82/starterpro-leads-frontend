@@ -539,6 +539,9 @@ useEffect(() => {
                       User
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      NPN Number
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Contact
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -595,6 +598,9 @@ useEffect(() => {
                               <div className="text-sm text-gray-900 dark:text-gray-100">{user.email}</div>
                             </div>
                           </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{user.npn || 'N/A'}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-500 dark:text-gray-400">{user.phone || 'N/A'}</div>
