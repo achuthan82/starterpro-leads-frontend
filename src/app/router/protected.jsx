@@ -20,253 +20,252 @@ const protectedRoutes = {
           index: true,
           element: <Navigate to="/agent-dashboard" />,
         },
-            {
-              path: "overview",
-              lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/Overview"))
-                  .default,
-              }),
-            },
-            {
-              path: "agent-dashboard",
-              lazy: async () => ({
+        {
+          path: "overview",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/Overview")).default,
+          }),
+        },
+        {
+          path: "agent-dashboard",
+          lazy: async () => ({
             Component: (await import("app/pages/AegisSuite/AgentDashboard"))
-                  .default,
-              }),
-            },
-            {
-              path: "subscriptions",
-              lazy: async () => ({
+              .default,
+          }),
+        },
+        {
+          path: "profile-page",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/profile/ProfilePage"))
+              .default,
+          }),
+        },
+        {
+          path: "appointments",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/appointments/Appointments"))
+              .default,
+          }),
+        },
+        {
+          path: "subscriptions",
+          lazy: async () => ({
             Component: (await import("app/pages/AegisSuite/Subscriptions"))
-                  .default,
-              }),
-            },
-            {
-              path: "subscriptions/success",
-              lazy: async () => ({
-                Component: (
-                  await import(
+              .default,
+          }),
+        },
+        {
+          path: "subscriptions/success",
+          lazy: async () => ({
+            Component: (
+              await import(
                 "app/pages/AegisSuite/Subscriptions/PurchaseLeads/CheckoutSuccess"
-                  )
-                ).default,
-              }),
-            },
-            {
-              path: "subscriptions/cancel",
-              lazy: async () => ({
-                Component: (
-                  await import(
+              )
+            ).default,
+          }),
+        },
+        {
+          path: "subscriptions/cancel",
+          lazy: async () => ({
+            Component: (
+              await import(
                 "app/pages/AegisSuite/Subscriptions/PurchaseLeads/CheckoutCancel"
-                  )
-                ).default,
-              }),
-            },
-            {
-              path: "subscriptions/invoice/:id",
-              lazy: async () => ({
-                Component: (
-                  await import(
-                "app/pages/AegisSuite/Subscriptions/InvoiceTemplate"
-                  )
-                ).default,
-              }),
-            },
-            {
-              path: "subscriptions/purchase/:id",
-              lazy: async () => ({
-                Component: (
-                  await import(
+              )
+            ).default,
+          }),
+        },
+        {
+          path: "subscriptions/invoice/:id",
+          lazy: async () => ({
+            Component: (
+              await import("app/pages/AegisSuite/Subscriptions/InvoiceTemplate")
+            ).default,
+          }),
+        },
+        {
+          path: "subscriptions/purchase/:id",
+          lazy: async () => ({
+            Component: (
+              await import(
                 "app/pages/AegisSuite/Subscriptions/PurchaseLeads/index"
-                  )
-                ).default,
-              }),
-            },
-            {
-              path: "lead-management",
-              lazy: async () => ({
+              )
+            ).default,
+          }),
+        },
+        {
+          path: "lead-management",
+          lazy: async () => ({
             Component: (await import("app/pages/AegisSuite/LeadManagement"))
-                  .default,
-              }),
-            },
-            {
-              path: "revenue-report",
-              lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/revenue-reports/Report"))
-                  .default,
-              }),
-            },
-            {
-              path: "regions",
-              lazy: async () => ({
+              .default,
+          }),
+        },
+        {
+          path: "revenue-report",
+          lazy: async () => ({
+            Component: (
+              await import("app/pages/AegisSuite/revenue-reports/Report")
+            ).default,
+          }),
+        },
+        {
+          path: "regions",
+          lazy: async () => ({
             Component: (await import("app/pages/AegisSuite/Territories"))
-                  .default,
-              }),
-            },
-            {
-              path: "marketplace",
-              lazy: async () => ({
-                Component: (
+              .default,
+          }),
+        },
+        {
+          path: "marketplace",
+          lazy: async () => ({
+            Component: (
               await import("app/pages/AegisSuite/Marketplace/Marketplace")
-                ).default,
-              }),
-            },
-            {
-              path: "prospect",
-              lazy: async () => ({
-                Component: (
+            ).default,
+          }),
+        },
+        {
+          path: "prospect",
+          lazy: async () => ({
+            Component: (
               await import("app/pages/AegisSuite/prospect/ProspectList")
-                ).default,
-              }),
-            },
-             {
-              path: "campaign",
-              lazy: async () => ({
-                Component: (
+            ).default,
+          }),
+        },
+        {
+          path: "campaign",
+          lazy: async () => ({
+            Component: (
               await import("app/pages/AegisSuite/campaign/CampaignManagement")
-                ).default,
-              }),
-            },
-            {
-              path: "marketplace/checkout-success",
-              lazy: async () => ({
-                Component: (
-                  await import(
-                "app/pages/AegisSuite/Marketplace/CheckoutSuccess"
-                  )
-                ).default,
-              }),
-            },
-            {
-              path: "marketplace/checkout-cancel",
-              lazy: async () => ({
-                Component: (
-                  await import(
-                "app/pages/AegisSuite/Marketplace/CheckoutCancel"
-                  )
-                ).default,
-              }),
-            },
-            {
-              path: "campaigns",
-              lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/Campaigns"))
-                  .default,
-              }),
-            },
-            {
-              path: "reports",
-              lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/Reports"))
-                  .default,
-              }),
-            },
-            {
-              path: "orders-subscriptions",
-              lazy: async () => ({
-                Component: (
-                  await import(
+            ).default,
+          }),
+        },
+        {
+          path: "marketplace/checkout-success",
+          lazy: async () => ({
+            Component: (
+              await import("app/pages/AegisSuite/Marketplace/CheckoutSuccess")
+            ).default,
+          }),
+        },
+        {
+          path: "marketplace/checkout-cancel",
+          lazy: async () => ({
+            Component: (
+              await import("app/pages/AegisSuite/Marketplace/CheckoutCancel")
+            ).default,
+          }),
+        },
+        {
+          path: "campaigns",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/Campaigns")).default,
+          }),
+        },
+        {
+          path: "reports",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/Reports")).default,
+          }),
+        },
+        {
+          path: "orders-subscriptions",
+          lazy: async () => ({
+            Component: (
+              await import(
                 "app/pages/AegisSuite/OrdersAndSubscriptions/OrdersAndSubscriptions"
-                  )
-                ).default,
-              }),
-            },
-            {
-              path: "/power-dialer",
-              lazy: async () => ({
-                Component: (
-              await import("app/pages/powerDialer/PowerDialer")
-                ).default,
-              }),
-            },
-            {
-              path: "settings",
-              lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/Settings"))
-                  .default,
-              }),
-            },
+              )
+            ).default,
+          }),
+        },
+        {
+          path: "/power-dialer",
+          lazy: async () => ({
+            Component: (await import("app/pages/powerDialer/PowerDialer"))
+              .default,
+          }),
+        },
+        {
+          path: "settings",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/Settings")).default,
+          }),
+        },
 
-            // Admin routes
-            {
-              path: "admin/agents",
-              lazy: async () => ({
-                Component: (
-                  await import(
-                "app/pages/AegisSuite/admin/AdminAgentManagement"
-                  )
-                ).default,
-              }),
-            },
-            {
-              path: "admin/users",
-              lazy: async () => ({
-                Component: (
+        // Admin routes
+        {
+          path: "admin/agents",
+          lazy: async () => ({
+            Component: (
+              await import("app/pages/AegisSuite/admin/AdminAgentManagement")
+            ).default,
+          }),
+        },
+        {
+          path: "admin/users",
+          lazy: async () => ({
+            Component: (
               await import("app/pages/AegisSuite/admin/AdminUserManagement")
-                ).default,
-              }),
-            },
-              {
-              path: "admin/file-upload",
-              lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/admin/file-upload/FileUpload"))
-                  .default,
-              }),
-            },
-            {
-              path: "admin/subscriptions",
-              lazy: async () => ({
-                Component: (
-                  await import(
-                "app/pages/AegisSuite/admin/AdminSubscriptionPlans"
-                  )
-                ).default,
-              }),
-            },
-            {
-              path: "admin/purchase-history",
-              lazy: async () => ({
-                Component: (
-                  await import(
-                "app/pages/AegisSuite/admin/AdminPurchaseHistory"
-                  )
-                ).default,
-              }),
-            },
-            {
-              path: "admin/invite-user",
-              lazy: async () => ({
+            ).default,
+          }),
+        },
+        {
+          path: "admin/file-upload",
+          lazy: async () => ({
+            Component: (
+              await import("app/pages/AegisSuite/admin/file-upload/FileUpload")
+            ).default,
+          }),
+        },
+        {
+          path: "admin/subscriptions",
+          lazy: async () => ({
+            Component: (
+              await import("app/pages/AegisSuite/admin/AdminSubscriptionPlans")
+            ).default,
+          }),
+        },
+        {
+          path: "admin/purchase-history",
+          lazy: async () => ({
+            Component: (
+              await import("app/pages/AegisSuite/admin/AdminPurchaseHistory")
+            ).default,
+          }),
+        },
+        {
+          path: "admin/invite-user",
+          lazy: async () => ({
             Component: (await import("app/pages/AegisSuite/InviteUser"))
-                  .default,
-              }),
-            },
-            {
-              path: "admin/agents/:agentId/leads",
-              lazy: async () => ({
-                Component: (
-              await import("app/pages/AegisSuite/admin/AgentLeads")
-                ).default,
-              }),
-            },
-            {
-              path: "admin/agents/:agentId/orders",
-              lazy: async () => ({
-                Component: (
-              await import("app/pages/AegisSuite/admin/AgentOrders")
-                ).default,
-              }),
-            },
-            {
-              path: "admin/promo-codes",
-              lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/admin/AdminPromoCodeManagement"))
-                  .default,
-              }),
-            },
-            {
-              path: "support",
-              lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/Support"))
-                      .default,
+              .default,
+          }),
+        },
+        {
+          path: "admin/agents/:agentId/leads",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/admin/AgentLeads"))
+              .default,
+          }),
+        },
+        {
+          path: "admin/agents/:agentId/orders",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/admin/AgentOrders"))
+              .default,
+          }),
+        },
+        {
+          path: "admin/promo-codes",
+          lazy: async () => ({
+            Component: (
+              await import(
+                "app/pages/AegisSuite/admin/AdminPromoCodeManagement"
+              )
+            ).default,
+          }),
+        },
+        {
+          path: "support",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/Support")).default,
           }),
         },
       ],
