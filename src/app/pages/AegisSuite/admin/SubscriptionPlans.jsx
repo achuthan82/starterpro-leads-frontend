@@ -462,7 +462,7 @@ const SubscriptionPlans = () => {
         <header className="border-b border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[#0a2463]">
+              <h1 className="text-2xl font-bold text-[#0a2463] dark:text-[#4d9fff]">
                 Subscription Plans
               </h1>
               <p className="mt-1 text-gray-600 dark:text-gray-300">
