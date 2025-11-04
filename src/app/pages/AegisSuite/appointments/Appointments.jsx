@@ -170,6 +170,7 @@ const Appointments = () => {
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
                     appointments={appointments}
+                    open={open}
                   />
                 )}
               </div>

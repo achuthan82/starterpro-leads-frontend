@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { ChevronRightIcon, ChevronLeftIcon, CalendarIcon } from "@heroicons/react/24/outline";
-const DailyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
+const DailyCalendar = ({ selectedDate, setSelectedDate, appointments, open }) => {
     const appointmentsByDate = useMemo(() => {
     const grouped = {};
     appointments.forEach((apt) => {
@@ -73,7 +73,7 @@ const DailyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
               <CalendarIcon className="size-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-600 text-lg">No appointments scheduled for this day</p>
               <button
-                // onClick={() => setShowAddModal(true)}
+                 onClick={open}
                 className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Schedule Appointment
