@@ -3,10 +3,14 @@ import { useState } from "react";
 import MonthlyCalendar from "./MonthlyCalendar";
 import WeeklyCalendar from "./WeeklyCalendar";
 import DailyCalendar from "./DailyCalendar";
+import { useDisclosure } from "hooks";
+import AppointmentModal from "./AppointmentModal";
+
 const Appointments = () => {
   const [viewType, setViewType] = useState("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
-
+  const [isOpen, { open, close }] = useDisclosure(false);
+  
   const appointments = [
     {
       id: "p001",
@@ -125,7 +129,7 @@ const Appointments = () => {
                 </button>
               </div>
 
-              <button className="flex items-center space-x-2 rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-gray-900 shadow-lg transition-all hover:bg-yellow-600">
+              <button className="flex items-center space-x-2 rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-gray-900 shadow-lg transition-all hover:bg-yellow-600" onClick={open}>
                 <svg
                   className="h-5 w-5"
                   fill="currentColor"
@@ -261,6 +265,7 @@ const Appointments = () => {
               </div>
             </div>
           </div>
+          <AppointmentModal isOpen={isOpen} close={close}></AppointmentModal>
         </main>
       </div>
     </div>
