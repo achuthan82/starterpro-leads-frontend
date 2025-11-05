@@ -6,7 +6,7 @@ import { JWT_HOST_API } from "configs/auth.config";
 
 const profileService = {
   getBasicDetails: () => {
-    return axios.get(`${JWT_HOST_API}/users/me`);
+    return axios.get(`${JWT_HOST_API}/user/me`);
   },
   getLicenseDetails: () => {
     return axios.get(`${JWT_HOST_API}/license-number`);

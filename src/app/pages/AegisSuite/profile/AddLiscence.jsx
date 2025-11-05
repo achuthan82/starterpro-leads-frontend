@@ -14,8 +14,9 @@ import profileService from "utils/profileService";
 import Select from "react-select";
 import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
 import { useDropzone } from "react-dropzone";
+import { getReactSelectDarkModeStyles } from "utils/reactSelectDarkMode";
 
-const AddLiscence = ({ isOpen, close }) => {
+const AddLiscence = ({ isOpen, close, getLiscence}) => {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [states, setStates] = useState([]);
@@ -50,8 +51,9 @@ const AddLiscence = ({ isOpen, close }) => {
     profileService
       .addLiscenceDetails(formData)
       .then((response) => {
-        if (response.data.status === 201) {
+        if (response.data.status === 200) {
           toast.success("Added !");
+          getLiscence()
          close()
         } else {
           toast.error(response?.data?.message || "Failed to Create Coupon");
@@ -187,6 +189,7 @@ const AddLiscence = ({ isOpen, close }) => {
                         {...field}
                         options={states}
                         isLoading={stateLoading}
+                        styles={getReactSelectDarkModeStyles()}
                         placeholder="Select States"
                         classNamePrefix="react-select"
                         className={
