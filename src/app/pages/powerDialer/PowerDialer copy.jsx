@@ -56,7 +56,7 @@ const PowerDialer = () => {
   const [callStatus, setCallStatus] = useState('Ready to Make Calls');
   const [isCallActive, setIsCallActive] = useState(false);
   const [isDialing, setIsDialing] = useState(false);
-  const [isCallEnded, setIsCallEnded] = useState(false);
+  const [callingFrom, setCallingFrom] = useState('(305) 123-4567');
   const [callingMode, setCallingMode] = useState('Human Agent');
   const [selectedScript, setSelectedScript] = useState('Opening');
   const [transcript, setTranscript] = useState('Call transcription will appear here when connected');
@@ -69,18 +69,17 @@ const PowerDialer = () => {
   ]);
 
   const handleTabToggle = (tab) => {
-    setActiveTabs((prev) =>
-      prev.includes(tab)
-        ? prev.filter((t) => t !== tab)
-        : [...prev, tab]
-    );
-  };
+  setActiveTabs((prev) =>
+    prev.includes(tab)
+      ? prev.filter((t) => t !== tab) // turn off if already active
+      : [...prev, tab] // turn on if not active
+  );
+};
 
   // Refs
   const deviceRef = useRef(null);
   const callRef = useRef(null);
   const callTimerRef = useRef(null);
-  const audioElementRef = useRef(null);
 
   // Filter leads based on search
   const filteredLeads = leads.filter(lead =>
@@ -88,24 +87,6 @@ const PowerDialer = () => {
     lead.phone.includes(searchTerm) ||
     lead.territory.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Initialize audio element for better browser compatibility
-  useEffect(() => {
-    audioElementRef.current = new Audio();
-    audioElementRef.current.preload = 'auto';
-    
-    return () => {
-      if (audioElementRef.current) {
-        audioElementRef.current.pause();
-        audioElementRef.current = null;
-      }
-    };
-  }, []);
-
-  // Request microphone permissions on component mount
-  useEffect(() => {
-    requestMicrophonePermission();
-  }, []);
 
   // Initialize Twilio Device
   useEffect(() => {
@@ -117,45 +98,20 @@ const PowerDialer = () => {
       if (callTimerRef.current) {
         clearInterval(callTimerRef.current);
       }
-      // Clean up global call reference
-      window.currentTwilioCall = null;
     };
   }, []);
 
-  // Reset call ended status after delay
+  // Auto-call when lead is selected (if you want automatic calling)
   useEffect(() => {
-    if (isCallEnded) {
-      const timer = setTimeout(() => {
-        setIsCallEnded(false);
-      }, 3000);
-      return () => clearTimeout(timer);
+    if (selectedLead && !isCallActive && !isDialing) {
+      // Uncomment the line below if you want automatic calling when lead is selected
+      // makeCall();
     }
-  }, [isCallEnded]);
-
-  const requestMicrophonePermission = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        } 
-      });
-      
-      stream.getTracks().forEach(track => track.stop());
-      
-      console.log('Microphone permission granted');
-    } catch (error) {
-      console.warn('Microphone permission not granted:', error);
-      setCallStatus('Microphone access is required for calling');
-    }
-  };
+  }, [selectedLead]);
 
   const initializeTwilio = async () => {
     try {
       setCallStatus('Initializing calling system...');
-      
-      await requestMicrophonePermission();
       
       const response = await fetch('https://call.abacies.com/react/token', {
         method: 'POST',
@@ -178,8 +134,6 @@ const PowerDialer = () => {
       deviceRef.current = new Device(data.token, {
         codecPreferences: ['opus', 'pcmu'],
         debug: true,
-        enableRingingState: true,
-        closeProtection: true
       });
 
       deviceRef.current.on('registered', () => {
@@ -189,10 +143,6 @@ const PowerDialer = () => {
       deviceRef.current.on('error', (error) => {
         console.error('Device error:', error);
         setCallStatus(`Device error: ${error.message}`);
-      });
-
-      deviceRef.current.on('incoming', (call) => {
-        console.log('Incoming call:', call);
       });
 
       deviceRef.current.register();
@@ -232,19 +182,10 @@ const PowerDialer = () => {
     try {
       setCallStatus('Dialing...');
       setIsDialing(true);
-      setIsCallEnded(false);
-      
-      await requestMicrophonePermission();
       
       callRef.current = await deviceRef.current.connect({ 
-        params: { 
-          To: selectedLead.phone.replace(/\D/g, ''),
-          from: 'power-dialer',
-          leadId: selectedLead.id
-        } 
+        params: { To: selectedLead.phone.replace(/\D/g, '') } 
       });
-
-      window.currentTwilioCall = callRef.current;
 
       callRef.current.on('accept', () => {
         setCallStatus('Connected');
@@ -253,10 +194,7 @@ const PowerDialer = () => {
         startCallTimer();
         setTranscript('Call in progress... Live transcription will appear here.');
         
-        if (audioElementRef.current) {
-          audioElementRef.current.play().catch(e => console.log('Audio play prevented:', e));
-        }
-        
+        // Add to call history
         const now = new Date();
         const newCall = {
           date: now.toISOString().split('T')[0],
@@ -272,13 +210,11 @@ const PowerDialer = () => {
         setCallStatus('Call ended');
         setIsCallActive(false);
         setIsDialing(false);
-        setIsCallEnded(true);
         stopCallTimer();
         setCallDuration(0);
         setTranscript('Call ended. Transcription will be saved.');
         
-        window.currentTwilioCall = null;
-        
+        // Update call history with duration
         if (callDuration > 0) {
           setCallHistory(prev => {
             const updated = [...prev];
@@ -296,66 +232,25 @@ const PowerDialer = () => {
         setCallStatus(`Call error: ${error.message}`);
         setIsCallActive(false);
         setIsDialing(false);
-        setIsCallEnded(true);
         stopCallTimer();
-        
-        window.currentTwilioCall = null;
         callRef.current = null;
-      });
-
-      callRef.current.on('mute', (isMuted) => {
-        console.log(`Call ${isMuted ? 'muted' : 'unmuted'}`);
-        setIsCallActive(prev => !prev);
-        setIsCallActive(prev => !prev);
       });
 
     } catch (error) {
       console.error('Call failed:', error);
       setCallStatus(`Call failed: ${error.message}`);
       setIsDialing(false);
-      setIsCallEnded(true);
-      
-      window.currentTwilioCall = null;
     }
   };
 
   const hangupCall = () => {
     if (callRef.current) {
       callRef.current.disconnect();
-    } else if (window.currentTwilioCall) {
-      window.currentTwilioCall.disconnect();
     }
     setIsCallActive(false);
     setIsDialing(false);
-    setIsCallEnded(true);
     stopCallTimer();
     setCallStatus('Call ended');
-    
-    window.currentTwilioCall = null;
-  };
-
-  const setCallMute = async (mute) => {
-    const call = callRef.current || window.currentTwilioCall;
-    
-    if (call && typeof call.mute === 'function' && typeof call.unmute === 'function') {
-      try {
-        if (mute) {
-          await call.mute();
-          console.log('Call muted');
-        } else {
-          await call.unmute();
-          console.log('Call unmuted');
-        }
-      } catch (error) {
-        console.error('Error toggling mute:', error);
-      }
-    } else {
-      console.warn('No active call found for mute control');
-    }
-  };
-
-  const getCurrentCall = () => {
-    return callRef.current || window.currentTwilioCall;
   };
 
   const updateLeadStatus = (leadId, newStatus) => {
@@ -406,7 +301,6 @@ const PowerDialer = () => {
 
         <main className="flex-1 overflow-auto p-6">
           <div className="grid grid-cols-12 gap-6 h-full">
-            {/* Left Column - Leads List */}
             <div className="col-span-4">
               <LeadList
                 leads={filteredLeads}
@@ -417,43 +311,39 @@ const PowerDialer = () => {
               />
             </div>
 
-            {/* Middle Column - Call Controls and Lead Info */}
             <div className="col-span-4 flex flex-col space-y-6">
-              {/* Call Controls */}
-              <CallControls
+               <CallControls
+                callingFrom={callingFrom}
+                onCallingFromChange={setCallingFrom}
                 isCallActive={isCallActive}
                 isDialing={isDialing}
-                isCallEnded={isCallEnded}
                 onMakeCall={makeCall}
                 onHangupCall={hangupCall}
                 selectedLead={selectedLead}
                 callDuration={callDuration}
-                onMuteToggle={setCallMute}
-                currentCall={getCurrentCall()}
               />
 
-              {/* Lead Information */}
               <LeadInfo
                 lead={selectedLead}
                 onUpdateStatus={updateLeadStatus}
                 callStatus={callStatus}
                 isDialing={isDialing}
                 isCallActive={isCallActive}
+                callingFrom={callingFrom}
                 callDuration={callDuration}
                 callHistory={callHistory}
               />
             </div>
 
-            {/* Right Column - Script and Transcript */}
             <div className="col-span-4">
               <ScriptTranscript
-                activeTabs={activeTabs}
-                onTabToggle={handleTabToggle}
-                selectedScript={selectedScript}
-                onScriptChange={setSelectedScript}
-                lead={selectedLead}
-                transcript={transcript}
-                isCallActive={isCallActive}
+               activeTabs={activeTabs}
+              onTabToggle={handleTabToggle}
+              selectedScript={selectedScript}
+              onScriptChange={setSelectedScript}
+              lead={selectedLead}
+              transcript={transcript}
+              isCallActive={isCallActive}
               />
             </div>
           </div>

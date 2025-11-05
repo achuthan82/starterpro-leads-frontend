@@ -304,7 +304,7 @@ const PurchaseHistory = () => {
         <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[#0a2463]">Purchase History</h1>
+              <h1 className="text-2xl font-bold text-[#0a2463] dark:text-[#4d9fff]">Purchase History</h1>
               <p className="text-gray-600 dark:text-gray-300 mt-1">View all purchase transactions</p>
             </div>
             {/* <div className="flex items-center space-x-3">

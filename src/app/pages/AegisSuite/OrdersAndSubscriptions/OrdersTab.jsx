@@ -391,7 +391,7 @@ const OrdersTab = () => {
               <button
                 onClick={exportToCSV}
                 disabled={orders.length === 0}
-                className={`flex items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
+                className={`flex items-center dark:text-white space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                   orders.length === 0
                     ? "cursor-not-allowed border-gray-300 text-gray-400"
                     : "border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-700"
@@ -481,7 +481,7 @@ const OrdersTab = () => {
                           {items.length > 0 && (
                             <button
                               onClick={() => toggleRowExpansion(order.id)}
-                              className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors"
+                              className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                               title={isExpanded ? "Collapse items" : "Expand items"}
                             >
                               {isExpanded ? (
@@ -517,14 +517,14 @@ const OrdersTab = () => {
                         </td>
                         <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
                           <button
-                            className="flex items-center space-x-1 text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80"
+                            className="flex dark:text-[#4d9fff] items-center space-x-1 text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80"
                             onClick={() =>
                               navigate(
                                 `/subscriptions/invoice/${order.id}?from=1`,
                               )
                             }
                           >
-                            <EyeIcon className="h-4 w-4" />
+                            <EyeIcon className="h-4 w-4 dark:text-[#4d9fff]" />
                             <span>View/Download Invoice</span>
                           </button>
                         </td>
@@ -532,7 +532,7 @@ const OrdersTab = () => {
                       
                       {/* Expanded items row */}
                       {isExpanded && items.length > 0 && (
-                        <tr key={`${order.id}-items`} className="bg-gray-50 dark:bg-gray-700">
+                        <tr key={`${order.id}-items`} className="bg-gray-50 dark:bg-gray-700 dark:bg-gray-800">
                           <td colSpan="8" className="px-6 py-4">
                             <div className="ml-4">
                               <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
@@ -540,7 +540,7 @@ const OrdersTab = () => {
                               </h4>
                               <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200">
-                                  <thead className="bg-gray-100">
+                                  <thead className="bg-gray-100 dark:bg-gray-700">
                                     <tr>
                                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Title
