@@ -10,7 +10,7 @@ const Appointments = () => {
   const [viewType, setViewType] = useState("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isOpen, { open, close }] = useDisclosure(false);
-  
+
   const appointments = [
     {
       id: "p001",
@@ -94,12 +94,12 @@ const Appointments = () => {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex rounded-lg border border-gray-200 bg-white shadow-sm">
+              <div className="flex rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
                 <button
-                  className={`rounded-l-lg border-r border-gray-200 px-4 py-2 text-sm font-medium ${
+                  className={`rounded-l-lg border-r border-gray-200 px-4 py-2 text-sm font-medium transition-colors dark:border-gray-700 ${
                     viewType === "today"
                       ? "bg-blue-600 text-white"
-                      : "text-gray-700 hover:bg-gray-50"
+                      : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
                   }`}
                   onClick={() => setViewType("today")}
                 >
@@ -107,10 +107,10 @@ const Appointments = () => {
                 </button>
 
                 <button
-                  className={`border-r border-gray-200 px-4 py-2 text-sm font-medium ${
+                  className={`border-r border-gray-200 px-4 py-2 text-sm font-medium transition-colors dark:border-gray-700 ${
                     viewType === "week"
                       ? "bg-blue-600 text-white"
-                      : "text-gray-700 hover:bg-gray-50"
+                      : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
                   }`}
                   onClick={() => setViewType("week")}
                 >
@@ -118,10 +118,10 @@ const Appointments = () => {
                 </button>
 
                 <button
-                  className={`rounded-r-lg px-4 py-2 text-sm font-medium ${
+                  className={`rounded-r-lg px-4 py-2 text-sm font-medium transition-colors ${
                     viewType === "month"
                       ? "bg-blue-600 text-white"
-                      : "text-gray-700 hover:bg-gray-50"
+                      : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
                   }`}
                   onClick={() => setViewType("month")}
                 >
@@ -129,7 +129,10 @@ const Appointments = () => {
                 </button>
               </div>
 
-              <button className="flex items-center space-x-2 rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-gray-900 shadow-lg transition-all hover:bg-yellow-600" onClick={open}>
+              <button
+                className="flex items-center space-x-2 rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-gray-900 shadow-lg transition-all hover:bg-yellow-600 dark:bg-yellow-400 dark:text-gray-900 dark:hover:bg-yellow-500"
+                onClick={open}
+              >
                 <svg
                   className="h-5 w-5"
                   fill="currentColor"
@@ -170,56 +173,77 @@ const Appointments = () => {
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
                     appointments={appointments}
+                    open={open}
                   />
                 )}
               </div>
               <div className="lg:col-span-1">
-                <div className="mb-6 rounded-lg bg-white shadow-lg">
-                  <div className="border-b border-gray-200 p-4">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      Today&lsquo;s Appointments
+                {/* Today's Appointments */}
+                <div className="mb-6 rounded-lg bg-white shadow-lg dark:bg-gray-800">
+                  <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      Today‘s Appointments
                     </h3>
-                    <p className="text-sm text-gray-600">11/4/2025</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      11/4/2025
+                    </p>
                   </div>
                   <div className="p-4">
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       No appointments today
                     </p>
                   </div>
                 </div>
-                <div className="rounded-lg bg-white shadow-lg">
-                  <div className="border-b border-gray-200 p-4">
-                    <h3 className="text-lg font-semibold text-gray-900">
+
+                {/* This Month Summary */}
+                <div className="rounded-lg bg-white shadow-lg dark:bg-gray-800">
+                  <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                       This Month
                     </h3>
                   </div>
 
                   <div className="space-y-4 p-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
                         Total Appointments
                       </span>
-                      <span className="font-semibold text-gray-900">30</span>
+                      <span className="font-semibold text-gray-900 dark:text-gray-100">
+                        30
+                      </span>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Confirmed</span>
-                      <span className="font-semibold text-green-600">15</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Confirmed
+                      </span>
+                      <span className="font-semibold text-green-600 dark:text-green-400">
+                        15
+                      </span>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Scheduled</span>
-                      <span className="font-semibold text-blue-600">15</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Scheduled
+                      </span>
+                      <span className="font-semibold text-blue-600 dark:text-blue-400">
+                        15
+                      </span>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">This Week</span>
-                      <span className="font-semibold text-purple-600">0</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        This Week
+                      </span>
+                      <span className="font-semibold text-purple-600 dark:text-purple-400">
+                        0
+                      </span>
                     </div>
 
-                    <div className="mt-4 rounded-lg bg-gray-50 p-3">
+                    {/* Appointment Types */}
+                    <div className="mt-4 rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
                       <div className="mb-2 flex items-center justify-between">
-                        <span className="text-xs font-medium text-gray-600">
+                        <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
                           APPOINTMENT TYPES
                         </span>
                       </div>
@@ -228,9 +252,11 @@ const Appointments = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <div className="h-3 w-3 rounded-full bg-blue-500"></div>
-                            <span className="text-sm text-gray-700">Calls</span>
+                            <span className="text-sm text-gray-700 dark:text-gray-200">
+                              Calls
+                            </span>
                           </div>
-                          <span className="text-sm font-medium text-gray-900">
+                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             12
                           </span>
                         </div>
@@ -238,11 +264,11 @@ const Appointments = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <div className="h-3 w-3 rounded-full bg-green-500"></div>
-                            <span className="text-sm text-gray-700">
+                            <span className="text-sm text-gray-700 dark:text-gray-200">
                               Meetings
                             </span>
                           </div>
-                          <span className="text-sm font-medium text-gray-900">
+                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             11
                           </span>
                         </div>
@@ -250,11 +276,11 @@ const Appointments = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <div className="h-3 w-3 rounded-full bg-purple-500"></div>
-                            <span className="text-sm text-gray-700">
+                            <span className="text-sm text-gray-700 dark:text-gray-200">
                               Presentations
                             </span>
                           </div>
-                          <span className="text-sm font-medium text-gray-900">
+                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             7
                           </span>
                         </div>

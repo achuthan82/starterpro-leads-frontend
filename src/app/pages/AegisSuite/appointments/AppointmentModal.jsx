@@ -9,6 +9,7 @@ import {
 import { Button, Input } from "components/ui";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
+import { getReactSelectDarkModeStyles } from "utils/reactSelectDarkMode";
 
 const AppointmentModal = ({ isOpen, close }) => {
   const [loading, setLoading] = useState(false);
@@ -148,6 +149,7 @@ const AppointmentModal = ({ isOpen, close }) => {
                       render={({ field }) => (
                         <Select
                           {...field}
+                          styles={getReactSelectDarkModeStyles()}
                           options={typeOptions}
                           placeholder="Select Type"
                           classNamePrefix="react-select"

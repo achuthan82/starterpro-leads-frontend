@@ -35,11 +35,11 @@ const MonthlyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
     );
   };
   return (
-    <div className="rounded-lg bg-white p-4 shadow-md md:p-6">
+    <div className="rounded-lg bg-white p-4 shadow-md md:p-6 dark:bg-gray-800 dark:shadow-gray-900">
       {/* Calendar Header */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h3 className="text-xl font-bold text-gray-800">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
             {selectedDate.toLocaleDateString("en-US", {
               month: "long",
               year: "numeric",
@@ -49,15 +49,15 @@ const MonthlyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
         <div className="flex gap-2">
           <button
             onClick={handlePrevMonth}
-            className="rounded-lg p-2 transition-colors hover:bg-gray-100"
+            className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            <ChevronLeftIcon className="size-5" />
+            <ChevronLeftIcon className="size-5 text-gray-600 dark:text-gray-300" />
           </button>
           <button
             onClick={handleNextMonth}
-            className="rounded-lg p-2 transition-colors hover:bg-gray-100"
+            className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            <ChevronRightIcon className="size-5" />
+            <ChevronRightIcon className="size-5 text-gray-600 dark:text-gray-300" />
           </button>
         </div>
       </div>
@@ -67,7 +67,7 @@ const MonthlyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
         {days.map((day) => (
           <div
             key={day}
-            className="py-2 text-center text-sm font-semibold text-gray-600"
+            className="py-2 text-center text-sm font-semibold text-gray-600 dark:text-gray-300"
           >
             {day}
           </div>
@@ -87,10 +87,12 @@ const MonthlyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
         {/* Days of month */}
         {Array.from({ length: daysInMonth }).map((_, i) => {
           const day = i + 1;
-          const dateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          const dateStr = `${selectedDate.getFullYear()}-${String(
+            selectedDate.getMonth() + 1,
+          ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
           const dayAppointments = appointmentsByDate[dateStr] || [];
-          const currentDate = new Date(); // September 27, 2025
+          const currentDate = new Date();
           const isToday =
             currentDate.toDateString() ===
             new Date(
@@ -102,18 +104,22 @@ const MonthlyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
           return (
             <div
               key={day}
-              className={`min-h-[100px] cursor-pointer rounded-lg border border-gray-200 p-2 transition-colors hover:bg-gray-50 md:min-h-[120px] ${
-                isToday ? "border-blue-300 bg-blue-50" : ""
+              className={`min-h-[100px] cursor-pointer rounded-lg border p-2 transition-colors md:min-h-[120px] ${
+                isToday
+                  ? "border-blue-400 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/40"
+                  : "border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700/60"
               }`}
-              // onClick={() => {
-              //   handleDayClick(day)
-              // }}
             >
               <div
-                className={`mb-1 text-sm font-medium ${isToday ? "text-blue-600" : "text-gray-700"}`}
+                className={`mb-1 text-sm font-medium ${
+                  isToday
+                    ? "text-blue-600 dark:text-blue-400"
+                    : "text-gray-700 dark:text-gray-200"
+                }`}
               >
                 {day}
               </div>
+
               <div className="space-y-1">
                 {dayAppointments.slice(0, 3).map((apt) => (
                   <div
@@ -132,7 +138,7 @@ const MonthlyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
                   </div>
                 ))}
                 {dayAppointments.length > 3 && (
-                  <div className="px-2 text-xs text-gray-500">
+                  <div className="px-2 text-xs text-gray-500 dark:text-gray-400">
                     +{dayAppointments.length - 3} more
                   </div>
                 )}
