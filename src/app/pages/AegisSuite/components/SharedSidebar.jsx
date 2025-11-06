@@ -14,9 +14,10 @@ import {
   CalendarIcon,
   EyeIcon,
   ChevronLeftIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 import Logo from "assets/app-logo/logo-text.svg?.react";
+import logoIcon from "assets/app-logo/logo-new.png?.react";
 import { useNavigate } from "react-router";
 import { useAuthContext } from "app/contexts/auth/context";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
@@ -190,52 +191,35 @@ const SharedSidebar = ({ currentPath = "" }) => {
   };
   return (
     <div
-      className={`flex ${isCollapsed ? "w-40" : "w-64"} flex-col border-r border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800`}
+      className={`flex ${isCollapsed ? "w-20" : "w-64"} flex-col border-r border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800`}
       style={{ overflow: "auto" }}
     >
       <div className="border-b border-gray-200 p-6 dark:border-gray-700">
         {isCollapsed ? (
           <>
-            <div className="flex flex-col  items-center space-y-3">
+            <div className="flex flex-col items-center space-y-3">
               <img
-                src={Logo}
-                alt="Logo"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  objectFit: "contain",
-                }}
-                className="dark:brightness-200"
+                src={logoIcon}
+                alt="logo"
+                className="h-10 w-auto max-w-none object-contain"
               />
+              <button
+                onClick={toggleSidebar}
+                className="dark:hover:bg-dark-700 dark:text-dark-200 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100"
+                aria-label="Expand sidebar"
+                title="Expand sidebar"
+              >
+                <ChevronRightIcon className="h-5 w-5" />
+              </button>
             </div>
-             <button
-              onClick={toggleSidebar}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700 text-gray-600 dark:text-dark-200 transition-colors"
-              aria-label="Expand sidebar"
-              title="Expand sidebar"
-            >
-              <ChevronRightIcon className="h-5 w-5" />
-            </button>
           </>
         ) : (
-          <div className="flex space-x-3">
-            <div className="flex items-center space-x-3">
-              <div>
-                <img
-                  src={Logo}
-                  alt="Logo"
-                  style={{
-                    maxWidth: "100%",
-                    height: "auto",
-                    objectFit: "contain",
-                  }}
-                  className="dark:brightness-200"
-                />
-                <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">
-                  {userRole === "admin" ? "Admin Portal" : "Agent Portal"}
-                </p>
-              </div>
-            </div>
+          <div className="flex items-center justify-between">
+            <img
+              src={Logo}
+              alt="KovaLifeLeads"
+              className="h-25 w-auto object-contain"
+            />
             <button
               onClick={toggleSidebar}
               className="dark:hover:bg-dark-700 dark:text-dark-200 flex-shrink-0 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100"

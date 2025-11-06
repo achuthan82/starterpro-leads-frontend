@@ -12,6 +12,7 @@ const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("basic");
   const [liscence, setLiscence] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [states, setStates] = useState([]);
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -36,7 +37,7 @@ const ProfilePage = () => {
   // ];
 
   const getBasics = () => {
-    setLoading(true)
+    setLoading(true);
     profileService
       .getBasicDetails()
       .then((response) => {
@@ -72,13 +73,13 @@ const ProfilePage = () => {
           npn: "",
         });
         toast.error(error?.message || "Please try again later");
-      }).finally(() => {
-        setLoading(false)
       })
+      .finally(() => {
+        setLoading(false);
+      });
   };
-
   const getLiscense = () => {
-    setLoading(true)
+    setLoading(true);
     profileService
       .getLicenseDetails()
       .then((response) => {
@@ -92,14 +93,36 @@ const ProfilePage = () => {
       })
       .catch((error) => {
         toast.error(error?.message || "Please try again later");
-      }).finally(() => {
-        setLoading(false)
       })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+  const getStates = () => {
+    profileService
+      .getUsaStates()
+      .then((response) => {
+        console.log("response", response);
+        if (response.data.status === 200) {
+          const dt = response.data.data;
+          const arr = [];
+          Object.keys(dt).map(function (key) {
+            arr.push({ value: dt[key], label: key });
+          });
+          setStates(arr);
+        } else {
+          setStates([]);
+        }
+      })
+      .catch(() => {
+        setStates([]);
+      });
   };
   useEffect(() => {
     if (activeTab === "basic") {
       getBasics();
     } else {
+      getStates();
       getLiscense();
     }
   }, [activeTab]);
@@ -222,7 +245,7 @@ const ProfilePage = () => {
                               className="mb-4 h-40 w-full rounded-md border border-gray-300 object-contain dark:border-gray-600"
                             />
                             <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                              {l.state}
+                              {states.length > 0 ? states.find((item) => item.value === l.state)?.label || l.state : l.state}
                             </p>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
                               License No:{" "}
@@ -239,7 +262,11 @@ const ProfilePage = () => {
               )}
             </div>
           </div>
-          <AddLiscence isOpen={isOpen} close={close} getLiscense={getLiscense} />
+          <AddLiscence
+            isOpen={isOpen}
+            close={close}
+            getLiscense={getLiscense}
+          />
         </main>
       </div>
     </div>
