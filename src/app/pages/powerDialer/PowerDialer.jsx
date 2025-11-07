@@ -9,48 +9,6 @@ import ScriptTranscript from './ScriptTranscript';
 
 const PowerDialer = () => {
   // State for leads and selection
-  const [leads, setLeads] = useState([
-    {
-      id: 1,
-      name: 'Michael Johnson',
-      phone: '+91 9567614372',
-      territory: 'FL-33101',
-      status: 'First Call',
-      lastContact: '2025-10-29',
-      age: 45,
-      homeValue: 450000,
-      mortgage: 320000,
-      notes: 'Interested in mortgage protection',
-      initials: 'MJ'
-    },
-    {
-      id: 2,
-      name: 'Sarah Davis',
-      phone: '(555) 234-5678',
-      territory: 'CA-90210',
-      status: 'Second Call',
-      lastContact: '2024-01-15',
-      age: 38,
-      homeValue: 750000,
-      mortgage: 520000,
-      notes: 'Follow up on insurance options',
-      initials: 'SD'
-    },
-    {
-      id: 3,
-      name: 'Robert Chen',
-      phone: '(555) 345-6789',
-      territory: 'TX-75201',
-      status: 'Qualified',
-      lastContact: '2024-01-14',
-      age: 52,
-      homeValue: 320000,
-      mortgage: 180000,
-      notes: 'Ready for closing',
-      initials: 'RC'
-    }
-  ]);
-
   const [selectedLead, setSelectedLead] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [callStatus, setCallStatus] = useState('Ready to Make Calls');
@@ -81,13 +39,6 @@ const PowerDialer = () => {
   const callRef = useRef(null);
   const callTimerRef = useRef(null);
   const audioElementRef = useRef(null);
-
-  // Filter leads based on search
-  const filteredLeads = leads.filter(lead =>
-    lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.phone.includes(searchTerm) ||
-    lead.territory.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   // Initialize audio element for better browser compatibility
   useEffect(() => {
@@ -359,9 +310,9 @@ const PowerDialer = () => {
   };
 
   const updateLeadStatus = (leadId, newStatus) => {
-    setLeads(leads.map(lead => 
-      lead.id === leadId ? { ...lead, status: newStatus } : lead
-    ));
+    // Status update will be handled by the API in LeadList component
+    // This function is kept for compatibility with LeadInfo component
+    console.log('Lead status update requested:', { leadId, newStatus });
   };
 
   return (
@@ -409,7 +360,6 @@ const PowerDialer = () => {
             {/* Left Column - Leads List */}
             <div className="col-span-4">
               <LeadList
-                leads={filteredLeads}
                 selectedLead={selectedLead}
                 onSelectLead={setSelectedLead}
                 searchTerm={searchTerm}

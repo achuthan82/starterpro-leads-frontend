@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   MagnifyingGlassIcon, 
   PhoneIcon, 
@@ -6,25 +6,107 @@ import {
   PaperClipIcon,
   CalendarIcon 
 } from '@heroicons/react/24/outline';
+import { dialerService } from 'utils/apiService';
+import { LEAD_STATUS, STATUS_NAME_TO_ID } from 'constants/app.constant';
+import { toast } from 'sonner';
 
-const LeadList = ({ leads, selectedLead, onSelectLead, searchTerm, onSearchChange }) => {
+const LeadList = ({ selectedLead, onSelectLead, searchTerm, onSearchChange }) => {
   const [selectedStatus, setSelectedStatus] = useState('All Statuses');
+  const [leads, setLeads] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   const statusOptions = [
     'All Statuses',
-    'First Call',
-    'Second Call',
-    'Qualified',
-    'Callback',
-    'Scheduled',
-    'Not Interested',
-    'Sold'
+    ...Object.values(LEAD_STATUS).filter(status => status !== 'UNKNOWN')
   ];
 
-  // Filter leads based on selected status
-  const filteredLeads = selectedStatus === 'All Statuses' 
-    ? leads 
-    : leads.filter(lead => lead.status === selectedStatus);
+  // Fetch leads from API
+  const fetchLeads = async (page = currentPage, name = searchTerm, lead_status = selectedStatus) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const params = {
+        page,
+        per_page: perPage
+      };
+
+      // Add optional filters
+      if (name && name.trim()) {
+        params.name = name.trim();
+      }
+
+      if (lead_status && lead_status !== 'All Statuses' && lead_status !== 'all') {
+        // Convert status name to ID if it's a status name
+        const statusId = STATUS_NAME_TO_ID[lead_status] || lead_status;
+        params.lead_status = statusId;
+      }
+
+      const response = await dialerService.getPaginatedLeads(params);
+      
+      // Handle different response formats
+      const leadsData = response.data || response.leads || [];
+      const pagination = response.pagination || {};
+      const total = pagination.total || response.total || response.total_count || 0;
+      const perPageFromAPI = pagination.per_page || perPage;
+      const totalPagesCalc = Math.ceil(total / perPageFromAPI);
+
+      // Transform API data to match component structure
+      const transformedLeads = leadsData.map(lead => ({
+        id: lead.assignee_id || lead.id || lead.mortgage_id,
+        name: lead.full_name || lead.name || 'Unknown',
+        phone: lead.ivr_response?.number || lead.ivr_response?.ani || lead.phone || lead.lead_phone_number || 'N/A',
+        territory: `${lead.city || ''} ${lead.state || ''} ${lead.zip || lead.zipcode || ''}`.trim() || 'N/A',
+        status: LEAD_STATUS[lead.lead_status] || lead.lead_status || 'Unknown',
+        lastContact: lead.call_in_date_time || lead.last_contact || '',
+        age: lead.ivr_response?.age || lead.age || '',
+        homeValue: lead.loan_amount || '',
+        mortgage: lead.mortgage_amount || '',
+        notes: lead.notes || '',
+        initials: (lead.full_name || lead.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2),
+        // Keep original data for reference
+        originalData: lead
+      }));
+
+      setLeads(transformedLeads);
+      setTotalRecords(total);
+      setTotalPages(totalPagesCalc);
+      setCurrentPage(page);
+    } catch (err) {
+      console.error('Error fetching leads:', err);
+      setError(err.message || 'Failed to fetch leads');
+      toast.error(err.message || 'Failed to load leads. Please try again.');
+      setLeads([]);
+      setTotalRecords(0);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch leads on component mount and when filters change
+  useEffect(() => {
+    fetchLeads(1, searchTerm, selectedStatus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, selectedStatus]);
+
+  // Handle status change
+  const handleStatusChange = (newStatus) => {
+    setSelectedStatus(newStatus);
+    setCurrentPage(1);
+  };
+
+  // Handle page change
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      fetchLeads(newPage, searchTerm, selectedStatus);
+    }
+  };
 
   const getStatusIcon = (status) => {
     const icons = {
@@ -84,7 +166,7 @@ const LeadList = ({ leads, selectedLead, onSelectLead, searchTerm, onSearchChang
       <div className="mb-6">
         <select 
           value={selectedStatus}
-          onChange={(e) => setSelectedStatus(e.target.value)}
+          onChange={(e) => handleStatusChange(e.target.value)}
           className="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-atoll)] focus:border-[var(--color-atoll)] bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
         >
           {statusOptions.map(status => (
@@ -93,9 +175,24 @@ const LeadList = ({ leads, selectedLead, onSelectLead, searchTerm, onSearchChang
         </select>
       </div>
 
+      {/* Error Message */}
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading && (
+        <div className="mb-4 text-center py-4">
+          <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[var(--color-atoll)] dark:border-blue-400"></div>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Loading leads...</p>
+        </div>
+      )}
+
       {/* Leads List */}
       <div className="space-y-3 max-h-[calc(100vh-300px)] overflow-y-auto">
-        {filteredLeads.map((lead) => (
+        {!loading && leads.map((lead) => (
           <div
             key={lead.id}
             onClick={() => onSelectLead(lead)}
@@ -147,12 +244,50 @@ const LeadList = ({ leads, selectedLead, onSelectLead, searchTerm, onSearchChang
           </div>
         ))}
         
-        {filteredLeads.length === 0 && (
+        {!loading && leads.length === 0 && !error && (
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             {selectedStatus === 'All Statuses' ? 'No leads found' : `No ${selectedStatus} leads found`}
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Showing {((currentPage - 1) * perPage) + 1} to {Math.min(currentPage * perPage, totalRecords)} of {totalRecords} leads
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage <= 1}
+                className={`px-3 py-1 rounded border text-sm ${
+                  currentPage <= 1
+                    ? 'border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-50 dark:bg-gray-800'
+                    : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 bg-white dark:bg-gray-700'
+                }`}
+              >
+                Previous
+              </button>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage >= totalPages}
+                className={`px-3 py-1 rounded border text-sm ${
+                  currentPage >= totalPages
+                    ? 'border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-50 dark:bg-gray-800'
+                    : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 bg-white dark:bg-gray-700'
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Status Legend */}
       <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
