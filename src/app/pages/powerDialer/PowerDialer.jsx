@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Device } from '@twilio/voice-sdk';
-import { UserIcon, CpuChipIcon } from '@heroicons/react/24/outline';
+import { UserIcon, CpuChipIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import SharedSidebar from '../AegisSuite/components/SharedSidebar';
 import LeadList from './LeadList';
 import LeadInfo from './LeadInfo';
 import CallControls from './CallControls';
 import ScriptTranscript from './ScriptTranscript';
+import OutboundNumberModal from './OutboundNumberModal';
 
 const PowerDialer = () => {
   // State for leads and selection
@@ -25,6 +26,8 @@ const PowerDialer = () => {
     { date: '2024-01-10', time: '14:15', status: 'callback', duration: '1:45' },
     { date: '2024-01-08', time: '11:20', status: 'not interested', duration: '0:45' }
   ]);
+  const [selectedOutboundNumber, setSelectedOutboundNumber] = useState(null);
+  const [showOutboundModal, setShowOutboundModal] = useState(false);
 
   const handleTabToggle = (tab) => {
     setActiveTabs((prev) =>
@@ -174,9 +177,25 @@ const PowerDialer = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const formatPhoneNumber = (phone) => {
+    if (!phone) return '';
+    // Remove +1 and format
+    const cleaned = phone.replace(/^\+1/, '').replace(/\D/g, '');
+    if (cleaned.length === 10) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    }
+    return phone;
+  };
+
   const makeCall = async () => {
     if (!deviceRef.current || !selectedLead) {
       setCallStatus('Please select a lead first');
+      return;
+    }
+    
+    if (!selectedOutboundNumber) {
+      setCallStatus('Please select an outbound number first');
+      setShowOutboundModal(true);
       return;
     }
     
@@ -315,13 +334,30 @@ const PowerDialer = () => {
     console.log('Lead status update requested:', { leadId, newStatus });
   };
 
+  // Handle outbound number selection
+  const handleSelectOutboundNumber = (number) => {
+    setSelectedOutboundNumber(number);
+  };
+
+  // Reset outbound number when lead changes
+  useEffect(() => {
+    if (selectedLead) {
+      // Reset outbound number when a new lead is selected
+      setSelectedOutboundNumber(null);
+      setShowOutboundModal(true);
+    } else {
+      // Clear outbound number when no lead is selected
+      setSelectedOutboundNumber(null);
+    }
+  }, [selectedLead?.id]); // Only trigger when lead ID changes
+
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       <SharedSidebar currentPath="/power-dialer" />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Power Dialer</h1>
               <p className="text-gray-600 dark:text-gray-300 mt-1">Advanced calling system with AI assistance</p>
@@ -353,6 +389,33 @@ const PowerDialer = () => {
               </div>
             </div>
           </div>
+          
+          {/* Calling from Number Section */}
+          <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Calling from:</span>
+              {selectedOutboundNumber ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-base font-semibold text-gray-900 dark:text-white">
+                    {formatPhoneNumber(selectedOutboundNumber.phone)}
+                  </span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">→</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                    {selectedOutboundNumber.friendly_name || 'Outbound Number'}
+                  </span>
+                </div>
+              ) : (
+                <span className="text-sm text-gray-400 dark:text-gray-500 italic">No number selected</span>
+              )}
+            </div>
+            <button
+              onClick={() => setShowOutboundModal(true)}
+              className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+            >
+              Change Number
+              <ChevronDownIcon className="w-4 h-4" />
+            </button>
+          </div>
         </header>
 
         <main className="flex-1 overflow-auto p-6">
@@ -380,6 +443,7 @@ const PowerDialer = () => {
                 callDuration={callDuration}
                 onMuteToggle={setCallMute}
                 currentCall={getCurrentCall()}
+                selectedOutboundNumber={selectedOutboundNumber}
               />
 
               {/* Lead Information */}
@@ -409,6 +473,14 @@ const PowerDialer = () => {
           </div>
         </main>
       </div>
+
+      {/* Outbound Number Selection Modal */}
+      <OutboundNumberModal
+        isOpen={showOutboundModal}
+        onClose={() => setShowOutboundModal(false)}
+        selectedLead={selectedLead}
+        onSelectNumber={handleSelectOutboundNumber}
+      />
     </div>
   );
 };

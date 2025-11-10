@@ -95,7 +95,8 @@ export const API_ENDPOINTS = {
     VERIFY_TOKEN: "/user/verify-registration-short-link"
   },
   DIALER: {
-    PAGINATED_LEADS: "/dialer/leads/complete-incomplete/paginated"
+    PAGINATED_LEADS: "/dialer/leads/complete-incomplete/paginated",
+    OUTBOUND_NUMBERS: "/dialer/outbound-numbers-from-db"
   }
 };
 

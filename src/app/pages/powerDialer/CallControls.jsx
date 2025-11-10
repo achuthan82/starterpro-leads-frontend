@@ -16,7 +16,8 @@ const CallControls = ({
   selectedLead,
   callDuration,
   onMuteToggle,
-  currentCall
+  currentCall,
+  selectedOutboundNumber
 }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
@@ -217,7 +218,6 @@ const CallControls = ({
         </div>
         <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{selectedLead.name}</h3>
         <p className="text-gray-600 dark:text-gray-300 text-sm">{selectedLead.phone}</p>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Calling from: (305) 123-4567</p>
       </div>
 
       {/* Status */}
@@ -274,12 +274,21 @@ const CallControls = ({
         {/* Hangup / Call */}
         <button
           onClick={isCallActive || isDialing ? onHangupCall : onMakeCall}
+          disabled={!selectedOutboundNumber && !isCallActive && !isDialing}
           className={`w-16 h-16 flex items-center justify-center rounded-full shadow-md transition-all duration-200 ${
             isCallActive || isDialing
               ? 'bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 transform hover:scale-105'
+              : !selectedOutboundNumber
+              ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed opacity-50'
               : 'bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 transform hover:scale-105'
           }`}
-          title={isCallActive || isDialing ? 'Hang up call' : 'Make call'}
+          title={
+            isCallActive || isDialing 
+              ? 'Hang up call' 
+              : !selectedOutboundNumber 
+              ? 'Please select an outbound number first' 
+              : 'Make call'
+          }
         >
           <PhoneXMarkIcon className="w-8 h-8 text-white" />
         </button>

@@ -4,7 +4,9 @@ import {
   PhoneIcon, 
   MapPinIcon, 
   PaperClipIcon,
-  CalendarIcon 
+  CalendarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 import { dialerService } from 'utils/apiService';
 import { LEAD_STATUS, STATUS_NAME_TO_ID } from 'constants/app.constant';
@@ -16,7 +18,7 @@ const LeadList = ({ selectedLead, onSelectLead, searchTerm, onSearchChange }) =>
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(10);
+  const [perPage, setPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
 
@@ -26,14 +28,14 @@ const LeadList = ({ selectedLead, onSelectLead, searchTerm, onSearchChange }) =>
   ];
 
   // Fetch leads from API
-  const fetchLeads = async (page = currentPage, name = searchTerm, lead_status = selectedStatus) => {
+  const fetchLeads = async (page = currentPage, name = searchTerm, lead_status = selectedStatus, itemsPerPage = perPage) => {
     setLoading(true);
     setError(null);
     
     try {
       const params = {
         page,
-        per_page: perPage
+        per_page: itemsPerPage
       };
 
       // Add optional filters
@@ -53,7 +55,7 @@ const LeadList = ({ selectedLead, onSelectLead, searchTerm, onSearchChange }) =>
       const leadsData = response.data || response.leads || [];
       const pagination = response.pagination || {};
       const total = pagination.total || response.total || response.total_count || 0;
-      const perPageFromAPI = pagination.per_page || perPage;
+      const perPageFromAPI = pagination.per_page || itemsPerPage;
       const totalPagesCalc = Math.ceil(total / perPageFromAPI);
 
       // Transform API data to match component structure
@@ -106,6 +108,13 @@ const LeadList = ({ selectedLead, onSelectLead, searchTerm, onSearchChange }) =>
     if (newPage >= 1 && newPage <= totalPages) {
       fetchLeads(newPage, searchTerm, selectedStatus);
     }
+  };
+
+  // Handle per page change
+  const handlePerPageChange = (newPerPage) => {
+    setPerPage(newPerPage);
+    setCurrentPage(1);
+    fetchLeads(1, searchTerm, selectedStatus, newPerPage);
   };
 
   const getStatusIcon = (status) => {
@@ -252,39 +261,61 @@ const LeadList = ({ selectedLead, onSelectLead, searchTerm, onSearchChange }) =>
       </div>
 
       {/* Pagination */}
-      {!loading && totalPages > 1 && (
+      {!loading && totalRecords > 0 && (
         <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Showing {((currentPage - 1) * perPage) + 1} to {Math.min(currentPage * perPage, totalRecords)} of {totalRecords} leads
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 w-full">
+            {/* Left side - Info and Per Page */}
+            <div className="flex flex-wrap items-center gap-3 flex-1 min-w-0">
+              <div className="text-xs text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                Showing {((currentPage - 1) * perPage) + 1} to {Math.min(currentPage * perPage, totalRecords)} of {totalRecords}
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <label className="text-xs text-gray-600 dark:text-gray-400 whitespace-nowrap">Per page:</label>
+                <select
+                  value={perPage}
+                  onChange={(e) => handlePerPageChange(Number(e.target.value))}
+                  className="px-2 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[var(--color-atoll)] dark:focus:ring-blue-400 min-w-[60px]"
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage <= 1}
-                className={`px-3 py-1 rounded border text-sm ${
-                  currentPage <= 1
-                    ? 'border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-50 dark:bg-gray-800'
-                    : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 bg-white dark:bg-gray-700'
-                }`}
-              >
-                Previous
-              </button>
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage >= totalPages}
-                className={`px-3 py-1 rounded border text-sm ${
-                  currentPage >= totalPages
-                    ? 'border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-50 dark:bg-gray-800'
-                    : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 bg-white dark:bg-gray-700'
-                }`}
-              >
-                Next
-              </button>
-            </div>
+
+            {/* Right side - Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage <= 1}
+                  className={`p-1.5 rounded border transition-colors flex items-center justify-center ${
+                    currentPage <= 1
+                      ? 'border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-50 dark:bg-gray-800'
+                      : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 bg-white dark:bg-gray-700'
+                  }`}
+                  title="Previous page"
+                >
+                  <ChevronLeftIcon className="w-4 h-4" />
+                </button>
+                <span className="text-xs text-gray-600 dark:text-gray-400 px-2 min-w-[60px] text-center">
+                  {currentPage} / {totalPages}
+                </span>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage >= totalPages}
+                  className={`p-1.5 rounded border transition-colors flex items-center justify-center ${
+                    currentPage >= totalPages
+                      ? 'border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-50 dark:bg-gray-800'
+                      : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 bg-white dark:bg-gray-700'
+                  }`}
+                  title="Next page"
+                >
+                  <ChevronRightIcon className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

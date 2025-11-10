@@ -49,6 +49,20 @@ class DialerService {
       throw error;
     }
   }
+
+  /**
+   * Get outbound numbers from database
+   * @returns {Promise} Response with list of outbound numbers
+   */
+  async getOutboundNumbers() {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.DIALER.OUTBOUND_NUMBERS);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching outbound numbers:', error);
+      throw error;
+    }
+  }
 }
 
 const dialerService = new DialerService();
