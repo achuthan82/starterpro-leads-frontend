@@ -5,6 +5,7 @@ import {
   SpeakerXMarkIcon,
   NoSymbolIcon
 } from '@heroicons/react/24/solid';
+import { CalendarIcon } from '@heroicons/react/24/outline';
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 const CallControls = ({
@@ -17,7 +18,8 @@ const CallControls = ({
   callDuration,
   onMuteToggle,
   currentCall,
-  selectedOutboundNumber
+  selectedOutboundNumber,
+  onScheduleAppointment
 }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
@@ -269,6 +271,20 @@ const CallControls = ({
           title={isMuted ? 'Unmute microphone' : 'Mute microphone'}
         >
           {isMuted ? <NoSymbolIcon className="w-6 h-6" /> : <MicrophoneIcon className="w-6 h-6" />}
+        </button>
+
+        {/* Schedule Appointment */}
+        <button
+          onClick={onScheduleAppointment}
+          disabled={!selectedLead}
+          className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200 ${
+            selectedLead
+              ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/40 shadow-sm'
+              : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500 opacity-50 cursor-not-allowed'
+          }`}
+          title={selectedLead ? 'Schedule appointment' : 'Select a lead to schedule appointment'}
+        >
+          <CalendarIcon className="w-6 h-6" />
         </button>
 
         {/* Hangup / Call */}
