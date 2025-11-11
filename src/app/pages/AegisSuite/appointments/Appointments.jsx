@@ -1,83 +1,177 @@
 import SharedSidebar from "../components/SharedSidebar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MonthlyCalendar from "./MonthlyCalendar";
 import WeeklyCalendar from "./WeeklyCalendar";
 import DailyCalendar from "./DailyCalendar";
 import { useDisclosure } from "hooks";
 import AppointmentModal from "./AppointmentModal";
+import moment from "moment/moment";
+import appointmentServive from "utils/appointmentService";
 
 const Appointments = () => {
   const [viewType, setViewType] = useState("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [appointments, setAppointments] = useState([]);
   const [isOpen, { open, close }] = useDisclosure(false);
+  const [endDate, setEndDate] = useState(
+    moment().endOf("month").format("MM-DD-YYYY HH:mm:ss"),
+  );
+  const [startDate, setStartDate] = useState(
+    moment().startOf("month").format("MM-DD-YYYY HH:mm:ss"),
+  );
+  console.log(startDate, endDate);
+  const time_zone =
+    Intl.DateTimeFormat().resolvedOptions().timeZone === "Asia/Calcutta"
+      ? "Asia/Kolkata"
+      : Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const appointments = [
-    {
-      id: "p001",
-      doctor: "Dr. Emily Carter",
-      patientName: "John Doe",
-      phone: "+1-555-234-5678",
-      email: "john.doe@example.com",
-      time: "09:00",
-      endTime: "09:30",
-      type: "consultation",
-      status: "confirmed",
-      date: "2025-11-04",
-      color: "#3B82F6",
-    },
-    {
-      id: "p002",
-      doctor: "Dr. Emily Carter",
-      patientName: "Sarah Lin",
-      phone: "+1-555-987-1234",
-      email: "sarah.lin@example.com",
-      time: "10:15",
-      endTime: "10:45",
-      type: "consultation",
-      status: "pending",
-      date: "2025-11-04",
-      color: "#10B981",
-    },
-    {
-      id: "p003",
-      doctor: "Dr. Alex Morgan",
-      patientName: "David Patel",
-      phone: "+1-555-222-8899",
-      email: "david.patel@example.com",
-      time: "11:00",
-      endTime: "11:30",
-      type: "consultation",
-      status: "cancelled",
-      date: "2025-11-05",
-      color: "#F59E0B",
-    },
-    {
-      id: "p004",
-      doctor: "Dr. Sophia Nguyen",
-      patientName: "Liam Johnson",
-      phone: "+1-555-555-6677",
-      email: "liam.johnson@example.com",
-      time: "13:00",
-      endTime: "13:45",
-      type: "consultation",
-      status: "confirmed",
-      date: "2025-11-05",
-      color: "#8B5CF6",
-    },
-    {
-      id: "p005",
-      doctor: "Dr. Noah Kim",
-      patientName: "Olivia Brown",
-      phone: "+1-555-444-7788",
-      email: "olivia.brown@example.com",
-      time: "15:00",
-      endTime: "15:30",
-      type: "consultation",
-      status: "confirmed",
-      date: "2025-11-06",
-      color: "#EC4899",
-    },
-  ];
+  // const appointments = [
+  //   {
+  //     id: "p001",
+  //     doctor: "Dr. Emily Carter",
+  //     patientName: "John Doe",
+  //     phone: "+1-555-234-5678",
+  //     email: "john.doe@example.com",
+  //     time: "09:00",
+  //     endTime: "09:30",
+  //     type: "consultation",
+  //     status: "confirmed",
+  //     date: "2025-11-04",
+  //     color: "#3B82F6",
+  //   },
+  //   {
+  //     id: "p002",
+  //     doctor: "Dr. Emily Carter",
+  //     patientName: "Sarah Lin",
+  //     phone: "+1-555-987-1234",
+  //     email: "sarah.lin@example.com",
+  //     time: "10:15",
+  //     endTime: "10:45",
+  //     type: "consultation",
+  //     status: "pending",
+  //     date: "2025-11-04",
+  //     color: "#10B981",
+  //   },
+  //   {
+  //     id: "p003",
+  //     doctor: "Dr. Alex Morgan",
+  //     patientName: "David Patel",
+  //     phone: "+1-555-222-8899",
+  //     email: "david.patel@example.com",
+  //     time: "11:00",
+  //     endTime: "11:30",
+  //     type: "consultation",
+  //     status: "cancelled",
+  //     date: "2025-11-05",
+  //     color: "#F59E0B",
+  //   },
+  //   {
+  //     id: "p004",
+  //     doctor: "Dr. Sophia Nguyen",
+  //     patientName: "Liam Johnson",
+  //     phone: "+1-555-555-6677",
+  //     email: "liam.johnson@example.com",
+  //     time: "13:00",
+  //     endTime: "13:45",
+  //     type: "consultation",
+  //     status: "confirmed",
+  //     date: "2025-11-05",
+  //     color: "#8B5CF6",
+  //   },
+  //   {
+  //     id: "p005",
+  //     doctor: "Dr. Noah Kim",
+  //     patientName: "Olivia Brown",
+  //     phone: "+1-555-444-7788",
+  //     email: "olivia.brown@example.com",
+  //     time: "15:00",
+  //     endTime: "15:30",
+  //     type: "consultation",
+  //     status: "confirmed",
+  //     date: "2025-11-06",
+  //     color: "#EC4899",
+  //   },
+  // ];
+  const loadAppointments = (start_date, end_date) => {
+    // setLoading(true);
+
+    appointmentServive
+      .getAppointments(start_date, end_date, time_zone)
+      .then((response) => {
+        console.log(response);
+        if (response.data.status === 200) {
+          setAppointments(
+            response.data.data.map((item) => {
+              return {
+                id: item.id,
+                time: moment(item.meeting_datetime).format("HH:mm") || "00:00",
+                endTime:
+                  moment(item.meeting_end_datetime).format("HH:mm") || "00:00",
+                // type: "consultation",
+                status: "confirmed",
+                date: moment(
+                  item.meeting_datetime,
+                  "MM-DD-YYYY HH:mm:ss",
+                ).format("YYYY-MM-DD"),
+                color: "#3B82F6", // default color
+                title: item.title || "Untitled Meeting", // keep the title
+              };
+            }),
+          );
+        }
+        //   if (response.status === 200) {
+        //     const formattedData = response.data.reduce((acc, item) => {
+        //       const mappedEvents = item[key].map(event => ({
+        //       id:event.patient_id || '',
+        //       doctor:event?.user || '',
+        //       patientName: event?.invitee_name || '',
+        //       phone:event?.invitee_mobile || '',
+        //       email:event?.invitee_email || '',
+        //       time: moment(event.meeting_datetime).format("HH:mm"),
+        //       type:'consultation',
+        //       status: event?.custom_fields?.status || 'confirmed',
+        //       endTime: moment(event.meeting_end_datetime).format("HH:mm"),
+        //       date: key,
+        //       color: event?.custom_fields?.color_theme || '#8B5CF6'
+        // }));
+        //  acc.push(...mappedEvents);
+        // return acc;
+        //     },[])
+        //     setAppointments(formattedData)
+        //   }
+      })
+      .catch(() => {})
+      .finally(() => {
+        // setLoading(false)
+      });
+  };
+  useEffect(() => {
+    let start_date;
+    let end_date = moment(selectedDate).format("MM-DD-YYYY HH:mm:ss");
+    if (viewType === "month") {
+      setSelectedDate(new Date());
+      end_date = moment(new Date())
+        .endOf("month")
+        .format("MM-DD-YYYY HH:mm:ss");
+      start_date = moment(new Date())
+        .startOf("month")
+        .format("MM-DD-YYYY HH:mm:ss");
+    } else if (viewType === "week") {
+      setSelectedDate(new Date());
+      end_date = moment(selectedDate)
+        .endOf("week")
+        .format("MM-DD-YYYY HH:mm:ss");
+      start_date = moment(selectedDate)
+        .startOf("week")
+        .format("MM-DD-YYYY HH:mm:ss");
+    } else if (viewType === "today") {
+      console.log(selectedDate);
+      start_date = moment(selectedDate).format("MM-DD-YYYY") + " 00:00:00";
+    }
+    setStartDate(start_date);
+    setEndDate(end_date);
+    loadAppointments(start_date, end_date);
+  }, [viewType]);
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
@@ -159,6 +253,9 @@ const Appointments = () => {
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
                     appointments={appointments}
+                    setStartDate={setStartDate}
+                    setEndDate={setEndDate}
+                    loadAppointments={loadAppointments}
                   />
                 )}
                 {viewType === "week" && (
@@ -166,6 +263,9 @@ const Appointments = () => {
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
                     appointments={appointments}
+                    setStartDate={setStartDate}
+                    setEndDate={setEndDate}
+                    loadAppointments={loadAppointments}
                   />
                 )}
                 {viewType === "today" && (
@@ -174,6 +274,9 @@ const Appointments = () => {
                     setSelectedDate={setSelectedDate}
                     appointments={appointments}
                     open={open}
+                    setStartDate={setStartDate}
+                    setEndDate={setEndDate}
+                    loadAppointments={loadAppointments}
                   />
                 )}
               </div>

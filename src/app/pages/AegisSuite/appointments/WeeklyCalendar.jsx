@@ -1,7 +1,15 @@
 import { useMemo } from "react";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
+import moment from "moment/moment";
 
-const WeeklyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
+const WeeklyCalendar = ({
+  selectedDate,
+  setSelectedDate,
+  appointments,
+  setStartDate,
+  setEndDate,
+  loadAppointments,
+}) => {
   const getWeekDates = (date) => {
     const week = [];
     const startOfWeek = new Date(date);
@@ -55,12 +63,22 @@ const WeeklyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() - 7);
     setSelectedDate(newDate);
+    const start_date = moment(newDate).startOf("week").format("MM-DD-YYYY HH:mm:ss");
+    const end_date = moment(newDate).endOf("week").format("MM-DD-YYYY HH:mm:ss");
+    setStartDate(start_date)
+    setEndDate(end_date)
+    loadAppointments(start_date, end_date);
   };
 
   const handleNextWeek = () => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() + 7);
     setSelectedDate(newDate);
+    const start_date = moment(newDate).startOf("week").format("MM-DD-YYYY HH:mm:ss");
+    const end_date = moment(newDate).endOf("week").format("MM-DD-YYYY HH:mm:ss");
+     setStartDate(start_date)
+    setEndDate(end_date)
+    loadAppointments(start_date, end_date);
   };
   return (
     <div className="rounded-lg bg-white p-4 shadow-md md:p-6 dark:bg-gray-800 dark:shadow-gray-900">
@@ -169,8 +187,8 @@ const WeeklyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
                           className="cursor-pointer rounded p-2 text-xs text-white transition-opacity hover:opacity-90"
                           style={{ backgroundColor: apt.color }}
                         >
-                          <div className="font-medium">{apt.patientName}</div>
-                          <div>{apt.type}</div>
+                          <div className="font-medium">{apt.title}</div>
+                          {/* <div>{apt.type}</div> */}
                         </div>
                       ))}
                     </div>
