@@ -4,22 +4,28 @@ import MonthlyCalendar from "./MonthlyCalendar";
 import WeeklyCalendar from "./WeeklyCalendar";
 import DailyCalendar from "./DailyCalendar";
 import { useDisclosure } from "hooks";
-// import AppointmentModal from "./AppointmentModal";
+import AppointmentModal from "./AppointmentModal";
 import moment from "moment/moment";
 import calendarService from "utils/clendarService";
 import ScheduleAppointmentModal from "app/pages/powerDialer/ScheduleAppointmentModal";
+import DeleteAppointmentModal from "./DeleteAppointmentModal";
 const Appointments = () => {
   const [viewType, setViewType] = useState("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
+  const [deleteModal, setDeleteModal] = useState(false);
+
   const [isOpen, { open, close }] = useDisclosure(false);
+
+  const [isDetailsOpen, { open: detailOpen, close: detailClose }] =
+    useDisclosure(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [endDate, setEndDate] = useState(
     moment().endOf("month").format("MM-DD-YYYY HH:mm:ss"),
   );
   const [startDate, setStartDate] = useState(
     moment().startOf("month").format("MM-DD-YYYY HH:mm:ss"),
   );
-  console.log(startDate, endDate);
   const time_zone =
     Intl.DateTimeFormat().resolvedOptions().timeZone === "Asia/Calcutta"
       ? "Asia/Kolkata"
@@ -104,6 +110,8 @@ const Appointments = () => {
             response.data.data.map((item) => {
               return {
                 id: item.id,
+                client: item.client_name,
+                phone: item.phone_number,
                 time: moment(item.meeting_datetime).format("HH:mm") || "00:00",
                 endTime:
                   moment(item.meeting_end_datetime).format("HH:mm") || "00:00",
@@ -250,12 +258,14 @@ const Appointments = () => {
               <div className="lg:col-span-3">
                 {viewType === "month" && (
                   <MonthlyCalendar
+                    detailOpen={detailOpen}
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
                     appointments={appointments}
                     setStartDate={setStartDate}
                     setEndDate={setEndDate}
                     loadAppointments={loadAppointments}
+                    setSelectedAppointment={setSelectedAppointment}
                   />
                 )}
                 {viewType === "week" && (
@@ -266,6 +276,8 @@ const Appointments = () => {
                     setStartDate={setStartDate}
                     setEndDate={setEndDate}
                     loadAppointments={loadAppointments}
+                    setSelectedAppointment={setSelectedAppointment}
+                    detailOpen={detailOpen}
                   />
                 )}
                 {viewType === "today" && (
@@ -277,6 +289,8 @@ const Appointments = () => {
                     setStartDate={setStartDate}
                     setEndDate={setEndDate}
                     loadAppointments={loadAppointments}
+                    setSelectedAppointment={setSelectedAppointment}
+                    detailOpen={detailOpen}
                   />
                 )}
               </div>
@@ -394,8 +408,28 @@ const Appointments = () => {
               </div>
             </div>
           </div>
-          <ScheduleAppointmentModal isOpen={isOpen} onClose={close} loadAppintments={loadAppointments} startDate={startDate} endDate={endDate }/>
-          {/* <AppointmentModal isOpen={isOpen} close={close}></AppointmentModal> */}
+          <ScheduleAppointmentModal
+            isOpen={isOpen}
+            onClose={close}
+            loadAppintments={loadAppointments}
+            startDate={startDate}
+            endDate={endDate}
+          />
+          <AppointmentModal
+            isOpen={isDetailsOpen}
+            close={detailClose}
+            appointment={selectedAppointment}
+            setDeleteModal={setDeleteModal}
+          ></AppointmentModal>
+          {deleteModal && (
+            <DeleteAppointmentModal
+              appointment={selectedAppointment}
+              setDeleteModal={setDeleteModal}
+              startDate={startDate}
+              endDate={endDate}
+              loadAppointments={loadAppointments}
+            />
+          )}
         </main>
       </div>
     </div>

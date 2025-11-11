@@ -9,6 +9,8 @@ const MonthlyCalendar = ({
   setStartDate,
   setEndDate,
   loadAppointments,
+  setSelectedAppointment,
+  detailOpen
 }) => {
   const appointmentsByDate = useMemo(() => {
     const grouped = {};
@@ -160,7 +162,8 @@ const MonthlyCalendar = ({
                     key={apt.id}
                     onClick={(e) => {
                       e.stopPropagation();
-                      // setSelectedAppointment(apt);
+                      setSelectedAppointment(apt);
+                      detailOpen()
                       // setShowDetailModal(true);
                     }}
                     className="cursor-pointer truncate rounded px-2 py-1 text-xs text-white transition-opacity hover:opacity-90"

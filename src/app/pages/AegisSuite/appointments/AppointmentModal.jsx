@@ -1,78 +1,21 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment } from "react";
 import {
   Dialog,
   DialogPanel,
   Transition,
   TransitionChild,
-  DialogTitle,
 } from "@headlessui/react";
-import { Button, Input } from "components/ui";
-import { useForm, Controller } from "react-hook-form";
-import Select from "react-select";
-import { getReactSelectDarkModeStyles } from "utils/reactSelectDarkMode";
-import dialerService from "utils/dialerService";
-import { toast } from "sonner";
+import {
+  CalendarDaysIcon,
+  ClockIcon,
+  PhoneIcon,
+  XMarkIcon,
+  UserIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 
-const AppointmentModal = ({ isOpen, close }) => {
-  const [loading, setLoading] = useState(false);
-  const [clients, setClients] = useState([]);
-  const [clientsLoading, setClientsLoading] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm({
-    mode: "onChange",
-  });
-
-  const getClients = (name = "") => {
-    setClientsLoading(true);
-    const params = { page: 1, per_page: 50, name: name };
-    dialerService
-      .getPaginatedLeads(params)
-      .then((response) => {
-        console.log(response);
-        if (response.status === 200) {
-          setClients(
-            response.data.map((item) => {
-              return { label: item.full_name, value: item.agent_id };
-            }),
-          );
-        } else if (response.status === 204) {
-          setClients([]);
-        } else {
-          setClients([]);
-          toast.error(response?.data?.message || "Failed to fetch clients");
-        }
-      })
-      .catch((error) => {
-        setClients([]);
-        toast.error(error?.message || "Failed to fetch clients");
-      })
-      .finally(() => {
-        setClientsLoading(false);
-      });
-  };
-  const loadOptions = (inputValue, actionMeta) => {
-    setSearchValue(inputValue);
-    if (actionMeta.action === "input-change") {
-      getClients(inputValue);
-    }
-  };
-  const onSubmit = (data) => {
-    setLoading(true);
-    console.log("Form Data:", data);
-    setTimeout(() => {
-      setLoading(false);
-      close();
-    }, 1000);
-  };
-  useEffect(() => {
-    if (isOpen) {
-      getClients();
-    }
-  }, [isOpen]);
+const AppointmentModal = ({ isOpen, close, appointment, setDeleteModal}) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -103,205 +46,152 @@ const AppointmentModal = ({ isOpen, close }) => {
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-95"
         >
-          <DialogPanel className="dark:bg-dark-700 relative w-full max-w-[600px] rounded-2xl bg-white px-6 py-8 text-center shadow-xl transition-all sm:px-8">
-            <DialogTitle
-              as="h3"
-              className="text-2xl font-semibold text-gray-800 dark:text-gray-100"
-            >
-              Add Appointment
-            </DialogTitle>
-            <div className="max-h-[80vh] overflow-y-auto px-6 py-4">
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="grid gap-y-4 pt-4 text-left">
-                  {/* Title */}
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">
-                      Title<span className="text-red-500">*</span>
-                    </label>
-                    <Controller
-                      name="title"
-                      control={control}
-                      rules={{ required: "Title is required" }}
-                      render={({ field }) => (
-                        <Input {...field} type="text" invalid={errors.title} />
-                      )}
-                    />
-                    {errors.title && (
-                      <span className="text-sm text-red-500">
-                        {errors.title.message}
-                      </span>
-                    )}
-                  </div>
+          <DialogPanel className="relative w-full max-w-2xl rounded-2xl bg-white px-6 py-8 text-gray-900 shadow-xl transition-all dark:bg-dark-700 dark:text-gray-100 sm:px-8">
+            {appointment && (
+              <div>
+                {/* Header */}
+                <div className="mb-6 flex items-center justify-between">
+                  <h2 className="text-2xl font-bold">Appointment Details</h2>
+                  <button
+                    onClick={close}
+                    className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-dark-600"
+                  >
+                    <XMarkIcon className="h-5 w-5" />
+                  </button>
+                </div>
 
-                  {/* Date */}
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">
-                      Choose Date<span className="text-red-500">*</span>
-                    </label>
-                    <Controller
-                      name="date"
-                      control={control}
-                      rules={{ required: "Date is required" }}
-                      render={({ field }) => (
-                        <Input {...field} type="date" invalid={errors.date} />
-                      )}
-                    />
-                    {errors.date && (
-                      <span className="text-sm text-red-500">
-                        {errors.date.message}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Time */}
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">
-                      Choose Time<span className="text-red-500">*</span>
-                    </label>
-                    <Controller
-                      name="time"
-                      control={control}
-                      rules={{ required: "Time is required" }}
-                      render={({ field }) => (
-                        <Input {...field} type="time" invalid={errors.time} />
-                      )}
-                    />
-                    {errors.time && (
-                      <span className="text-sm text-red-500">
-                        {errors.time.message}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Type */}
-                  {/* <div>
-                    <label className="mb-1 block text-sm font-medium">
-                      Type<span className="text-red-500">*</span>
-                    </label>
-                    <Controller
-                      name="type"
-                      control={control}
-                      rules={{ required: "Please select a type" }}
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          styles={getReactSelectDarkModeStyles()}
-                          options={typeOptions}
-                          placeholder="Select Type"
-                          classNamePrefix="react-select"
-                          className={
-                            errors.type ? "rounded border border-red-500" : ""
-                          }
-                        />
-                      )}
-                    />
-                    {errors.type && (
-                      <span className="text-sm text-red-500">
-                        {errors.type.message}
-                      </span>
-                    )}
-                  </div> */}
-
-                  {/* Client Name */}
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">
-                      Client<span className="text-red-500">*</span>
-                    </label>
-                    <Controller
-                      name="client"
-                      control={control}
-                      rules={{ required: "Please select a client" }}
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          isLoading={clientsLoading}
-                          styles={getReactSelectDarkModeStyles()}
-                          options={clients}
-                          onInputChange={loadOptions}
-                          inputValue={searchValue}
-                          placeholder="Select Client"
-                          classNamePrefix="react-select"
-                          className={
-                            errors.client ? "rounded border border-red-500" : ""
-                          }
-                        />
-                      )}
-                    />
-                    {errors.client && (
-                      <span className="text-sm text-red-500">
-                        {errors.client.message}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Phone Number */}
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">
-                      Phone Number<span className="text-red-500">*</span>
-                    </label>
-                    <Controller
-                      name="phone"
-                      control={control}
-                      rules={{
-                        required: "Phone number is required",
-                        pattern: {
-                          value: /^[0-9+\-\s()]*$/,
-                          message: "Invalid phone number",
-                        },
-                      }}
-                      render={({ field }) => (
-                        <Input {...field} type="text" invalid={errors.phone} />
-                      )}
-                    />
-                    {errors.phone && (
-                      <span className="text-sm text-red-500">
-                        {errors.phone.message}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Notes */}
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">
-                      Notes
-                    </label>
-                    <Controller
-                      name="notes"
-                      control={control}
-                      render={({ field }) => (
-                        <textarea
-                          {...field}
-                          rows="3"
-                          className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                          placeholder="Add any notes here..."
-                        />
-                      )}
-                    />
-                  </div>
-
-                  {/* Buttons */}
-                  <div className="mt-4 text-center">
-                    <Button
-                      color="primary"
-                      style={{ backgroundColor: "var(--atoll)" }}
-                      type="submit"
-                      className="mr-4 rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
-                      disabled={loading}
+                {/* Status Badge */}
+                <div className="mb-6">
+                  {appointment.status && (
+                    <span
+                      className={`rounded-full border px-4 py-2 text-sm font-medium ${
+                        {
+                          confirmed:
+                            "border-green-300 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700",
+                          waiting:
+                            "border-yellow-300 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700",
+                          cancelled:
+                            "border-red-300 bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700",
+                          completed:
+                            "border-blue-300 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700",
+                        }[appointment.status]
+                      }`}
                     >
-                      {loading ? "Saving..." : "Add"}
-                    </Button>
-                    <Button
-                      type="button"
-                      className="rounded border border-gray-400 px-6 py-2 text-gray-700 hover:bg-gray-100"
-                      onClick={close}
-                      disabled={loading}
-                    >
-                      Cancel
-                    </Button>
+                      {appointment.status.charAt(0).toUpperCase() +
+                        appointment.status.slice(1)}
+                    </span>
+                  )}
+                </div>
+
+                {/* Client Information */}
+                <div className="mb-6 rounded-lg bg-gray-50 p-4 dark:bg-dark-600">
+                  <h3 className="mb-3 font-semibold text-gray-900 dark:text-gray-100">
+                    Client Information
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="flex items-center gap-3">
+                      <UserIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Name
+                        </p>
+                        <p className="font-medium">{appointment.client}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <PhoneIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Phone
+                        </p>
+                        <p className="font-medium">{appointment.phone}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </form>
-            </div>
+
+                {/* Appointment Schedule */}
+                <div className="mb-6 rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
+                  <h3 className="mb-3 font-semibold text-gray-900 dark:text-gray-100">
+                    Appointment Schedule
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="flex items-center gap-3">
+                      <CalendarDaysIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Date
+                        </p>
+                        <p className="font-medium">
+                          {new Date(appointment.date).toLocaleDateString(
+                            "en-US",
+                            {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            },
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <ClockIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Time
+                        </p>
+                        <p className="font-medium">
+                          {appointment.time}
+                          {appointment.endTime
+                            ? ` - ${appointment.endTime}`
+                            : ""}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Notes */}
+                {appointment.notes && (
+                  <div className="mb-6 rounded-lg bg-yellow-50 p-4 dark:bg-yellow-900/20">
+                    <h3 className="mb-2 font-semibold text-gray-900 dark:text-gray-100">
+                      Notes
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      {appointment.notes}
+                    </p>
+                  </div>
+                )}
+
+                {/* Buttons */}
+                <div className="flex justify-end gap-3">
+                  <button
+                    // onClick={() => onEdit && onEdit(appointment)}
+                    className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+                  >
+                    <PencilSquareIcon className="h-4 w-4" />
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() => {setDeleteModal(true); close()}}
+                    className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                    Delete
+                  </button>
+
+                  <button
+                    onClick={close}
+                    className="rounded-lg bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
           </DialogPanel>
         </TransitionChild>
       </Dialog>
