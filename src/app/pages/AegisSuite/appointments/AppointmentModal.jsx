@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -10,10 +10,14 @@ import { Button, Input } from "components/ui";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
 import { getReactSelectDarkModeStyles } from "utils/reactSelectDarkMode";
+import dialerService from "utils/dialerService";
+import { toast } from "sonner";
 
 const AppointmentModal = ({ isOpen, close }) => {
   const [loading, setLoading] = useState(false);
-
+  const [clients, setClients] = useState([]);
+  const [clientsLoading, setClientsLoading] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
   const {
     handleSubmit,
     control,
@@ -22,12 +26,40 @@ const AppointmentModal = ({ isOpen, close }) => {
     mode: "onChange",
   });
 
-  const typeOptions = [
-    { value: "phonecall", label: "Phone Call" },
-    { value: "inperson", label: "In-person Meeting" },
-    { value: "presentation", label: "Presentation" },
-  ];
-
+  const getClients = (name = "") => {
+    setClientsLoading(true);
+    const params = { page: 1, per_page: 50, name: name };
+    dialerService
+      .getPaginatedLeads(params)
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          setClients(
+            response.data.map((item) => {
+              return { label: item.full_name, value: item.agent_id };
+            }),
+          );
+        } else if (response.status === 204) {
+          setClients([]);
+        } else {
+          setClients([]);
+          toast.error(response?.data?.message || "Failed to fetch clients");
+        }
+      })
+      .catch((error) => {
+        setClients([]);
+        toast.error(error?.message || "Failed to fetch clients");
+      })
+      .finally(() => {
+        setClientsLoading(false);
+      });
+  };
+  const loadOptions = (inputValue, actionMeta) => {
+    setSearchValue(inputValue);
+    if (actionMeta.action === "input-change") {
+      getClients(inputValue);
+    }
+  };
   const onSubmit = (data) => {
     setLoading(true);
     console.log("Form Data:", data);
@@ -36,7 +68,11 @@ const AppointmentModal = ({ isOpen, close }) => {
       close();
     }, 1000);
   };
-
+  useEffect(() => {
+    if (isOpen) {
+      getClients();
+    }
+  }, [isOpen]);
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -138,7 +174,7 @@ const AppointmentModal = ({ isOpen, close }) => {
                   </div>
 
                   {/* Type */}
-                  <div>
+                  {/* <div>
                     <label className="mb-1 block text-sm font-medium">
                       Type<span className="text-red-500">*</span>
                     </label>
@@ -164,28 +200,36 @@ const AppointmentModal = ({ isOpen, close }) => {
                         {errors.type.message}
                       </span>
                     )}
-                  </div>
+                  </div> */}
 
                   {/* Client Name */}
                   <div>
                     <label className="mb-1 block text-sm font-medium">
-                      Client Name<span className="text-red-500">*</span>
+                      Client<span className="text-red-500">*</span>
                     </label>
                     <Controller
-                      name="clientName"
+                      name="client"
                       control={control}
-                      rules={{ required: "Client Name is required" }}
+                      rules={{ required: "Please select a client" }}
                       render={({ field }) => (
-                        <Input
+                        <Select
                           {...field}
-                          type="text"
-                          invalid={errors.clientName}
+                          isLoading={clientsLoading}
+                          styles={getReactSelectDarkModeStyles()}
+                          options={clients}
+                          onInputChange={loadOptions}
+                          inputValue={searchValue}
+                          placeholder="Select Client"
+                          classNamePrefix="react-select"
+                          className={
+                            errors.client ? "rounded border border-red-500" : ""
+                          }
                         />
                       )}
                     />
-                    {errors.clientName && (
+                    {errors.client && (
                       <span className="text-sm text-red-500">
-                        {errors.clientName.message}
+                        {errors.client.message}
                       </span>
                     )}
                   </div>

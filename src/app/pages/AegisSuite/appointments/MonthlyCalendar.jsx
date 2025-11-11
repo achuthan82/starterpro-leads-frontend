@@ -1,6 +1,15 @@
 import { useMemo } from "react";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
-const MonthlyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
+import moment from "moment/moment";
+
+const MonthlyCalendar = ({
+  selectedDate,
+  setSelectedDate,
+  appointments,
+  setStartDate,
+  setEndDate,
+  loadAppointments,
+}) => {
   const appointmentsByDate = useMemo(() => {
     const grouped = {};
     appointments.forEach((apt) => {
@@ -27,12 +36,37 @@ const MonthlyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
     setSelectedDate(
       new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1),
     );
+    const prevMonthDate = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth() - 1,
+    );
+    const firstDay = moment(prevMonthDate)
+      .startOf("month")
+      .format("MM-DD-YYYY HH:mm:ss");
+    const lastDay = moment(prevMonthDate).endOf("month").format("MM-DD-YYYY HH:mm:ss");
+    setStartDate(firstDay);
+    setEndDate(lastDay);
+    loadAppointments(firstDay, lastDay);
   };
 
   const handleNextMonth = () => {
     setSelectedDate(
       new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1),
     );
+    const nextMonthDate = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth() + 1,
+    );
+    const firstDay = moment(nextMonthDate)
+      .startOf("month")
+      .format("MM-DD-YYYY HH:mm:ss");
+    const lastDay = moment()
+      .add(1, "month")
+      .endOf("month")
+      .format("MM-DD-YYYY HH:mm:ss");
+    setStartDate(firstDay);
+    setEndDate(lastDay);
+    loadAppointments(firstDay, lastDay);
   };
   return (
     <div className="rounded-lg bg-white p-4 shadow-md md:p-6 dark:bg-gray-800 dark:shadow-gray-900">
@@ -131,10 +165,9 @@ const MonthlyCalendar = ({ selectedDate, setSelectedDate, appointments }) => {
                     }}
                     className="cursor-pointer truncate rounded px-2 py-1 text-xs text-white transition-opacity hover:opacity-90"
                     style={{ backgroundColor: apt.color }}
-                    title={`${apt.time} - ${apt.patientName}`}
+                    title={`${apt.time} - ${apt.title}`}
                   >
-                    <span className="font-medium">{apt.time}</span>{" "}
-                    {apt.patientName}
+                    <span className="font-medium">{apt.time}</span> {apt.title}
                   </div>
                 ))}
                 {dayAppointments.length > 3 && (
