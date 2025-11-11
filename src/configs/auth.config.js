@@ -97,7 +97,11 @@ export const API_ENDPOINTS = {
   DIALER: {
     PAGINATED_LEADS: "/dialer/leads/complete-incomplete/paginated",
     OUTBOUND_NUMBERS: "/dialer/outbound-numbers-from-db"
-  }
+  },
+   AVAILABILITY: {
+    SETTINGS_CREATE: '/appointment/settings', // POST for both create and update
+    SETTINGS_DETAILS: '/appointment/settings/details', // GET to check if data exists
+  },
 };
 
 // Request Configuration
