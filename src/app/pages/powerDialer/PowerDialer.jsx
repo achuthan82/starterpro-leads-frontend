@@ -9,8 +9,11 @@ import ScriptTranscript from './ScriptTranscript';
 import OutboundNumberModal from './OutboundNumberModal';
 import ScheduleAppointmentModal from './ScheduleAppointmentModal';
 import { STATUS_NAME_TO_ID } from 'constants/app.constant';
+import { dialerService } from 'utils/apiService';
 
 const PowerDialer = () => {
+  const userData = JSON.parse(localStorage.getItem('currentUser'));
+  console.log(userData);
   // State for leads and selection
   const [selectedLead, setSelectedLead] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,6 +34,7 @@ const PowerDialer = () => {
   const [selectedOutboundNumber, setSelectedOutboundNumber] = useState(null);
   const [showOutboundModal, setShowOutboundModal] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [outboundModalShown, setOutboundModalShown] = useState(false);
 
   const handleTabToggle = (tab) => {
     setActiveTabs((prev) =>
@@ -114,25 +118,16 @@ const PowerDialer = () => {
       
       await requestMicrophonePermission();
       
-      const response = await fetch('https://call.abacies.com/react/token', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const data = await dialerService.initializeTwilio(userData?.email);
+
+      console.log(data);
+      console.log(data?.data?.token);
       
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      if (!data.token) {
+      if (!data?.data?.token) {
         throw new Error('No token in response');
       }
       
-      deviceRef.current = new Device(data.token, {
+      deviceRef.current = new Device(data?.data?.token, {
         codecPreferences: ['opus', 'pcmu'],
         debug: true,
         enableRingingState: true,
@@ -156,7 +151,7 @@ const PowerDialer = () => {
 
     } catch (error) {
       console.error('Initialization failed:', error);
-      setCallStatus(`Initialization failed: ${error.message}`);
+      setCallStatus(`Initialization failed: ${error.message || 'Unknown error'}`);
     }
   };
 
@@ -351,19 +346,16 @@ const PowerDialer = () => {
   // Handle outbound number selection
   const handleSelectOutboundNumber = (number) => {
     setSelectedOutboundNumber(number);
+    setShowOutboundModal(false);
   };
 
-  // Reset outbound number when lead changes
+  // Show outbound number modal once on page load if no number is selected
   useEffect(() => {
-    if (selectedLead) {
-      // Reset outbound number when a new lead is selected
-      setSelectedOutboundNumber(null);
+    if (!selectedOutboundNumber && !outboundModalShown) {
       setShowOutboundModal(true);
-    } else {
-      // Clear outbound number when no lead is selected
-      setSelectedOutboundNumber(null);
+      setOutboundModalShown(true);
     }
-  }, [selectedLead?.id]); // Only trigger when lead ID changes
+  }, [selectedOutboundNumber, outboundModalShown]);
 
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">

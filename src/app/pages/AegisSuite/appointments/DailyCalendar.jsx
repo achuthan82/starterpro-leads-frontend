@@ -4,11 +4,16 @@ import {
   ChevronLeftIcon,
   CalendarIcon,
 } from "@heroicons/react/24/outline";
+import moment from "moment/moment";
+
 const DailyCalendar = ({
   selectedDate,
   setSelectedDate,
   appointments,
   open,
+  setStartDate,
+  setEndDate,
+  loadAppointments,
 }) => {
   const appointmentsByDate = useMemo(() => {
     const grouped = {};
@@ -47,12 +52,20 @@ const DailyCalendar = ({
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() - 1);
     setSelectedDate(newDate);
+    const formattedDate = moment(newDate).format("MM-DD-YYYY HH:mm:ss");
+    setStartDate(formattedDate);
+    setEndDate(formattedDate);
+    loadAppointments(formattedDate, formattedDate);
   };
 
   const handleNextDay = () => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() + 1);
     setSelectedDate(newDate);
+    const formattedDate = moment(newDate).format("MM-DD-YYYY HH:mm:ss");
+    setStartDate(formattedDate);
+    setEndDate(formattedDate);
+    loadAppointments(formattedDate, formattedDate);
   };
   return (
     <div className="rounded-lg bg-white p-4 shadow-md md:p-6 dark:bg-gray-800 dark:shadow-gray-900">
@@ -114,7 +127,7 @@ const DailyCalendar = ({
               const slotAppointments = dayAppointments.filter(
                 (apt) => apt.time === time,
               );
-
+              console.log(slotAppointments);
               if (slotAppointments.length === 0) {
                 return (
                   <div
@@ -155,7 +168,7 @@ const DailyCalendar = ({
                           <div className="flex-1">
                             <div className="mb-2 flex items-center gap-3">
                               <h4 className="font-semibold text-gray-900 dark:text-gray-100">
-                                {apt.patientName}
+                                {apt.title}
                               </h4>
                               <span
                                 className={`rounded-full px-2 py-1 text-xs font-medium ${
@@ -168,19 +181,11 @@ const DailyCalendar = ({
                               >
                                 {apt.status}
                               </span>
-
-                              {apt.consultationType === "video" && (
-                                <span className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
-                                  {/* <Video className="h-4 w-4" /> */}
-                                  <span>Video</span>
-                                </span>
-                              )}
                             </div>
                             <div className="text-sm text-gray-600 dark:text-gray-400">
                               <span className="font-medium">
                                 {apt.time} - {apt.endTime}
                               </span>{" "}
-                              • {apt.type}
                             </div>
                             {apt.notes && (
                               <div className="mt-2 text-sm text-gray-700 dark:text-gray-300">
