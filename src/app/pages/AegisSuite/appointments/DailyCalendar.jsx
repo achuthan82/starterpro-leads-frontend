@@ -14,6 +14,8 @@ const DailyCalendar = ({
   setStartDate,
   setEndDate,
   loadAppointments,
+  setSelectedAppointment,
+  detailOpen
 }) => {
   const appointmentsByDate = useMemo(() => {
     const grouped = {};
@@ -155,8 +157,8 @@ const DailyCalendar = ({
                       <div
                         key={apt.id}
                         onClick={() => {
-                          // setSelectedAppointment(apt);
-                          // setShowDetailModal(true);
+                          setSelectedAppointment(apt);
+                          detailOpen()
                         }}
                         className="cursor-pointer rounded-lg border-l-4 p-4 transition-all hover:shadow-md dark:shadow-gray-900 dark:hover:shadow-lg"
                         style={{

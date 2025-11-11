@@ -9,6 +9,8 @@ const WeeklyCalendar = ({
   setStartDate,
   setEndDate,
   loadAppointments,
+  setSelectedAppointment,
+  detailOpen
 }) => {
   const getWeekDates = (date) => {
     const week = [];
@@ -180,10 +182,10 @@ const WeeklyCalendar = ({
                       {slotAppointments.map((apt) => (
                         <div
                           key={apt.id}
-                          // onClick={() => {
-                          //   setSelectedAppointment(apt);
-                          //   setShowDetailModal(true);
-                          // }}
+                          onClick={() => {
+                            setSelectedAppointment(apt);
+                            detailOpen();
+                          }}
                           className="cursor-pointer rounded p-2 text-xs text-white transition-opacity hover:opacity-90"
                           style={{ backgroundColor: apt.color }}
                         >

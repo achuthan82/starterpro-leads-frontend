@@ -64,6 +64,17 @@ class AppointmentService {
       throw error;
     }
   }
+  async deleteAppointment(appointmentId) {
+  try {
+    const response = await axios.delete(
+      `/appointment/delete/${appointmentId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting appointment:', error);
+    throw error;
+  }
+}
 }
 
 const appointmentService = new AppointmentService();

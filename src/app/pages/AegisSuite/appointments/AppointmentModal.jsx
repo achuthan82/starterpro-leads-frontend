@@ -1,164 +1,201 @@
-import { Fragment, } from "react";
+import { Fragment } from "react";
 import {
   Dialog,
   DialogPanel,
   Transition,
   TransitionChild,
 } from "@headlessui/react";
-import { CalendarDaysIcon, ClockIcon, PhoneIcon, XMarkIcon, UserIcon} from "@heroicons/react/24/outline";
+import {
+  CalendarDaysIcon,
+  ClockIcon,
+  PhoneIcon,
+  XMarkIcon,
+  UserIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 
-const AppointmentModal = ({ isOpen, close, appointment }) => {
-  console.log('appointment', appointment)
+const AppointmentModal = ({ isOpen, close, appointment, setDeleteModal}) => {
   return (
- <Transition appear show={isOpen} as={Fragment}>
-  <Dialog
-    as="div"
-    className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
-    onClose={close}
-  >
-    {/* Overlay */}
-    <TransitionChild
-      as={Fragment}
-      enter="ease-out duration-300"
-      enterFrom="opacity-0"
-      enterTo="opacity-100"
-      leave="ease-in duration-200"
-      leaveFrom="opacity-100"
-      leaveTo="opacity-0"
-    >
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" />
-    </TransitionChild>
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog
+        as="div"
+        className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
+        onClose={close}
+      >
+        {/* Overlay */}
+        <TransitionChild
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" />
+        </TransitionChild>
 
-    {/* Modal Content */}
-    <TransitionChild
-      as={Fragment}
-      enter="ease-out duration-300"
-      enterFrom="opacity-0 scale-95"
-      enterTo="opacity-100 scale-100"
-      leave="ease-in duration-200"
-      leaveFrom="opacity-100 scale-100"
-      leaveTo="opacity-0 scale-95"
-    >
-      <DialogPanel className="dark:bg-dark-700 relative w-full max-w-2xl rounded-2xl bg-white px-6 py-8 text-gray-900 shadow-xl transition-all sm:px-8">
-        {appointment && (
-          <div>
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">Appointment Details</h2>
-              <button
-                onClick={close}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <XMarkIcon className="w-5 h-5" />
-              </button>
-            </div>
+        {/* Modal Content */}
+        <TransitionChild
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0 scale-95"
+          enterTo="opacity-100 scale-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100 scale-100"
+          leaveTo="opacity-0 scale-95"
+        >
+          <DialogPanel className="relative w-full max-w-2xl rounded-2xl bg-white px-6 py-8 text-gray-900 shadow-xl transition-all dark:bg-dark-700 dark:text-gray-100 sm:px-8">
+            {appointment && (
+              <div>
+                {/* Header */}
+                <div className="mb-6 flex items-center justify-between">
+                  <h2 className="text-2xl font-bold">Appointment Details</h2>
+                  <button
+                    onClick={close}
+                    className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-dark-600"
+                  >
+                    <XMarkIcon className="h-5 w-5" />
+                  </button>
+                </div>
 
-            {/* Status Badge */}
-            <div className="mb-6">
-              {appointment.status && (
-                <span
-                  className={`px-4 py-2 rounded-full text-sm font-medium border ${
-                    {
-                      confirmed:
-                        "bg-green-100 text-green-800 border-green-300",
-                      waiting: "bg-yellow-100 text-yellow-800 border-yellow-300",
-                      cancelled: "bg-red-100 text-red-800 border-red-300",
-                      completed: "bg-blue-100 text-blue-800 border-blue-300",
-                    }[appointment.status]
-                  }`}
-                >
-                  {appointment.status.charAt(0).toUpperCase() +
-                    appointment.status.slice(1)}
-                </span>
-              )}
-            </div>
+                {/* Status Badge */}
+                <div className="mb-6">
+                  {appointment.status && (
+                    <span
+                      className={`rounded-full border px-4 py-2 text-sm font-medium ${
+                        {
+                          confirmed:
+                            "border-green-300 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700",
+                          waiting:
+                            "border-yellow-300 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700",
+                          cancelled:
+                            "border-red-300 bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700",
+                          completed:
+                            "border-blue-300 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700",
+                        }[appointment.status]
+                      }`}
+                    >
+                      {appointment.status.charAt(0).toUpperCase() +
+                        appointment.status.slice(1)}
+                    </span>
+                  )}
+                </div>
 
-            {/* Patient Information */}
-            <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <h3 className="font-semibold mb-3">Client Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3">
-                  <UserIcon className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-600">Name</p>
-                    <p className="font-medium">{appointment.client}</p>
+                {/* Client Information */}
+                <div className="mb-6 rounded-lg bg-gray-50 p-4 dark:bg-dark-600">
+                  <h3 className="mb-3 font-semibold text-gray-900 dark:text-gray-100">
+                    Client Information
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="flex items-center gap-3">
+                      <UserIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Name
+                        </p>
+                        <p className="font-medium">{appointment.client}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <PhoneIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Phone
+                        </p>
+                        <p className="font-medium">{appointment.phone}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-             
-                <div className="flex items-center gap-3">
-                  <PhoneIcon className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-600">Phone</p>
-                    <p className="font-medium">{appointment.phone}</p>
+
+                {/* Appointment Schedule */}
+                <div className="mb-6 rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
+                  <h3 className="mb-3 font-semibold text-gray-900 dark:text-gray-100">
+                    Appointment Schedule
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="flex items-center gap-3">
+                      <CalendarDaysIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Date
+                        </p>
+                        <p className="font-medium">
+                          {new Date(appointment.date).toLocaleDateString(
+                            "en-US",
+                            {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            },
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <ClockIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Time
+                        </p>
+                        <p className="font-medium">
+                          {appointment.time}
+                          {appointment.endTime
+                            ? ` - ${appointment.endTime}`
+                            : ""}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-             
-              </div>
-            </div>
 
-            {/* Appointment Details */}
-            <div className="bg-blue-50 rounded-lg p-4 mb-6">
-              <h3 className="font-semibold mb-3">Appointment Schedule</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3">
-                  <CalendarDaysIcon className="w-5 h-5 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Date</p>
-                    <p className="font-medium">
-                      {new Date(appointment.date).toLocaleDateString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
+                {/* Notes */}
+                {appointment.notes && (
+                  <div className="mb-6 rounded-lg bg-yellow-50 p-4 dark:bg-yellow-900/20">
+                    <h3 className="mb-2 font-semibold text-gray-900 dark:text-gray-100">
+                      Notes
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      {appointment.notes}
                     </p>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <ClockIcon className="w-5 h-5 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Time</p>
-                    <p className="font-medium">
-                      {appointment.time}
-                      {appointment.endTime ? ` - ${appointment.endTime}` : ""}
-                    </p>
-                  </div>
-                </div>
-                {/* <div className="flex items-center gap-3">
-                  <UserCircleIcon className="w-5 h-5 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Provider</p>
-                    <p className="font-medium">{appointment.doctor}</p>
-                  </div>
-                </div> */}
-              </div>
-            </div>
+                )}
 
-            {/* Notes */}
-            {appointment.notes && (
-              <div className="bg-yellow-50 rounded-lg p-4 mb-6">
-                <h3 className="font-semibold mb-2">Notes</h3>
-                <p className="text-gray-700">{appointment.notes}</p>
+                {/* Buttons */}
+                <div className="flex justify-end gap-3">
+                  <button
+                    // onClick={() => onEdit && onEdit(appointment)}
+                    className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+                  >
+                    <PencilSquareIcon className="h-4 w-4" />
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() => {setDeleteModal(true); close()}}
+                    className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                    Delete
+                  </button>
+
+                  <button
+                    onClick={close}
+                    className="rounded-lg bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             )}
-
-            {/* Buttons */}
-            <div className="flex justify-end gap-3">
-              
-              <button
-                onClick={close}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
-      </DialogPanel>
-    </TransitionChild>
-  </Dialog>
-</Transition>
-
+          </DialogPanel>
+        </TransitionChild>
+      </Dialog>
+    </Transition>
   );
 };
 
