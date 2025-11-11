@@ -9,6 +9,7 @@ import ScriptTranscript from './ScriptTranscript';
 import OutboundNumberModal from './OutboundNumberModal';
 import ScheduleAppointmentModal from './ScheduleAppointmentModal';
 import { STATUS_NAME_TO_ID } from 'constants/app.constant';
+import { JWT_HOST_API } from 'configs/auth.config';
 
 const PowerDialer = () => {
   // State for leads and selection
@@ -114,7 +115,7 @@ const PowerDialer = () => {
       
       await requestMicrophonePermission();
       
-      const response = await fetch('https://call.abacies.com/react/token', {
+      const response = await fetch(`${JWT_HOST_API}/dialer/token`, {
         method: 'POST',
         credentials: 'include',
         headers: {

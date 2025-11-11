@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useDisclosure } from "hooks";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import AddLiscence from "./AddLiscence";
+import CalendarPage from "../available/CalendarPage";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("basic");
@@ -152,6 +153,7 @@ const ProfilePage = () => {
                 {[
                   { id: "basic", label: "Basic Details" },
                   { id: "license", label: "License Details" },
+                  { id: "settings", label: "Available Settings" },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -257,6 +259,9 @@ const ProfilePage = () => {
                         ))}
                       </div>
                     </>
+                  )}
+                  {activeTab === "settings" && (
+                   <CalendarPage/>
                   )}
                 </>
               )}
