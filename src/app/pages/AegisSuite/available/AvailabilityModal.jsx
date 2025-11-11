@@ -9,9 +9,10 @@ import {
 import { Button } from "components/ui";
 import { toast } from "sonner";
 
-const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, saving = false }) => {
+const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, timezone: initialTimezone, saving = false }) => {
   const [timeSlots, setTimeSlots] = useState([]);
   const [currentDuration, setCurrentDuration] = useState(30);
+  const [currentTimezone, setCurrentTimezone] = useState('');
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -21,12 +22,80 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, sa
       setTimeSlots([{ start: '09:00', end: '17:00' }]);
     }
     setCurrentDuration(duration || 30);
-  }, [availability, duration, isOpen]);
+    
+    // Set timezone - use initialTimezone from API if provided
+    if (initialTimezone) {
+      setCurrentTimezone(initialTimezone);
+    } else {
+      // If no timezone from API, use system timezone as fallback
+      const systemTimezone = getSystemTimezone();
+      setCurrentTimezone(systemTimezone);
+    }
+  }, [availability, duration, initialTimezone, isOpen]);
 
   // Get system timezone function
   const getSystemTimezone = () => {
     const systemTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     return systemTimezone === 'Asia/Calcutta' ? 'Asia/Kolkata' : systemTimezone;
+  };
+
+  // Comprehensive timezone list including Asia/Kolkata and Europe/Zaporozhye
+  const getTimezones = () => {
+    const timezones = [
+      { value: 'Pacific/Midway', label: 'Pacific Midway', offset: '-11:00' },
+      { value: 'Pacific/Honolulu', label: 'Pacific Honolulu', offset: '-10:00' },
+      { value: 'America/Anchorage', label: 'America Anchorage', offset: '-09:00' },
+      { value: 'America/Los_Angeles', label: 'America Los Angeles', offset: '-08:00' },
+      { value: 'America/Denver', label: 'America Denver', offset: '-07:00' },
+      { value: 'America/Chicago', label: 'America Chicago', offset: '-06:00' },
+      { value: 'America/New_York', label: 'America New York', offset: '-05:00' },
+      { value: 'America/Caracas', label: 'America Caracas', offset: '-04:00' },
+      { value: 'America/Halifax', label: 'America Halifax', offset: '-04:00' },
+      { value: 'America/St_Johns', label: 'America St Johns', offset: '-03:30' },
+      { value: 'America/Sao_Paulo', label: 'America Sao Paulo', offset: '-03:00' },
+      { value: 'America/Godthab', label: 'America Godthab', offset: '-03:00' },
+      { value: 'Atlantic/Azores', label: 'Atlantic Azores', offset: '-01:00' },
+      { value: 'UTC', label: 'UTC', offset: '+00:00' },
+      { value: 'Europe/London', label: 'Europe London', offset: '+00:00' },
+      { value: 'Europe/Berlin', label: 'Europe Berlin', offset: '+01:00' },
+      { value: 'Europe/Paris', label: 'Europe Paris', offset: '+01:00' },
+      { value: 'Africa/Cairo', label: 'Africa Cairo', offset: '+02:00' },
+      { value: 'Europe/Moscow', label: 'Europe Moscow', offset: '+03:00' },
+      { value: 'Asia/Dubai', label: 'Asia Dubai', offset: '+04:00' },
+      { value: 'Asia/Karachi', label: 'Asia Karachi', offset: '+05:00' },
+      { value: 'Asia/Kolkata', label: 'Asia Kolkata', offset: '+05:30' },
+      { value: 'Asia/Dhaka', label: 'Asia Dhaka', offset: '+06:00' },
+      { value: 'Asia/Bangkok', label: 'Asia Bangkok', offset: '+07:00' },
+      { value: 'Asia/Singapore', label: 'Asia Singapore', offset: '+08:00' },
+      { value: 'Asia/Shanghai', label: 'Asia Shanghai', offset: '+08:00' },
+      { value: 'Asia/Tokyo', label: 'Asia Tokyo', offset: '+09:00' },
+      { value: 'Australia/Sydney', label: 'Australia Sydney', offset: '+10:00' },
+      { value: 'Pacific/Guam', label: 'Pacific Guam', offset: '+10:00' },
+      { value: 'Pacific/Noumea', label: 'Pacific Noumea', offset: '+11:00' },
+      { value: 'Pacific/Auckland', label: 'Pacific Auckland', offset: '+12:00' },
+      { value: 'Pacific/Fiji', label: 'Pacific Fiji', offset: '+12:00' },
+      // Add Europe/Zaporozhye and other European timezones
+      { value: 'Europe/Zaporozhye', label: 'Europe Zaporozhye', offset: '+03:00' },
+      { value: 'Europe/Kiev', label: 'Europe Kiev', offset: '+03:00' },
+      { value: 'Europe/Warsaw', label: 'Europe Warsaw', offset: '+02:00' },
+      { value: 'Europe/Rome', label: 'Europe Rome', offset: '+02:00' },
+      { value: 'Europe/Madrid', label: 'Europe Madrid', offset: '+02:00' },
+      { value: 'Europe/Athens', label: 'Europe Athens', offset: '+03:00' },
+      { value: 'Europe/Istanbul', label: 'Europe Istanbul', offset: '+03:00' }
+    ].sort((a, b) => {
+      // Sort by offset first, then by label
+      if (a.offset !== b.offset) {
+        return a.offset.localeCompare(b.offset);
+      }
+      return a.label.localeCompare(b.label);
+    });
+    
+    return timezones;
+  };
+
+  // Format timezone option for display
+  const formatTimezoneOption = (tz) => {
+    return `${tz.label} (UTC${tz.offset})`;
   };
 
   // Generate time options from 00:00 to 23:45 in 15-minute intervals
@@ -167,10 +236,15 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, sa
       return;
     }
 
+    if (!currentTimezone) {
+      toast.error('Please select a timezone');
+      return;
+    }
+
     const settingsData = {
       availability: timeSlots,
       duration_minutes: currentDuration,
-      timezone: getSystemTimezone() // Automatically use system timezone in payload
+      timezone: currentTimezone
     };
 
     onSave(settingsData);
@@ -271,6 +345,8 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, sa
     setErrors(newErrors);
   }, [currentDuration]);
 
+  const timezones = getTimezones();
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -328,6 +404,31 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, sa
                       <option value={45}>45 minutes</option>
                       <option value={60}>60 minutes</option>
                     </select>
+                  </div>
+
+                  {/* Timezone Selection */}
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Timezone <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={currentTimezone}
+                      onChange={(e) => setCurrentTimezone(e.target.value)}
+                      disabled={saving}
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    >
+                      <option value="">Select Timezone</option>
+                      {timezones.map((tz) => (
+                        <option key={tz.value} value={tz.value}>
+                          {formatTimezoneOption(tz)}
+                        </option>
+                      ))}
+                    </select>
+                    {!currentTimezone && (
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                        Please select a timezone
+                      </p>
+                    )}
                   </div>
 
                   {/* Time Slots */}
@@ -424,7 +525,7 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, sa
                   <Button
                     style={{ backgroundColor: '#155dfc'}}
                     type="submit"
-                    disabled={Object.keys(errors).length > 0 || saving}
+                    disabled={Object.keys(errors).length > 0 || saving || !currentTimezone}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     {saving ? (
