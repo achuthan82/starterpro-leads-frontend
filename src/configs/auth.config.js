@@ -96,9 +96,15 @@ export const API_ENDPOINTS = {
   },
   DIALER: {
     PAGINATED_LEADS: "/dialer/leads/complete-incomplete/paginated",
-    OUTBOUND_NUMBERS: "/dialer/outbound-numbers-from-db"
+    OUTBOUND_NUMBERS: "/dialer/outbound-numbers-from-db",
+    TOKEN: "/dialer/token"
   },
-   AVAILABILITY: {
+  APPOINTMENT: {
+    SETTINGS: "/appointment/settings/details",
+    LIST: "/appointment/list",
+    CREATE: "/appointment"
+  },
+  AVAILABILITY: {
     SETTINGS_CREATE: '/appointment/settings', 
     SETTINGS_DETAILS: '/appointment/settings/details', 
   },

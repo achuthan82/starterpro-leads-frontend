@@ -142,7 +142,7 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead }) => {
     
     setLoadingSlots(true);
     try {
-      const timezone = availability.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const timezone = availability?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
       
       // Format dates for API: MM-DD-YYYY HH:MM:SS
       const [year, month, day] = selectedDate.split('-');
@@ -259,8 +259,7 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead }) => {
     
     setLoading(true);
     try {
-      // Use local timezone
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const timezone = availability?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
       const duration = availability?.duration_minutes || 30;
       const meetingDateTime = getMeetingDateTime();
       
