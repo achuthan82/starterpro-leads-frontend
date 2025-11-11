@@ -63,6 +63,23 @@ class DialerService {
       throw error;
     }
   }
+
+  /**
+   * Initialize Twilio by getting access token
+   * @param {string} identity - User email/identity for Twilio token
+   * @returns {Promise} Response with Twilio token
+   */
+  async initializeTwilio(identity) {
+    try {
+      const response = await axiosInstance.post(API_ENDPOINTS.DIALER.TOKEN, {
+        identity
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error initializing Twilio:', error);
+      throw error;
+    }
+  }
 }
 
 const dialerService = new DialerService();
