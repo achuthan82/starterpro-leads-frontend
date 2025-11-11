@@ -4,7 +4,7 @@ import MonthlyCalendar from "./MonthlyCalendar";
 import WeeklyCalendar from "./WeeklyCalendar";
 import DailyCalendar from "./DailyCalendar";
 import { useDisclosure } from "hooks";
-// import AppointmentModal from "./AppointmentModal";
+import AppointmentModal from "./AppointmentModal";
 import moment from "moment/moment";
 import calendarService from "utils/clendarService";
 import ScheduleAppointmentModal from "app/pages/powerDialer/ScheduleAppointmentModal";
@@ -13,6 +13,8 @@ const Appointments = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
   const [isOpen, { open, close }] = useDisclosure(false);
+  const [isDetailsOpen, { open:detailOpen, close:detailClose }] = useDisclosure(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null)
   const [endDate, setEndDate] = useState(
     moment().endOf("month").format("MM-DD-YYYY HH:mm:ss"),
   );
@@ -104,6 +106,8 @@ const Appointments = () => {
             response.data.data.map((item) => {
               return {
                 id: item.id,
+                client:item.client_name,
+                phone:item.phone_number,
                 time: moment(item.meeting_datetime).format("HH:mm") || "00:00",
                 endTime:
                   moment(item.meeting_end_datetime).format("HH:mm") || "00:00",
@@ -250,12 +254,14 @@ const Appointments = () => {
               <div className="lg:col-span-3">
                 {viewType === "month" && (
                   <MonthlyCalendar
+                    detailOpen={detailOpen}
                     selectedDate={selectedDate}
                     setSelectedDate={setSelectedDate}
                     appointments={appointments}
                     setStartDate={setStartDate}
                     setEndDate={setEndDate}
                     loadAppointments={loadAppointments}
+                    setSelectedAppointment={setSelectedAppointment}
                   />
                 )}
                 {viewType === "week" && (
@@ -395,7 +401,7 @@ const Appointments = () => {
             </div>
           </div>
           <ScheduleAppointmentModal isOpen={isOpen} onClose={close} loadAppintments={loadAppointments} startDate={startDate} endDate={endDate }/>
-          {/* <AppointmentModal isOpen={isOpen} close={close}></AppointmentModal> */}
+          <AppointmentModal isOpen={isDetailsOpen} close={detailClose} appointment={selectedAppointment}></AppointmentModal>
         </main>
       </div>
     </div>
