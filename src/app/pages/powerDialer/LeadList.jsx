@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   MagnifyingGlassIcon, 
   PhoneIcon, 
@@ -27,8 +27,27 @@ const LeadList = ({ selectedLead, onSelectLead, searchTerm, onSearchChange }) =>
     ...Object.values(LEAD_STATUS).filter(status => status !== 'UNKNOWN')
   ];
 
+  // Use ref to track if we're currently fetching to prevent duplicate calls
+  const isFetchingRef = useRef(false);
+  const lastFetchParamsRef = useRef({ searchTerm: '', selectedStatus: '' });
+
   // Fetch leads from API
-  const fetchLeads = async (page = currentPage, name = searchTerm, lead_status = selectedStatus, itemsPerPage = perPage) => {
+  const fetchLeads = useCallback(async (page = currentPage, name = searchTerm, lead_status = selectedStatus, itemsPerPage = perPage) => {
+    // Prevent duplicate calls
+    if (isFetchingRef.current) {
+      return;
+    }
+
+    // Check if parameters have actually changed
+    if (lastFetchParamsRef.current.searchTerm === name && 
+        lastFetchParamsRef.current.selectedStatus === lead_status &&
+        lastFetchParamsRef.current.page === page &&
+        lastFetchParamsRef.current.perPage === itemsPerPage) {
+      return;
+    }
+
+    isFetchingRef.current = true;
+    lastFetchParamsRef.current = { searchTerm: name, selectedStatus: lead_status, page, perPage: itemsPerPage };
     setLoading(true);
     setError(null);
     
@@ -89,11 +108,13 @@ const LeadList = ({ selectedLead, onSelectLead, searchTerm, onSearchChange }) =>
       setTotalPages(1);
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
-  };
+  }, [currentPage, searchTerm, selectedStatus, perPage]);
 
-  // Fetch leads on component mount and when filters change
+  // Fetch leads on component mount and when filters change (not when call state changes)
   useEffect(() => {
+    // Only fetch if searchTerm or selectedStatus actually changed
     fetchLeads(1, searchTerm, selectedStatus);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, selectedStatus]);

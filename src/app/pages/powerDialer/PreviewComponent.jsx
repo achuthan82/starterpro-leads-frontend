@@ -56,6 +56,7 @@ const PreviewComponent = ({ submittedData }) => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    adaptiveHeight: true,
     arrows: true,
     afterChange: (current) => setCurrentSlide(current),
     prevArrow: <CustomPrevArrow />,
@@ -115,7 +116,7 @@ const PreviewComponent = ({ submittedData }) => {
   const CertificateInfo = () => {
     return (
       <div
-        className="flex-col items-center justify-center text-white text-lg font-normal min-h-screen px-12 py-2"
+        className="flex-col bg-white items-center justify-center text-white text-lg font-normal min-h-screen px-12 py-2"
       >
         <div className="flex items-center justify-center">
           <img src={certificate} alt="certificate" style={{width: '90%'}}/>
@@ -127,9 +128,9 @@ const PreviewComponent = ({ submittedData }) => {
   const CarrierInfo = () => {
     return (
       <div
-        className="flex-col items-center justify-center text-white text-lg font-normal min-h-screen px-12 py-2"
+        className="flex-col bg-white border-t-[50px] border-b-[50px] border-[#3BA9F4] items-center justify-center text-white text-lg font-normal min-h-screen px-12 py-2"
       >
-        <div className="flex items-center justify-center mt-20">
+        <div className="flex items-center justify-center">
           <img src={carrier} alt="carrier" style={{width: '100%'}}/>
         </div>
       </div>

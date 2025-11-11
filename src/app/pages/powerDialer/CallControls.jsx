@@ -19,7 +19,10 @@ const CallControls = ({
   onMuteToggle,
   currentCall,
   selectedOutboundNumber,
-  onScheduleAppointment
+  onScheduleAppointment,
+  licenseDetails,
+  licenseError,
+  licenseLoading
 }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
@@ -197,8 +200,15 @@ const CallControls = ({
     );
   }
 
+  // Check if call is allowed
+  // Verify outbound number exists and has a valid phone number
+  const hasValidOutboundNumber = selectedOutboundNumber && 
+    selectedOutboundNumber.phone && 
+    selectedOutboundNumber.phone.trim();
+  const canMakeCall = hasValidOutboundNumber && licenseDetails && !licenseError;
+
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 p-6 w-full max-w-sm mx-auto text-center">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 p-6 w-full max-w-sm text-center">
       {!audioPermission && (
         <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-lg p-3 mb-4 text-sm">
           <p>Microphone access required</p>
@@ -208,6 +218,38 @@ const CallControls = ({
           >
             Grant Permission
           </button>
+        </div>
+      )}
+
+      {/* License Warning */}
+      {selectedLead && !licenseLoading && !licenseDetails && licenseError && (
+        <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg p-3 mb-4 text-sm">
+          <p className="font-medium">⚠️ License Required</p>
+          <p className="mt-1 text-xs">{licenseError}</p>
+          <p className="mt-2 text-xs">Please upload license in Profile page.</p>
+        </div>
+      )}
+
+      {/* License Loading */}
+      {selectedLead && licenseLoading && (
+        <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-lg p-3 mb-4 text-sm">
+          <p>Checking license...</p>
+        </div>
+      )}
+
+      {/* License Verified */}
+      {selectedLead && licenseDetails && !licenseError && (
+        <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg p-3 mb-4 text-sm">
+          <p className="font-medium">✓ License Verified</p>
+          <p className="mt-1 text-xs">State: {licenseDetails.state || 'N/A'}</p>
+        </div>
+      )}
+
+      {/* Outbound Number Warning */}
+      {selectedLead && !hasValidOutboundNumber && (
+        <div className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded-lg p-3 mb-4 text-sm">
+          <p className="font-medium">⚠️ Outbound Number Required</p>
+          <p className="mt-1 text-xs">Please select a valid outbound number to make calls.</p>
         </div>
       )}
 
@@ -290,19 +332,21 @@ const CallControls = ({
         {/* Hangup / Call */}
         <button
           onClick={isCallActive || isDialing ? onHangupCall : onMakeCall}
-          disabled={!selectedOutboundNumber && !isCallActive && !isDialing}
+          disabled={(!canMakeCall && !isCallActive && !isDialing)}
           className={`w-16 h-16 flex items-center justify-center rounded-full shadow-md transition-all duration-200 ${
             isCallActive || isDialing
               ? 'bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 transform hover:scale-105'
-              : !selectedOutboundNumber
+              : !canMakeCall
               ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed opacity-50'
               : 'bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 transform hover:scale-105'
           }`}
           title={
             isCallActive || isDialing 
               ? 'Hang up call' 
-              : !selectedOutboundNumber 
-              ? 'Please select an outbound number first' 
+              : !hasValidOutboundNumber 
+              ? 'Please select a valid outbound number first' 
+              : !licenseDetails
+              ? 'License required for this state. Please upload license in Profile.'
               : 'Make call'
           }
         >

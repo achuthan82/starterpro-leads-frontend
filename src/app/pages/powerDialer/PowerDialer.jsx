@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
-import { Device } from '@twilio/voice-sdk';
+import { useState, useEffect } from 'react';
 import { UserIcon, CpuChipIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import SharedSidebar from '../AegisSuite/components/SharedSidebar';
 import LeadList from './LeadList';
@@ -9,32 +8,46 @@ import ScriptTranscript from './ScriptTranscript';
 import OutboundNumberModal from './OutboundNumberModal';
 import ScheduleAppointmentModal from './ScheduleAppointmentModal';
 import { STATUS_NAME_TO_ID } from 'constants/app.constant';
-import { dialerService } from 'utils/apiService';
+import { useCallContext } from 'app/contexts/call/context';
 
 const PowerDialer = () => {
-  const userData = JSON.parse(localStorage.getItem('currentUser'));
-  console.log(userData);
-  // State for leads and selection
-  const [selectedLead, setSelectedLead] = useState(null);
+  // Get call state and functions from context
+  const {
+    callStatus,
+    isCallActive,
+    isDialing,
+    isCallEnded,
+    callDuration,
+    selectedLead: contextSelectedLead,
+    selectedOutboundNumber: contextSelectedOutboundNumber,
+    transcript,
+    callHistory,
+    callLogs,
+    callLogsLoading,
+    setSelectedLead,
+    setSelectedOutboundNumber,
+    makeCall,
+    hangupCall,
+    setCallMute,
+    getCurrentCall,
+    showScheduleModal,
+    setShowScheduleModal,
+    licenseDetails,
+    licenseError,
+    licenseLoading
+  } = useCallContext();
+
+  // Local state for PowerDialer-specific UI
   const [searchTerm, setSearchTerm] = useState('');
-  const [callStatus, setCallStatus] = useState('Ready to Make Calls');
-  const [isCallActive, setIsCallActive] = useState(false);
-  const [isDialing, setIsDialing] = useState(false);
-  const [isCallEnded, setIsCallEnded] = useState(false);
   const [callingMode, setCallingMode] = useState('Human Agent');
   const [selectedScript, setSelectedScript] = useState('Opening');
-  const [transcript, setTranscript] = useState('Call transcription will appear here when connected');
   const [activeTabs, setActiveTabs] = useState(['script']);
-  const [callDuration, setCallDuration] = useState(0);
-  const [callHistory, setCallHistory] = useState([
-    { date: '2024-01-15', time: '8:42', status: 'interested', duration: '2:30' },
-    { date: '2024-01-10', time: '14:15', status: 'callback', duration: '1:45' },
-    { date: '2024-01-08', time: '11:20', status: 'not interested', duration: '0:45' }
-  ]);
-  const [selectedOutboundNumber, setSelectedOutboundNumber] = useState(null);
   const [showOutboundModal, setShowOutboundModal] = useState(false);
-  const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [outboundModalShown, setOutboundModalShown] = useState(false);
+
+  // Use context selectedLead as local selectedLead
+  const selectedLead = contextSelectedLead;
+  const selectedOutboundNumber = contextSelectedOutboundNumber;
 
   const handleTabToggle = (tab) => {
     setActiveTabs((prev) =>
@@ -42,137 +55,6 @@ const PowerDialer = () => {
         ? prev.filter((t) => t !== tab)
         : [...prev, tab]
     );
-  };
-
-  // Refs
-  const deviceRef = useRef(null);
-  const callRef = useRef(null);
-  const callTimerRef = useRef(null);
-  const audioElementRef = useRef(null);
-
-  // Initialize audio element for better browser compatibility
-  useEffect(() => {
-    audioElementRef.current = new Audio();
-    audioElementRef.current.preload = 'auto';
-    
-    return () => {
-      if (audioElementRef.current) {
-        audioElementRef.current.pause();
-        audioElementRef.current = null;
-      }
-    };
-  }, []);
-
-  // Request microphone permissions on component mount
-  useEffect(() => {
-    requestMicrophonePermission();
-  }, []);
-
-  // Initialize Twilio Device
-  useEffect(() => {
-    initializeTwilio();
-    return () => {
-      if (deviceRef.current) {
-        deviceRef.current.destroy();
-      }
-      if (callTimerRef.current) {
-        clearInterval(callTimerRef.current);
-      }
-      // Clean up global call reference
-      window.currentTwilioCall = null;
-    };
-  }, []);
-
-  // Reset call ended status after delay
-  useEffect(() => {
-    if (isCallEnded) {
-      const timer = setTimeout(() => {
-        setIsCallEnded(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isCallEnded]);
-
-  const requestMicrophonePermission = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        } 
-      });
-      
-      stream.getTracks().forEach(track => track.stop());
-      
-      console.log('Microphone permission granted');
-    } catch (error) {
-      console.warn('Microphone permission not granted:', error);
-      setCallStatus('Microphone access is required for calling');
-    }
-  };
-
-  const initializeTwilio = async () => {
-    try {
-      setCallStatus('Initializing calling system...');
-      
-      await requestMicrophonePermission();
-      
-      const data = await dialerService.initializeTwilio(userData?.email);
-
-      console.log(data);
-      console.log(data?.data?.token);
-      
-      if (!data?.data?.token) {
-        throw new Error('No token in response');
-      }
-      
-      deviceRef.current = new Device(data?.data?.token, {
-        codecPreferences: ['opus', 'pcmu'],
-        debug: true,
-        enableRingingState: true,
-        closeProtection: true
-      });
-
-      deviceRef.current.on('registered', () => {
-        setCallStatus('Ready to Make Calls');
-      });
-
-      deviceRef.current.on('error', (error) => {
-        console.error('Device error:', error);
-        setCallStatus(`Device error: ${error.message}`);
-      });
-
-      deviceRef.current.on('incoming', (call) => {
-        console.log('Incoming call:', call);
-      });
-
-      deviceRef.current.register();
-
-    } catch (error) {
-      console.error('Initialization failed:', error);
-      setCallStatus(`Initialization failed: ${error.message || 'Unknown error'}`);
-    }
-  };
-
-  const startCallTimer = () => {
-    setCallDuration(0);
-    callTimerRef.current = setInterval(() => {
-      setCallDuration(prev => prev + 1);
-    }, 1000);
-  };
-
-  const stopCallTimer = () => {
-    if (callTimerRef.current) {
-      clearInterval(callTimerRef.current);
-      callTimerRef.current = null;
-    }
-  };
-
-  const formatCallDuration = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const formatPhoneNumber = (phone) => {
@@ -185,145 +67,14 @@ const PowerDialer = () => {
     return phone;
   };
 
-  const makeCall = async () => {
-    if (!deviceRef.current || !selectedLead) {
-      setCallStatus('Please select a lead first');
-      return;
-    }
-    
-    if (!selectedOutboundNumber) {
-      setCallStatus('Please select an outbound number first');
+  // Handle making call with modal check
+  const handleMakeCall = async () => {
+    // Verify outbound number is selected and has a valid phone number
+    if (!selectedOutboundNumber || !selectedOutboundNumber.phone || !selectedOutboundNumber.phone.trim()) {
       setShowOutboundModal(true);
       return;
     }
-    
-    try {
-      setCallStatus('Dialing...');
-      setIsDialing(true);
-      setIsCallEnded(false);
-      
-      await requestMicrophonePermission();
-      
-      callRef.current = await deviceRef.current.connect({ 
-        params: { 
-          To: selectedLead.phone.replace(/\D/g, ''),
-          from: 'power-dialer',
-          leadId: selectedLead.id
-        } 
-      });
-
-      window.currentTwilioCall = callRef.current;
-
-      callRef.current.on('accept', () => {
-        setCallStatus('Connected');
-        setIsCallActive(true);
-        setIsDialing(false);
-        startCallTimer();
-        setTranscript('Call in progress... Live transcription will appear here.');
-        
-        if (audioElementRef.current) {
-          audioElementRef.current.play().catch(e => console.log('Audio play prevented:', e));
-        }
-        
-        const now = new Date();
-        const newCall = {
-          date: now.toISOString().split('T')[0],
-          time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
-          status: 'connected',
-          duration: '0:00'
-        };
-        setCallHistory(prev => [newCall, ...prev]);
-      });
-
-      callRef.current.on('disconnect', () => {
-        const duration = formatCallDuration(callDuration);
-        setCallStatus('Call ended');
-        setIsCallActive(false);
-        setIsDialing(false);
-        setIsCallEnded(true);
-        stopCallTimer();
-        setCallDuration(0);
-        setTranscript('Call ended. Transcription will be saved.');
-        
-        window.currentTwilioCall = null;
-        
-        if (callDuration > 0) {
-          setCallHistory(prev => {
-            const updated = [...prev];
-            if (updated.length > 0) {
-              updated[0] = { ...updated[0], duration, status: 'completed' };
-            }
-            return updated;
-          });
-        }
-        
-        callRef.current = null;
-      });
-
-      callRef.current.on('error', (error) => {
-        setCallStatus(`Call error: ${error.message}`);
-        setIsCallActive(false);
-        setIsDialing(false);
-        setIsCallEnded(true);
-        stopCallTimer();
-        
-        window.currentTwilioCall = null;
-        callRef.current = null;
-      });
-
-      callRef.current.on('mute', (isMuted) => {
-        console.log(`Call ${isMuted ? 'muted' : 'unmuted'}`);
-        setIsCallActive(prev => !prev);
-        setIsCallActive(prev => !prev);
-      });
-
-    } catch (error) {
-      console.error('Call failed:', error);
-      setCallStatus(`Call failed: ${error.message}`);
-      setIsDialing(false);
-      setIsCallEnded(true);
-      
-      window.currentTwilioCall = null;
-    }
-  };
-
-  const hangupCall = () => {
-    if (callRef.current) {
-      callRef.current.disconnect();
-    } else if (window.currentTwilioCall) {
-      window.currentTwilioCall.disconnect();
-    }
-    setIsCallActive(false);
-    setIsDialing(false);
-    setIsCallEnded(true);
-    stopCallTimer();
-    setCallStatus('Call ended');
-    
-    window.currentTwilioCall = null;
-  };
-
-  const setCallMute = async (mute) => {
-    const call = callRef.current || window.currentTwilioCall;
-    
-    if (call && typeof call.mute === 'function' && typeof call.unmute === 'function') {
-      try {
-        if (mute) {
-          await call.mute();
-          console.log('Call muted');
-        } else {
-          await call.unmute();
-          console.log('Call unmuted');
-        }
-      } catch (error) {
-        console.error('Error toggling mute:', error);
-      }
-    } else {
-      console.warn('No active call found for mute control');
-    }
-  };
-
-  const getCurrentCall = () => {
-    return callRef.current || window.currentTwilioCall;
+    await makeCall();
   };
 
   const updateLeadStatus = (leadId, newStatus) => {
@@ -332,14 +83,14 @@ const PowerDialer = () => {
     // If needed, we can refresh the selected lead here
     if (selectedLead && selectedLead.id === leadId) {
       // Update the selected lead's status locally
-      setSelectedLead(prev => ({
-        ...prev,
+      setSelectedLead({
+        ...selectedLead,
         status: newStatus,
         originalData: {
-          ...prev.originalData,
-          lead_status: typeof newStatus === 'number' ? newStatus : STATUS_NAME_TO_ID[newStatus?.toUpperCase()] || prev.originalData?.lead_status
+          ...selectedLead.originalData,
+          lead_status: typeof newStatus === 'number' ? newStatus : STATUS_NAME_TO_ID[newStatus?.toUpperCase()] || selectedLead.originalData?.lead_status
         }
-      }));
+      });
     }
   };
 
@@ -347,6 +98,11 @@ const PowerDialer = () => {
   const handleSelectOutboundNumber = (number) => {
     setSelectedOutboundNumber(number);
     setShowOutboundModal(false);
+  };
+
+  // Update context when local lead selection changes
+  const handleSelectLead = (lead) => {
+    setSelectedLead(lead);
   };
 
   // Show outbound number modal once on page load if no number is selected
@@ -430,7 +186,7 @@ const PowerDialer = () => {
             <div className="col-span-4">
               <LeadList
                 selectedLead={selectedLead}
-                onSelectLead={setSelectedLead}
+                onSelectLead={handleSelectLead}
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
               />
@@ -443,7 +199,7 @@ const PowerDialer = () => {
                 isCallActive={isCallActive}
                 isDialing={isDialing}
                 isCallEnded={isCallEnded}
-                onMakeCall={makeCall}
+                onMakeCall={handleMakeCall}
                 onHangupCall={hangupCall}
                 selectedLead={selectedLead}
                 callDuration={callDuration}
@@ -451,6 +207,9 @@ const PowerDialer = () => {
                 currentCall={getCurrentCall()}
                 selectedOutboundNumber={selectedOutboundNumber}
                 onScheduleAppointment={() => setShowScheduleModal(true)}
+                licenseDetails={licenseDetails}
+                licenseError={licenseError}
+                licenseLoading={licenseLoading}
               />
 
               {/* Lead Information */}
@@ -462,6 +221,8 @@ const PowerDialer = () => {
                 isCallActive={isCallActive}
                 callDuration={callDuration}
                 callHistory={callHistory}
+                callLogs={callLogs}
+                callLogsLoading={callLogsLoading}
               />
             </div>
 
@@ -475,6 +236,8 @@ const PowerDialer = () => {
                 lead={selectedLead}
                 transcript={transcript}
                 isCallActive={isCallActive}
+                callLogs={callLogs}
+                callLogsLoading={callLogsLoading}
               />
             </div>
           </div>

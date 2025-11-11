@@ -8,8 +8,11 @@ const profileService = {
   getBasicDetails: () => {
     return axios.get(`${JWT_HOST_API}/user/me`);
   },
-  getLicenseDetails: () => {
-    return axios.get(`${JWT_HOST_API}/license-number`);
+  getLicenseDetails: (state = null) => {
+    const url = state 
+      ? `${JWT_HOST_API}/license-number?state=${encodeURIComponent(state)}`
+      : `${JWT_HOST_API}/license-number`;
+    return axios.get(url);
   },
   getUsaStates: () => {
     return axios.get(`${JWT_HOST_API}/pricing/usa_states`);

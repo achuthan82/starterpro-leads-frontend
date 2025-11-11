@@ -66,17 +66,53 @@ class DialerService {
 
   /**
    * Initialize Twilio by getting access token
-   * @param {string} identity - User email/identity for Twilio token
+   * @param {Object} params - Parameters for Twilio initialization
+   * @param {string} params.to_number - Phone number of the lead being called
+   * @param {string|number} params.mortgage_id - Mortgage ID of the selected lead
+   * @param {string} params.uuid - UUID4 generated on frontend
    * @returns {Promise} Response with Twilio token
    */
-  async initializeTwilio(identity) {
+  async initializeTwilio(params) {
     try {
+      const { to_number, mortgage_id, uuid } = params;
       const response = await axiosInstance.post(API_ENDPOINTS.DIALER.TOKEN, {
-        identity
+        to_number,
+        mortgage_id,
+        uuid
       });
       return response.data;
     } catch (error) {
       console.error('Error initializing Twilio:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get call logs (call history and transcripts)
+   * @param {Object} params - Parameters for fetching call logs
+   * @param {number} params.page - Page number (default: 1)
+   * @param {number} params.per_page - Items per page (default: 100)
+   * @param {string|number} params.mortgage_id - Optional mortgage ID to filter by lead
+   * @returns {Promise} Response with call logs data
+   */
+  async getCallLogs(params = {}) {
+    try {
+      const { page = 1, per_page = 100, mortgage_id } = params;
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        per_page: per_page.toString()
+      });
+      
+      if (mortgage_id) {
+        queryParams.append('mortgage_id', mortgage_id.toString());
+      }
+      
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.DIALER.CALL_LOGS}?${queryParams.toString()}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching call logs:', error);
       throw error;
     }
   }
