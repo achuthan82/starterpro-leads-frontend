@@ -98,11 +98,10 @@ export const API_ENDPOINTS = {
     PAGINATED_LEADS: "/dialer/leads/complete-incomplete/paginated",
     OUTBOUND_NUMBERS: "/dialer/outbound-numbers-from-db"
   },
-  APPOINTMENT: {
-    SETTINGS: "/appointment/settings/details",
-    LIST: "/appointment/list",
-    CREATE: "/appointment"
-  }
+   AVAILABILITY: {
+    SETTINGS_CREATE: '/appointment/settings', 
+    SETTINGS_DETAILS: '/appointment/settings/details', 
+  },
 };
 
 // Request Configuration
