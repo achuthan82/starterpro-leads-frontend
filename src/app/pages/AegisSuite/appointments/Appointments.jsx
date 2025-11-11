@@ -4,10 +4,10 @@ import MonthlyCalendar from "./MonthlyCalendar";
 import WeeklyCalendar from "./WeeklyCalendar";
 import DailyCalendar from "./DailyCalendar";
 import { useDisclosure } from "hooks";
-import AppointmentModal from "./AppointmentModal";
+// import AppointmentModal from "./AppointmentModal";
 import moment from "moment/moment";
-import appointmentServive from "utils/appointmentService";
-
+import calendarService from "utils/clendarService";
+import ScheduleAppointmentModal from "app/pages/powerDialer/ScheduleAppointmentModal";
 const Appointments = () => {
   const [viewType, setViewType] = useState("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -95,7 +95,7 @@ const Appointments = () => {
   const loadAppointments = (start_date, end_date) => {
     // setLoading(true);
 
-    appointmentServive
+    calendarService
       .getAppointments(start_date, end_date, time_zone)
       .then((response) => {
         console.log(response);
@@ -394,7 +394,8 @@ const Appointments = () => {
               </div>
             </div>
           </div>
-          <AppointmentModal isOpen={isOpen} close={close}></AppointmentModal>
+          <ScheduleAppointmentModal isOpen={isOpen} onClose={close} loadAppintments={loadAppointments} startDate={startDate} endDate={endDate }/>
+          {/* <AppointmentModal isOpen={isOpen} close={close}></AppointmentModal> */}
         </main>
       </div>
     </div>

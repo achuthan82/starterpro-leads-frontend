@@ -3,7 +3,7 @@ import {
   MagnifyingGlassIcon, 
   PhoneIcon, 
   MapPinIcon, 
-  PaperClipIcon,
+  // PaperClipIcon,
   CalendarIcon,
   ChevronLeftIcon,
   ChevronRightIcon
@@ -63,8 +63,9 @@ const LeadList = ({ selectedLead, onSelectLead, searchTerm, onSearchChange }) =>
         id: lead.assignee_id || lead.id || lead.mortgage_id,
         name: lead.full_name || lead.name || 'Unknown',
         phone: lead.ivr_response?.number || lead.ivr_response?.ani || lead.phone || lead.lead_phone_number || 'N/A',
-        territory: `${lead.city || ''} ${lead.state || ''} ${lead.zip || lead.zipcode || ''}`.trim() || 'N/A',
+        address: `${lead.address || ''} ${lead.city || ''} ${lead.state || ''} ${lead.zip || lead.zipcode || ''}`.trim() || 'N/A',
         status: LEAD_STATUS[lead.lead_status] || lead.lead_status || 'Unknown',
+        statusId: lead.lead_status, // Keep the original status ID for badge colors
         lastContact: lead.call_in_date_time || lead.last_contact || '',
         age: lead.ivr_response?.age || lead.age || '',
         homeValue: lead.loan_amount || '',
@@ -117,44 +118,33 @@ const LeadList = ({ selectedLead, onSelectLead, searchTerm, onSearchChange }) =>
     fetchLeads(1, searchTerm, selectedStatus, newPerPage);
   };
 
-  const getStatusIcon = (status) => {
-    const icons = {
-      'First Call': (
-        <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-      ),
-      'Second Call': (
-        <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-      ),
-      'Qualified': (
-        <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-      ),
-      'Callback': (
-        <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
-      ),
-      'Scheduled': (
-        <div className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></div>
-      ),
-      'Not Interested': (
-        <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-      ),
-      'Sold': (
-        <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></div>
-      )
-    };
-    return icons[status] || <div className="w-2 h-2 bg-gray-500 rounded-full mr-2"></div>;
+  // Get status ID from lead status (could be name or ID)
+  const getStatusId = (status) => {
+    if (!status) return null;
+    
+    // If it's already a number, return it
+    if (typeof status === 'number') {
+      return status;
+    }
+    
+    // If it's a string, try to find the ID
+    if (typeof status === 'string') {
+      // Try STATUS_NAME_TO_ID first
+      const statusId = STATUS_NAME_TO_ID[status.toUpperCase()];
+      if (statusId) return statusId;
+      
+      // Try to find in LEAD_STATUS
+      const foundId = Object.keys(LEAD_STATUS).find(key => LEAD_STATUS[key] === status || LEAD_STATUS[key] === status.toUpperCase());
+      if (foundId) return Number(foundId);
+    }
+    
+    return null;
   };
 
-  const getStatusColor = (status) => {
-    const colors = {
-      'First Call': 'text-blue-600',
-      'Second Call': 'text-purple-600',
-      'Qualified': 'text-green-600',
-      'Callback': 'text-yellow-600',
-      'Scheduled': 'text-indigo-600',
-      'Not Interested': 'text-red-600',
-      'Sold': 'text-emerald-600'
-    };
-    return colors[status] || 'text-gray-600';
+  // Get status badge class using the same system as LeadManagement
+  const getStatusBadgeClass = (statusId) => {
+    if (!statusId) return '';
+    return `shieldnest-badge-${statusId}`;
   };
 
   return (
@@ -215,22 +205,29 @@ const LeadList = ({ selectedLead, onSelectLead, searchTerm, onSearchChange }) =>
             <div className="flex justify-between items-start mb-3">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-base">{lead.name}</h3>
               <div className="flex items-center space-x-2">
-                <div className={`flex items-center text-xs font-medium ${getStatusColor(lead.status)}`}>
-                  {getStatusIcon(lead.status)}
-                  {lead.status}
-                </div>
+                {(() => {
+                  // Use statusId from lead data if available, otherwise try to get it from status name
+                  const statusId = lead.statusId || getStatusId(lead.status);
+                  return statusId ? (
+                    <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full status-badge ${getStatusBadgeClass(statusId)}`}>
+                      {lead.status || LEAD_STATUS[statusId] || ''}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-gray-600 dark:text-gray-400">{lead.status || 'Unknown'}</span>
+                  );
+                })()}
               </div>
             </div>
             
             {/* Lead Details with Heroicons */}
             <div className="space-y-2 ml-1">
+            <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                <PhoneIcon className="w-4 h-4 mr-2 text-gray-400" />
+                {lead.phone || 'N/A'}
+              </div>
               <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                 <MapPinIcon className="w-4 h-4 mr-2 text-gray-400" />
-                {lead.phone}
-              </div>
-              <div className="flex items-center text-sm text-gray-500 dark:text-gray-500 mt-4">
-                <PaperClipIcon className="w-4 h-4 mr-2 text-gray-400" />
-                {lead.territory}
+                {lead.address || 'N/A'}
               </div>
               {lead.lastContact && (
                 <div className="flex items-center justify-between">
@@ -323,13 +320,37 @@ const LeadList = ({ selectedLead, onSelectLead, searchTerm, onSearchChange }) =>
       {/* Status Legend */}
       <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
         <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Status Legend:</p>
-        <div className="grid grid-cols-2 gap-1 text-xs">
-          {statusOptions.slice(1).map(status => (
-            <div key={status} className="flex items-center text-gray-600 dark:text-gray-400">
-              {getStatusIcon(status)}
-              <span>{status}</span>
-            </div>
-          ))}
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          {statusOptions.slice(1).map(status => {
+            const statusId = getStatusId(status);
+            // Get the background color from the badge class
+            const getStatusDotColor = (id) => {
+              if (!id) return 'bg-gray-400';
+              // Map status IDs to their corresponding colors from shieldnest-theme.css
+              const colorMap = {
+                1: 'bg-[var(--atoll)]', // NEW
+                2: 'bg-[var(--atoll)]', // FIRST CALL
+                3: 'bg-[var(--atlantis)]', // SECOND CALL
+                4: 'bg-[#f97316]', // THIRD CALL
+                5: 'bg-[#8b5cf6]', // TEXT
+                6: 'bg-[#3b82f6]', // APPOINTMENT
+                7: 'bg-[var(--fern)]', // SOLD
+                8: 'bg-[var(--waterloo)]', // NOT INTERESTED
+                9: 'bg-[var(--gray-suit)]', // SIT / NO SALE
+                10: 'bg-[#ef4444]', // NO SHOW
+                11: 'bg-[#374151]', // DNC
+                12: 'bg-[#4e1515]', // SUPPRESSED
+                13: 'bg-[#10151d]' // Suppression Denied
+              };
+              return colorMap[id] || 'bg-gray-400';
+            };
+            return (
+              <div key={status} className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${getStatusDotColor(statusId)}`}></div>
+                <span className="text-gray-600 dark:text-gray-400">{status}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

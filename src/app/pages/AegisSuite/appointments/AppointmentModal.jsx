@@ -17,7 +17,7 @@ const AppointmentModal = ({ isOpen, close }) => {
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState([]);
   const [clientsLoading, setClientsLoading] = useState([]);
-  const [searchValue, setSearchValue] = useState('')
+  const [searchValue, setSearchValue] = useState("");
   const {
     handleSubmit,
     control,
@@ -26,14 +26,13 @@ const AppointmentModal = ({ isOpen, close }) => {
     mode: "onChange",
   });
 
-
   const getClients = (name = "") => {
     setClientsLoading(true);
     const params = { page: 1, per_page: 50, name: name };
     dialerService
       .getPaginatedLeads(params)
       .then((response) => {
-        console.log(response)
+        console.log(response);
         if (response.status === 200) {
           setClients(
             response.data.map((item) => {
@@ -43,22 +42,22 @@ const AppointmentModal = ({ isOpen, close }) => {
         } else if (response.status === 204) {
           setClients([]);
         } else {
-          setClients([])
+          setClients([]);
           toast.error(response?.data?.message || "Failed to fetch clients");
         }
       })
       .catch((error) => {
-        setClients([])
+        setClients([]);
         toast.error(error?.message || "Failed to fetch clients");
       })
       .finally(() => {
         setClientsLoading(false);
       });
   };
-    const loadOptions = (inputValue, actionMeta) => {
-      setSearchValue(inputValue);
-      if (actionMeta.action === "input-change") {
-        getClients(inputValue);
+  const loadOptions = (inputValue, actionMeta) => {
+    setSearchValue(inputValue);
+    if (actionMeta.action === "input-change") {
+      getClients(inputValue);
     }
   };
   const onSubmit = (data) => {
@@ -71,7 +70,7 @@ const AppointmentModal = ({ isOpen, close }) => {
   };
   useEffect(() => {
     if (isOpen) {
-    getClients();
+      getClients();
     }
   }, [isOpen]);
   return (
