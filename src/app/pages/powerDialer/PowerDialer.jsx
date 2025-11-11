@@ -7,6 +7,8 @@ import LeadInfo from './LeadInfo';
 import CallControls from './CallControls';
 import ScriptTranscript from './ScriptTranscript';
 import OutboundNumberModal from './OutboundNumberModal';
+import ScheduleAppointmentModal from './ScheduleAppointmentModal';
+import { STATUS_NAME_TO_ID } from 'constants/app.constant';
 
 const PowerDialer = () => {
   // State for leads and selection
@@ -28,6 +30,7 @@ const PowerDialer = () => {
   ]);
   const [selectedOutboundNumber, setSelectedOutboundNumber] = useState(null);
   const [showOutboundModal, setShowOutboundModal] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   const handleTabToggle = (tab) => {
     setActiveTabs((prev) =>
@@ -329,9 +332,20 @@ const PowerDialer = () => {
   };
 
   const updateLeadStatus = (leadId, newStatus) => {
-    // Status update will be handled by the API in LeadList component
-    // This function is kept for compatibility with LeadInfo component
-    console.log('Lead status update requested:', { leadId, newStatus });
+    // Status update is now handled directly in LeadInfo component via API
+    // This function is kept for compatibility but status updates are done in LeadInfo
+    // If needed, we can refresh the selected lead here
+    if (selectedLead && selectedLead.id === leadId) {
+      // Update the selected lead's status locally
+      setSelectedLead(prev => ({
+        ...prev,
+        status: newStatus,
+        originalData: {
+          ...prev.originalData,
+          lead_status: typeof newStatus === 'number' ? newStatus : STATUS_NAME_TO_ID[newStatus?.toUpperCase()] || prev.originalData?.lead_status
+        }
+      }));
+    }
   };
 
   // Handle outbound number selection
@@ -444,6 +458,7 @@ const PowerDialer = () => {
                 onMuteToggle={setCallMute}
                 currentCall={getCurrentCall()}
                 selectedOutboundNumber={selectedOutboundNumber}
+                onScheduleAppointment={() => setShowScheduleModal(true)}
               />
 
               {/* Lead Information */}
@@ -480,6 +495,13 @@ const PowerDialer = () => {
         onClose={() => setShowOutboundModal(false)}
         selectedLead={selectedLead}
         onSelectNumber={handleSelectOutboundNumber}
+      />
+
+      {/* Schedule Appointment Modal */}
+      <ScheduleAppointmentModal
+        isOpen={showScheduleModal}
+        onClose={() => setShowScheduleModal(false)}
+        selectedLead={selectedLead}
       />
     </div>
   );

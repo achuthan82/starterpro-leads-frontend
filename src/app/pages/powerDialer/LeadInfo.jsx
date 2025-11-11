@@ -1,19 +1,41 @@
 import { useState, useEffect } from 'react';
 import { ShieldCheckIcon } from '@heroicons/react/24/outline';
 import MortgageProtectionModal from './MortgageProtectionModal';
+import { LEAD_STATUS, LEAD_STATUSES, STATUS_NAME_TO_ID } from 'constants/app.constant';
+import { JWT_HOST_API } from 'configs/auth.config';
+import { toast } from 'sonner';
 // import LeadInfoPDF from './LeadInfoPDF';
 
 const LeadInfo = ({ lead, onUpdateStatus, callHistory }) => {
   const [currentStatus, setCurrentStatus] = useState(lead?.status || '');
+  const [currentStatusId, setCurrentStatusId] = useState(null);
   const [isMortgageModalOpen, setIsMortgageModalOpen] = useState(false);
   const [formData, setFormData] = useState(null);
+  const [statusLoading, setStatusLoading] = useState(false);
   console.log(formData)
 
   useEffect(() => {
-    if (lead?.status !== currentStatus) {
-      setCurrentStatus(lead?.status || '');
+    if (lead) {
+      // Get status from lead - could be status name or lead_status ID
+      const leadStatus = lead.originalData?.lead_status || lead.lead_status || lead.status;
+      
+      // If it's a number, it's a status ID
+      if (typeof leadStatus === 'number') {
+        setCurrentStatusId(leadStatus);
+        setCurrentStatus(LEAD_STATUS[leadStatus] || '');
+      } else if (typeof leadStatus === 'string') {
+        // If it's a string, try to find the ID
+        const statusId = STATUS_NAME_TO_ID[leadStatus.toUpperCase()] || Object.keys(LEAD_STATUS).find(key => LEAD_STATUS[key] === leadStatus);
+        if (statusId) {
+          setCurrentStatusId(Number(statusId));
+          setCurrentStatus(leadStatus);
+        } else {
+          setCurrentStatus(leadStatus);
+          setCurrentStatusId(null);
+        }
+      }
     }
-  }, [lead, currentStatus]);
+  }, [lead]);
 
   const handleFormSubmit = (data) => {
     setFormData(data);
@@ -32,36 +54,64 @@ const LeadInfo = ({ lead, onUpdateStatus, callHistory }) => {
     );
   }
 
-  const getStatusColor = (status) => {
-    const colors = {
-      'first call': 'bg-blue-600',
-      'second call': 'bg-purple-600',
-      'qualified': 'bg-green-600',
-      'callback': 'bg-yellow-600',
-      'scheduled': 'bg-indigo-600',
-      'not interested': 'bg-red-600',
-      'sold': 'bg-emerald-600'
-    };
-    return colors[status?.toLowerCase()] || 'bg-gray-600';
+  // Get status badge class using the same system as LeadManagement
+  const getStatusBadgeClass = (statusId) => {
+    if (!statusId) return '';
+    return `shieldnest-badge-${statusId}`;
   };
 
-  const getStatusColors = (status) => {
-    const colors = {
-      'First Call': 'bg-blue-600',
-      'Second Call': 'bg-purple-600',
-      'Qualified': 'bg-green-600',
-      'Callback': 'bg-yellow-600',
-      'Scheduled': 'bg-indigo-600',
-      'Not Interested': 'bg-red-600',
-      'Sold': 'bg-emerald-600'
-    };
-    return colors[status] || 'bg-gray-600';
-  };
-
-  const handleStatusChange = (e) => {
-    const newStatus = e.target.value;
-    setCurrentStatus(newStatus);
-    onUpdateStatus(lead.id, newStatus);
+  // Handle status change using the same API as LeadManagement
+  const handleStatusChange = async (e) => {
+    const newStatusId = Number(e.target.value);
+    if (!newStatusId || !lead) return;
+    
+    setStatusLoading(true);
+    try {
+      // Prepare payload - same as LeadManagement
+      const agentId = lead.originalData?.agent_id || lead.agent_id || lead.agentId;
+      const mortgageId = lead.originalData?.mortgage_id || lead.mortgage_id || lead.identifier || lead.id;
+      
+      if (!agentId || !mortgageId) {
+        toast.error('Missing agent or mortgage ID');
+        setStatusLoading(false);
+        return;
+      }
+      
+      const payload = {
+        agent_id: agentId,
+        lead_status: newStatusId,
+        mortgage_ids: [mortgageId]
+      };
+      
+      // Call API (category=1) - same endpoint as LeadManagement
+      const response = await fetch(`${JWT_HOST_API}/leads/status/1`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      const data = await response.json();
+      if (response.ok && (data.success || data.status === 200)) {
+        toast.success(data.message || 'Status updated successfully!');
+        setCurrentStatusId(newStatusId);
+        setCurrentStatus(LEAD_STATUS[newStatusId] || '');
+        // Call the onUpdateStatus callback if provided
+        if (onUpdateStatus) {
+          onUpdateStatus(lead.id, LEAD_STATUS[newStatusId] || newStatusId);
+        }
+      } else {
+        toast.error(data.message || 'Failed to update status');
+      }
+    } catch (err) {
+      console.error('Error updating status:', err);
+      toast.error(err.message || 'Failed to update status');
+    } finally {
+      setStatusLoading(false);
+    }
   };
 
   return (
@@ -87,13 +137,13 @@ const LeadInfo = ({ lead, onUpdateStatus, callHistory }) => {
             </button>
           </div>
         </div>
-        {currentStatus && (
+        {currentStatusId && (
           <span
-            className={`px-3 py-1 text-sm font-medium rounded-full text-white ${getStatusColors(
-              currentStatus
+            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full hover:opacity-80 transition-opacity status-badge ${getStatusBadgeClass(
+              currentStatusId
             )}`}
           >
-            {currentStatus}
+            {currentStatus || LEAD_STATUS[currentStatusId] || ''}
           </span>
         )} 
         {/* Lead Details */}
@@ -116,34 +166,39 @@ const LeadInfo = ({ lead, onUpdateStatus, callHistory }) => {
           </div>
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">Territory</p>
-            <p className="font-medium text-gray-900 dark:text-gray-100">{lead.territory}</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">{lead.originalData?.state}-{lead.originalData?.zip}</p>
           </div>
         </div>
 
         {/* Notes */}
+        {lead.notes && (
         <div className="mb-4">
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Notes</p>
           <p className="text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg text-sm">
             {lead.notes}
           </p>
-        </div>
+        </div> 
+        )}
 
         {/* Update Status */}
         <div className="mb-6">
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Update Status</p>
           <select
-            value={currentStatus}
+            value={currentStatusId || ''}
             onChange={handleStatusChange}
-            className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-atoll)] bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100`}
+            disabled={statusLoading}
+            className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-atoll)] dark:focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+              statusLoading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            <option value="First Call">First Call</option>
-            <option value="Second Call">Second Call</option>
-            <option value="Qualified">Qualified</option>
-            <option value="Callback">Callback</option>
-            <option value="Scheduled">Scheduled</option>
-            <option value="Not Interested">Not Interested</option>
-            <option value="Sold">Sold</option>
+            <option value="">Select Status</option>
+            {LEAD_STATUSES.map(status => (
+              <option key={status?.value} value={status?.value}>{status?.label}</option>
+            ))}
           </select>
+          {statusLoading && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Updating status...</p>
+          )}
         </div>
 
         {/* Call History */}
@@ -151,17 +206,32 @@ const LeadInfo = ({ lead, onUpdateStatus, callHistory }) => {
           <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Call History</h4>
           <div className="space-y-2">
             {callHistory.length > 0 ? (
-              callHistory.map((call, index) => (
-                <div key={index} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center space-x-2">
-                    <div className={`w-2 h-2 rounded-full ${getStatusColor(call.status)}`}></div>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {call.date} · {call.time}
-                    </span>
+              callHistory.map((call, index) => {
+                // Try to get status ID from call status
+                const callStatusId = typeof call.status === 'number' 
+                  ? call.status 
+                  : STATUS_NAME_TO_ID[call.status?.toUpperCase()] || Object.keys(LEAD_STATUS).find(key => LEAD_STATUS[key] === call.status);
+                return (
+                  <div key={index} className="flex items-center justify-between text-sm">
+                    <div className="flex items-center space-x-2">
+                      {callStatusId && (
+                        <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full status-badge ${getStatusBadgeClass(callStatusId)}`}>
+                          {LEAD_STATUS[callStatusId] || call.status}
+                        </span>
+                      )}
+                      {!callStatusId && (
+                        <div className={`w-2 h-2 rounded-full bg-gray-400`}></div>
+                      )}
+                      <span className="text-gray-600 dark:text-gray-400">
+                        {call.date} · {call.time}
+                      </span>
+                    </div>
+                    {call.duration && (
+                      <span className="text-gray-500 dark:text-gray-500 text-xs">{call.duration}</span>
+                    )}
                   </div>
-                  <span>{call.status}</span>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="text-center py-4 text-gray-400 dark:text-gray-500 text-sm">
                 No call history

@@ -99,8 +99,8 @@ export const API_ENDPOINTS = {
     OUTBOUND_NUMBERS: "/dialer/outbound-numbers-from-db"
   },
    AVAILABILITY: {
-    SETTINGS_CREATE: '/appointment/settings', // POST for both create and update
-    SETTINGS_DETAILS: '/appointment/settings/details', // GET to check if data exists
+    SETTINGS_CREATE: '/appointment/settings', 
+    SETTINGS_DETAILS: '/appointment/settings/details', 
   },
 };
 
