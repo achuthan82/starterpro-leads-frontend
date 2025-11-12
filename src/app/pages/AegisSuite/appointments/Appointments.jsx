@@ -13,10 +13,11 @@ const Appointments = () => {
   const [viewType, setViewType] = useState("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
+  const [dailyAppointment, setDailyAppointment] = useState([]);
   const [deleteModal, setDeleteModal] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
   const [isOpen, { open, close }] = useDisclosure(false);
-
   const [isDetailsOpen, { open: detailOpen, close: detailClose }] =
     useDisclosure(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -99,7 +100,7 @@ const Appointments = () => {
   //   },
   // ];
   const loadAppointments = (start_date, end_date) => {
-    // setLoading(true);
+    setLoading(true);
 
     calendarService
       .getAppointments(start_date, end_date, time_zone)
@@ -113,7 +114,10 @@ const Appointments = () => {
                 client: item.client_name,
                 phone: item.phone_number,
                 time: moment(item.meeting_datetime).format("HH:mm") || "00:00",
-                slot_time:moment(item.meeting_datetime, "DD-MM-YYYY HH:mm:ss").format("h:mm A"),
+                slot_time: moment(
+                  item.meeting_datetime,
+                  "MM-DD-YYYY HH:mm:ss",
+                ).format("h:mm A"),
                 endTime:
                   moment(item.meeting_end_datetime).format("HH:mm") || "00:00",
                 // type: "consultation",
@@ -151,8 +155,13 @@ const Appointments = () => {
       })
       .catch(() => {})
       .finally(() => {
-        // setLoading(false)
+        setLoading(false);
       });
+  };
+  const fetchAppointmentStats = (appointment) => {
+    setDailyAppointment(
+      appointment.filter((item) => item.date === moment().format("YYYY-MM-DD")),
+    );
   };
   useEffect(() => {
     let start_date;
@@ -174,13 +183,19 @@ const Appointments = () => {
         .startOf("week")
         .format("MM-DD-YYYY HH:mm:ss");
     } else if (viewType === "today") {
-      console.log(selectedDate);
+      end_date = moment(selectedDate).format("MM-DD-YYYY") + " 23:59:59";
       start_date = moment(selectedDate).format("MM-DD-YYYY") + " 00:00:00";
     }
     setStartDate(start_date);
     setEndDate(end_date);
     loadAppointments(start_date, end_date);
   }, [viewType]);
+  useEffect(() => {
+    if (viewType === "month") {
+      fetchAppointmentStats(appointments);
+      setTotal(appointments.length)
+    }
+  }, [appointments, viewType]);
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
@@ -234,7 +249,10 @@ const Appointments = () => {
 
               <button
                 className="flex items-center space-x-2 rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-gray-900 shadow-lg transition-all hover:bg-yellow-600 dark:bg-yellow-400 dark:text-gray-900 dark:hover:bg-yellow-500"
-                onClick={() => {setSelectedAppointment(null); open()}}
+                onClick={() => {
+                  setSelectedAppointment(null);
+                  open();
+                }}
               >
                 <svg
                   className="h-5 w-5"
@@ -257,42 +275,55 @@ const Appointments = () => {
           <div className="min-h-screen w-full bg-transparent dark:bg-gray-900">
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
               <div className="lg:col-span-3">
-                {viewType === "month" && (
-                  <MonthlyCalendar
-                    detailOpen={detailOpen}
-                    selectedDate={selectedDate}
-                    setSelectedDate={setSelectedDate}
-                    appointments={appointments}
-                    setStartDate={setStartDate}
-                    setEndDate={setEndDate}
-                    loadAppointments={loadAppointments}
-                    setSelectedAppointment={setSelectedAppointment}
-                  />
-                )}
-                {viewType === "week" && (
-                  <WeeklyCalendar
-                    selectedDate={selectedDate}
-                    setSelectedDate={setSelectedDate}
-                    appointments={appointments}
-                    setStartDate={setStartDate}
-                    setEndDate={setEndDate}
-                    loadAppointments={loadAppointments}
-                    setSelectedAppointment={setSelectedAppointment}
-                    detailOpen={detailOpen}
-                  />
-                )}
-                {viewType === "today" && (
-                  <DailyCalendar
-                    selectedDate={selectedDate}
-                    setSelectedDate={setSelectedDate}
-                    appointments={appointments}
-                    open={open}
-                    setStartDate={setStartDate}
-                    setEndDate={setEndDate}
-                    loadAppointments={loadAppointments}
-                    setSelectedAppointment={setSelectedAppointment}
-                    detailOpen={detailOpen}
-                  />
+                {loading ? (
+                  <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
+                    <div className="text-center">
+                      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
+                      <p className="mt-4 text-gray-600 dark:text-gray-300">
+                        Loading Appointments...
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {viewType === "month" && (
+                      <MonthlyCalendar
+                        detailOpen={detailOpen}
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
+                        appointments={appointments}
+                        setStartDate={setStartDate}
+                        setEndDate={setEndDate}
+                        loadAppointments={loadAppointments}
+                        setSelectedAppointment={setSelectedAppointment}
+                      />
+                    )}
+                    {viewType === "week" && (
+                      <WeeklyCalendar
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
+                        appointments={appointments}
+                        setStartDate={setStartDate}
+                        setEndDate={setEndDate}
+                        loadAppointments={loadAppointments}
+                        setSelectedAppointment={setSelectedAppointment}
+                        detailOpen={detailOpen}
+                      />
+                    )}
+                    {viewType === "today" && (
+                      <DailyCalendar
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
+                        appointments={appointments}
+                        open={open}
+                        setStartDate={setStartDate}
+                        setEndDate={setEndDate}
+                        loadAppointments={loadAppointments}
+                        setSelectedAppointment={setSelectedAppointment}
+                        detailOpen={detailOpen}
+                      />
+                    )}
+                  </>
                 )}
               </div>
               <div className="lg:col-span-1">
@@ -303,14 +334,39 @@ const Appointments = () => {
                       Today‘s Appointments
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      11/4/2025
+                      {moment().format("DD/MM/YYYY")}
                     </p>
                   </div>
                   <div className="p-4">
+                    {dailyAppointment.length > 0 ? (
+                      <ul className="space-y-3">
+                        {dailyAppointment.map((appt, index) => (
+                          <li
+                            key={index}
+                            className="flex items-center justify-between rounded-md border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-900"
+                          >
+                            <div>
+                              <p className="font-medium text-gray-800 dark:text-gray-100">
+                                {appt.client || "Unnamed Client"}
+                              </p>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {appt.slot_time}
+                              </p>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        No appointments today
+                      </p>
+                    )}
+                  </div>
+                  {/* <div className="p-4">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       No appointments today
                     </p>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* This Month Summary */}
@@ -327,7 +383,7 @@ const Appointments = () => {
                         Total Appointments
                       </span>
                       <span className="font-semibold text-gray-900 dark:text-gray-100">
-                        30
+                        {total}
                       </span>
                     </div>
 
@@ -336,27 +392,27 @@ const Appointments = () => {
                         Confirmed
                       </span>
                       <span className="font-semibold text-green-600 dark:text-green-400">
-                        15
+                        {total}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    {/* <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600 dark:text-gray-400">
                         Scheduled
                       </span>
                       <span className="font-semibold text-blue-600 dark:text-blue-400">
                         15
                       </span>
-                    </div>
+                    </div> */}
 
-                    <div className="flex items-center justify-between">
+                    {/* <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600 dark:text-gray-400">
                         This Week
                       </span>
                       <span className="font-semibold text-purple-600 dark:text-purple-400">
                         0
                       </span>
-                    </div>
+                    </div> */}
 
                     {/* Appointment Types */}
                     <div className="mt-4 rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
@@ -375,11 +431,11 @@ const Appointments = () => {
                             </span>
                           </div>
                           <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                            12
+                            {total}
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-between">
+                        {/* <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <div className="h-3 w-3 rounded-full bg-green-500"></div>
                             <span className="text-sm text-gray-700 dark:text-gray-200">
@@ -390,7 +446,6 @@ const Appointments = () => {
                             11
                           </span>
                         </div>
-
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <div className="h-3 w-3 rounded-full bg-purple-500"></div>
@@ -401,7 +456,7 @@ const Appointments = () => {
                           <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             7
                           </span>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -416,6 +471,8 @@ const Appointments = () => {
             startDate={startDate}
             endDate={endDate}
             editAppointment={selectedAppointment}
+            viewType={viewType}
+            defaultDate={selectedDate}
           />
           <AppointmentModal
             open={open}

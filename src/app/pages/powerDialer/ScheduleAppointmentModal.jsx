@@ -11,7 +11,7 @@ import { appointmentService, dialerService } from "utils/apiService";
 import { toast } from "sonner";
 import Select from "react-select";
 import { getReactSelectDarkModeStyles } from "utils/reactSelectDarkMode";
-
+import moment from "moment";
 const ScheduleAppointmentModal = ({
   isOpen,
   onClose,
@@ -20,8 +20,9 @@ const ScheduleAppointmentModal = ({
   startDate,
   endDate,
   editAppointment,
+  viewType,
+  defaultDate,
 }) => {
-  console.log(editAppointment, "edit-appointment");
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [availability, setAvailability] = useState(null);
@@ -240,7 +241,12 @@ const ScheduleAppointmentModal = ({
       getClients();
     }
   }, [isOpen]);
+  useEffect(() => {
+    if (isOpen && viewType === 'today' && defaultDate) {
+      setSelectedDate(moment(defaultDate).format("YYYY-MM-DD"))
+    }
 
+  },[isOpen, defaultDate, viewType])
   // Fetch appointment settings
   useEffect(() => {
     if (isOpen) {
@@ -250,6 +256,7 @@ const ScheduleAppointmentModal = ({
 
   useEffect(() => {
     if (editAppointment?.date) {
+      console.log(editAppointment)
       setSelectedDate(editAppointment.date);
       setClientName(editAppointment?.client);
       setPhoneNumber(editAppointment?.phone);
@@ -269,6 +276,8 @@ const ScheduleAppointmentModal = ({
   }, [selectedDate]);
 
   const findSlot = (time) => {
+    console.log(time)
+    console.log(timeSlots)
     let time_slot = null;
     if (timeSlots.morning.some((item) => item.time === time)) {
       setSelectedTime(timeSlots.morning.find((item) => item.time === time));
