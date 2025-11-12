@@ -92,10 +92,18 @@ export function CallProvider({ children }) {
         throw new Error('No token in response');
       }
       
-      // Destroy existing device if any
+      // Destroy existing device if any (to allow reinitialization)
       if (deviceRef.current) {
-        deviceRef.current.destroy();
+        try {
+          deviceRef.current.destroy();
+        } catch (destroyError) {
+          console.warn('Error destroying existing device:', destroyError);
+        }
+        deviceRef.current = null;
       }
+      
+      // Reset initialization flag
+      isInitializedRef.current = false;
       
       // Create new device with token
       deviceRef.current = new Device(data.data.token, {
@@ -516,10 +524,16 @@ export function CallProvider({ children }) {
         setCallDuration(0);
         setTranscript('Call ended. Transcription will be saved.');
         
-        // Clear call log ID when call ends
-        setCurrentCallLogId(null);
+        // Don't clear call log ID - keep it for the same lead
+        // This allows making another call without needing to reselect the lead
         
+        // Clean up call references
+        callRef.current = null;
         window.currentTwilioCall = null;
+        
+        // Reset device initialization state to allow reinitialization for next call
+        // The device will be destroyed and recreated when makeCall is called again
+        isInitializedRef.current = false;
         
         if (currentDuration > 0) {
           setCallHistory(prev => {
@@ -533,13 +547,11 @@ export function CallProvider({ children }) {
         
         // Refresh call logs after call ends
         if (selectedLead) {
-          // Wait a bit for the API to process the call log
+          // Wait 5 seconds for the API to process the call log
           setTimeout(() => {
             fetchCallLogs(selectedLead);
-          }, 2000);
+          }, 10000);
         }
-        
-        callRef.current = null;
       });
 
       callRef.current.on('error', (error) => {
@@ -548,6 +560,9 @@ export function CallProvider({ children }) {
         setIsDialing(false);
         setIsCallEnded(true);
         stopCallTimer();
+        
+        // Don't clear call log ID on error - keep it for retry
+        // setCurrentCallLogId(null);
         
         window.currentTwilioCall = null;
         callRef.current = null;
@@ -568,11 +583,14 @@ export function CallProvider({ children }) {
         try {
           deviceRef.current.destroy();
           deviceRef.current = null;
+          isInitializedRef.current = false;
         } catch (cleanupError) {
           console.error('Error cleaning up device:', cleanupError);
         }
       }
       
+      // Reset call refs but keep call log ID
+      callRef.current = null;
       window.currentTwilioCall = null;
     }
   }, [selectedLead, selectedOutboundNumber, licenseDetails, getLeadState, initializeTwilio, startCallTimer, stopCallTimer, formatCallDuration, currentCallLogId, fetchCallLogs]);
@@ -589,9 +607,10 @@ export function CallProvider({ children }) {
     stopCallTimer();
     setCallStatus('Call ended');
     
-    // Clear call log ID when call ends
-    setCurrentCallLogId(null);
+    // Don't clear call log ID - keep it for the same lead
+    // This allows making another call without needing to reselect the lead
     
+    callRef.current = null;
     window.currentTwilioCall = null;
   }, [stopCallTimer]);
 

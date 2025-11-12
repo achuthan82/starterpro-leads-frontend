@@ -15,6 +15,7 @@ import { dialerService } from "utils/apiService";
 import { toast } from "sonner";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import domtoimage from "dom-to-image";
 
 const MortgageProtectionModal = ({
   isOpen,
@@ -365,6 +366,8 @@ const MortgageProtectionModal = ({
     setIsGeneratingPDF(true);
     try {
       const pdf = new jsPDF("landscape", "pt", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
       
       // Get the slider container
       const sliderContainer = document.querySelector('.slick-slider');
@@ -378,161 +381,409 @@ const MortgageProtectionModal = ({
         throw new Error('Slider track not found');
       }
       
-      // Expected number of slides (we know there are 6)
-      const expectedSlides = 6;
+      // Get ALL slides (not just visible ones) - filter out cloned slides
+      // Also limit to expected number of slides (6) to avoid processing duplicates
+      const allSlides = Array.from(sliderTrack.querySelectorAll('.slick-slide'))
+        .filter(slide => {
+          // Filter out cloned slides
+          if (slide.classList.contains('slick-cloned')) return false;
+          // Only process slides with valid data-index (0-5 for 6 slides)
+          const index = parseInt(slide.getAttribute('data-index') || '-1');
+          return index >= 0 && index < 6;
+        })
+        .sort((a, b) => {
+          const indexA = parseInt(a.getAttribute('data-index') || '0');
+          const indexB = parseInt(b.getAttribute('data-index') || '0');
+          return indexA - indexB;
+        })
+        .slice(0, 6); // Limit to 6 slides maximum
       
-      // Try to get slider instance for navigation
-      let sliderInstance = null;
-      try {
-        if (window.jQuery && window.jQuery(sliderContainer).data('slick')) {
-          sliderInstance = window.jQuery(sliderContainer).data('slick');
-        } else if (sliderContainer.slick) {
-          sliderInstance = sliderContainer.slick;
-        }
-      } catch (e) {
-        console.warn('Could not access slider instance:', e);
+      console.log(`Found ${allSlides.length} slides to process`);
+      
+      if (allSlides.length === 0) {
+        throw new Error('No slides found');
       }
       
-      // Process each slide by navigating to it first
-      for (let i = 0; i < expectedSlides; i++) {
+      // Process each slide
+      for (let i = 0; i < allSlides.length; i++) {
+        const slide = allSlides[i];
+        const slideIndex = parseInt(slide.getAttribute('data-index') || i.toString());
+        
         try {
-          // Navigate to this slide to ensure it's rendered
-          if (sliderInstance && typeof sliderInstance.slickGoTo === 'function') {
-            sliderInstance.slickGoTo(i, true);
-          } else if (window.jQuery) {
-            window.jQuery(sliderContainer).slick('slickGoTo', i, true);
-          }
+          console.log(`Processing slide ${i + 1}/${allSlides.length} (index: ${slideIndex})`);
           
-          // Wait for slide to be visible and images to load
-          await new Promise(resolve => setTimeout(resolve, 800));
+          // Get the content div inside the slide
+          const slideContent = slide.querySelector('div') || slide;
           
-          // Get the currently visible slide
-          const visibleSlide = sliderTrack.querySelector(`.slick-slide[data-index="${i}"]:not(.slick-cloned)`);
-          if (!visibleSlide) {
-            console.warn(`Slide ${i} not found, skipping`);
-            continue;
-          }
-          
-          // Get the slide content element
-          const slideElement = visibleSlide.querySelector('div') || visibleSlide;
-          
-          // Ensure all images in the slide are loaded
-          const images = slideElement.querySelectorAll('img');
-          await Promise.all(Array.from(images).map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise((resolve) => {
-              img.onload = resolve;
-              img.onerror = resolve; // Continue even if image fails
-              // Timeout after 2 seconds
-              setTimeout(resolve, 2000);
-            });
-          }));
-          
-          // Create a temporary container for capture
+          // Create a temporary off-screen container for this slide
           const tempContainer = document.createElement('div');
           tempContainer.style.cssText = `
             position: fixed;
-            left: 0;
+            left: -9999px;
             top: 0;
-            width: 1000px;
-            height: 700px;
+            width: ${pdfWidth}px;
+            height: ${pdfHeight}px;
             background: white;
             z-index: 99999;
             overflow: hidden;
+            padding: 0;
+            margin: 0;
           `;
           
-          // Clone the slide content with all styles preserved
-          const slideClone = slideElement.cloneNode(true);
+          // Deep clone the slide content
+          const slideClone = slideContent.cloneNode(true);
           
-          // Preserve important styles but fix positioning
-          const preserveStyles = (el) => {
-            // Get computed styles to preserve layout
-            const computedStyle = window.getComputedStyle(el);
-            
-            // Preserve important layout properties
-            if (computedStyle.position === 'absolute' || computedStyle.position === 'relative') {
-              el.style.position = computedStyle.position;
+          // Function to clean and prepare the clone
+          const prepareElement = (el) => {
+            // Remove slick classes
+            if (el.classList) {
+              el.classList.remove('slick-cloned', 'slick-active', 'slick-current');
             }
             
-            // Preserve dimensions
-            if (computedStyle.width && computedStyle.width !== 'auto') {
-              el.style.width = computedStyle.width;
-            }
-            if (computedStyle.height && computedStyle.height !== 'auto') {
-              el.style.height = computedStyle.height;
-            }
+            // Get computed styles and apply them
+            const computed = window.getComputedStyle(el);
             
-            // Remove transforms that cause positioning issues
-            if (el.style.transform && el.style.transform.includes('translate3d')) {
+            // Apply important styles
+            if (el.style) {
+              // Copy computed styles that matter
+              el.style.width = computed.width;
+              el.style.height = computed.height;
+              el.style.display = computed.display === 'none' ? 'block' : computed.display;
+              el.style.visibility = 'visible';
+              el.style.opacity = '1';
+              el.style.position = 'relative';
               el.style.transform = 'none';
-            }
-            
-            // Fix oklch colors
-            if (el.style.background?.includes('oklch') || el.style.backgroundColor?.includes('oklch')) {
-              const bgColor = computedStyle.backgroundColor;
-              if (bgColor && !bgColor.includes('oklch')) {
+              el.style.left = '0';
+              el.style.top = '0';
+              el.style.margin = computed.margin;
+              el.style.padding = computed.padding;
+              
+              // Fix background colors - use computed value which is already converted to rgb
+              const bgColor = computed.backgroundColor;
+              if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && !bgColor.includes('oklch')) {
                 el.style.backgroundColor = bgColor;
-              } else {
-                el.style.backgroundColor = '#ffffff';
+              } else if (bgColor && bgColor.includes('oklch')) {
+                // If computed style still has oklch (shouldn't happen, but just in case)
+                el.style.backgroundColor = 'transparent';
+              }
+              
+              // Fix background images
+              if (computed.backgroundImage && computed.backgroundImage !== 'none') {
+                el.style.backgroundImage = computed.backgroundImage;
+                el.style.backgroundSize = computed.backgroundSize;
+                el.style.backgroundPosition = computed.backgroundPosition;
+                el.style.backgroundRepeat = computed.backgroundRepeat;
+              }
+              
+              // Fix colors - use computed value
+              const textColor = computed.color;
+              if (textColor && !textColor.includes('oklch')) {
+                el.style.color = textColor;
+              } else if (textColor && textColor.includes('oklch')) {
+                // Fallback to black if oklch
+                el.style.color = '#000000';
+              }
+              
+              // Fix border colors
+              if (computed.borderColor && !computed.borderColor.includes('oklch')) {
+                el.style.borderColor = computed.borderColor;
+              }
+              
+              // Fix fonts
+              el.style.fontFamily = computed.fontFamily;
+              el.style.fontSize = computed.fontSize;
+              el.style.fontWeight = computed.fontWeight;
+              
+              // Remove any inline oklch colors from style attribute
+              const styleAttr = el.getAttribute('style') || '';
+              if (styleAttr.includes('oklch')) {
+                // Remove oklch colors from style attribute
+                const cleanedStyle = styleAttr
+                  .split(';')
+                  .filter(prop => !prop.includes('oklch'))
+                  .join(';');
+                el.setAttribute('style', cleanedStyle);
+              }
+              
+              // Fix images
+              if (el.tagName === 'IMG') {
+                el.style.display = 'block';
+                el.style.visibility = 'visible';
+                el.style.opacity = '1';
+                el.style.maxWidth = '100%';
+                el.style.height = 'auto';
               }
             }
             
-            // Ensure images are visible and loaded
-            if (el.tagName === 'IMG') {
-              el.style.display = 'block';
-              el.style.maxWidth = '100%';
-              el.style.height = 'auto';
-            }
-            
-            // Recursively process children
-            Array.from(el.children || []).forEach(preserveStyles);
+            // Process children recursively
+            Array.from(el.children || []).forEach(prepareElement);
           };
           
-          preserveStyles(slideClone);
+          // Prepare the clone
+          prepareElement(slideClone);
           
-          // Set container dimensions - preserve aspect ratio
-          slideClone.style.cssText += `
-            width: 1000px !important;
-            height: 700px !important;
+          // Set container dimensions on clone
+          slideClone.style.cssText = `
+            width: ${pdfWidth}px !important;
+            height: ${pdfHeight}px !important;
             margin: 0 !important;
             padding: 0 !important;
             position: relative !important;
             display: block !important;
-            overflow: hidden !important;
+            overflow: visible !important;
             box-sizing: border-box !important;
+            transform: none !important;
+            left: 0 !important;
+            top: 0 !important;
+            visibility: visible !important;
+            opacity: 1 !important;
           `;
           
           tempContainer.appendChild(slideClone);
           document.body.appendChild(tempContainer);
           
-          // Wait for DOM to update and images to render
+          // Wait for DOM to update
           await new Promise(resolve => setTimeout(resolve, 300));
           
-          // Capture using html2canvas (better for external images)
-          const canvas = await html2canvas(tempContainer, {
-            width: 1000,
-            height: 700,
-            scale: 2, // Higher quality
-            useCORS: true, // Allow cross-origin images
-            allowTaint: false,
-            backgroundColor: '#ffffff',
-            logging: false,
-            removeContainer: true,
-            imageTimeout: 15000, // Wait up to 15 seconds for images
-            onclone: (clonedDoc) => {
-              // Ensure all images in cloned document are visible
-              const clonedImages = clonedDoc.querySelectorAll('img');
-              clonedImages.forEach(img => {
-                img.style.display = 'block';
-                img.style.visibility = 'visible';
-                img.style.opacity = '1';
-              });
+          // AGGRESSIVE oklch removal - walk through entire DOM and replace all oklch with RGB
+          const removeOklchFromElement = (el) => {
+            if (!el || !el.style) return;
+            
+            // Get computed styles and replace any oklch with RGB
+            const computed = window.getComputedStyle(el);
+            
+            // Replace background color
+            if (computed.backgroundColor) {
+              const bgColor = computed.backgroundColor;
+              if (bgColor.includes('oklch')) {
+                // Use computed RGB value (browser converts oklch to RGB)
+                el.style.backgroundColor = bgColor.replace(/oklch\([^)]+\)/g, computed.backgroundColor);
+              } else {
+                el.style.backgroundColor = bgColor;
+              }
+            }
+            
+            // Replace text color
+            if (computed.color) {
+              const textColor = computed.color;
+              if (textColor.includes('oklch')) {
+                el.style.color = textColor.replace(/oklch\([^)]+\)/g, computed.color);
+              } else {
+                el.style.color = textColor;
+              }
+            }
+            
+            // Replace border colors
+            ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor'].forEach(prop => {
+              try {
+                const borderColor = computed[prop];
+                if (borderColor && borderColor.includes('oklch')) {
+                  el.style[prop] = borderColor.replace(/oklch\([^)]+\)/g, computed[prop]);
+                }
+              } catch {
+                // Skip if error accessing computed style
+              }
+            });
+            
+            // Remove oklch from style attribute string
+            const styleAttr = el.getAttribute('style') || '';
+            if (styleAttr.includes('oklch')) {
+              const cleanedStyle = styleAttr
+                .split(';')
+                .map(prop => {
+                  if (prop.includes('oklch')) {
+                    // Extract property name
+                    const propName = prop.split(':')[0]?.trim();
+                    if (propName) {
+                      // Use computed value instead
+                      try {
+                        const computedValue = computed[propName];
+                        if (computedValue && !computedValue.includes('oklch')) {
+                          return `${propName}: ${computedValue}`;
+                        }
+                      } catch {
+                        // Skip if error accessing computed style
+                      }
+                    }
+                    return ''; // Remove oklch property
+                  }
+                  return prop;
+                })
+                .filter(prop => prop.trim().length > 0 && !prop.includes('oklch'))
+                .join(';');
+              el.setAttribute('style', cleanedStyle);
+            }
+            
+            // Process children
+            Array.from(el.children || []).forEach(removeOklchFromElement);
+          };
+          
+          // Remove oklch from entire container
+          removeOklchFromElement(tempContainer);
+          
+          // Force all elements to use computed RGB values and remove classes that might have oklch
+          const allElements = tempContainer.querySelectorAll('*');
+          allElements.forEach(el => {
+            try {
+              // Remove all CSS classes to avoid oklch in stylesheets
+              // We'll rely only on inline styles from computed values
+              if (el.classList && el.classList.length > 0) {
+                const classesToKeep = [];
+                el.classList.forEach(className => {
+                  // Keep only non-color related classes
+                  if (!className.includes('bg-') && 
+                      !className.includes('text-') && 
+                      !className.includes('border-') &&
+                      !className.includes('color')) {
+                    classesToKeep.push(className);
+                  }
+                });
+                // Remove all classes and re-add only safe ones
+                el.className = '';
+                classesToKeep.forEach(cls => el.classList.add(cls));
+              }
+              
+              const computed = window.getComputedStyle(el);
+              
+              // Get computed RGB values (browser automatically converts oklch to RGB)
+              const bgColor = computed.backgroundColor;
+              const textColor = computed.color;
+              const borderColor = computed.borderColor;
+              
+              // Set inline styles using computed RGB values (these are already converted from oklch)
+              // This ensures no oklch strings remain in the DOM
+              if (bgColor && !bgColor.includes('oklch') && bgColor !== 'rgba(0, 0, 0, 0)') {
+                el.style.setProperty('background-color', bgColor, 'important');
+              }
+              if (textColor && !textColor.includes('oklch')) {
+                el.style.setProperty('color', textColor, 'important');
+              }
+              if (borderColor && !borderColor.includes('oklch') && borderColor !== 'rgba(0, 0, 0, 0)') {
+                el.style.setProperty('border-color', borderColor, 'important');
+              }
+              
+              // Also copy other important computed styles
+              if (computed.backgroundImage && computed.backgroundImage !== 'none') {
+                el.style.setProperty('background-image', computed.backgroundImage, 'important');
+                el.style.setProperty('background-size', computed.backgroundSize, 'important');
+                el.style.setProperty('background-position', computed.backgroundPosition, 'important');
+                el.style.setProperty('background-repeat', computed.backgroundRepeat, 'important');
+              }
+              
+              // Copy layout styles
+              el.style.setProperty('display', computed.display, 'important');
+              el.style.setProperty('width', computed.width, 'important');
+              el.style.setProperty('height', computed.height, 'important');
+              el.style.setProperty('margin', computed.margin, 'important');
+              el.style.setProperty('padding', computed.padding, 'important');
+              el.style.setProperty('font-family', computed.fontFamily, 'important');
+              el.style.setProperty('font-size', computed.fontSize, 'important');
+              el.style.setProperty('font-weight', computed.fontWeight, 'important');
+            } catch {
+              // Skip if error accessing computed styles
             }
           });
           
-          const dataUrl = canvas.toDataURL('image/png', 1.0);
+          // Ensure all images are loaded
+          const images = tempContainer.querySelectorAll('img');
+          await Promise.all(Array.from(images).map(img => {
+            if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+            return new Promise((resolve) => {
+              img.onload = resolve;
+              img.onerror = resolve;
+              setTimeout(resolve, 5000);
+            });
+          }));
           
-          // Remove temp container
+          // Wait a bit more for rendering
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          // Verify content exists
+          const hasText = tempContainer.textContent.trim().length > 0;
+          const hasImages = tempContainer.querySelectorAll('img').length > 0;
+          
+          if (!hasText && !hasImages) {
+            console.warn(`Slide ${i + 1} appears to have no content, skipping`);
+            document.body.removeChild(tempContainer);
+            continue;
+          }
+          
+          // Try using dom-to-image first (simpler, handles oklch better)
+          let dataUrl;
+          try {
+            // Use dom-to-image which handles modern CSS better
+            dataUrl = await domtoimage.toPng(tempContainer, {
+              quality: 1.0,
+              width: pdfWidth,
+              height: pdfHeight,
+            style: {
+              transform: 'scale(1)',
+              transformOrigin: 'top left'
+            },
+            filter: (node) => {
+                // Filter out elements that might cause issues
+                if (node.classList && node.classList.contains('slick-cloned')) {
+                  return false;
+              }
+              return true;
+            }
+          });
+          } catch (domError) {
+            console.warn(`dom-to-image failed for slide ${i + 1}, trying html2canvas:`, domError);
+            
+            // Fallback to html2canvas with even more aggressive oklch removal
+            try {
+              // One more pass to remove oklch
+              removeOklchFromElement(tempContainer);
+              
+              const canvas = await html2canvas(tempContainer, {
+                width: pdfWidth,
+                height: pdfHeight,
+                scale: 2,
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: '#ffffff',
+                logging: false,
+                removeContainer: false,
+                imageTimeout: 30000,
+                windowWidth: pdfWidth,
+                windowHeight: pdfHeight,
+                onclone: (clonedDoc) => {
+                  // Final aggressive oklch removal in cloned document
+                  const clonedElements = clonedDoc.querySelectorAll('*');
+                  clonedElements.forEach((el) => {
+                    // Remove style attribute completely if it has oklch
+                    const styleAttr = el.getAttribute('style') || '';
+                    if (styleAttr.includes('oklch')) {
+                      el.removeAttribute('style');
+                    }
+                    
+                    // Force RGB colors via inline styles
+                    if (el.style) {
+                      try {
+                        const computed = window.getComputedStyle(el);
+                        if (computed.backgroundColor && !computed.backgroundColor.includes('oklch')) {
+                          el.style.backgroundColor = computed.backgroundColor;
+                        }
+                        if (computed.color && !computed.color.includes('oklch')) {
+                          el.style.color = computed.color;
+                        }
+                      } catch {
+                        // Skip if error accessing computed styles
+                      }
+                    }
+                  });
+                }
+              });
+              dataUrl = canvas.toDataURL('image/png', 1.0);
+            } catch (canvasError) {
+              console.error(`Both methods failed for slide ${i + 1}:`, canvasError);
+              document.body.removeChild(tempContainer);
+              continue;
+            }
+          }
+          
+          // Clean up temp container
           if (document.body.contains(tempContainer)) {
             document.body.removeChild(tempContainer);
           }
@@ -542,40 +793,29 @@ const MortgageProtectionModal = ({
             pdf.addPage();
           }
           
-          // Calculate dimensions to fill page
-          const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = pdf.internal.pageSize.getHeight();
-          
-          // Add image to fill entire page
+          // Add image to PDF
           pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
           
-          console.log(`Processed slide ${i + 1}/${expectedSlides}`);
+          console.log(`✓ Processed slide ${i + 1}/${allSlides.length}`);
           
         } catch (slideError) {
-          console.error(`Error with slide ${i + 1}:`, slideError);
-          // Continue with next slide even if one fails
+          console.error(`Error processing slide ${i + 1}:`, slideError);
+          // Continue with next slide
           continue;
         }
         
         // Small delay between slides
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
       
-      // Reset slider to first slide
-      if (sliderInstance && typeof sliderInstance.slickGoTo === 'function') {
-        sliderInstance.slickGoTo(0, true);
-      } else if (window.jQuery) {
-        try {
-          window.jQuery(sliderContainer).slick('slickGoTo', 0, true);
-        } catch (e) {
-          console.warn('Could not reset slider:', e);
-        }
-      }
-      
+      // Save PDF
       pdf.save("Mortgage_Protection_Presentation.pdf");
+      console.log('PDF generation completed successfully');
       
     } catch (error) {
       console.error("PDF generation failed:", error);
+      toast.error("Failed to generate PDF. Please try again.");
+      
       // Fall back to simple PDF
       await createSimplePDF();
     } finally {
@@ -1025,13 +1265,13 @@ const MortgageProtectionModal = ({
         </Dialog>
       </Transition>
 
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className="fixed inset-0 z-[100] flex items-center justify-center px-2 py-2 sm:px-3"
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog
+        as="div"
+        className="fixed inset-0 z-[100] flex items-center justify-center px-2 py-2 sm:px-3"
           onClose={() => {}} // Prevent closing on outside click
           static
-        >
+      >
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
