@@ -12,7 +12,16 @@ import { toast } from "sonner";
 import Select from "react-select";
 import { getReactSelectDarkModeStyles } from "utils/reactSelectDarkMode";
 
-const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintments, startDate, endDate }) => {
+const ScheduleAppointmentModal = ({
+  isOpen,
+  onClose,
+  selectedLead,
+  loadAppintments,
+  startDate,
+  endDate,
+  editAppointment,
+}) => {
+  console.log(editAppointment, "edit-appointment");
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [availability, setAvailability] = useState(null);
@@ -31,7 +40,7 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintmen
   const [phoneNumber, setPhoneNumber] = useState("");
   const [clients, setClients] = useState([]);
   const [clientsLoading, setClientsLoading] = useState([]);
-  const [searchValue, setSearchValue] = useState('')
+  const [searchValue, setSearchValue] = useState("");
 
   // Get today's date and format for date input
   const today = new Date().toISOString().split("T")[0];
@@ -188,7 +197,7 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintmen
         if (response.status === 200) {
           setClients(
             response.data.map((item) => {
-              return { label: item.full_name, value: item.agent_id, ...item};
+              return { label: item.full_name, value: item.agent_id, ...item };
             }),
           );
         } else if (response.status === 204) {
@@ -206,7 +215,7 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintmen
         setClientsLoading(false);
       });
   };
-   const loadOptions = (inputValue, actionMeta) => {
+  const loadOptions = (inputValue, actionMeta) => {
     setSearchValue(inputValue);
     if (actionMeta.action === "input-change") {
       getClients(inputValue);
@@ -214,10 +223,10 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintmen
   };
   const handleClient = (selectedOption) => {
     if (selectedOption) {
-      setClientName(selectedOption.label)
-      setPhoneNumber(selectedOption?.ivr_response?.ani)
+      setClientName(selectedOption.label);
+      setPhoneNumber(selectedOption?.ivr_response?.ani);
     }
-  }
+  };
   // Reset form when modal closes
   useEffect(() => {
     if (!isOpen) {
@@ -228,7 +237,7 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintmen
       setNotes("");
       setClientName("");
       setPhoneNumber("");
-      getClients()
+      getClients();
     }
   }, [isOpen]);
 
@@ -239,7 +248,18 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintmen
     }
   }, [isOpen, fetchAppointmentSettings]);
 
-  // Fetch booked appointments when date is selected
+  useEffect(() => {
+    if (editAppointment?.date) {
+      setSelectedDate(editAppointment.date);
+      setClientName(editAppointment?.client);
+      setPhoneNumber(editAppointment?.phone);
+      setTitle(editAppointment?.title);
+      setNotes(editAppointment?.notes || '');
+    }
+    if (editAppointment?.slot_time) {
+      findSlot(editAppointment.slot_time);
+    }
+  }, [editAppointment, timeSlots]);
   useEffect(() => {
     if (selectedDate && availability) {
       fetchBookedAppointments();
@@ -248,6 +268,22 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintmen
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);
 
+  const findSlot = (time) => {
+    let time_slot = null;
+    if (timeSlots.morning.some((item) => item.time === time)) {
+      setSelectedTime(timeSlots.morning.find((item) => item.time === time));
+      time_slot = timeSlots.morning.find((item) => item.time === time);
+    } else if (timeSlots.afternoon.some((item) => item.time === time)) {
+      setSelectedTime(timeSlots.afternoon.find((item) => item.time === time));
+      time_slot = timeSlots.afternoon.find((item) => item.time === time);
+    } else {
+      setSelectedTime(timeSlots.evening.find((item) => item.time === time));
+      time_slot = timeSlots.evening.find((item) => item.time === time);
+    }
+    if (time_slot) {
+      setShowAppointmentForm(true);
+    }
+  };
   const handleDateSelect = (date) => {
     setSelectedDate(date);
     setSelectedTime(null);
@@ -317,7 +353,9 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintmen
 
     setLoading(true);
     try {
-      const timezone = availability?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const timezone =
+        availability?.timezone ||
+        Intl.DateTimeFormat().resolvedOptions().timeZone;
       const duration = availability?.duration_minutes || 30;
       const meetingDateTime = getMeetingDateTime();
 
@@ -331,14 +369,18 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintmen
         notes: notes.trim() || "",
       };
 
-      const response =
-        await appointmentService.createAppointment(appointmentData);
+      let response;
+      if (!editAppointment) {
+        response = await appointmentService.createAppointment(appointmentData);
+      } else {
+        response = await appointmentService.editAppointment(editAppointment.id, appointmentData);
+      }
 
-      if (response.status === 201 || response.success) {
+      if (response.status === 201 || response.status === 200 || response.success) {
         toast.success(
           response.message || "Appointment scheduled successfully!",
         );
-       
+
         // Reset form but keep modal open to allow scheduling another appointment
         setSelectedTime(null);
         setTitle("");
@@ -348,8 +390,8 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintmen
         setShowAppointmentForm(false);
         // Refresh booked appointments to update availability
         if (startDate && endDate && loadAppintments) {
-          loadAppintments(startDate, endDate)
-          onClose()
+          loadAppintments(startDate, endDate);
+          onClose();
         }
         if (selectedDate && availability) {
           fetchBookedAppointments();
@@ -551,22 +593,8 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintmen
                             required
                           />
                         </div>
-                        {/* Phone Number */}
-                        <div className="mb-4">
-                          <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Phone Number <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                            className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
-                            placeholder="Enter phone number"
-                            required
-                          />
-                        </div>
                       </>
-                    ) : (
+                    ) : !editAppointment ? (
                       <div className="mb-4">
                         <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                           Choose Client <span className="text-red-500">*</span>
@@ -582,8 +610,33 @@ const ScheduleAppointmentModal = ({ isOpen, onClose, selectedLead, loadAppintmen
                           classNamePrefix="react-select"
                         />
                       </div>
+                    ) : (
+                      <div className="mb-4">
+                        <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Client
+                        </label>
+                        <input
+                          type="text"
+                          value={clientName}
+                          readOnly
+                          className="w-full cursor-not-allowed rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
+                        />
+                      </div>
                     )}
-
+                    {/* Phone Number */}
+                    <div className="mb-4">
+                      <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Phone Number <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
+                        placeholder="Enter phone number"
+                        required
+                      />
+                    </div>
                     {/* Meeting DateTime */}
                     <div className="mb-4">
                       <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">

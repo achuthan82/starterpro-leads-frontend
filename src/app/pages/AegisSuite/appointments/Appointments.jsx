@@ -113,6 +113,7 @@ const Appointments = () => {
                 client: item.client_name,
                 phone: item.phone_number,
                 time: moment(item.meeting_datetime).format("HH:mm") || "00:00",
+                slot_time:moment(item.meeting_datetime, "DD-MM-YYYY HH:mm:ss").format("h:mm A"),
                 endTime:
                   moment(item.meeting_end_datetime).format("HH:mm") || "00:00",
                 // type: "consultation",
@@ -233,7 +234,7 @@ const Appointments = () => {
 
               <button
                 className="flex items-center space-x-2 rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-gray-900 shadow-lg transition-all hover:bg-yellow-600 dark:bg-yellow-400 dark:text-gray-900 dark:hover:bg-yellow-500"
-                onClick={open}
+                onClick={() => {setSelectedAppointment(null); open()}}
               >
                 <svg
                   className="h-5 w-5"
@@ -414,8 +415,10 @@ const Appointments = () => {
             loadAppintments={loadAppointments}
             startDate={startDate}
             endDate={endDate}
+            editAppointment={selectedAppointment}
           />
           <AppointmentModal
+            open={open}
             isOpen={isDetailsOpen}
             close={detailClose}
             appointment={selectedAppointment}
