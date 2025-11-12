@@ -100,6 +100,9 @@ export const API_ENDPOINTS = {
     TOKEN: "/dialer/token",
     CALL_LOGS: "/dialer/call-logs"
   },
+  CARRIERS: {
+    LOGO_COLLAGE: "/carriers/logos/collage"
+  },
   APPOINTMENT: {
     SETTINGS: "/appointment/settings/details",
     LIST: "/appointment/list",

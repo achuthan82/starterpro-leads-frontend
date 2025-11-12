@@ -164,6 +164,3 @@
 /* If your slides contain images, you might want to 
   make them fill the slide
 */
-.slick-slide img {
-  object-fit: contain; /* Prevents image stretching */
-}
