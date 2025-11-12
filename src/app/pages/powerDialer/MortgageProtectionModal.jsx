@@ -11,7 +11,9 @@ import { Button, Input } from "components/ui";
 import { XMarkIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import PreviewComponent from "./PreviewComponent";
 import { useCallContext } from "app/contexts/call/context";
-// import html2canvas from "html2canvas";
+import { dialerService } from "utils/apiService";
+import { toast } from "sonner";
+import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 
 const MortgageProtectionModal = ({
@@ -19,12 +21,14 @@ const MortgageProtectionModal = ({
   close,
   onFormSubmit,
 }) => {
-  const { licenseDetails } = useCallContext();
+  const { licenseDetails, currentCallLogId } = useCallContext();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({});
   const [submittedData, setSubmittedData] = useState(null);
   const [isPreview, setIsPreview] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [showCloseWarning, setShowCloseWarning] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     control,
@@ -83,18 +87,53 @@ const MortgageProtectionModal = ({
     }
   });
 
-  const closeModal = () => {
+  const closeModal = (forceClose = false) => {
+    // Check if there's unsaved data
+    const hasUnsavedData = Object.keys(formData).length > 0 || submittedData !== null;
+    
+    if (!forceClose && hasUnsavedData && !showCloseWarning) {
+      setShowCloseWarning(true);
+      return;
+    }
+    
     reset();
     setFormData({});
     setSubmittedData(null);
     setCurrentStep(1);
     setIsPreview(false);
+    setShowCloseWarning(false);
     close();
   };
 
-  const onStepSubmit = (data) => {
+  const handleConfirmClose = () => {
+    closeModal(true);
+  };
+
+  const handleCancelClose = () => {
+    setShowCloseWarning(false);
+  };
+
+  const onStepSubmit = async (data) => {
     const updatedData = { ...formData, ...data };
     setFormData(updatedData);
+
+    // Save data to API after each step if call_log_id exists
+    if (currentCallLogId) {
+      setIsSaving(true);
+      try {
+        await dialerService.saveDataEntry(currentCallLogId, updatedData);
+        if (currentStep < 2) {
+          toast.success('Step 1 data saved successfully');
+        } else {
+          toast.success('Mortgage Protection Assessment data saved successfully');
+        }
+      } catch (error) {
+        console.error('Error saving assessment data:', error);
+        toast.error(error?.response?.data?.message || 'Failed to save assessment data');
+      } finally {
+        setIsSaving(false);
+      }
+    }
 
     if (currentStep < 2) {
       setCurrentStep(currentStep + 1);
@@ -319,62 +358,224 @@ const MortgageProtectionModal = ({
     }
   };
 
-  // Alternative: Use a different approach with dom-to-image
+  // Alternative: Use html2canvas for better external image support
   const handleDownloadWithDomToImage = async () => {
     if (isGeneratingPDF) return;
     
     setIsGeneratingPDF(true);
     try {
-      // Dynamically import dom-to-image
-      const domToImage = await import('dom-to-image');
       const pdf = new jsPDF("landscape", "pt", "a4");
       
-      const slides = document.querySelectorAll('.slick-slide:not(.slick-cloned)');
+      // Get the slider container
+      const sliderContainer = document.querySelector('.slick-slider');
+      if (!sliderContainer) {
+        throw new Error('Slider not found');
+      }
       
-      for (let i = 0; i < slides.length; i++) {
-        const slide = slides[i];
-        
+      // Get the slider track which contains all slides
+      const sliderTrack = sliderContainer.querySelector('.slick-track');
+      if (!sliderTrack) {
+        throw new Error('Slider track not found');
+      }
+      
+      // Expected number of slides (we know there are 6)
+      const expectedSlides = 6;
+      
+      // Try to get slider instance for navigation
+      let sliderInstance = null;
+      try {
+        if (window.jQuery && window.jQuery(sliderContainer).data('slick')) {
+          sliderInstance = window.jQuery(sliderContainer).data('slick');
+        } else if (sliderContainer.slick) {
+          sliderInstance = sliderContainer.slick;
+        }
+      } catch (e) {
+        console.warn('Could not access slider instance:', e);
+      }
+      
+      // Process each slide by navigating to it first
+      for (let i = 0; i < expectedSlides; i++) {
         try {
-          const dataUrl = await domToImage.toPng(slide, {
-            width: slide.scrollWidth,
-            height: slide.scrollHeight,
-            style: {
-              transform: 'scale(1)',
-              transformOrigin: 'top left'
-            },
-            filter: (node) => {
-              // Filter out problematic nodes
-              if (node.style && (
-                node.style.background?.includes('oklch') ||
-                node.style.backgroundColor?.includes('oklch')
-              )) {
-                node.style.background = '#ffffff';
-                node.style.backgroundColor = '#ffffff';
+          // Navigate to this slide to ensure it's rendered
+          if (sliderInstance && typeof sliderInstance.slickGoTo === 'function') {
+            sliderInstance.slickGoTo(i, true);
+          } else if (window.jQuery) {
+            window.jQuery(sliderContainer).slick('slickGoTo', i, true);
+          }
+          
+          // Wait for slide to be visible and images to load
+          await new Promise(resolve => setTimeout(resolve, 800));
+          
+          // Get the currently visible slide
+          const visibleSlide = sliderTrack.querySelector(`.slick-slide[data-index="${i}"]:not(.slick-cloned)`);
+          if (!visibleSlide) {
+            console.warn(`Slide ${i} not found, skipping`);
+            continue;
+          }
+          
+          // Get the slide content element
+          const slideElement = visibleSlide.querySelector('div') || visibleSlide;
+          
+          // Ensure all images in the slide are loaded
+          const images = slideElement.querySelectorAll('img');
+          await Promise.all(Array.from(images).map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise((resolve) => {
+              img.onload = resolve;
+              img.onerror = resolve; // Continue even if image fails
+              // Timeout after 2 seconds
+              setTimeout(resolve, 2000);
+            });
+          }));
+          
+          // Create a temporary container for capture
+          const tempContainer = document.createElement('div');
+          tempContainer.style.cssText = `
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 1000px;
+            height: 700px;
+            background: white;
+            z-index: 99999;
+            overflow: hidden;
+          `;
+          
+          // Clone the slide content with all styles preserved
+          const slideClone = slideElement.cloneNode(true);
+          
+          // Preserve important styles but fix positioning
+          const preserveStyles = (el) => {
+            // Get computed styles to preserve layout
+            const computedStyle = window.getComputedStyle(el);
+            
+            // Preserve important layout properties
+            if (computedStyle.position === 'absolute' || computedStyle.position === 'relative') {
+              el.style.position = computedStyle.position;
+            }
+            
+            // Preserve dimensions
+            if (computedStyle.width && computedStyle.width !== 'auto') {
+              el.style.width = computedStyle.width;
+            }
+            if (computedStyle.height && computedStyle.height !== 'auto') {
+              el.style.height = computedStyle.height;
+            }
+            
+            // Remove transforms that cause positioning issues
+            if (el.style.transform && el.style.transform.includes('translate3d')) {
+              el.style.transform = 'none';
+            }
+            
+            // Fix oklch colors
+            if (el.style.background?.includes('oklch') || el.style.backgroundColor?.includes('oklch')) {
+              const bgColor = computedStyle.backgroundColor;
+              if (bgColor && !bgColor.includes('oklch')) {
+                el.style.backgroundColor = bgColor;
+              } else {
+                el.style.backgroundColor = '#ffffff';
               }
-              return true;
+            }
+            
+            // Ensure images are visible and loaded
+            if (el.tagName === 'IMG') {
+              el.style.display = 'block';
+              el.style.maxWidth = '100%';
+              el.style.height = 'auto';
+            }
+            
+            // Recursively process children
+            Array.from(el.children || []).forEach(preserveStyles);
+          };
+          
+          preserveStyles(slideClone);
+          
+          // Set container dimensions - preserve aspect ratio
+          slideClone.style.cssText += `
+            width: 1000px !important;
+            height: 700px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: relative !important;
+            display: block !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+          `;
+          
+          tempContainer.appendChild(slideClone);
+          document.body.appendChild(tempContainer);
+          
+          // Wait for DOM to update and images to render
+          await new Promise(resolve => setTimeout(resolve, 300));
+          
+          // Capture using html2canvas (better for external images)
+          const canvas = await html2canvas(tempContainer, {
+            width: 1000,
+            height: 700,
+            scale: 2, // Higher quality
+            useCORS: true, // Allow cross-origin images
+            allowTaint: false,
+            backgroundColor: '#ffffff',
+            logging: false,
+            removeContainer: true,
+            imageTimeout: 15000, // Wait up to 15 seconds for images
+            onclone: (clonedDoc) => {
+              // Ensure all images in cloned document are visible
+              const clonedImages = clonedDoc.querySelectorAll('img');
+              clonedImages.forEach(img => {
+                img.style.display = 'block';
+                img.style.visibility = 'visible';
+                img.style.opacity = '1';
+              });
             }
           });
-
+          
+          const dataUrl = canvas.toDataURL('image/png', 1.0);
+          
+          // Remove temp container
+          if (document.body.contains(tempContainer)) {
+            document.body.removeChild(tempContainer);
+          }
+          
+          // Add page (except for first slide)
           if (i > 0) {
             pdf.addPage();
           }
           
+          // Calculate dimensions to fill page
           const pdfWidth = pdf.internal.pageSize.getWidth();
           const pdfHeight = pdf.internal.pageSize.getHeight();
-          pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+          
+          // Add image to fill entire page
+          pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+          
+          console.log(`Processed slide ${i + 1}/${expectedSlides}`);
           
         } catch (slideError) {
           console.error(`Error with slide ${i + 1}:`, slideError);
+          // Continue with next slide even if one fails
           continue;
         }
         
-        await new Promise(resolve => setTimeout(resolve, 300));
+        // Small delay between slides
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+      
+      // Reset slider to first slide
+      if (sliderInstance && typeof sliderInstance.slickGoTo === 'function') {
+        sliderInstance.slickGoTo(0, true);
+      } else if (window.jQuery) {
+        try {
+          window.jQuery(sliderContainer).slick('slickGoTo', 0, true);
+        } catch (e) {
+          console.warn('Could not reset slider:', e);
+        }
       }
       
       pdf.save("Mortgage_Protection_Presentation.pdf");
       
     } catch (error) {
-      console.error("dom-to-image failed:", error);
+      console.error("PDF generation failed:", error);
       // Fall back to simple PDF
       await createSimplePDF();
     } finally {
@@ -770,12 +971,67 @@ const MortgageProtectionModal = ({
   );
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed inset-0 z-[100] flex items-center justify-center px-2 py-2 sm:px-3"
-        onClose={closeModal}
-      >
+    <>
+      {/* Close Warning Dialog */}
+      <Transition show={showCloseWarning} as={Fragment}>
+        <Dialog onClose={handleCancelClose} className="relative z-[110]">
+          <TransitionChild
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/50" />
+          </TransitionChild>
+          <div className="fixed inset-0 flex items-center justify-center p-4">
+            <TransitionChild
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <DialogPanel className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
+                <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                  Unsaved Changes
+                </DialogTitle>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  You have unsaved changes. Are you sure you want to close without saving?
+                </p>
+                <div className="flex justify-end gap-3">
+                  <Button
+                    type="button"
+                    className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+                    onClick={handleCancelClose}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="button"
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded"
+                    onClick={handleConfirmClose}
+                  >
+                    Close Without Saving
+                  </Button>
+                </div>
+              </DialogPanel>
+            </TransitionChild>
+          </div>
+        </Dialog>
+      </Transition>
+
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="fixed inset-0 z-[100] flex items-center justify-center px-2 py-2 sm:px-3"
+          onClose={() => {}} // Prevent closing on outside click
+          static
+        >
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
@@ -856,6 +1112,11 @@ const MortgageProtectionModal = ({
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                     Assessment Preview
                   </h4>
+                  {isSaving && (
+                    <div className="text-sm text-blue-600 dark:text-blue-400">
+                      Saving...
+                    </div>
+                  )}
                 </div>
                 
                 <PreviewComponent 
@@ -887,6 +1148,7 @@ const MortgageProtectionModal = ({
         </TransitionChild>
       </Dialog>
     </Transition>
+    </>
   );
 };
 

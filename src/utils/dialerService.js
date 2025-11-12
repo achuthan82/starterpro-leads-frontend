@@ -116,6 +116,25 @@ class DialerService {
       throw error;
     }
   }
+
+  /**
+   * Save Mortgage Protection Assessment data entry
+   * @param {string} callLogId - UUID of the call log
+   * @param {Object} data - Assessment data to save
+   * @returns {Promise} Response from API
+   */
+  async saveDataEntry(callLogId, data) {
+    try {
+      const response = await axiosInstance.post(
+        `${API_ENDPOINTS.DIALER.DATA_ENTRY}/${callLogId}`,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error saving data entry:', error);
+      throw error;
+    }
+  }
 }
 
 const dialerService = new DialerService();

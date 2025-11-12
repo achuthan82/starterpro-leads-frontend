@@ -98,7 +98,8 @@ export const API_ENDPOINTS = {
     PAGINATED_LEADS: "/dialer/leads/complete-incomplete/paginated",
     OUTBOUND_NUMBERS: "/dialer/outbound-numbers-from-db",
     TOKEN: "/dialer/token",
-    CALL_LOGS: "/dialer/call-logs"
+    CALL_LOGS: "/dialer/call-logs",
+    DATA_ENTRY: "/dialer/data-entry"
   },
   CARRIERS: {
     LOGO_COLLAGE: "/carriers/logos/collage"

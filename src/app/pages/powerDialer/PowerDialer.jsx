@@ -44,18 +44,38 @@ const PowerDialer = () => {
   const [activeTabs, setActiveTabs] = useState(['script']);
   const [showOutboundModal, setShowOutboundModal] = useState(false);
   const [outboundModalShown, setOutboundModalShown] = useState(false);
+  const [previousCallEnded, setPreviousCallEnded] = useState(false);
 
   // Use context selectedLead as local selectedLead
   const selectedLead = contextSelectedLead;
   const selectedOutboundNumber = contextSelectedOutboundNumber;
 
   const handleTabToggle = (tab) => {
-    setActiveTabs((prev) =>
-      prev.includes(tab)
-        ? prev.filter((t) => t !== tab)
-        : [...prev, tab]
-    );
+    // Set the active tab directly (single tab selection)
+    setActiveTabs([tab]);
   };
+
+  // Auto-switch to transcript tab when call logs are loaded after call ends
+  useEffect(() => {
+    // Track when call ends
+    if (isCallEnded && !previousCallEnded) {
+      setPreviousCallEnded(true);
+    }
+
+    // When call has ended and call logs are loaded (not loading and has data)
+    if (isCallEnded && previousCallEnded && !callLogsLoading && callLogs.length > 0) {
+      // Switch to transcript tab
+      if (activeTabs[0] !== 'transcript') {
+        setActiveTabs(['transcript']);
+      }
+      setPreviousCallEnded(false); // Reset for next call
+    }
+
+    // Reset when call starts again
+    if (isCallActive || isDialing) {
+      setPreviousCallEnded(false);
+    }
+  }, [isCallEnded, callLogsLoading, callLogs, isCallActive, isDialing, previousCallEnded, activeTabs]);
 
   const formatPhoneNumber = (phone) => {
     if (!phone) return '';

@@ -27,6 +27,7 @@ export function CallProvider({ children }) {
   const [licenseDetails, setLicenseDetails] = useState(null);
   const [licenseError, setLicenseError] = useState(null);
   const [licenseLoading, setLicenseLoading] = useState(false);
+  const [currentCallLogId, setCurrentCallLogId] = useState(null); // UUID for current call
 
   // Refs
   const deviceRef = useRef(null);
@@ -298,26 +299,46 @@ export function CallProvider({ children }) {
 
       if (response.status === 200 && response.data) {
         // Transform API data to match component structure
-        const transformedLogs = response.data.map(log => ({
-          id: log.id,
-          date: log.started_at ? new Date(log.started_at).toISOString().split('T')[0] : '',
-          time: log.started_at ? new Date(log.started_at).toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            hour12: false 
-          }) : '',
-          duration: log.duration_seconds 
-            ? `${Math.floor(log.duration_seconds / 60)}:${String(log.duration_seconds % 60).padStart(2, '0')}`
-            : '0:00',
-          status: log.status || 'completed',
-          to_number: log.to_number || '',
-          outbound_number: log.outbound_number || {},
-          transcription: log.transcription || {},
-          recording: log.recording || {},
-          twilio_call_sid: log.twilio_call_sid || '',
-          started_at: log.started_at || '',
-          ended_at: log.ended_at || ''
-        }));
+        const transformedLogs = response.data.map(log => {
+          // Parse date strings (format: "MM-DD-YYYY HH:MM:SS")
+          const parseDate = (dateStr) => {
+            if (!dateStr) return null;
+            try {
+              // Format: "11-12-2025 07:30:33"
+              const [datePart, timePart] = dateStr.split(' ');
+              const [month, day, year] = datePart.split('-');
+              const [hour, minute, second] = timePart.split(':');
+              return new Date(year, month - 1, day, hour, minute, second);
+            } catch {
+              return null;
+            }
+          };
+
+          const startedDate = parseDate(log.started_at);
+
+          return {
+            id: log.id,
+            date: startedDate ? startedDate.toISOString().split('T')[0] : '',
+            time: startedDate ? startedDate.toLocaleTimeString('en-US', { 
+              hour: '2-digit', 
+              minute: '2-digit', 
+              hour12: false 
+            }) : '',
+            duration: log.duration_seconds 
+              ? `${Math.floor(log.duration_seconds / 60)}:${String(log.duration_seconds % 60).padStart(2, '0')}`
+              : '0:00',
+            status: log.status || 'completed',
+            to_number: log.to_number || '',
+            outbound_number: log.outbound_number || {},
+            transcription: log.transcription_data || {},
+            transcription_data: log.transcription_data || null, // Keep full transcription data
+            recording: log.recording || {},
+            twilio_call_sid: log.twilio_call_sid || '',
+            started_at: log.started_at || '',
+            ended_at: log.ended_at || '',
+            transcription_status: log.transcription_status || null
+          };
+        });
         setCallLogs(transformedLogs);
       } else {
         setCallLogs([]);
@@ -330,15 +351,20 @@ export function CallProvider({ children }) {
     }
   }, []);
 
-  // Check license when lead is selected
+  // Generate UUID and check license when lead is selected
   useEffect(() => {
     if (selectedLead) {
+      // Generate new UUID for this lead
+      const newCallLogId = uuidv4();
+      setCurrentCallLogId(newCallLogId);
+      
       checkLicense(selectedLead);
       fetchCallLogs(selectedLead);
     } else {
       setLicenseDetails(null);
       setLicenseError(null);
       setCallLogs([]);
+      setCurrentCallLogId(null);
     }
   }, [selectedLead, checkLicense, fetchCallLogs]);
 
@@ -373,8 +399,12 @@ export function CallProvider({ children }) {
       return;
     }
 
-    // Generate UUID4
-    const callUuid = uuidv4();
+    // Use the UUID that was generated when lead was selected
+    const callUuid = currentCallLogId;
+    if (!callUuid) {
+      setCallStatus('Call log ID not found. Please select the lead again.');
+      return;
+    }
     
     // Format phone number for API (E.164 format with + prefix)
     const formatPhoneForAPI = (phone) => {
@@ -486,6 +516,9 @@ export function CallProvider({ children }) {
         setCallDuration(0);
         setTranscript('Call ended. Transcription will be saved.');
         
+        // Clear call log ID when call ends
+        setCurrentCallLogId(null);
+        
         window.currentTwilioCall = null;
         
         if (currentDuration > 0) {
@@ -496,6 +529,14 @@ export function CallProvider({ children }) {
             }
             return updated;
           });
+        }
+        
+        // Refresh call logs after call ends
+        if (selectedLead) {
+          // Wait a bit for the API to process the call log
+          setTimeout(() => {
+            fetchCallLogs(selectedLead);
+          }, 2000);
         }
         
         callRef.current = null;
@@ -534,7 +575,7 @@ export function CallProvider({ children }) {
       
       window.currentTwilioCall = null;
     }
-  }, [selectedLead, selectedOutboundNumber, licenseDetails, getLeadState, initializeTwilio, startCallTimer, stopCallTimer, formatCallDuration]);
+  }, [selectedLead, selectedOutboundNumber, licenseDetails, getLeadState, initializeTwilio, startCallTimer, stopCallTimer, formatCallDuration, currentCallLogId, fetchCallLogs]);
 
   const hangupCall = useCallback(() => {
     if (callRef.current) {
@@ -547,6 +588,9 @@ export function CallProvider({ children }) {
     setIsCallEnded(true);
     stopCallTimer();
     setCallStatus('Call ended');
+    
+    // Clear call log ID when call ends
+    setCurrentCallLogId(null);
     
     window.currentTwilioCall = null;
   }, [stopCallTimer]);
@@ -589,6 +633,7 @@ export function CallProvider({ children }) {
     callLogs,
     callLogsLoading,
     showScheduleModal,
+    currentCallLogId,
     
     // Actions
     setSelectedLead,
