@@ -3,7 +3,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import appointmentService from "utils/appointmentService";
 import { toast } from "sonner";
 
-const DeleteAppointmentModal = ({ appointment, setDeleteModal, startDate,endDate, loadAppointments }) => {
+const DeleteAppointmentModal = ({ appointment, setDeleteModal, startDate,endDate, loadAppointments}) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const handleDelete = async () => {
     try {

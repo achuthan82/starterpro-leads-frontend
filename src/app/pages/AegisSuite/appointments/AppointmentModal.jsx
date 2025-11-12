@@ -15,7 +15,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 
-const AppointmentModal = ({ isOpen, close, appointment, setDeleteModal}) => {
+const AppointmentModal = ({ isOpen, close, appointment, setDeleteModal, open}) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -168,7 +168,7 @@ const AppointmentModal = ({ isOpen, close, appointment, setDeleteModal}) => {
                 {/* Buttons */}
                 <div className="flex justify-end gap-3">
                   <button
-                    // onClick={() => onEdit && onEdit(appointment)}
+                    onClick={() => {open(); close() }}
                     className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                   >
                     <PencilSquareIcon className="h-4 w-4" />
