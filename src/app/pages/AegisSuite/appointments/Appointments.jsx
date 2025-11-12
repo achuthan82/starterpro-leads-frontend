@@ -114,6 +114,7 @@ const Appointments = () => {
                 client: item.client_name,
                 phone: item.phone_number,
                 time: moment(item.meeting_datetime).format("HH:mm") || "00:00",
+                notes:item?.notes,
                 slot_time: moment(
                   item.meeting_datetime,
                   "MM-DD-YYYY HH:mm:ss",
