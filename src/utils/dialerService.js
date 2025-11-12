@@ -100,7 +100,8 @@ class DialerService {
       const { page = 1, per_page = 100, mortgage_id } = params;
       const queryParams = new URLSearchParams({
         page: page.toString(),
-        per_page: per_page.toString()
+        per_page: per_page.toString(),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
       });
       
       if (mortgage_id) {
