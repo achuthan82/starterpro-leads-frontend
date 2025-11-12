@@ -15,7 +15,7 @@ const DailyCalendar = ({
   setEndDate,
   loadAppointments,
   setSelectedAppointment,
-  detailOpen
+  detailOpen,
 }) => {
   const appointmentsByDate = useMemo(() => {
     const grouped = {};
@@ -54,20 +54,25 @@ const DailyCalendar = ({
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() - 1);
     setSelectedDate(newDate);
-    const formattedDate = moment(newDate).format("MM-DD-YYYY HH:mm:ss");
-    setStartDate(formattedDate);
-    setEndDate(formattedDate);
-    loadAppointments(formattedDate, formattedDate);
+    let end_date = moment(newDate).format("MM-DD-YYYY") + " 23:59:59";
+    let start_date = moment(newDate).format("MM-DD-YYYY") + " 00:00:00";
+    setStartDate(start_date);
+    setEndDate(end_date);
+    loadAppointments(start_date, end_date);
+    setStartDate(start_date);
+    setEndDate(end_date);
+    loadAppointments(start_date, end_date);
   };
 
   const handleNextDay = () => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() + 1);
     setSelectedDate(newDate);
-    const formattedDate = moment(newDate).format("MM-DD-YYYY HH:mm:ss");
-    setStartDate(formattedDate);
-    setEndDate(formattedDate);
-    loadAppointments(formattedDate, formattedDate);
+    let end_date = moment(newDate).format("MM-DD-YYYY") + " 23:59:59";
+    let start_date = moment(newDate).format("MM-DD-YYYY") + " 00:00:00";
+    setStartDate(start_date);
+    setEndDate(end_date);
+    loadAppointments(start_date, end_date);
   };
   return (
     <div className="rounded-lg bg-white p-4 shadow-md md:p-6 dark:bg-gray-800 dark:shadow-gray-900">
@@ -117,7 +122,7 @@ const DailyCalendar = ({
               No appointments scheduled for this day
             </p>
             <button
-              onClick={open}
+              onClick={() => {setSelectedAppointment(null); open()}}
               className="mt-4 rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
             >
               Schedule Appointment
@@ -158,7 +163,7 @@ const DailyCalendar = ({
                         key={apt.id}
                         onClick={() => {
                           setSelectedAppointment(apt);
-                          detailOpen()
+                          detailOpen();
                         }}
                         className="cursor-pointer rounded-lg border-l-4 p-4 transition-all hover:shadow-md dark:shadow-gray-900 dark:hover:shadow-lg"
                         style={{

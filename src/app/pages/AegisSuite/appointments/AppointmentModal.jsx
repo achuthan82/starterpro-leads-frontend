@@ -51,7 +51,8 @@ const AppointmentModal = ({ isOpen, close, appointment, setDeleteModal, open}) =
               <div>
                 {/* Header */}
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-2xl font-bold">Appointment Details</h2>
+                  <h2 className="text-2xl font-bold">{appointment?.title || 'Appointment Details'}</h2>
+                  
                   <button
                     onClick={close}
                     className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-dark-600"

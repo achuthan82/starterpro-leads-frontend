@@ -16,7 +16,7 @@ import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
 import { useDropzone } from "react-dropzone";
 import { getReactSelectDarkModeStyles } from "utils/reactSelectDarkMode";
 
-const AddLiscence = ({ isOpen, close, getLiscence}) => {
+const AddLiscence = ({ isOpen, close, getLiscense}) => {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [states, setStates] = useState([]);
@@ -52,8 +52,8 @@ const AddLiscence = ({ isOpen, close, getLiscence}) => {
       .addLiscenceDetails(formData)
       .then((response) => {
         if (response.data.status === 200) {
-          toast.success("Added !");
-          getLiscence()
+         toast.success("Added !");
+         getLiscense()
          close()
         } else {
           toast.error(response?.data?.message || "Failed to Create Coupon");
@@ -158,7 +158,7 @@ const AddLiscence = ({ isOpen, close, getLiscence}) => {
                     render={({ field }) => (
                       <Input
                         {...field}
-                        type="number"
+                        type="text"
                         id="liscence_number"
                         // placeholder="e.g., NEWCOUPON123"
                         invalid={errors.liscence_number}
