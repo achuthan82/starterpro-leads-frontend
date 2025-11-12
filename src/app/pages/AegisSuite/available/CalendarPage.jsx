@@ -12,6 +12,7 @@ const CalendarPage = () => {
   const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [duration, setDuration] = useState(30);
+  const [timezone, setTimezone] = useState('');
   const [saving, setSaving] = useState(false);
 
   // Fetch appointment settings from API
@@ -24,10 +25,12 @@ const CalendarPage = () => {
         // If settings exist, populate the form
         setAvailability(response.data.availability || []);
         setDuration(response.data.duration_minutes || 30);
+        setTimezone(response.data.timezone || ''); // Set timezone from API
       } else {
         // If no settings exist, initialize with defaults
         setAvailability([{ start: '09:00', end: '17:00' }]);
         setDuration(30);
+        setTimezone('');
       }
     } catch (err) {
       console.error('Error fetching appointment settings:', err);
@@ -35,6 +38,7 @@ const CalendarPage = () => {
       // If settings don't exist (404) or other error, initialize with defaults
       setAvailability([{ start: '09:00', end: '17:00' }]);
       setDuration(30);
+      setTimezone('');
       
       if (err.response?.status !== 404) {
         toast.error('Failed to load appointment settings');
@@ -95,6 +99,7 @@ const CalendarPage = () => {
         onSave={handleSaveAvailability}
         availability={availability}
         duration={duration}
+        timezone={timezone} // Pass the timezone from API
         saving={saving}
       />
     </div>

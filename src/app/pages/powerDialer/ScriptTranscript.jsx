@@ -1,18 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DocumentTextIcon,
   ChatBubbleLeftEllipsisIcon,
 } from "@heroicons/react/24/solid";
 
-export default function ScriptTranscriptTabs() {
-  const [activeTab, setActiveTab] = useState("script");
+export default function ScriptTranscript({ 
+  activeTabs = ["script"], 
+  onTabToggle, 
+  // eslint-disable-next-line no-unused-vars
+  selectedScript = "Opening", 
+  // eslint-disable-next-line no-unused-vars
+  onScriptChange, 
+  // eslint-disable-next-line no-unused-vars
+  lead, 
+  transcript = "Call transcription will appear here when connected", 
+  isCallActive = false,
+  callLogs = [],
+  callLogsLoading = false
+}) {
+  const [activeTab, setActiveTab] = useState(activeTabs[0] || "script");
+  
+  // Sync with parent activeTabs
+  useEffect(() => {
+    if (activeTabs.length > 0 && activeTabs[0] !== activeTab) {
+      setActiveTab(activeTabs[0]);
+    }
+  }, [activeTabs, activeTab]);
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    if (onTabToggle) {
+      onTabToggle(tab);
+    }
+  };
 
   return (
     <div className="w-full bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-4">
       {/* Tabs Header */}
       <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
         <button
-          onClick={() => setActiveTab("script")}
+          onClick={() => handleTabClick("script")}
           className={`flex items-center gap-2 px-4 py-2 rounded-t-lg font-medium transition ${
             activeTab === "script"
               ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400"
@@ -24,7 +51,7 @@ export default function ScriptTranscriptTabs() {
         </button>
 
         <button
-          onClick={() => setActiveTab("transcript")}
+          onClick={() => handleTabClick("transcript")}
           className={`flex items-center gap-2 px-4 py-2 rounded-t-lg font-medium transition ${
             activeTab === "transcript"
               ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400"
@@ -93,12 +120,59 @@ export default function ScriptTranscriptTabs() {
 
       {activeTab === "transcript" && (
         <div className="space-y-3">
-          <h2 className="font-semibold text-lg text-gray-700 dark:text-gray-200">Live Transcription</h2>
+          <h2 className="font-semibold text-lg text-gray-700 dark:text-gray-200">
+            {isCallActive ? "Live Transcription" : "Call Transcripts"}
+          </h2>
 
-          <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-10 rounded-lg">
-            <ChatBubbleLeftEllipsisIcon className="w-8 h-8 opacity-50 mb-2" />
-            <p>Call transcription will appear here when connected</p>
-          </div>
+          {isCallActive ? (
+            // Show live transcript during active call
+            <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 leading-relaxed min-h-[200px]">
+              {transcript || "Call transcription will appear here when connected"}
+            </div>
+          ) : callLogsLoading ? (
+            <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-10 rounded-lg">
+              <ChatBubbleLeftEllipsisIcon className="w-8 h-8 opacity-50 mb-2 animate-pulse" />
+              <p>Loading transcripts...</p>
+            </div>
+          ) : callLogs.length > 0 ? (
+            // Show call logs transcripts
+            <div className="space-y-4 max-h-[500px] overflow-y-auto">
+              {callLogs.map((log) => {
+                const transcription = log.transcription || {};
+                const transcriptText = transcription.text || transcription.transcript || transcription.content || '';
+                const hasTranscript = transcriptText && transcriptText.trim();
+                
+                return (
+                  <div key={log.id} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        {log.date} · {log.time}
+                      </div>
+                      {log.duration && (
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          Duration: {log.duration}
+                        </div>
+                      )}
+                    </div>
+                    {hasTranscript ? (
+                      <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+                        {transcriptText}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-gray-400 dark:text-gray-500 italic">
+                        No transcription available for this call
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-10 rounded-lg">
+              <ChatBubbleLeftEllipsisIcon className="w-8 h-8 opacity-50 mb-2" />
+              <p>No call transcripts available</p>
+            </div>
+          )}
         </div>
       )}
     </div>

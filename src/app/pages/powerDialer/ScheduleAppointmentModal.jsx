@@ -163,10 +163,7 @@ const ScheduleAppointmentModal = ({
 
     setLoadingSlots(true);
     try {
-      const timezone =
-        availability.timezone ||
-        Intl.DateTimeFormat().resolvedOptions().timeZone;
-
+      const timezone = availability?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
       // Format dates for API: MM-DD-YYYY HH:MM:SS
       const [year, month, day] = selectedDate.split("-");
       const startDate = `${month}-${day}-${year} 00:00:00`;

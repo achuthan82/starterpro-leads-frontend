@@ -6,7 +6,7 @@ import { JWT_HOST_API } from 'configs/auth.config';
 import { toast } from 'sonner';
 // import LeadInfoPDF from './LeadInfoPDF';
 
-const LeadInfo = ({ lead, onUpdateStatus, callHistory }) => {
+const LeadInfo = ({ lead, onUpdateStatus, callHistory, callLogs = [], callLogsLoading = false }) => {
   const [currentStatus, setCurrentStatus] = useState(lead?.status || '');
   const [currentStatusId, setCurrentStatusId] = useState(null);
   const [isMortgageModalOpen, setIsMortgageModalOpen] = useState(false);
@@ -204,40 +204,73 @@ const LeadInfo = ({ lead, onUpdateStatus, callHistory }) => {
         {/* Call History */}
         <div>
           <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Call History</h4>
-          <div className="space-y-2">
-            {callHistory.length > 0 ? (
-              callHistory.map((call, index) => {
-                // Try to get status ID from call status
-                const callStatusId = typeof call.status === 'number' 
-                  ? call.status 
-                  : STATUS_NAME_TO_ID[call.status?.toUpperCase()] || Object.keys(LEAD_STATUS).find(key => LEAD_STATUS[key] === call.status);
-                return (
-                  <div key={index} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center space-x-2">
-                      {callStatusId && (
-                        <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full status-badge ${getStatusBadgeClass(callStatusId)}`}>
-                          {LEAD_STATUS[callStatusId] || call.status}
+          {callLogsLoading ? (
+            <div className="text-center py-4 text-gray-400 dark:text-gray-500 text-sm">
+              Loading call history...
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {callLogs.length > 0 ? (
+                callLogs.map((log, index) => {
+                  // Try to get status ID from call status
+                  const callStatusId = typeof log.status === 'number' 
+                    ? log.status 
+                    : STATUS_NAME_TO_ID[log.status?.toUpperCase()] || Object.keys(LEAD_STATUS).find(key => LEAD_STATUS[key] === log.status);
+                  return (
+                    <div key={log.id || index} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center space-x-2">
+                        {callStatusId && (
+                          <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full status-badge ${getStatusBadgeClass(callStatusId)}`}>
+                            {LEAD_STATUS[callStatusId] || log.status}
+                          </span>
+                        )}
+                        {!callStatusId && (
+                          <div className={`w-2 h-2 rounded-full bg-gray-400`}></div>
+                        )}
+                        <span className="text-gray-600 dark:text-gray-400">
+                          {log.date} · {log.time}
                         </span>
+                      </div>
+                      {log.duration && (
+                        <span className="text-gray-500 dark:text-gray-500 text-xs">{log.duration}</span>
                       )}
-                      {!callStatusId && (
-                        <div className={`w-2 h-2 rounded-full bg-gray-400`}></div>
-                      )}
-                      <span className="text-gray-600 dark:text-gray-400">
-                        {call.date} · {call.time}
-                      </span>
                     </div>
-                    {call.duration && (
-                      <span className="text-gray-500 dark:text-gray-500 text-xs">{call.duration}</span>
-                    )}
-                  </div>
-                );
-              })
-            ) : (
-              <div className="text-center py-4 text-gray-400 dark:text-gray-500 text-sm">
-                No call history
-              </div>
-            )}
-          </div>
+                  );
+                })
+              ) : callHistory.length > 0 ? (
+                // Fallback to local callHistory if API logs are empty
+                callHistory.map((call, index) => {
+                  const callStatusId = typeof call.status === 'number' 
+                    ? call.status 
+                    : STATUS_NAME_TO_ID[call.status?.toUpperCase()] || Object.keys(LEAD_STATUS).find(key => LEAD_STATUS[key] === call.status);
+                  return (
+                    <div key={index} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center space-x-2">
+                        {callStatusId && (
+                          <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full status-badge ${getStatusBadgeClass(callStatusId)}`}>
+                            {LEAD_STATUS[callStatusId] || call.status}
+                          </span>
+                        )}
+                        {!callStatusId && (
+                          <div className={`w-2 h-2 rounded-full bg-gray-400`}></div>
+                        )}
+                        <span className="text-gray-600 dark:text-gray-400">
+                          {call.date} · {call.time}
+                        </span>
+                      </div>
+                      {call.duration && (
+                        <span className="text-gray-500 dark:text-gray-500 text-xs">{call.duration}</span>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-center py-4 text-gray-400 dark:text-gray-500 text-sm">
+                  No call history
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

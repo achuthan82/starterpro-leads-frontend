@@ -10,6 +10,7 @@ import { useForm, Controller } from "react-hook-form";
 import { Button, Input } from "components/ui";
 import { XMarkIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import PreviewComponent from "./PreviewComponent";
+import { useCallContext } from "app/contexts/call/context";
 // import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 
@@ -18,6 +19,7 @@ const MortgageProtectionModal = ({
   close,
   onFormSubmit,
 }) => {
+  const { licenseDetails } = useCallContext();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({});
   const [submittedData, setSubmittedData] = useState(null);
@@ -856,7 +858,10 @@ const MortgageProtectionModal = ({
                   </h4>
                 </div>
                 
-                <PreviewComponent submittedData={submittedData} />
+                <PreviewComponent 
+                  submittedData={submittedData} 
+                  licenseDetails={licenseDetails}
+                />
 
                 <div className="mt-6 flex justify-between gap-4">
                   <Button

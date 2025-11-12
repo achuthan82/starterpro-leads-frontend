@@ -1,18 +1,40 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Slider from "react-slick";
 import { ChevronLeftIcon, ChevronRightIcon, MegaphoneIcon } from "@heroicons/react/24/outline";
+import profileService from "utils/profileService";
 
 // Import Slick CSS
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import bg from "./images/mortgageProtection.jpg"
 import smiley from "./images/smile-icon.svg"; 
-import certificate from "./images/certificate.png"; 
-import carrier from "./images/carriers.png"; 
 
-const PreviewComponent = ({ submittedData }) => {
+const PreviewComponent = ({ submittedData, licenseDetails = null }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [carriersLogo, setCarriersLogo] = useState(null);
+  const [carriersLoading, setCarriersLoading] = useState(false);
   const sliderRef = useRef(null);
+
+  // Fetch carriers logo on mount
+  useEffect(() => {
+    const fetchCarriersLogo = async () => {
+      setCarriersLoading(true);
+      try {
+        const response = await profileService.getCarriersLogo();
+        if (response.data && response.data.status === 200 && response.data.data) {
+          setCarriersLogo(response.data.data);
+        } else {
+          setCarriersLogo(null);
+        }
+      } catch (error) {
+        console.error('Error fetching carriers logo:', error);
+        setCarriersLogo(null);
+      } finally {
+        setCarriersLoading(false);
+      }
+    };
+    fetchCarriersLogo();
+  }, []);
 
   const formatYesNo = (value) => {
     if (value === 'yes') return 'Yes';
@@ -77,7 +99,7 @@ const PreviewComponent = ({ submittedData }) => {
   const MortgageProtectionInfo = () => {
     return (
       <div
-        className="flex-col items-center justify-center text-white text-lg font-normal min-h-screen px-12 py-2"
+        className="flex-col items-center justify-center text-white text-lg font-normal px-12 py-2"
         style={{
           backgroundImage: `url(${bg})`,
           backgroundSize: "cover",
@@ -99,13 +121,13 @@ const PreviewComponent = ({ submittedData }) => {
         {/* Footer Info */}
         <div className="flex justify-between w-full max-w-3xl font-light text-sm">
           <div className="space-y-1">
-            <p>• Patrick Moreno</p>
+            <p>• {JSON.parse(localStorage.getItem('currentUser'))?.name}</p>
             <p>• Senior Field Underwriter</p>
           </div>
 
           <div className="space-y-1 text-left">
-            <p>State License ID: W834433</p>
-            <p>NPN: 20255207</p>
+            <p>State License ID: {licenseDetails?.license_number || 'N/A'}</p>
+            <p>NPN: {JSON.parse(localStorage.getItem('currentUser'))?.npn || 'N/A'}</p>
           </div>
         </div>
       </div>
@@ -113,24 +135,44 @@ const PreviewComponent = ({ submittedData }) => {
   };
 
   const CertificateInfo = () => {
+    const licenseImage = licenseDetails?.image || licenseDetails?.certificate;
+    
     return (
       <div
-        className="flex-col items-center justify-center text-white text-lg font-normal min-h-screen px-12 py-2"
+        className="flex-col bg-white border-t-[40px] border-b-[40px] border-[#3BA9F4] items-center justify-center text-white text-lg font-normal px-12 py-2"
       >
-        <div className="flex items-center justify-center">
-          <img src={certificate} alt="certificate" style={{width: '90%'}}/>
+        <div className="flex items-center justify-center h-full">
+          {licenseImage ? (
+            <img src={licenseImage} alt="license certificate" className="w-full h-full object-contain"/>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-gray-500">
+              <p className="text-xl font-medium">No licence found</p>
+            </div>
+          )}
         </div> 
       </div>
     );
   };
 
   const CarrierInfo = () => {
+    const carriersImage = carriersLogo?.image || carriersLogo?.url || carriersLogo?.logo_url || carriersLogo;
+    
     return (
       <div
-        className="flex-col items-center justify-center text-white text-lg font-normal min-h-screen px-12 py-2"
+        className="flex-col bg-white border-t-[40px] border-b-[40px] border-[#3BA9F4] items-center justify-center text-white text-lg font-normal px-12 py-2"
       >
-        <div className="flex items-center justify-center mt-20">
-          <img src={carrier} alt="carrier" style={{width: '100%'}}/>
+        <div className="flex items-center justify-center h-full">
+          {carriersLoading ? (
+            <div className="flex flex-col items-center justify-center h-full text-gray-500">
+              <p className="text-xl font-medium">Loading carriers...</p>
+            </div>
+          ) : carriersImage ? (
+            <img src={carriersImage} alt="carriers" className="w-full h-full object-contain"/>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-gray-500">
+              <p className="text-xl font-medium">No carriers found</p>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -176,7 +218,7 @@ const PreviewComponent = ({ submittedData }) => {
 
     return (
       <div
-        className="flex-col items-center justify-center text-white text-lg font-normal min-h-screen px-12 py-2"
+        className="flex-col items-center justify-center text-white text-lg font-normal px-12 py-2"
         style={{
           backgroundImage: `url(${bg})`,
           backgroundSize: "cover",
@@ -260,7 +302,7 @@ const PreviewComponent = ({ submittedData }) => {
 
     return (
       <div
-        className="relative flex-col items-center justify-center min-h-screen text-gray-800 font-sans overflow-hidden"
+        className="relative flex-col bg-white items-center justify-center text-gray-800 font-sans overflow-hidden"
       >
         {/* Title */}
         <h1 className="text-3xl font-bold my-4 text-left w-full px-6">
@@ -329,7 +371,7 @@ const PreviewComponent = ({ submittedData }) => {
   };
 
   return (
-    <div className="relative h-[600px]">
+    <div className="relative h-[500px]">
       <Slider ref={sliderRef} {...sliderSettings}>
         <div className="h-[500px] slick-slide">
           <MortgageProtectionInfo />

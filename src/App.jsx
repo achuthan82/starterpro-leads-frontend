@@ -7,6 +7,7 @@ import { BreakpointProvider } from "app/contexts/breakpoint/Provider";
 import { LocaleProvider } from "app/contexts/locale/Provider";
 import { SidebarProvider } from "app/contexts/sidebar/Provider";
 import { ThemeProvider } from "app/contexts/theme/Provider";
+import { CallProvider } from "app/contexts/call/Provider";
 import router from "app/router/router";
 
 // ----------------------------------------------------------------------
@@ -18,7 +19,9 @@ function App() {
         <LocaleProvider>
           <BreakpointProvider>
             <SidebarProvider>
-              <RouterProvider router={router} />
+              <CallProvider>
+                <RouterProvider router={router} />
+              </CallProvider>
             </SidebarProvider>
           </BreakpointProvider>
         </LocaleProvider>

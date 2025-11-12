@@ -8,6 +8,7 @@ import { Loadable } from "components/shared/Loadable";
 
 const Toaster = Loadable(lazy(() => import("components/template/Toaster")));
 const Tooltip = Loadable(lazy(() => import("components/template/Tooltip")));
+const StickyCallBar = Loadable(lazy(() => import("components/shared/StickyCallBar")));
 
 // ----------------------------------------------------------------------
 
@@ -19,6 +20,7 @@ function Root() {
       <Outlet />
       <Tooltip />
       <Toaster />
+      <StickyCallBar />
     </>
   );
 }

@@ -145,3 +145,22 @@
     border-color: var(--color-gray-200, currentColor);
   }
 }
+
+.slick-slider {
+  height: 500px; /* Set your desired height here */
+}
+
+/* Make sure the slides and their content 
+  fill this height
+*/
+.slick-slide {
+  height: 500px !important; /* Match the slider height */
+}
+
+.slick-slide > div {
+  height: 100%;
+}
+
+/* If your slides contain images, you might want to 
+  make them fill the slide
+*/
