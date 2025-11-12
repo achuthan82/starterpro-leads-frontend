@@ -1,5 +1,6 @@
 // Import Dependencies
 import { RouterProvider } from "react-router";
+import { useEffect } from "react";
 
 // Local Imports
 import { AuthProvider } from "app/contexts/auth/Provider";
@@ -13,6 +14,23 @@ import router from "app/router/router";
 // ----------------------------------------------------------------------
 
 function App() {
+  // This function toggles dark mode
+  function toggleDarkMode() {
+    // Get the <html> element
+    const htmlElement = document.documentElement;
+
+    // Check if it already has the 'dark' class
+    if (htmlElement.classList.contains('dark')) {
+      // If it does, remove it
+      htmlElement.classList.remove('dark');
+      // Optional: save preference
+      localStorage.theme = 'light';
+    }
+  }
+
+  useEffect(() => {
+    toggleDarkMode();
+  }, []);
   return (
     <AuthProvider>
       <ThemeProvider>
