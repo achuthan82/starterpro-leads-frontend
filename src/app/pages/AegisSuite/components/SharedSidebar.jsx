@@ -191,17 +191,16 @@ const SharedSidebar = ({ currentPath = "" }) => {
   };
   return (
     <div
-      className={`flex ${isCollapsed ? "w-20" : "w-64"} flex-col border-r border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800`}
-      style={{ overflow: "auto" }}
+      className={`sidebar-scroll-container flex ${isCollapsed ? "w-20" : "w-64"} flex-col border-r border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800 overflow-y-auto overflow-x-hidden`}
     >
-      <div className="border-b border-gray-200 p-6 dark:border-gray-700">
+      <div className="border-b border-gray-200 p-6 dark:border-gray-700 overflow-x-hidden">
         {isCollapsed ? (
           <>
             <div className="flex flex-col items-center space-y-3">
               <img
                 src={logoIcon}
                 alt="logo"
-                className="h-10 w-auto max-w-none object-contain"
+                className="h-10 w-auto max-w-full object-contain"
               />
               <button
                 onClick={toggleSidebar}
@@ -214,11 +213,11 @@ const SharedSidebar = ({ currentPath = "" }) => {
             </div>
           </>
         ) : (
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between min-w-0">
             <img
               src={Logo}
               alt="KovaLifeLeads"
-              className="h-25 w-auto object-contain"
+              className="h-25 w-auto max-w-full object-contain flex-shrink"
             />
             <button
               onClick={toggleSidebar}
@@ -232,13 +231,13 @@ const SharedSidebar = ({ currentPath = "" }) => {
         )}
       </div>
 
-      <nav className="flex-1 p-4">
-        <ul className="space-y-2">
+      <nav className="flex-1 p-4 overflow-x-hidden">
+        <ul className="space-y-2 w-full">
           {sidebarItems.map((item) => (
-            <li key={item.id}>
+            <li key={item.id} className="w-full min-w-0">
               <button
                 onClick={() => navigate(item.href)}
-                className={`flex w-full items-center ${isCollapsed ? "justify-center" : "space-x-3"} rounded-lg p-3 text-left transition-all duration-200 ${
+                className={`flex w-full items-center ${isCollapsed ? "justify-center" : "space-x-3"} rounded-lg p-3 text-left transition-all duration-200 min-w-0 ${
                   currentPath === item.href ||
                   window.location.pathname === item.href
                     ? "bg-[#0a2463] text-white dark:bg-blue-600"
@@ -248,7 +247,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
               >
                 <item.icon className="h-5 w-5 flex-shrink-0" />
                 {!isCollapsed && (
-                  <span className="font-medium">{item.label}</span>
+                  <span className="font-medium truncate">{item.label}</span>
                 )}
               </button>
             </li>
@@ -267,10 +266,10 @@ const SharedSidebar = ({ currentPath = "" }) => {
                 </div>
               </li>
               {adminItems.map((item) => (
-                <li key={item.id} className="mb-2">
+                <li key={item.id} className="mb-2 w-full min-w-0">
                   <button
                     onClick={() => navigate(item.href)}
-                    className={`flex w-full items-center ${isCollapsed ? "justify-center" : "space-x-3"} rounded-lg p-3 text-left transition-all duration-200 ${
+                    className={`flex w-full items-center ${isCollapsed ? "justify-center" : "space-x-3"} rounded-lg p-3 text-left transition-all duration-200 min-w-0 ${
                       currentPath === item.href ||
                       window.location.pathname === item.href
                         ? "bg-[#0a2463] text-white dark:bg-blue-600"
@@ -280,7 +279,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
                   >
                     <item.icon className="h-5 w-5 flex-shrink-0" />
                     {!isCollapsed && (
-                      <span className="font-medium">{item.label}</span>
+                      <span className="font-medium truncate">{item.label}</span>
                     )}
                   </button>
                 </li>
@@ -290,7 +289,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
         </ul>
       </nav>
 
-      <div className="border-t border-gray-200 p-4 dark:border-gray-700">
+      <div className="border-t border-gray-200 p-4 dark:border-gray-700 overflow-x-hidden">
         {!isCollapsed ? (
           <>
             {" "}
