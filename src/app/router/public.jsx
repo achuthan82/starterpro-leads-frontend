@@ -15,6 +15,12 @@ const publicRoutes = {
         Component: (await import("app/pages/prototypes/sign-in-1")).default,
       }),
     },
+      {
+      path: "single-mortgage-public/:mortgage_id/:uuid",
+      lazy: async () => ({
+        Component: (await import("app/pages/AegisSuite/public/SingleMortgage")).default,
+      }),
+    },
     {
       path: "register/:token",
       lazy: async () => ({
