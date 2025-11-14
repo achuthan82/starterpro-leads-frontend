@@ -3,6 +3,7 @@ import {
   DocumentTextIcon,
   ChatBubbleLeftEllipsisIcon,
 } from "@heroicons/react/24/solid";
+import { useAuthContext } from "app/contexts/auth/context";
 
 export default function ScriptTranscript({ 
   activeTabs = ["script"], 
@@ -18,6 +19,7 @@ export default function ScriptTranscript({
   callLogs = [],
   callLogsLoading = false
 }) {
+  const { user } = useAuthContext();
   const [activeTab, setActiveTab] = useState(activeTabs[0] || "script");
   
   // Sync with parent activeTabs
@@ -107,7 +109,7 @@ export default function ScriptTranscript({
 
           {/* Script Text */}
           <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-            Hi Michael, this is Sarah Wilson from Aegis Suite. I hope I&apos;m catching you at a good
+            Hi Michael, this is Sarah Wilson from {user?.agency_name}. I hope I&apos;m catching you at a good
             time.
             <br />
             <br />
