@@ -148,22 +148,26 @@ const LeadInfo = ({ lead, onUpdateStatus, callHistory, callLogs = [], callLogsLo
         )} 
         {/* Lead Details */}
         <div className="grid grid-cols-2 gap-4 my-4">
+          {lead.age && (
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">Age</p>
             <p className="font-medium text-gray-900 dark:text-gray-100">{lead.age}</p>
           </div>
+          )}
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">Home Value</p>
             <p className="font-medium text-gray-900 dark:text-gray-100">
               ${lead.homeValue?.toLocaleString()}
             </p>
           </div>
+          {lead.mortgage && (
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">Mortgage</p>
             <p className="font-medium text-gray-900 dark:text-gray-100">
               ${lead.mortgage?.toLocaleString()}
             </p>
           </div>
+          )}
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">Territory</p>
             <p className="font-medium text-gray-900 dark:text-gray-100">{lead.originalData?.state}-{lead.originalData?.zip}</p>

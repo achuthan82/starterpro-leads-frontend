@@ -213,12 +213,14 @@ const SharedSidebar = ({ currentPath = "" }) => {
             </div>
           </>
         ) : (
+          <>
           <div className="flex items-center justify-between min-w-0">
             <img
               src={Logo}
-              alt="KovaLifeLeads"
+              alt="StarterPro"
               className="h-25 w-auto max-w-full object-contain flex-shrink"
             />
+            
             <button
               onClick={toggleSidebar}
               className="dark:hover:bg-dark-700 dark:text-dark-200 flex-shrink-0 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100"
@@ -228,6 +230,10 @@ const SharedSidebar = ({ currentPath = "" }) => {
               <ChevronLeftIcon className="h-10 w-10" />
             </button>
           </div>
+          {user.agency_name !== 'StarterPro' && (
+            <h3 className="text-sm ml-[32px] mt-2 font-bold text-gray-900 dark:text-gray-100">[{user.agency_name}]</h3>
+          )}
+          </>
         )}
       </div>
 
@@ -266,7 +272,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
                 </div>
               </li>
               {adminItems.map((item) => (
-                <li key={item.id} className="mb-2 w-full min-w-0">
+                <li key={item.id} className={`${user.agency_name !== 'StarterPro' && item.href === "/admin/subscriptions" ? "hidden" : "mb-2 w-full min-w-0"}`}>
                   <button
                     onClick={() => navigate(item.href)}
                     className={`flex w-full items-center ${isCollapsed ? "justify-center" : "space-x-3"} rounded-lg p-3 text-left transition-all duration-200 min-w-0 ${
@@ -342,7 +348,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
           <>
             <div className="flex flex-col items-center space-y-4">
               <div
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#75150b]"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0a2463] dark:bg-blue-600"
                 title={userName}
               >
                 <span className="text-sm font-medium text-white">

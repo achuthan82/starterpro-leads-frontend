@@ -8,6 +8,7 @@ import {
 } from "@headlessui/react";
 import { Button } from "components/ui";
 import { toast } from "sonner";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, timezone: initialTimezone, saving = false }) => {
   const [timeSlots, setTimeSlots] = useState([]);
@@ -32,6 +33,13 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
       setCurrentTimezone(systemTimezone);
     }
   }, [availability, duration, initialTimezone, isOpen]);
+
+  // Clear errors when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setErrors({});
+    }
+  }, [isOpen]);
 
   // Get system timezone function
   const getSystemTimezone = () => {
@@ -119,8 +127,8 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
     const endMinutes = timeToMinutes(endTime);
     const slotDuration = endMinutes - startMinutes;
     
-    // Check if slot duration is multiple of appointment duration
-    return slotDuration % currentDuration === 0;
+    // Check if slot duration is positive and multiple of appointment duration
+    return slotDuration > 0 && slotDuration % currentDuration === 0;
   };
 
   // Check for time slot conflicts and duration validation
@@ -145,11 +153,11 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
       const otherStart = timeToMinutes(timeSlots[i].start);
       const otherEnd = timeToMinutes(timeSlots[i].end);
 
-      if (
-        (startMinutes >= otherStart && startMinutes < otherEnd) ||
-        (endMinutes > otherStart && endMinutes <= otherEnd) ||
-        (startMinutes <= otherStart && endMinutes >= otherEnd)
-      ) {
+      // More precise conflict detection - allow exact boundary matches
+      const hasConflict = 
+        (startMinutes < otherEnd && endMinutes > otherStart);
+
+      if (hasConflict) {
         return `Conflicts with existing slot: ${timeSlots[i].start} - ${timeSlots[i].end}`;
       }
     }
@@ -167,14 +175,14 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
       const lastEnd = timeToMinutes(lastSlot.end);
       
       // Start new slot after last slot ends (using current duration)
-      const newStartMinutes = lastEnd + currentDuration;
+      const newStartMinutes = lastEnd;
       if (newStartMinutes < 1380) { // 23:00 in minutes
         const newStartHour = Math.floor(newStartMinutes / 60);
         const newStartMinute = newStartMinutes % 60;
         defaultStart = `${newStartHour.toString().padStart(2, '0')}:${newStartMinute.toString().padStart(2, '0')}`;
         
-        // Set end time based on a reasonable duration (8 hours max)
-        const newEndMinutes = newStartMinutes + Math.min(480, 1440 - newStartMinutes);
+        // Set end time based on current duration
+        const newEndMinutes = newStartMinutes + currentDuration;
         if (newEndMinutes <= 1440) {
           const newEndHour = Math.floor(newEndMinutes / 60);
           const newEndMinute = newEndMinutes % 60;
@@ -262,6 +270,7 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
         const otherStart = timeToMinutes(timeSlots[i].start);
         const otherEnd = timeToMinutes(timeSlots[i].end);
         
+        // Allow start time to equal another slot's end time (no gap)
         if (timeMinutes >= otherStart && timeMinutes < otherEnd) {
           return false;
         }
@@ -289,13 +298,16 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
       }
       
       // Check if this end time would conflict with other slots
+      // Allow exact boundary matches (end = next start)
       for (let i = 0; i < timeSlots.length; i++) {
         if (i === index) continue;
         
         const otherStart = timeToMinutes(timeSlots[i].start);
         const otherEnd = timeToMinutes(timeSlots[i].end);
         
-        if (endMinutes > otherStart && endMinutes <= otherEnd) {
+        // Allow end time to equal another slot's start time (no gap)
+        // But prevent overlap
+        if (endMinutes > otherStart && endMinutes < otherEnd) {
           return false;
         }
       }
@@ -345,18 +357,24 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
     setErrors(newErrors);
   }, [currentDuration]);
 
+  const handleClose = () => {
+    setErrors({});
+    onClose();
+  };
+
   const timezones = getTimezones();
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
+    <Transition show={isOpen} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
-        onClose={onClose}
+        onClose={handleClose}
       >
         {/* Overlay */}
         <TransitionChild
           as={Fragment}
+          show={isOpen}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -370,6 +388,7 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
         {/* Modal Content */}
         <TransitionChild
           as={Fragment}
+          show={isOpen}
           enter="ease-out duration-300"
           enterFrom="opacity-0 scale-95"
           enterTo="opacity-100 scale-100"
@@ -378,9 +397,19 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
           leaveTo="opacity-0 scale-95"
         >
           <DialogPanel className="dark:bg-dark-700 relative w-full max-w-2xl rounded-2xl bg-white px-6 py-8 text-left shadow-xl transition-all sm:px-8">
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={handleClose}
+              disabled={saving}
+              className="absolute right-4 top-4 rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed dark:hover:bg-gray-600 dark:hover:text-gray-300"
+            >
+              <XMarkIcon className="h-6 w-6" />
+            </button>
+
             <DialogTitle
               as="h3"
-              className="text-2xl font-semibold text-gray-800 dark:text-gray-100 text-center mb-6"
+              className="text-2xl font-semibold text-gray-800 dark:text-gray-100 text-center mb-6 pr-8"
             >
               Manage Availability
             </DialogTitle>
@@ -424,11 +453,6 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
                         </option>
                       ))}
                     </select>
-                    {!currentTimezone && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                        Please select a timezone
-                      </p>
-                    )}
                   </div>
 
                   {/* Time Slots */}
@@ -441,6 +465,7 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
                         type="button"
                         onClick={addTimeSlot}
                         disabled={saving}
+                        style={{ backgroundColor: '#00a63e'}}
                         className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 text-sm rounded"
                       >
                         Add Slot
@@ -495,6 +520,7 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
                                 onClick={() => removeTimeSlot(index)}
                                 disabled={saving}
                                 className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 mt-6"
+                                style={{ backgroundColor: '#e7000b'}}
                               >
                                 Remove
                               </Button>
@@ -516,7 +542,7 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
                 <div className="mt-8 flex justify-end gap-3 border-t border-gray-200 pt-6 dark:border-gray-700">
                   <Button
                     type="button"
-                    onClick={onClose}
+                    onClick={handleClose}
                     disabled={saving}
                     className="border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 px-6 py-2 rounded"
                   >
@@ -525,7 +551,7 @@ const AvailabilityModal = ({ isOpen, onClose, onSave, availability, duration, ti
                   <Button
                     style={{ backgroundColor: '#155dfc'}}
                     type="submit"
-                    disabled={Object.keys(errors).length > 0 || saving || !currentTimezone}
+                    disabled={Object.keys(errors).length > 0 || saving}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     {saving ? (

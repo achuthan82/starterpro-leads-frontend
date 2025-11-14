@@ -27,15 +27,29 @@ const UserModal = ({
     { id: "", auto_generate: false, source: "" },
   ]);
 
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+  console.log("currentUser", currentUser);
+
   const types_ = {
     1: "NEW MTG",
     // 2: "RETRO MTG",
     // 3: "FEX",
   };
+
   const roleOptions = [
     { label: "Admin", value: 1 },
     { label: "Agent", value: 2 },
   ];
+
+  const agencyOptions1 = [
+    { label: "StarterPro", value: 'StarterPro' },
+    { label: "YS Financials", value: 'YS Financials' },
+  ]
+
+  const agencyOptions2 = [
+    { label: "YS Financials", value: 'YS Financials' },
+  ]
 
   const [loading, setLoading] = useState(false);
 
@@ -374,21 +388,20 @@ const UserModal = ({
                     className="mb-1 block text-left text-sm font-medium"
                     htmlFor="agency_name"
                   >
-                    Agency Name
+                    Agency Name <span className="text-red-500">*</span>
                   </label>
                   <Controller
                     control={control}
                     name="agency_name"
+                    rules={{ required: "Agency name is required" }}
                     render={({ field }) => (
-                      <Input
+                      <Select
+                        options={currentUser.agency_name === 'StarterPro' ? agencyOptions1 : agencyOptions2}
                         {...field}
                         innerRef={field.ref}
                         autoFocus
-                        type="text"
-                        id="agency_name"
-                        placeholder="Agency Name"
+                        styles={getReactSelectDarkModeStyles()}
                         invalid={errors.agency_name}
-                        className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                         onChange={(event) => {
                           field.onChange(event);
                         }}

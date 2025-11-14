@@ -153,7 +153,7 @@ const ProfilePage = () => {
                 {[
                   { id: "basic", label: "Basic Details" },
                   { id: "license", label: "License Details" },
-                  { id: "settings", label: "Available Settings" },
+                  { id: "settings", label: "Calendar Settings" },
                 ].map((tab) => (
                   <button
                     key={tab.id}
