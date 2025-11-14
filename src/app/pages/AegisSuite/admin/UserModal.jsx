@@ -188,7 +188,7 @@ const UserModal = ({
       d["phone"] = data.phone;
     }
     if (data?.agency_name) {
-      d["agency_name"] = data?.agency_name;
+      d["agency_name"] = data?.agency_name.value;
     }
     if (data?.npn_number) {
       d["npn"] = data?.npn_number;
@@ -295,7 +295,7 @@ const UserModal = ({
       if (editData.npn) setValue("npn_number", editData.npn);
       setValue("phone", editData.phone);
       setValue("email", editData.email);
-      if (editData?.agency_name) setValue("agency_name", editData?.agency_name);
+      if (editData?.agency_name) setValue("agency_name", agencyOptions1.find(item => item.value === editData?.agency_name));
       setValue("user_role", roleOptions[role_id]);
     } else {
       console.log("errors", errors);

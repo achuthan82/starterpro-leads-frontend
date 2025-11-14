@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { useForm, Controller } from "react-hook-form";
-import { Button, Input } from "components/ui";
+import { Button, Input, Spinner } from "components/ui";
 import { XMarkIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import PreviewComponent from "./PreviewComponent";
 import { useCallContext } from "app/contexts/call/context";
@@ -146,6 +146,10 @@ const MortgageProtectionModal = ({
   };
 
   const goToStep = (step) => {
+    // Prevent navigation if API call is in progress
+    if (isSaving) {
+      return;
+    }
     setCurrentStep(step);
   };
 
@@ -829,12 +833,19 @@ const MortgageProtectionModal = ({
       <div className="flex items-center">
         {[1, 2].map((step) => (
           <Fragment key={step}>
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
-              currentStep === step ? 'bg-blue-600 text-white' : 
-              currentStep > step ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'
-            }`}>
+            <button
+              type="button"
+              onClick={() => goToStep(step)}
+              disabled={isSaving}
+              className={`flex items-center justify-center w-8 h-8 rounded-full transition-all ${
+                currentStep === step ? 'bg-blue-600 text-white' : 
+                currentStep > step ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'
+              } ${
+                isSaving ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:opacity-80'
+              }`}
+            >
               {step}
-            </div>
+            </button>
             {step < 2 && (
               <div className={`w-12 h-1 mx-2 ${
                 currentStep > step ? 'bg-green-500' : 'bg-gray-300'
@@ -1294,6 +1305,18 @@ const MortgageProtectionModal = ({
           leaveTo="opacity-0 scale-95"
         >
           <DialogPanel className="dark:bg-dark-700 relative w-full max-w-4xl rounded-2xl bg-white px-3 py-4 text-center shadow-xl transition-all sm:px-8 max-h-[98vh] overflow-hidden">
+            {/* Loader Overlay */}
+            {isSaving && (
+              <div className="absolute inset-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm z-50 flex items-center justify-center rounded-2xl">
+                <div className="flex flex-col items-center gap-3">
+                  <Spinner className="w-8 h-8 border-2" color="primary" />
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Saving...
+                  </p>
+                </div>
+              </div>
+            )}
+            
             {/* Header with Close Button */}
             <div className="flex items-center justify-between mb-0">
               <DialogTitle
@@ -1316,7 +1339,7 @@ const MortgageProtectionModal = ({
                     <button
                       onClick={handleDownloadWithDomToImage}
                       disabled={isGeneratingPDF}
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex hidden items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <DocumentArrowDownIcon className="w-4 h-4" />
                       {isGeneratingPDF ? 'Generating PDF...' : 'Download PDF'}
