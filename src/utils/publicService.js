@@ -1,17 +1,25 @@
 // Import Dependencies
-import axios from './axios'; // Using the project's configured axios instance
-import { API_ENDPOINTS } from 'configs/auth.config';
+import axios from './axiosPublic'; // Using the project's configured axios instance
 
 // ----------------------------------------------------------------------
 
-class AppointmentService {
+class AppointmentPublicService {
     /**
      * Get appointment settings/details
      * @returns {Promise} Response with availability settings
      */
-    async getAppointmentSettings() {
+    async getAppointmentSettings(token) {
         try {
-            const response = await axios.get(API_ENDPOINTS.APPOINTMENT.SETTINGS);
+            const response = await axios.get(`/appointment/public/settings/details?token=${token}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching appointment settings:', error);
+            throw error;
+        }
+    }
+    async getAppointmentDetails(token) {
+        try {
+            const response = await axios.get(`/appointment/public/invitation-details?token=${token}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching appointment settings:', error);
@@ -29,7 +37,7 @@ class AppointmentService {
      */
     async getAppointmentList(params) {
         try {
-            const response = await axios.get(API_ENDPOINTS.APPOINTMENT.LIST, { params });
+            const response = await axios.get('/appointment/public/list', { params });
             return response.data;
         } catch (error) {
             console.error('Error fetching appointment list:', error);
@@ -50,14 +58,15 @@ class AppointmentService {
      * @param {string} appointmentData.payload.notes - Optional notes
      * @returns {Promise} Response with created appointment
      */
-    async createAppointment(appointmentData) {
+    async createAppointment(appointmentData, token) {
         try {
             const { time_zone, duration, ...payload } = appointmentData;
             const params = {
                 time_zone: time_zone,
-                duration: duration
+                duration: duration,
+                token:token
             };
-            const response = await axios.post(API_ENDPOINTS.APPOINTMENT.CREATE, payload, { params });
+            const response = await axios.post('/appointment/public/create', payload, { params });
             return response.data;
         } catch (error) {
             console.error('Error creating appointment:', error);
@@ -108,6 +117,6 @@ class AppointmentService {
     }
 }
 
-const appointmentService = new AppointmentService();
-export default appointmentService;
+const appointmentPublicService = new AppointmentPublicService();
+export default appointmentPublicService;
 
