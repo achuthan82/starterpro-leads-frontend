@@ -9,6 +9,7 @@ import moment from "moment/moment";
 import calendarService from "utils/clendarService";
 import ScheduleAppointmentModal from "app/pages/powerDialer/ScheduleAppointmentModal";
 import DeleteAppointmentModal from "./DeleteAppointmentModal";
+import InviteModal from "./InviteModal";
 const Appointments = () => {
   const [viewType, setViewType] = useState("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -18,6 +19,8 @@ const Appointments = () => {
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [isOpen, { open, close }] = useDisclosure(false);
+  const [isInviteOpen, { open: inviteOpen, close: inviteClose }] =
+    useDisclosure(false);
   const [isDetailsOpen, { open: detailOpen, close: detailClose }] =
     useDisclosure(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -114,7 +117,7 @@ const Appointments = () => {
                 client: item.client_name,
                 phone: item.phone_number,
                 time: moment(item.meeting_datetime).format("HH:mm") || "00:00",
-                notes:item?.notes,
+                notes: item?.notes,
                 slot_time: moment(
                   item.meeting_datetime,
                   "MM-DD-YYYY HH:mm:ss",
@@ -194,7 +197,7 @@ const Appointments = () => {
   useEffect(() => {
     if (viewType === "month") {
       fetchAppointmentStats(appointments);
-      setTotal(appointments.length)
+      setTotal(appointments.length);
     }
   }, [appointments, viewType]);
   return (
@@ -247,6 +250,25 @@ const Appointments = () => {
                   Month
                 </button>
               </div>
+              <button
+                className="flex items-center space-x-2 rounded-lg px-4 py-2 font-semibold text-white shadow-lg transition-all"
+                style={{ backgroundColor: "#0a2463" }}
+                onClick={() => {
+                  inviteOpen()
+                }}
+              >
+                {/* Envelope Icon */}
+                <svg
+                  className="h-5 w-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M2.94 6.34L10 11.12l7.06-4.78A2 2 0 0015.82 4H4.18a2 2 0 00-1.24 2.34z" />
+                  <path d="M18 8.88l-8 5.42-8-5.42V14a2 2 0 002 2h12a2 2 0 002-2V8.88z" />
+                </svg>
+
+                <span>Invite</span>
+              </button>
 
               <button
                 className="flex items-center space-x-2 rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-gray-900 shadow-lg transition-all hover:bg-yellow-600 dark:bg-yellow-400 dark:text-gray-900 dark:hover:bg-yellow-500"
@@ -482,6 +504,7 @@ const Appointments = () => {
             appointment={selectedAppointment}
             setDeleteModal={setDeleteModal}
           ></AppointmentModal>
+          <InviteModal isInviteOpen={isInviteOpen} inviteClose={inviteClose}></InviteModal>
           {deleteModal && (
             <DeleteAppointmentModal
               appointment={selectedAppointment}
