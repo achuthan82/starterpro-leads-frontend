@@ -552,7 +552,9 @@ const LeadManagement = () => {
 
       setShowBulkStatusModal(false);
       setBulkNewStatus('');
-      setSelectedLeads([]); // Clear selection
+      setSelectedLeads([]); 
+      setPrintLeads([])
+      // Clear selection
       fetchLeads(activeTab, filters, currentPage, perPage, false, purchased); // Refresh the list
       toast.success(`Status updated successfully for ${selectedLeadsData.length} leads!`);
     } catch (err) {
@@ -636,6 +638,8 @@ const LeadManagement = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    setPrintLeads([])
+    setSelectedLeads([])
     toast.success(`${tabs.find((item) => item.id === activeTab).label} leads exported successfully`)
   }
   function escapeCSVValue(value) {
