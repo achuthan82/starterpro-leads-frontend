@@ -214,7 +214,7 @@ export default function Register() {
                 </p>
               )}
             </div>
-            <div>
+            <div className="hidden">
               <label
                 htmlFor="agency_name"
                 className="mb-2 block text-sm font-medium text-[#0a2463] dark:text-blue-400"

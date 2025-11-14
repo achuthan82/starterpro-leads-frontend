@@ -50,6 +50,7 @@ const UserManagement = () => {
   });
 
   const [isOpen, {open, close}] = useDisclosure(false)
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
   // Modal states
 
   // Define fetchUsers with useCallback before using it in useEffect
@@ -538,6 +539,16 @@ useEffect(() => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       User
                     </th>
+                    {currentUser.agency_name === 'StarterPro' && (
+                    <>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Agency Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Upline
+                    </th>
+                    </>
+                    )}
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       NPN Number
                     </th>
@@ -599,6 +610,16 @@ useEffect(() => {
                             </div>
                           </div>
                         </td>
+                        {currentUser.agency_name === 'StarterPro' && (
+                        <>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{user.agency_name || 'N/A'}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{user.upline_name || 'N/A'}</div>
+                        </td>
+                        </>
+                        )}
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-500 dark:text-gray-400">{user.npn || 'N/A'}</div>
                         </td>
