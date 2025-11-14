@@ -376,7 +376,7 @@ export default function SignInV1() {
                 Forgot password?
               </Link>
             </div>
-            <div className="mt-6 border-t border-gray-200 pt-6">
+            {/* <div className="mt-6 border-t border-gray-200 pt-6">
               <p className="text-center text-sm text-gray-600 dark:text-gray-100">
                 Don&apos;t have an account?{" "}
                 <a
@@ -386,7 +386,7 @@ export default function SignInV1() {
                   Contact Sales
                 </a>
               </p>
-            </div>
+            </div> */}
             {/* <div className="mt-6 flex items-center justify-center gap-6 text-xs text-gray-500">
               <div className="flex items-center gap-1">
                 <svg

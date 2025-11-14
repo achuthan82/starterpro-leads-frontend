@@ -132,7 +132,7 @@ export default function Register() {
   }, [])*/
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f2f2f2] dark:bg-gray-900">
+    <div className="flex min-h-screen items-center py-4 justify-center bg-[#f2f2f2] dark:bg-gray-900">
       <div className="mx-auto w-full max-w-md px-4">
         {/* Logo and Brand */}
         {/* <div className="text-center mb-8">
