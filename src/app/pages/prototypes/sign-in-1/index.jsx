@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
-import { EnvelopeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import { EnvelopeIcon, EyeIcon, EyeSlashIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { Spinner } from "components/ui";
 import { useAuthContext } from "app/contexts/auth/context";
 import { authService } from "utils/apiService";
@@ -24,7 +24,7 @@ export default function SignInV1() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const [showPassword, setShowPassword] = useState('')
   const navigate = useNavigate();
   const { login } = useAuthContext();
   const handleInputChange = (e) => {
@@ -51,6 +51,7 @@ export default function SignInV1() {
 
       // Handle different response formats
       const responseData = response.data || response;
+      console.log("response-data", responseData);
       // Check for token in both top level response and data object
       const token =
         response.auth_token ||
@@ -127,7 +128,10 @@ export default function SignInV1() {
           );
         }
       } else if (!token) {
-        setError("Login failed: No authentication token received from server.");
+        setError(
+          responseData?.message ||
+            "Login failed: No authentication token received from server.",
+        );
       } else {
         setError(
           responseData?.message ||
@@ -181,7 +185,7 @@ export default function SignInV1() {
             </p> */}
           </div>
         </div>
-        <Card className="mt-1 max-w-[28rem] rounded-lg bg-white dark:bg-gray-800 p-5 lg:p-8">
+        <Card className="mt-1 max-w-[28rem] rounded-lg bg-white p-5 lg:p-8 dark:bg-gray-800">
           <form onSubmit={handleSubmit}>
             {error && (
               <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
@@ -246,20 +250,36 @@ export default function SignInV1() {
                   />
                 }
               />
-              <Input
-                id="password"
-                name="password"
-                label="Password"
-                placeholder="Enter Password"
-                type="password"
-                onChange={handleInputChange}
-                prefix={
-                  <LockClosedIcon
-                    className="size-5 transition-colors duration-200"
-                    strokeWidth="1"
-                  />
-                }
-              />
+                  <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  label="Password"
+                  placeholder="Enter Password"
+                  type={showPassword ? "text" : "password"}
+                  className='pr-10'
+                  onChange={handleInputChange}
+                  prefix={
+                    <LockClosedIcon
+                      className="size-5 text-gray-400 transition-colors duration-200"
+                      strokeWidth="1"
+                    />
+                  }
+                />
+
+                {/* Eye toggle button */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-9 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  {showPassword ? (
+                    <EyeSlashIcon className="size-5" />
+                  ) : (
+                    <EyeIcon className="size-5" />
+                  )}
+                </button>
+              </div>
             </div>
             {/* <div className="mt-4 space-y-2 py-2">
               <div className="flex items-center gap-2">
@@ -345,7 +365,9 @@ export default function SignInV1() {
                   type="checkbox"
                   className="text-aegis-gold focus:ring-aegis-gold h-4 w-4 rounded border-gray-300"
                 />
-                <span className="ml-2 text-sm text-gray-600 dark:text-gray-100">Remember me</span>
+                <span className="ml-2 text-sm text-gray-600 dark:text-gray-100">
+                  Remember me
+                </span>
               </label>
               <Link
                 to="/forgot-password"

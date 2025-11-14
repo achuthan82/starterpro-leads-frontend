@@ -137,7 +137,7 @@ const AddLiscence = ({ isOpen, close, getLiscense}) => {
               as="h3"
               className="text-2xl font-semibold text-gray-800 dark:text-gray-100"
             >
-              Add Liscence
+              Add Licence
             </DialogTitle>
 
             <form onSubmit={handleSubmit(submitData)}>
@@ -147,7 +147,7 @@ const AddLiscence = ({ isOpen, close, getLiscense}) => {
                     className="mb-1 block text-left text-sm font-medium"
                     htmlFor="code"
                   >
-                    Liscence Number<span className="text-red-500">*</span>
+                    Licence Number<span className="text-red-500">*</span>
                   </label>
                   <Controller
                     control={control}
