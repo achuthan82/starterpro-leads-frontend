@@ -38,6 +38,7 @@ const Territories = () => {
   console.log("territories", usaStates);
 
   const getStatusBadgeClass = (status) => {
+    console.log("status", status)
     const classes = {
       active:
         "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400",
@@ -167,7 +168,7 @@ const Territories = () => {
             id: territory.state,
             name: stateName,
             code: territory.state,
-            status: activeTab === "active" ? "active" : "inactive",
+            status: tabId === "active" ? "active" : "inactive",
             leads: totalLeads || 0,
             conversions: territory.sold || 0,
             revenue: territory.revenue || 0,
@@ -178,7 +179,7 @@ const Territories = () => {
           };
         });
       }
-
+      console.log('processed-territories', processedTerritories)
       setTerritories(processedTerritories);
       setTotal(territoriesResponse.data.pagination?.total || 0);
     } catch (err) {
@@ -191,6 +192,7 @@ const Territories = () => {
 
   // Handle tab change
   const handleTabChange = (tabId) => {
+    console.log(tabId)
     setActiveTab(tabId);
     setPage(1); // Reset to first page when changing tabs
     fetchData(tabId);
