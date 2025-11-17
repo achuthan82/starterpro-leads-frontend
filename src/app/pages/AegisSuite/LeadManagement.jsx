@@ -41,7 +41,7 @@ const LeadManagement = () => {
     name: "",
     campaign: "",
   });
-
+  const [viewMarketPlace, setViewMarketPlace] = useState(false)
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
@@ -544,7 +544,7 @@ const LeadManagement = () => {
         setShowStatusModal(false);
         setStatusLead(null);
         setNewStatus("");
-        fetchSummary();
+        fetchSummary(viewMarketPlace ? 'market-place' : null);
         fetchLeads(activeTab, filters, currentPage, perPage, false, purchased);
         fetchStatusHistory(agentId, assigneeId);
       } else {
@@ -626,8 +626,7 @@ const LeadManagement = () => {
       setBulkNewStatus("");
       setSelectedLeads([]);
       setPrintLeads([]);
-      fetchSummary();
-
+      fetchSummary(viewMarketPlace ? 'market-place' : null);
       fetchLeads(activeTab, filters, currentPage, perPage, false, purchased); // Refresh the list
       toast.success(
         `Status updated successfully for ${selectedLeadsData.length} leads!`,
@@ -1033,8 +1032,10 @@ const LeadManagement = () => {
                     );
                     setPurchased(event.target.checked);
                     if (event.target.checked) {
+                      setViewMarketPlace(true)
                       fetchSummary("market-place");
                     } else {
+                      setViewMarketPlace(false)
                       fetchSummary();
                     }
                   }}

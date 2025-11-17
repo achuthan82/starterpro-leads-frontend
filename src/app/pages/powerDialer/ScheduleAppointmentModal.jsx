@@ -136,16 +136,24 @@ const ScheduleAppointmentModal = ({
 
   const updateTimeSlotsWithBookings = useCallback(
     (appointments) => {
+      console.log(selectedDate, 'selected-date')
       setTimeSlots((prev) => {
         const updateCategory = (category) => {
           return category.map((slot) => {
+            console.log('slot', slot)
             const slotDateTime = new Date(slot.datetime);
+            let isPast = false;
+            // 
+            console.log(selectedDate)
+            if (moment(selectedDate, "YYYY-MM-DD").isSame(moment(slot.datetime), "day") && moment(slot.datetime).isBefore(moment()) ) {
+              isPast = true
+            }
             const isBooked = appointments.some((apt) => {
               const aptStart = parseAppointmentTime(apt.meeting_datetime);
               const aptEnd = parseAppointmentTime(apt.meeting_end_datetime);
               return slotDateTime >= aptStart && slotDateTime < aptEnd;
             });
-            return { ...slot, available: !isBooked };
+            return { ...slot, available: !isBooked && !isPast};
           });
         };
 
@@ -156,7 +164,7 @@ const ScheduleAppointmentModal = ({
         };
       });
     },
-    [parseAppointmentTime],
+    [parseAppointmentTime, selectedDate],
   );
 
   const fetchBookedAppointments = useCallback(async () => {

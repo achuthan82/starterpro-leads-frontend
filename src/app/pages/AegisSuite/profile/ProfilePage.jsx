@@ -152,7 +152,7 @@ const ProfilePage = () => {
               <div className="-mb-px flex space-x-8 overflow-x-auto">
                 {[
                   { id: "basic", label: "Basic Details" },
-                  { id: "license", label: "License Details" },
+                  { id: "license", label: "Licence Details" },
                   { id: "settings", label: "Calendar Settings" },
                 ].map((tab) => (
                   <button
@@ -232,7 +232,7 @@ const ProfilePage = () => {
                           className="flex items-center space-x-2 rounded-lg bg-[#f4d03f] px-4 py-2 text-white transition-colors hover:bg-[#e6c035]"
                         >
                           <PlusIcon className="h-4 w-4" />
-                          <span>Add Liscence</span>
+                          <span>Add Licence</span>
                         </button>
                       </div>
                       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
