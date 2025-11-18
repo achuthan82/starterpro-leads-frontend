@@ -162,6 +162,12 @@ const SharedSidebar = ({ currentPath = "" }) => {
     //   href: "/admin/promo-codes",
     // },
     {
+      id: "side-lead-bank",
+      label: "Side Lead Bank",
+      icon: ShoppingCartIcon,
+      href: "/side-leads",
+    },
+    {
       id: "reports",
       label: "Reports & Analytics",
       icon: ChartBarIcon,

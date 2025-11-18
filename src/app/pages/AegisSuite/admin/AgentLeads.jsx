@@ -331,7 +331,7 @@ const AgentLeads = () => {
       // setLoading(true);
 
       const combinedFilters = Object.entries(filters).reduce((acc, item) => {
-        if (item[1] && item[1] !== 'all') {
+        if (item[1] && item[1] !== "all") {
           acc[item[0]] = item[1];
         }
         return acc;
@@ -371,7 +371,7 @@ const AgentLeads = () => {
     setFilters({ lead_status: "", state: "", name: "", campaign: "" });
     setCurrentPage(1);
     fetchAgentLeads(1, perPage, tabId, {}, purchased);
-    setPrintLeads([])
+    setPrintLeads([]);
   };
   const handleTypeChange = (sts) => {
     setSearchTerm("");
@@ -619,7 +619,7 @@ const AgentLeads = () => {
       {/* Main Content */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Header */}
-        <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+        <header className="border-b border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
@@ -641,7 +641,7 @@ const AgentLeads = () => {
         </header>
 
         {/* Enhanced Agent Info Banner */}
-        <div className="border-b border-gray-200 bg-gradient-to-r from-[#0a2463] to-[#f4d03f] p-6">
+        {/* <div className="border-b border-gray-200 bg-gradient-to-r from-[#0a2463] to-[#f4d03f] p-6">
           <div className="mx-auto max-w-7xl">
             <div className="flex items-center justify-between text-white">
               <div className="flex items-center space-x-6">
@@ -682,7 +682,6 @@ const AgentLeads = () => {
                 </div>
               </div>
 
-              {/* Lead Statistics */}
               <div className="grid grid-cols-4 gap-6 text-center">
                 <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
                   <div className="text-2xl font-bold text-white">
@@ -711,10 +710,81 @@ const AgentLeads = () => {
               </div>
             </div>
           </div>
+        </div> */}
+        <div className="border-b border-gray-200 bg-gradient-to-r from-[#0a2463] to-[#f4d03f] p-6">
+          <div className="mx-auto max-w-7xl">
+            <div className="flex flex-col space-y-6 text-white lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+              {/* Left Content */}
+              <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-6">
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-2 border-white/30 bg-white/20 backdrop-blur-sm sm:mx-0">
+                  <span className="text-2xl font-bold text-white">
+                    {agent?.name
+                      ?.split(" ")
+                      .map((n) => n[0])
+                      .join("") ||
+                      agentId?.toString().slice(0, 2) ||
+                      "A"}
+                  </span>
+                </div>
+
+                <div className="text-center sm:text-left">
+                  <div className="mb-2 flex flex-col sm:flex-row sm:items-center sm:space-x-3">
+                    <h2 className="text-3xl font-bold">
+                      {agent?.name || `Agent ${agentId}` || "Loading..."}
+                    </h2>
+                    <span className="mt-2 rounded-full border border-white/30 bg-white/20 px-3 py-1 text-sm font-medium backdrop-blur-sm sm:mt-0">
+                      Agent ID: {agentId}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col space-y-2 text-white/90 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-6">
+                    <div className="flex items-center justify-center space-x-2 sm:justify-start">
+                      <EnvelopeIcon className="h-4 w-4" />
+                      <span>{agent?.email || "Email not available"}</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2 sm:justify-start">
+                      <PhoneIcon className="h-4 w-4" />
+                      <span>{agent?.phone || "Phone not available"}</span>
+                    </div>
+
+                    {(agent?.role || agent?.status) && (
+                      <div className="mx-auto rounded border border-white/30 bg-white/20 px-2 py-1 text-xs font-medium backdrop-blur-sm sm:mx-0">
+                        {agent.role || agent.status}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Statistics */}
+              <div className="grid grid-cols-2 gap-4 text-center sm:grid-cols-4 lg:gap-6">
+                <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+                  <div className="text-2xl font-bold">{summary.totalLeads}</div>
+                  <div className="text-sm text-white/80">Total Leads</div>
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+                  <div className="text-2xl font-bold">{summary.goldLeads}</div>
+                  <div className="text-sm text-white/80">Completed Leads</div>
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+                  <div className="text-2xl font-bold">
+                    {summary.partialLeads}
+                  </div>
+                  <div className="text-sm text-white/80">Incomplete Leads</div>
+                </div>
+                <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+                  <div className="text-2xl font-bold">
+                    {summary.mailedLeads}
+                  </div>
+                  <div className="text-sm text-white/80">Mailed Leads</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto p-6 bg-[var(--color-ecru-white)] dark:bg-gray-900">
+        <main className="flex-1 overflow-auto bg-[var(--color-ecru-white)] p-6 dark:bg-gray-900">
           {/* Tabs */}
           <div className="mb-6">
             <div className="flex justify-between border-b border-gray-200 dark:border-gray-700">
@@ -725,8 +795,8 @@ const AgentLeads = () => {
                     onClick={() => handleTabChange(tab.id)}
                     className={`border-b-2 px-1 py-2 text-sm font-medium ${
                       activeTab === tab.id
-                        ? "border-[#0a2463] dark:border-blue-400 text-[#0a2463] dark:text-blue-400"
-                        : "border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-300"
+                        ? "border-[#0a2463] text-[#0a2463] dark:border-blue-400 dark:text-blue-400"
+                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
                     }`}
                   >
                     {tab.label} ({tab.count})
@@ -761,9 +831,9 @@ const AgentLeads = () => {
                         setSearchTerm(e.target.value);
                         handleFilterChange("name", e.target.value);
                       }}
-                      className={`w-full rounded-lg border py-2 pr-20 pl-10 focus:border-[#0a2463] dark:focus:border-blue-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
+                      className={`w-full rounded-lg border bg-white py-2 pr-20 pl-10 text-gray-900 focus:border-[#0a2463] focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:focus:border-blue-500 ${
                         searchTerm.trim()
-                          ? "border-[#0a2463] dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                          ? "border-[#0a2463] bg-blue-50 dark:border-blue-500 dark:bg-blue-900/20"
                           : "border-gray-300 dark:border-gray-600"
                       }`}
                     />
@@ -778,7 +848,7 @@ const AgentLeads = () => {
                       handleFilterChange("lead_status", e.target.value);
                       setStatusFilter(e.target.value);
                     }}
-                    className="rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 focus:border-[#0a2463] dark:focus:border-blue-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:focus:border-blue-500"
                   >
                     <option value="all">All Statuses</option>
                     {LEAD_STATUSES.map((status) => (
@@ -793,7 +863,7 @@ const AgentLeads = () => {
                     onChange={(e) =>
                       handleFilterChange("state", e.target.value)
                     }
-                    className="rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 focus:border-[#0a2463] dark:focus:border-blue-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:focus:border-blue-500"
                   >
                     <option value="all">All States</option>
                     {states.map((status) => (
@@ -810,13 +880,13 @@ const AgentLeads = () => {
                     onChange={(e) =>
                       handleFilterChange("campaign", e.target.value)
                     }
-                    className="rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 focus:border-[#0a2463] dark:focus:border-blue-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                    className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-blue-500"
                   />
                 </div>
               </div>
 
               {/* Export Controls and Pagination Info */}
-              <div className="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
+              <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-gray-600 dark:text-gray-300">
                     {selectedLeads.length > 0
@@ -837,7 +907,7 @@ const AgentLeads = () => {
                     onChange={(e) =>
                       handlePerPageChange(parseInt(e.target.value))
                     }
-                    className="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    className="rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                   >
                     <option value={10}>10 per page</option>
                     <option value={25}>25 per page</option>
@@ -852,8 +922,8 @@ const AgentLeads = () => {
                     disabled={selectedLeads.length === 0}
                     className={`flex items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                       selectedLeads.length === 0
-                        ? "cursor-not-allowed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500"
-                        : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        ? "cursor-not-allowed border-gray-300 text-gray-400 dark:border-gray-600 dark:text-gray-500"
+                        : "border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
                     }`}
                   >
                     <ArrowDownTrayIcon className="h-4 w-4" />
@@ -865,8 +935,8 @@ const AgentLeads = () => {
                     disabled={totalRecords < 1}
                     className={`flex items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                       totalRecords < 1
-                        ? "cursor-not-allowed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500"
-                        : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        ? "cursor-not-allowed border-gray-300 text-gray-400 dark:border-gray-600 dark:text-gray-500"
+                        : "border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
                     }`}
                   >
                     <ArrowDownTrayIcon className="h-4 w-4" />
@@ -879,7 +949,7 @@ const AgentLeads = () => {
 
           {/* Leads Table */}
           <Card className="shieldnest-shadow flex min-h-0 flex-1 flex-col overflow-hidden bg-white dark:bg-gray-800">
-            <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex-shrink-0 border-b border-gray-200 p-6 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-[#0a2463] dark:text-blue-400">
                   {tabs.find((tab) => tab.id === activeTab)?.label} (
@@ -893,9 +963,11 @@ const AgentLeads = () => {
                       selectedLeads.length === leads.length && leads.length > 0
                     }
                     onChange={handleSelectAll}
-                    className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-[#0a2463] dark:text-blue-500 focus:ring-[#0a2463] dark:focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-gray-300 text-[#0a2463] focus:ring-[#0a2463] dark:border-gray-600 dark:text-blue-500 dark:focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-600 dark:text-gray-300">Select All</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                    Select All
+                  </span>
                 </div>
               </div>
             </div>
@@ -903,13 +975,15 @@ const AgentLeads = () => {
             {loading ? (
               <div className="p-8 text-center">
                 <div className="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-[#0a2463] dark:border-blue-500"></div>
-                <p className="mt-2 text-gray-600 dark:text-gray-300">Loading leads...</p>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">
+                  Loading leads...
+                </p>
               </div>
             ) : (
               <>
                 {/* Selected Leads Info */}
                 {selectedLeads.length > 0 && (
-                  <div className="border-b border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 px-6 py-2">
+                  <div className="border-b border-blue-200 bg-blue-50 px-6 py-2 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-blue-700 dark:text-blue-400">
                         {selectedLeads.length} lead
@@ -920,7 +994,7 @@ const AgentLeads = () => {
                           setSelectedLeads([]);
                           setPrintLeads([]);
                         }}
-                        className="text-xs text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300"
+                        className="text-xs text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                       >
                         Clear selection
                       </button>
@@ -940,48 +1014,48 @@ const AgentLeads = () => {
                               leads.length > 0
                             }
                             onChange={handleSelectAll}
-                            className="h-4 w-4 rounded border-gray-300 text-[#0a2463] focus:ring-[#0a2463]  dark:text-blue-400"
+                            className="h-4 w-4 rounded border-gray-300 text-[#0a2463] focus:ring-[#0a2463] dark:text-blue-400"
                             title="Select All"
                           />
                         </th>
                         {!purchased && (
                           <>
-                            <th className="min-w-[120px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-300 uppercase">
+                            <th className="min-w-[120px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                               Identifier
                             </th>
-                            <th className="min-w-[150px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-300 uppercase">
+                            <th className="min-w-[150px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                               Campaign Name
                             </th>
                           </>
                         )}
-                        <th className="min-w-[150px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-300 uppercase">
+                        <th className="min-w-[150px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                           Full Name
                         </th>
-                        <th className="min-w-[100px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-300 uppercase">
+                        <th className="min-w-[100px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                           Source
                         </th>
                         {activeTab !== "mailed" && (
-                          <th className="min-w-[140px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-300 uppercase">
+                          <th className="min-w-[140px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                             Registered Date
                           </th>
                         )}
-                        <th className="min-w-[120px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-300 uppercase">
+                        <th className="min-w-[120px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                           Lead Status
                         </th>
-                        <th className="min-w-[150px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-300 uppercase">
+                        <th className="min-w-[150px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                           Address
                         </th>
                         {activeTab !== "mailed" && (
                           <>
-                            <th className="min-w-[140px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-300 uppercase">
+                            <th className="min-w-[140px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                               Lead Phone
                             </th>
-                            <th className="min-w-[140px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-300 uppercase">
+                            <th className="min-w-[140px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                               From Phone
                             </th>
                           </>
                         )}
-                        <th className="min-w-[100px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 dark:text-gray-300 uppercase">
+                        <th className="min-w-[100px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                           Actions
                         </th>
                       </tr>
@@ -1102,7 +1176,7 @@ const AgentLeads = () => {
                             <td className="px-3 py-4 text-sm font-medium whitespace-nowrap">
                               <button
                                 onClick={() => setSelectedLead(lead)}
-                                className="text-[#0a2463] dark:text-blue-400 hover:text-[#0a2463]/80 dark:hover:text-blue-300"
+                                className="text-[#0a2463] hover:text-[#0a2463]/80 dark:text-blue-400 dark:hover:text-blue-300"
                                 title="View Details"
                               >
                                 <EyeIcon className="h-4 w-4" />
@@ -1117,7 +1191,7 @@ const AgentLeads = () => {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 px-6 py-3">
+                  <div className="flex-shrink-0 border-t border-gray-200 bg-gray-50 px-6 py-3 dark:border-gray-700 dark:bg-gray-700">
                     <div className="flex items-center justify-between">
                       <div className="text-sm text-gray-700 dark:text-gray-300">
                         Showing {(currentPage - 1) * perPage + 1} to{" "}
@@ -1132,8 +1206,8 @@ const AgentLeads = () => {
                           disabled={currentPage <= 1}
                           className={`rounded border px-3 py-1 ${
                             currentPage <= 1
-                              ? "cursor-not-allowed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500"
-                              : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+                              ? "cursor-not-allowed border-gray-300 text-gray-400 dark:border-gray-600 dark:text-gray-500"
+                              : "border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600"
                           }`}
                         >
                           <ChevronLeftIcon className="h-4 w-4" />
@@ -1160,8 +1234,8 @@ const AgentLeads = () => {
                                 onClick={() => handlePageChange(pageNum)}
                                 className={`rounded border px-3 py-1 ${
                                   currentPage === pageNum
-                                    ? "border-[#0a2463] dark:border-blue-500 bg-[#0a2463] dark:bg-blue-600 text-white"
-                                    : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                    ? "border-[#0a2463] bg-[#0a2463] text-white dark:border-blue-500 dark:bg-blue-600"
+                                    : "border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600"
                                 }`}
                               >
                                 {pageNum}
@@ -1175,8 +1249,8 @@ const AgentLeads = () => {
                           disabled={currentPage >= totalPages}
                           className={`rounded border px-3 py-1 ${
                             currentPage >= totalPages
-                              ? "cursor-not-allowed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500"
-                              : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+                              ? "cursor-not-allowed border-gray-300 text-gray-400 dark:border-gray-600 dark:text-gray-500"
+                              : "border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600"
                           }`}
                         >
                           <ChevronRightIcon className="h-4 w-4" />
@@ -1197,9 +1271,9 @@ const AgentLeads = () => {
           className="fixed inset-0 z-50 h-full w-full overflow-y-auto bg-gray-600/65 dark:bg-black/75"
           style={{ width: " 100vw" }}
         >
-          <div className="relative top-10 mx-auto mb-10 w-11/12 max-w-4xl rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-lg">
+          <div className="relative top-10 mx-auto mb-10 w-11/12 max-w-4xl rounded-lg border border-gray-200 bg-white p-5 shadow-lg dark:border-gray-700 dark:bg-gray-800">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4">
+            <div className="flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
               <div className="flex items-center space-x-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#0a2463] dark:bg-blue-600">
                   <span className="text-xl font-bold text-white">
@@ -1243,7 +1317,7 @@ const AgentLeads = () => {
               </div>
               <button
                 onClick={() => setSelectedLead(null)}
-                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -1260,7 +1334,9 @@ const AgentLeads = () => {
                   <div className="space-y-3">
                     {!purchased && (
                       <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Identifier</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Identifier
+                        </p>
                         <p className="font-medium text-gray-900 dark:text-gray-100">
                           {selectedLead.identifier ||
                             selectedLead.mortgage_id ||
@@ -1271,20 +1347,26 @@ const AgentLeads = () => {
                     )}
                     {!purchased && (
                       <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Campaign Name</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Campaign Name
+                        </p>
                         <p className="font-medium text-gray-900 dark:text-gray-100">
                           {selectedLead.campaign_name || ""}
                         </p>
                       </div>
                     )}
                     <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Full Name</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Full Name
+                      </p>
                       <p className="font-medium text-gray-900 dark:text-gray-100">
                         {selectedLead.full_name || selectedLead.name || ""}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Source</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Source
+                      </p>
                       <p className="font-medium text-gray-900 dark:text-gray-100">
                         {source[selectedLead.source_id] || "N/A"}
                       </p>
@@ -1399,7 +1481,7 @@ const AgentLeads = () => {
             </div>
 
             {/* Modal Footer */}
-            <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
+            <div className="flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
               <span className="text-sm text-gray-500 dark:text-gray-400">
                 Lead Category:{" "}
                 {tabs.find((item) => item.id === activeTab).label || ""}
@@ -1407,7 +1489,7 @@ const AgentLeads = () => {
               <div className="flex space-x-3">
                 <button
                   onClick={() => setSelectedLead(null)}
-                  className="rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
                 >
                   Close
                 </button>

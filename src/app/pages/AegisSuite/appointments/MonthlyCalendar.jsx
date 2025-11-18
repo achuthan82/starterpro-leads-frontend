@@ -1,6 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState} from "react";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
 import moment from "moment/moment";
+import { useDisclosure } from "hooks";
+import DailyAppointmentModal from "./DailyAppointmentModal";
 
 const MonthlyCalendar = ({
   selectedDate,
@@ -12,6 +14,8 @@ const MonthlyCalendar = ({
   setSelectedAppointment,
   detailOpen
 }) => {
+  const [isOpen, { open, close }] = useDisclosure(false);
+  const [appointmentsOverflow, setAppointmentsOverflow] = useState([])
   const appointmentsByDate = useMemo(() => {
     const grouped = {};
     appointments.forEach((apt) => {
@@ -70,6 +74,7 @@ const MonthlyCalendar = ({
     setEndDate(lastDay);
     loadAppointments(firstDay, lastDay);
   };
+ 
   return (
     <div className="rounded-lg bg-white p-4 shadow-md md:p-6 dark:bg-gray-800 dark:shadow-gray-900">
       {/* Calendar Header */}
@@ -128,6 +133,7 @@ const MonthlyCalendar = ({
           ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
           const dayAppointments = appointmentsByDate[dateStr] || [];
+          console.log('day-appointment', dayAppointments)
           const currentDate = new Date();
           const isToday =
             currentDate.toDateString() ===
@@ -174,7 +180,8 @@ const MonthlyCalendar = ({
                   </div>
                 ))}
                 {dayAppointments.length > 3 && (
-                  <div className="px-2 text-xs text-gray-500 dark:text-gray-400">
+
+                <div className="px-2 text-xs text-gray-500 dark:text-gray-400" onClick={() => {setAppointmentsOverflow(dayAppointments); open()}}> 
                     +{dayAppointments.length - 3} more
                   </div>
                 )}
@@ -183,6 +190,7 @@ const MonthlyCalendar = ({
           );
         })}
       </div>
+      <DailyAppointmentModal isOpen={isOpen} close={close} appointmentList={appointmentsOverflow} detailOpen={detailOpen} setSelectedAppointment={setSelectedAppointment}/>
     </div>
   );
 };

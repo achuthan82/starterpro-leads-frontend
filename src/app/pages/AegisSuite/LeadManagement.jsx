@@ -1337,9 +1337,9 @@ const LeadManagement = () => {
                         <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider min-w-[140px]">
                           Borrower Phone
                         </th> */}
-                        <th className="min-w-[100px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
+                        {/* <th className="min-w-[100px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                           Actions
-                        </th>
+                        </th> */}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
@@ -1568,7 +1568,7 @@ const LeadManagement = () => {
                             </td> */}
 
                             {/* Actions */}
-                            <td className="px-3 py-4 text-sm font-medium whitespace-nowrap">
+                            {/* <td className="px-3 py-4 text-sm font-medium whitespace-nowrap">
                               <button
                                 onClick={() => setSelectedLead(lead)}
                                 className="text-[#0a2463] hover:text-[#0a2463]/80 dark:text-blue-400 dark:hover:text-blue-300"
@@ -1576,7 +1576,7 @@ const LeadManagement = () => {
                               >
                                 <EyeIcon className="h-4 w-4" />
                               </button>
-                            </td>
+                            </td> */}
                           </tr>
                         ))
                       )}

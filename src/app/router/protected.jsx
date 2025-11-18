@@ -47,6 +47,13 @@ const protectedRoutes = {
               .default,
           }),
         },
+         {
+          path: "side-leads",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/side-lead-bank/LeadBank"))
+              .default,
+          }),
+        },
         {
           path: "subscriptions",
           lazy: async () => ({
