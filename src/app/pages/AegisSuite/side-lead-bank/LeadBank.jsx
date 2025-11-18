@@ -379,7 +379,7 @@ const LeadBank = () => {
   return (
     <div className="flex min-h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
-      <SharedSidebar currentPath="/lead-management" />
+      <SharedSidebar currentPath="/side-leads" />
 
       {/* Main Content */}
       <div className="flex min-w-0 flex-1 flex-col">
