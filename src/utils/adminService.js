@@ -402,6 +402,15 @@ class AdminService {
     const response = await axiosInstance.get(`${API_ENDPOINTS.ADMIN.AGENT_SALES_COUNT}`, { params });
     return response.data;
   }
+
+  /**
+   * Get Agency List
+   * @returns {Promise} Response with agency list
+   */
+  async getAgencyList() {
+    const response = await axiosInstance.get('/agency/my-list');
+    return response.data;
+  }
 }
 
 // Export singleton instance

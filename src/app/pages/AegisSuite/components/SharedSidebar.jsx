@@ -236,8 +236,8 @@ const SharedSidebar = ({ currentPath = "" }) => {
               <ChevronLeftIcon className="h-10 w-10" />
             </button>
           </div>
-          {user.agency_name !== 'StarterPro' && (
-            <h3 className="text-sm ml-[32px] mt-2 font-bold text-gray-900 dark:text-gray-100">[{user.agency_name}]</h3>
+          {user.agency?.name !== 'StarterPro' && (
+            <h3 className="text-sm ml-[32px] mt-2 font-bold text-gray-900 dark:text-gray-100">[{user.agency?.name}]</h3>
           )}
           </>
         )}
@@ -278,7 +278,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
                 </div>
               </li>
               {adminItems.map((item) => (
-                <li key={item.id} className={`${user.agency_name !== 'StarterPro' && item.href === "/admin/subscriptions" ? "hidden" : "mb-2 w-full min-w-0"}`}>
+                <li key={item.id} className={`${user.agency?.name !== 'StarterPro' && item.href === "/admin/subscriptions" ? "hidden" : "mb-2 w-full min-w-0"}`}>
                   <button
                     onClick={() => navigate(item.href)}
                     className={`flex w-full items-center ${isCollapsed ? "justify-center" : "space-x-3"} rounded-lg p-3 text-left transition-all duration-200 min-w-0 ${

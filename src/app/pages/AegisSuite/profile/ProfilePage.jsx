@@ -47,7 +47,7 @@ const ProfilePage = () => {
           setUser({
             name: temp.name,
             email: temp.email,
-            agency: temp.agency_name,
+            agency: temp?.agency?.name || '',
             role: temp.role_id === 1 ? "Admin" : "Agent",
             npn: temp.npn,
             phone: temp.phone,

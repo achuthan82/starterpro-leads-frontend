@@ -19,7 +19,7 @@ const passwordRules =
 
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
-  agency_name: yup.string().required("Agency Name is required"),
+  // agency_name: yup.string().required("Agency Name is required"),
   npn_number: yup.string().required("NPN Number is required"),
   phone: yup
     .string()
@@ -45,7 +45,7 @@ export default function Register() {
   const registeredName = searchParams.get("name") || "";
   const registeredPhone = searchParams.get("phone") || "";
   const npn_number = searchParams.get("npn") || "";
-  const agencyName = searchParams.get("agency_name") || "";
+  // const agencyName = searchParams.get("agency_name") || "";
   const params = useParams();
   const register_token = params.token.replace(/\${5}/g, ".");
 
@@ -64,7 +64,7 @@ export default function Register() {
     resolver: yupResolver(schema),
     defaultValues: {
       name: registeredName,
-      agency_name: agencyName,
+      // agency_name: agencyName,
       npn_number: npn_number,
       phone: registeredPhone,
       password: "",
@@ -93,7 +93,7 @@ export default function Register() {
     try {
       const payload = {
         name: data.name,
-        agency_name: data.agency_name,
+        // agency_name: data.agency_name,
         npn: data.npn_number,
         phone: data.phone,
         password: data.password,
@@ -214,7 +214,7 @@ export default function Register() {
                 </p>
               )}
             </div>
-            <div className="hidden">
+            {/* <div>
               <label
                 htmlFor="agency_name"
                 className="mb-2 block text-sm font-medium text-[#0a2463] dark:text-blue-400"
@@ -235,7 +235,7 @@ export default function Register() {
                   {errors.agency_name.message}
                 </p>
               )}
-            </div>
+            </div> */}
             <div>
               <label
                 htmlFor="npn_number"

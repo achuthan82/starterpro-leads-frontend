@@ -262,7 +262,7 @@ const ProspectList = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-gray-500 dark:text-gray-400">
-                              {user.agency_name || "N/A"}
+                              {user?.agency?.name || "N/A"}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">

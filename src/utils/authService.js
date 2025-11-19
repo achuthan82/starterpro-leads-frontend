@@ -39,7 +39,7 @@ class AuthService {
 
   /**
    * Register from Invitation
-   * @param {Object} data - { agency_name, confirm_password, name, password, phone }
+   * @param {Object} data - { agency, confirm_password, name, password, phone }
    * @param {string} registerToken - The invitation token for Authorization header
    * @returns {Promise} Response with user data
    */

@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -42,15 +42,8 @@ const UserModal = ({
     { label: "Agent", value: 2 },
   ];
 
-  const agencyOptions1 = [
-    { label: "StarterPro", value: 'StarterPro' },
-    { label: "YS Financials", value: 'YS Financials' },
-  ]
-
-  const agencyOptions2 = [
-    { label: "YS Financials", value: 'YS Financials' },
-  ]
-
+  const [agencyOptions, setAgencyOptions] = useState([]);
+  const [loadingAgencies, setLoadingAgencies] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const types = [
@@ -187,8 +180,8 @@ const UserModal = ({
     if (data.phone) {
       d["phone"] = data.phone;
     }
-    if (data?.agency_name) {
-      d["agency_name"] = data?.agency_name.value;
+    if (data?.agency_id) {
+      d["agency_id"] = data?.agency_id?.value;
     }
     if (data?.npn_number) {
       d["npn"] = data?.npn_number;
@@ -271,9 +264,55 @@ const UserModal = ({
     setValue("phone", "");
     setValue("npn_number", "");
     setValue("user_role", "");
-    setValue("agency_name", "");
+    setValue("agency_id", "");
     setInputFields([{ id: "", auto_generate: false, source: "" }]);
   };
+  const fetchAgencyList = useCallback(async () => {
+    setLoadingAgencies(true);
+    try {
+      const response = await adminService.getAgencyList();
+      console.log("Agency list response:", response);
+      
+      // Transform API response to react-select format
+      let agencies = [];
+      if (response.data && Array.isArray(response.data)) {
+        agencies = response.data.map((agency) => ({
+          label: agency.name,
+          value: agency.id,
+          parent_agency_id: agency.parent_agency_id,
+        }));
+      } else if (Array.isArray(response)) {
+        agencies = response.map((agency) => ({
+          label: agency.name,
+          value: agency.id,
+          parent_agency_id: agency.parent_agency_id,
+        }));
+      } else if (response.agencies && Array.isArray(response.agencies)) {
+        agencies = response.agencies.map((agency) => ({
+          label: agency.name,
+          value: agency.id,
+          parent_agency_id: agency.parent_agency_id,
+        }));
+      }
+      
+      setAgencyOptions(agencies);
+    } catch (error) {
+      console.error("Error fetching agency list:", error);
+      toast.error("Failed to load agency list");
+      // Fallback to empty array or default options
+      setAgencyOptions([]);
+    } finally {
+      setLoadingAgencies(false);
+    }
+  }, []);
+
+  // Fetch agency list when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      fetchAgencyList();
+    }
+  }, [isOpen, fetchAgencyList]);
+
   useEffect(() => {
     if (editData !== null) {
       if (editData.agents.length > 0) {
@@ -295,7 +334,12 @@ const UserModal = ({
       if (editData.npn) setValue("npn_number", editData.npn);
       setValue("phone", editData.phone);
       setValue("email", editData.email);
-      if (editData?.agency_name) setValue("agency_name", agencyOptions1.find(item => item.value === editData?.agency_name));
+      if (editData?.agency_id && agencyOptions.length > 0) {
+        const agencyOption = agencyOptions.find(item => item.value === editData?.agency_id);
+        if (agencyOption) {
+          setValue("agency_id", agencyOption.value);
+        }
+      }
       setValue("user_role", roleOptions[role_id]);
     } else {
       console.log("errors", errors);
@@ -305,10 +349,10 @@ const UserModal = ({
       setValue("npn_number", "");
       setValue("email", "");
       setValue("user_role", "");
-      setValue("agency_name", "");
+      setValue("agency_id", "");
       setInputFields([{ id: "", auto_generate: false, source: "" }]);
     }
-  }, [editData]);
+  }, [editData, agencyOptions]);
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -386,31 +430,32 @@ const UserModal = ({
                 <div className="w-full">
                   <label
                     className="mb-1 block text-left text-sm font-medium"
-                    htmlFor="agency_name"
+                    htmlFor="agency_id"
                   >
                     Agency Name <span className="text-red-500">*</span>
                   </label>
                   <Controller
                     control={control}
-                    name="agency_name"
+                    name="agency_id"
                     rules={{ required: "Agency name is required" }}
                     render={({ field }) => (
                       <Select
-                        options={currentUser.agency_name === 'StarterPro' ? agencyOptions1 : agencyOptions2}
+                        options={agencyOptions}
+                        isLoading={loadingAgencies}
                         {...field}
                         innerRef={field.ref}
                         autoFocus
                         styles={getReactSelectDarkModeStyles()}
-                        invalid={errors.agency_name}
+                        invalid={errors.agency_id}
                         onChange={(event) => {
                           field.onChange(event);
                         }}
                       />
                     )}
                   />
-                  {errors.agency_name && (
+                  {errors.agency_id && (
                     <span className="text-red-500">
-                      {errors.agency_name.message}
+                      {errors.agency_id.message}
                     </span>
                   )}
                 </div>

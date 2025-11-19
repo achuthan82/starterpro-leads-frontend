@@ -150,7 +150,7 @@ export default function MailerRequestForm({ selectedPlan, plans }) {
       setValue("lastName4", nms[1]);
       setValue("lastName5", nms[1]);
       setValue("phone", userData?.phone);
-      setValue("agency", userData?.agency_name);
+      setValue("agency", userData?.agency?.name);
       setValue("email", userData?.email);
     }
   }, []);
