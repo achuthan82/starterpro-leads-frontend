@@ -186,8 +186,8 @@ const WeeklyCalendar = ({
                             setSelectedAppointment(apt);
                             detailOpen();
                           }}
-                          className="cursor-pointer rounded p-2 text-xs text-white transition-opacity hover:opacity-90"
-                          style={{ backgroundColor: apt.color }}
+                          className={`cursor-pointer rounded p-2 text-xs text-white transition-opacity hover:opacity-90 ${apt.color}`}
+                          // style={{ backgroundColor: apt.color }}
                         >
                           <div className="font-medium">{apt.title}</div>
                           {/* <div>{apt.type}</div> */}

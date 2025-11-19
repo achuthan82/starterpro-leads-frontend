@@ -42,4 +42,20 @@ export const SOURCE_MAPPING = {
     3: 'FEX',
     // Add more source mappings as needed
   };
+export const STATUS_COLORS = {
+                1: 'bg-[var(--atoll)]', // NEW
+                2: 'bg-[var(--atoll)]', // FIRST CALL
+                3: 'bg-[var(--atlantis)]', // SECOND CALL
+                4: 'bg-[#f97316]', // THIRD CALL
+                5: 'bg-[#8b5cf6]', // TEXT
+                6: 'bg-[#3b82f6]', // APPOINTMENT
+                7: 'bg-[var(--fern)]', // SOLD
+                8: 'bg-[var(--waterloo)]', // NOT INTERESTED
+                9: 'bg-[var(--gray-suit)]', // SIT / NO SALE
+                10: 'bg-[#ef4444]', // NO SHOW
+                11: 'bg-[#374151]', // DNC
+                12: 'bg-[#4e1515]', // SUPPRESSED
+                13: 'bg-[#10151d]' // Suppression Denied
+              
+}
   

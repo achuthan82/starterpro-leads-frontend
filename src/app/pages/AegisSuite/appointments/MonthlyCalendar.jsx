@@ -133,7 +133,6 @@ const MonthlyCalendar = ({
           ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
           const dayAppointments = appointmentsByDate[dateStr] || [];
-          console.log('day-appointment', dayAppointments)
           const currentDate = new Date();
           const isToday =
             currentDate.toDateString() ===
@@ -172,8 +171,8 @@ const MonthlyCalendar = ({
                       detailOpen()
                       // setShowDetailModal(true);
                     }}
-                    className="cursor-pointer truncate rounded px-2 py-1 text-xs text-white transition-opacity hover:opacity-90"
-                    style={{ backgroundColor: apt.color }}
+                    className={`cursor-pointer truncate rounded px-2 py-1 text-xs text-white transition-opacity hover:opacity-90 ${apt.color}`}
+                    // style={{ backgroundColor: apt.color }}
                     title={`${apt.time} - ${apt.title}`}
                   >
                     <span className="font-medium">{apt.time}</span> {apt.title}
