@@ -64,10 +64,44 @@ class AppointmentService {
             throw error;
         }
     }
-     async createPublicAppointment(appointmentData) {
+    async getPaginatedLeads(params = {}) {
+        try {
+            const {
+                page = 1,
+                per_page = 10,
+                name = '',
+                lead_status = ''
+            } = params;
+
+            // Build query parameters
+            const queryParams = {
+                page,
+                per_page
+            };
+
+            // Add optional filters only if they have values
+            if (name && name.trim()) {
+                queryParams.name = name.trim();
+            }
+
+            if (lead_status && lead_status !== 'All Statuses' && lead_status !== 'all') {
+                queryParams.lead_status = lead_status;
+            }
+
+            const response = await axios.get('/appointment/leads/complete-incomplete/paginated', {
+                params: queryParams
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching paginated leads for dialer:', error);
+            throw error;
+        }
+    }
+    async createPublicAppointment(appointmentData) {
         try {
             const { ...payload } = appointmentData;
-            const response = await axios.put('/appointment/send-invitation', payload);
+            const response = await axios.post('/appointment/send-invitation', payload);
             return response.data;
         } catch (error) {
             console.error('Error creating appointment:', error);

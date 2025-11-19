@@ -5,6 +5,7 @@ import {
   CalendarIcon,
 } from "@heroicons/react/24/outline";
 import moment from "moment/moment";
+import { LEAD_STATUS } from "utils/apiService";
 
 const DailyCalendar = ({
   selectedDate,
@@ -63,7 +64,10 @@ const DailyCalendar = ({
     setEndDate(end_date);
     loadAppointments(start_date, end_date);
   };
-
+  const getStatusBadgeClass = (statusId) => {
+    if (!statusId) return "";
+    return `shieldnest-badge-${statusId}`;
+  };
   const handleNextDay = () => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() + 1);
@@ -122,7 +126,10 @@ const DailyCalendar = ({
               No appointments scheduled for this day
             </p>
             <button
-              onClick={() => {setSelectedAppointment(null); open()}}
+              onClick={() => {
+                setSelectedAppointment(null);
+                open();
+              }}
               className="mt-4 rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
             >
               Schedule Appointment
@@ -165,11 +172,11 @@ const DailyCalendar = ({
                           setSelectedAppointment(apt);
                           detailOpen();
                         }}
-                        className="cursor-pointer rounded-lg border-l-4 p-4 transition-all hover:shadow-md dark:shadow-gray-900 dark:hover:shadow-lg"
-                        style={{
-                          borderLeftColor: apt.color,
-                          backgroundColor: apt.color + "10",
-                        }}
+                        className={`cursor-pointer rounded-lg border-l-4 p-4 transition-all hover:shadow-md dark:shadow-gray-900 dark:hover:shadow-lg ${apt.color}`}
+                        // style={{
+                        //   borderLeftColor: apt.color,
+                        //   backgroundColor: apt.color + "10",
+                        // }}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
@@ -178,15 +185,11 @@ const DailyCalendar = ({
                                 {apt.title}
                               </h4>
                               <span
-                                className={`rounded-full px-2 py-1 text-xs font-medium ${
-                                  apt.status === "confirmed"
-                                    ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
-                                    : apt.status === "pending"
-                                      ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400"
-                                      : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
-                                }`}
+                                className={`rounded-full px-2 py-1 text-xs font-medium status-badge ${getStatusBadgeClass(apt.status)}`}
                               >
-                                {apt.status}
+                                {LEAD_STATUS[apt.status]
+                                  ? LEAD_STATUS[apt.status]
+                                  : LEAD_STATUS[1]}
                               </span>
                             </div>
                             <div className="text-sm text-gray-600 dark:text-gray-400">

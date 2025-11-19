@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { XMarkIcon, CalendarIcon } from "@heroicons/react/24/outline";
-import { appointmentService, dialerService } from "utils/apiService";
+import { appointmentService} from "utils/apiService";
 import { toast } from "sonner";
 import Select from "react-select";
 import { getReactSelectDarkModeStyles } from "utils/reactSelectDarkMode";
@@ -26,6 +26,7 @@ const ScheduleAppointmentModal = ({
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [availability, setAvailability] = useState(null);
+  const [selectedClient, setSelectedClient] = useState(null);
   const [timeSlots, setTimeSlots] = useState({
     morning: [],
     afternoon: [],
@@ -136,24 +137,30 @@ const ScheduleAppointmentModal = ({
 
   const updateTimeSlotsWithBookings = useCallback(
     (appointments) => {
-      console.log(selectedDate, 'selected-date')
+      console.log(selectedDate, "selected-date");
       setTimeSlots((prev) => {
         const updateCategory = (category) => {
           return category.map((slot) => {
-            console.log('slot', slot)
+            console.log("slot", slot);
             const slotDateTime = new Date(slot.datetime);
             let isPast = false;
-            // 
-            console.log(selectedDate)
-            if (moment(selectedDate, "YYYY-MM-DD").isSame(moment(slot.datetime), "day") && moment(slot.datetime).isBefore(moment()) ) {
-              isPast = true
+            //
+            console.log(selectedDate);
+            if (
+              moment(selectedDate, "YYYY-MM-DD").isSame(
+                moment(slot.datetime),
+                "day",
+              ) &&
+              moment(slot.datetime).isBefore(moment())
+            ) {
+              isPast = true;
             }
             const isBooked = appointments.some((apt) => {
               const aptStart = parseAppointmentTime(apt.meeting_datetime);
               const aptEnd = parseAppointmentTime(apt.meeting_end_datetime);
               return slotDateTime >= aptStart && slotDateTime < aptEnd;
             });
-            return { ...slot, available: !isBooked && !isPast};
+            return { ...slot, available: !isBooked && !isPast };
           });
         };
 
@@ -172,7 +179,9 @@ const ScheduleAppointmentModal = ({
 
     setLoadingSlots(true);
     try {
-      const timezone = availability?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const timezone =
+        availability?.timezone ||
+        Intl.DateTimeFormat().resolvedOptions().timeZone;
       // Format dates for API: MM-DD-YYYY HH:MM:SS
       const [year, month, day] = selectedDate.split("-");
       const startDate = `${month}-${day}-${year} 00:00:00`;
@@ -199,14 +208,18 @@ const ScheduleAppointmentModal = ({
   const getClients = (name = "") => {
     setClientsLoading(true);
     const params = { page: 1, per_page: 50, name: name };
-    dialerService
+    appointmentService
       .getPaginatedLeads(params)
       .then((response) => {
         console.log(response);
         if (response.status === 200) {
           setClients(
             response.data.map((item) => {
-              return { label: item.full_name, value: item.agent_id, ...item };
+              return {
+                label: item.full_name,
+                value: item.lead_member_id,
+                ...item,
+              };
             }),
           );
         } else if (response.status === 204) {
@@ -232,6 +245,7 @@ const ScheduleAppointmentModal = ({
   };
   const handleClient = (selectedOption) => {
     if (selectedOption) {
+      setSelectedClient(selectedOption);
       setClientName(selectedOption.label);
       setPhoneNumber(selectedOption?.ivr_response?.ani);
     }
@@ -250,11 +264,10 @@ const ScheduleAppointmentModal = ({
     }
   }, [isOpen]);
   useEffect(() => {
-    if (isOpen && viewType === 'today' && defaultDate) {
-      setSelectedDate(moment(defaultDate).format("YYYY-MM-DD"))
+    if (isOpen && viewType === "today" && defaultDate) {
+      setSelectedDate(moment(defaultDate).format("YYYY-MM-DD"));
     }
-
-  },[isOpen, defaultDate, viewType])
+  }, [isOpen, defaultDate, viewType]);
   // Fetch appointment settings
   useEffect(() => {
     if (isOpen) {
@@ -264,12 +277,12 @@ const ScheduleAppointmentModal = ({
 
   useEffect(() => {
     if (editAppointment?.date) {
-      console.log(editAppointment)
+      console.log(editAppointment);
       setSelectedDate(editAppointment.date);
       setClientName(editAppointment?.client);
       setPhoneNumber(editAppointment?.phone);
       setTitle(editAppointment?.title);
-      setNotes(editAppointment?.notes || '');
+      setNotes(editAppointment?.notes || "");
     }
     if (editAppointment?.slot_time) {
       findSlot(editAppointment.slot_time);
@@ -284,8 +297,8 @@ const ScheduleAppointmentModal = ({
   }, [selectedDate]);
 
   const findSlot = (time) => {
-    console.log(time)
-    console.log(timeSlots)
+    console.log(time);
+    console.log(timeSlots);
     let time_slot = null;
     if (timeSlots.morning.some((item) => item.time === time)) {
       setSelectedTime(timeSlots.morning.find((item) => item.time === time));
@@ -384,16 +397,29 @@ const ScheduleAppointmentModal = ({
         meeting_datetime: meetingDateTime,
         title: title.trim(),
         notes: notes.trim() || "",
+        mortgage_id: selectedClient
+          ? selectedClient.mortgage_id
+          : selectedLead?.originalData?.mortgage_id,
+        lead_member_id: selectedClient
+          ? selectedClient?.ivr_response?.lead_member_id
+          : selectedLead?.originalData.lead_member_id,
       };
 
       let response;
       if (!editAppointment) {
         response = await appointmentService.createAppointment(appointmentData);
       } else {
-        response = await appointmentService.editAppointment(editAppointment.id, appointmentData);
+        response = await appointmentService.editAppointment(
+          editAppointment.id,
+          appointmentData,
+        );
       }
 
-      if (response.status === 201 || response.status === 200 || response.success) {
+      if (
+        response.status === 201 ||
+        response.status === 200 ||
+        response.success
+      ) {
         toast.success(
           response.message || "Appointment scheduled successfully!",
         );

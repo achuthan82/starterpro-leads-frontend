@@ -122,6 +122,7 @@ const PowerDialer = () => {
 
   // Update context when local lead selection changes
   const handleSelectLead = (lead) => {
+    console.log('lead', lead)
     setSelectedLead(lead);
   };
 

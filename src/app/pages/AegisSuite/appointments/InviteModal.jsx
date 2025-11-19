@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -10,9 +10,13 @@ import { useForm, Controller } from "react-hook-form";
 import { Button, Spinner, Input, Radio } from "components/ui";
 import { toast } from "sonner";
 import appointmentService from "utils/appointmentService";
+import Select from "react-select";
 
 const InviteModal = ({ isInviteOpen, inviteClose }) => {
   const [loading, setLoading] = useState(false);
+  const [clientsLoading, setClientsLoading] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [clients, setClients] = useState([])
   const {
     control,
     handleSubmit,
@@ -25,42 +29,93 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
 
   const selectedType = watch("type");
 
-  const submitData = async(form) => {
+  const submitData = async (form) => {
     setLoading(true);
-    let recipient_data = {
-      name: form.name,
+  
+     const payload = {
+      name:form?.client?.full_name,
+      title: form.title,
+      mortgage_id:form?.client?.mortgage_id,
+      lead_member_id:form?.client?.lead_member_id
     };
-
     if (form.type === "email") {
-      recipient_data.email = form.email;
+      payload['email'] = form.email;
     }
 
     if (form.type === "sms") {
-      recipient_data.phone = `+1${form.phone}`; 
+      payload['phone'] = `+1${form.phone}`;
     }
 
-    const payload = {
-      recipient_data,
-      title: form.title,
-    };
+   
     try {
-      const  response = await appointmentService.createPublicAppointment(payload)
-        if (response.status === 201 || response.status === 200 || response.success) {
+      const response =
+        await appointmentService.createPublicAppointment(payload);
+      if (
+        response.status === 201 ||
+        response.status === 200 ||
+        response.success
+      ) {
         toast.success(
           response.message || "Appointment scheduled successfully!",
         );
-        inviteClose()
+        inviteClose();
       } else {
         toast.error(response.message || "Failed to schedule appointment");
       }
-    }
-    catch (err) {
+    } catch (err) {
       console.error("Error scheduling appointment:", err);
       toast.error(err.message || "Failed to schedule appointment");
     } finally {
       setLoading(false);
     }
   };
+  const handleClient = (selectedClient) => {
+    setValue('phone', selectedClient?.ivr_response?.ani.slice(2))
+    setValue('email', selectedClient?.email)
+  }
+  const loadOptions = (inputValue, actionMeta) => {
+    setSearchValue(inputValue);
+    if (actionMeta.action === "input-change") {
+      getClients(inputValue);
+    }
+  };
+  const getClients = (name = "") => {
+    setClientsLoading(true);
+    const params = { page: 1, per_page: 50, name: name };
+    appointmentService
+      .getPaginatedLeads(params)
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          setClients(
+            response.data.map((item) => {
+              return {
+                label: item.full_name,
+                value: item.lead_member_id,
+                ...item,
+              };
+            }),
+          );
+        } else if (response.status === 204) {
+          setClients([]);
+        } else {
+          setClients([]);
+          toast.error(response?.data?.message || "Failed to fetch clients");
+        }
+      })
+      .catch((error) => {
+        setClients([]);
+        toast.error(error?.message || "Failed to fetch clients");
+      })
+      .finally(() => {
+        setClientsLoading(false);
+      });
+  };
+  useEffect(() => {
+    if (isInviteOpen) {
+      getClients();
+    }
+  }, [isInviteOpen]);
 
   return (
     <Transition appear show={isInviteOpen} as={Fragment}>
@@ -105,27 +160,33 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                 {/* NAME */}
                 <div className="w-full">
                   <label className="mb-1 block text-left text-sm font-medium">
-                    Name <span className="text-red-500">*</span>
+                    Choose Client <span className="text-red-500">*</span>
                   </label>
-
                   <Controller
+                    name="client"
                     control={control}
-                    name="name"
-                    rules={{ required: "Name is required" }}
+                    rules={{ required: "Please select a client" }}
                     render={({ field }) => (
-                      <Input
-                        {...field}
-                        type="text"
-                        placeholder="Enter name"
-                        invalid={errors.name}
-                      />
+                      <>
+                        <Select
+                          {...field}
+                          isLoading={clientsLoading}
+                          options={clients}
+                          onInputChange={loadOptions}
+                          inputValue={searchValue}
+                          placeholder="Select Client"
+                          classNamePrefix="react-select"
+                          onChange={(value) => { field.onChange(value); handleClient(value)}} // important!
+                        />
+
+                        {errors.client && (
+                          <span className="text-sm text-red-500">
+                            {errors.client.message}
+                          </span>
+                        )}
+                      </>
                     )}
                   />
-                  {errors.name && (
-                    <span className="text-sm text-red-500">
-                      {errors.name.message}
-                    </span>
-                  )}
                 </div>
 
                 {/* TITLE */}
@@ -172,7 +233,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                           checked={field.value === "email"}
                           onChange={() => {
                             field.onChange("email");
-                            setValue("phone", "");
+                            // setValue("phone", "");
                           }}
                         />
 
@@ -182,7 +243,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                           checked={field.value === "sms"}
                           onChange={() => {
                             field.onChange("sms");
-                            setValue("email", "");
+                            // setValue("email", "");
                           }}
                         />
                       </div>

@@ -10,6 +10,7 @@ import calendarService from "utils/clendarService";
 import ScheduleAppointmentModal from "app/pages/powerDialer/ScheduleAppointmentModal";
 import DeleteAppointmentModal from "./DeleteAppointmentModal";
 import InviteModal from "./InviteModal";
+import { STATUS_COLORS } from "constants/app.constant";
 const Appointments = () => {
   const [viewType, setViewType] = useState("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -125,12 +126,12 @@ const Appointments = () => {
                 endTime:
                   moment(item.meeting_end_datetime).format("HH:mm") || "00:00",
                 // type: "consultation",
-                status: "confirmed",
+                status:item.lead_status,
                 date: moment(
                   item.meeting_datetime,
                   "MM-DD-YYYY HH:mm:ss",
                 ).format("YYYY-MM-DD"),
-                color: "#3B82F6", // default color
+                color: STATUS_COLORS[item.lead_status] ? STATUS_COLORS[item.lead_status] : STATUS_COLORS[1],
                 title: item.title || "Untitled Meeting", // keep the title
               };
             }),
@@ -200,6 +201,9 @@ const Appointments = () => {
       setTotal(appointments.length);
     }
   }, [appointments, viewType]);
+  useEffect(() => {
+    console.log(appointments, 'appointments')
+  }, [appointments])
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
