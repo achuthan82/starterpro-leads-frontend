@@ -57,7 +57,7 @@ const CopyMoveModal = ({ isOpen, close, options = [], onSubmit }) => {
         >
           <DialogPanel className="dark:bg-dark-700 relative w-full max-w-md rounded-2xl bg-white px-6 py-6 text-gray-900 shadow-xl transition-all dark:text-gray-100">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Copy/Move Agents</h2>
+              <h2 className="text-xl font-semibold">Assign Leads to Agents</h2>
               <button
                 onClick={close}
                 className="dark:hover:bg-dark-600 rounded-lg p-2 transition-colors hover:bg-gray-100"

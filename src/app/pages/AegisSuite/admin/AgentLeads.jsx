@@ -805,7 +805,7 @@ const AgentLeads = () => {
               </nav>
               <div className="flex flex-wrap gap-5">
                 <Checkbox
-                  label="View Market Place Leads"
+                  label="View Lead Bank Leads"
                   onChange={(event) => {
                     setPurchased(event.target.checked);
                     handleTypeChange(event.target.checked);

@@ -1021,7 +1021,7 @@ const LeadManagement = () => {
               </nav>
               <div className="flex flex-wrap gap-5">
                 <Checkbox
-                  label="View Market Place Leads"
+                  label="View Lead Bank Leads"
                   onChange={(event) => {
                     fetchLeads(
                       activeTab,

@@ -419,7 +419,7 @@ const LeadBank = () => {
               </nav>
               <div className="flex flex-wrap gap-5">
                 <Checkbox
-                  label="View Market Place Leads"
+                  label="View Lead Bank Leads"
                   onChange={(event) => {
                     fetchLeads(
                       activeTab,
@@ -555,7 +555,7 @@ const LeadBank = () => {
                     }`}
                   >
                     <ArrowsRightLeftIcon className="h-4 w-4" />
-                    <span>Copy/Move</span>
+                    <span>Assign Leads to Agents</span>
                   </button>
 
                 </div>

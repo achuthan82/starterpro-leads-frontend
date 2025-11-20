@@ -315,6 +315,7 @@ const UserModal = ({
 
   useEffect(() => {
     if (editData !== null) {
+      console.log("editData", editData);
       if (editData.agents.length > 0) {
         const inputData = editData.agents.map((item, index) => {
           return {
@@ -334,10 +335,11 @@ const UserModal = ({
       if (editData.npn) setValue("npn_number", editData.npn);
       setValue("phone", editData.phone);
       setValue("email", editData.email);
-      if (editData?.agency_id && agencyOptions.length > 0) {
-        const agencyOption = agencyOptions.find(item => item.value === editData?.agency_id);
+      if (editData?.agency && agencyOptions.length > 0) {
+        const agencyOption = agencyOptions.find(item => item.value === editData?.agency?.id);
+        console.log("agencyOption", agencyOption);
         if (agencyOption) {
-          setValue("agency_id", agencyOption.value);
+          setValue("agency_id", agencyOption);
         }
       }
       setValue("user_role", roleOptions[role_id]);
