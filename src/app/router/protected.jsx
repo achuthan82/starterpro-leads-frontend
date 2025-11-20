@@ -50,7 +50,7 @@ const protectedRoutes = {
          {
           path: "side-leads",
           lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/side-lead-bank/LeadBank"))
+            Component: (await import("app/pages/AegisSuite/side-lead-bank/SideLeadBank"))
               .default,
           }),
         },
