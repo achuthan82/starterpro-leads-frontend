@@ -48,7 +48,7 @@ const SideLeadBank = () => {
       <CartProvider>
         <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
           {/* Sidebar */}
-          <SharedSidebar currentPath="/marketplace" />
+          <SharedSidebar currentPath="/side-leads" />
   
           {/* Main Content */}
           <div className="flex-1 flex flex-col overflow-hidden">

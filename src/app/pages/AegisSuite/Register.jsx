@@ -249,7 +249,7 @@ export default function Register() {
                 type="text"
                 {...register("npn_number")}
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 transition-colors focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
-                placeholder="Enter your agency name"
+                placeholder="Enter your NPN number"
                 defaultValue={npn_number}
               />
               {errors.npn_number && (
