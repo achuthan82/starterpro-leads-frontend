@@ -375,11 +375,16 @@ export default function Register() {
               )}
             </div>
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Before you sign up, please read the terms and conditions.
-                <a href="https://StarterProleads.com/terms-and-conditions/" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
-                  
-                </a>
+              <p className="mb-2 text-sm text-gray-600 dark:text-gray-300">
+                <Link
+                  to="/subscription"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline dark:text-blue-400 transition-colors duration-200 hover:text-blue-800"
+                >
+                  Subscribe to StarterPro Leads
+                </Link>
+                &nbsp;before you sign up, to get access to the leads.
               </p>
               <button
                 type="submit"
