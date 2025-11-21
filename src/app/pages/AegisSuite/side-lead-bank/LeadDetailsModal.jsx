@@ -11,6 +11,7 @@ import { Card, Button, Spinner } from "components/ui";
 import axios from "utils/axios";
 import { apiUtils } from "utils/apiService";
 import { toast } from "sonner";
+import { convertDays } from "utils/utlis";
 // import { useCart } from "app/contexts/cart/CartContext";
 
 const MarketplaceLeadDetailsModal = ({
@@ -20,7 +21,7 @@ const MarketplaceLeadDetailsModal = ({
   pricingData,
   cartData,
   setCartData,
-  selectedAgency
+  selectedAgency,
 }) => {
   //onAddToCart
   const [loading, setLoading] = useState(false);
@@ -80,7 +81,14 @@ const MarketplaceLeadDetailsModal = ({
     if ((qty.completed || 0) + (qty.incomplete || 0) === 0) return;
     let added = false;
     if (qty.completed && monthPricingGold) {
-      console.log("entered");
+      const obj = {
+        start_day: monthPricingGold.start_day,
+        end_day: monthPricingGold.end_day,
+        completed: true,
+        unit_price: monthPricingGold.unit_price,
+        description: monthPricingGold.description,
+        title: monthPricingGold.title,
+      };
       sessionStorage.setItem(
         "cart",
         JSON.stringify([
@@ -89,6 +97,7 @@ const MarketplaceLeadDetailsModal = ({
             pricing_id: monthPricingGold.id || monthPricingGold.pricing_id,
             quantity: qty.completed,
             state,
+            ...obj
           },
         ]),
       );
@@ -99,11 +108,19 @@ const MarketplaceLeadDetailsModal = ({
           pricing_id: monthPricingGold.id || monthPricingGold.pricing_id,
           quantity: qty.completed,
           state,
+          ...obj
         },
       ]);
     }
     if (qty.incomplete && monthPricingSilver) {
-      console.log("entered");
+      const obj = {
+        start_day: monthPricingSilver.start_day,
+        end_day: monthPricingSilver.end_day,
+        completed: false,
+        unit_price: monthPricingSilver.unit_price,
+        description: monthPricingSilver.description,
+        title: monthPricingSilver.title,
+      };
       sessionStorage.setItem(
         "cart",
         JSON.stringify([
@@ -112,6 +129,7 @@ const MarketplaceLeadDetailsModal = ({
             pricing_id: monthPricingSilver.id || monthPricingSilver.pricing_id,
             quantity: qty.incomplete,
             state,
+            ...obj
           },
         ]),
       );
@@ -123,11 +141,14 @@ const MarketplaceLeadDetailsModal = ({
           pricing_id: monthPricingSilver.id || monthPricingSilver.pricing_id,
           quantity: qty.incomplete,
           state,
+          ...obj
         },
       ]);
     }
     if (added) {
       toast.success("Added to cart!");
+    } else {
+      toast.error("Couldn't find matching Pricing Id")
     }
 
     setQuantities((q) => ({ ...q, [ageId]: { completed: 0, incomplete: 0 } }));
@@ -195,17 +216,17 @@ const MarketplaceLeadDetailsModal = ({
                   let monthPricingGold = null;
                   let monthPricingSilver = null;
                   if (pricingData && pricingData?.length > 0) {
+                    console.log("pricing", pricingData);
+                    console.log("group", group);
                     monthPricingGold = pricingData.find(
                       (m) =>
-                        String(m.month) === String(group.month) &&
-                        m.completed === true,
+                        m.start_day === group.start_day && m.completed === true,
                     );
                     monthPricingSilver = pricingData.find(
                       (m) =>
-                        String(m.month) === String(group.month) &&
+                        m.start_day === group.start_day &&
                         m.completed === false,
                     );
-                    console.log(monthPricingGold, monthPricingSilver);
                   }
                   // Get unit prices
                   const completedPrice = monthPricingGold
@@ -214,16 +235,15 @@ const MarketplaceLeadDetailsModal = ({
                   const incompletePrice = monthPricingSilver
                     ? monthPricingSilver.unit_price
                     : null;
-                  console.log(completedPrice, incompletePrice);
                   return (
                     <Card key={ageId} className="p-4 text-left">
                       <div className="mb-2 flex items-center justify-between">
                         <div>
                           <span className="text-lg font-bold">
-                            {group.month}+
+                            {convertDays(group.start_day)}
                           </span>
                           <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-                            Month Old
+                            Old
                           </span>
                         </div>
                         <span
