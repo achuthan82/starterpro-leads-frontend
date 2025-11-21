@@ -1,6 +1,6 @@
 // import React from 'react';
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 import axios from "utils/axios";
 import { toast } from "sonner";
@@ -18,6 +18,31 @@ const CartSidebar = ({
   const [selectedAgent, setSelectedAgent] = useState(null)
   const [assignLoading, setAssignLoading] = useState(false)
   // Sync local state with cart when cart changes
+    const toFloatWithoutRounding = (num, decimalPlaces) => {
+    const numStr = String(num);
+    const dotIndex = numStr.indexOf('.');
+  
+    if (dotIndex === -1) {
+      return parseFloat(numStr); // No decimal part, return as is
+    }
+  
+    const desiredLength = dotIndex + 1 + decimalPlaces;
+    const truncatedStr = numStr.substring(0, desiredLength);
+    return parseFloat(truncatedStr);
+  }
+
+  // Grand total calculation
+  const grandTotal = useMemo(() => {
+      return cartData.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
+  }, [cartData]) 
+  const commission =useMemo(() => {
+    return toFloatWithoutRounding((grandTotal * 0.03 * 100 / 100), 2);
+  })  
+  const roundedTotalWithCommission = useMemo(() => {
+    return  toFloatWithoutRounding(grandTotal + commission, 2); 
+  }, [commission, grandTotal])
+
+  const roundedGrandTotal = grandTotal; //Math.round(grandTotal);
 
   const handleAgent = (selectedOption) => {
     if (selectedOption) {
@@ -166,7 +191,20 @@ const CartSidebar = ({
           )}
         </div>
           <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
-         
+         <div className="flex flex-col gap-1 mb-2">
+            <div className="flex justify-between items-center">
+              <span className="font-semibold text-base text-gray-900 dark:text-gray-100">Subtotal:</span>
+              <span className="text-base font-bold text-gray-700 dark:text-gray-200">${roundedGrandTotal}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="font-semibold text-base text-gray-900 dark:text-gray-100">Processing Fee (3%):</span>
+              <span className="text-base font-bold text-gray-700 dark:text-gray-200">${commission}</span>
+            </div>
+            <div className="flex justify-between items-center mt-1">
+              <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">Total:</span>
+              <span className="text-xl font-bold text-[#0a2463] dark:text-blue-400">${roundedTotalWithCommission}</span>
+            </div>
+          </div>
           <button
             className="w-full bg-[#0a2463] dark:bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-[#0a1a4a] dark:hover:bg-blue-700 transition-colors text-lg disabled:opacity-50"
             disabled={cartData.length === 0 || !selectedAgent || assignLoading}
