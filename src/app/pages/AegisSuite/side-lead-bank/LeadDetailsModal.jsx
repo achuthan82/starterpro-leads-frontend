@@ -43,7 +43,7 @@ const MarketplaceLeadDetailsModal = ({
       try {
         const token = window.localStorage.getItem("authToken");
         const res = await axios.get(
-          `/starter-data/completed-incomplete-for-sale-month-wise/${selectedAgency?.value}/${state}`,
+          `/starter-data/completed-incomplete-for-sale-days-wise/${selectedAgency?.value}/${state}`,
           {
             headers: token ? { Authorization: `Bearer ${token}` } : {},
           },
