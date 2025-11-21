@@ -30,7 +30,8 @@ const CartSidebar = ({ open, onClose }) => {
         quantiy: item.quantity, // API typo: quantiy
         state: item.state || item.state_code,
         completed: item.completed,
-        month: item.month
+        start_day:item.start_day,
+        end_day:item.end_day
       })));
     } else {
       setStock({});

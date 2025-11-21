@@ -1,14 +1,22 @@
-import { useEffect, useState } from 'react';
-import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
-import { Fragment } from 'react';
-import { Card, Button, Spinner } from 'components/ui';
-import axios from 'utils/axios';
-import { apiUtils } from 'utils/apiService';
-import { addToCart } from 'utils/cartService';
-import { toast } from 'sonner';
-import { useCart } from 'app/contexts/cart/CartContext';
+import { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
+import { Fragment } from "react";
+import { Card, Button, Spinner } from "components/ui";
+import axios from "utils/axios";
+import { apiUtils } from "utils/apiService";
+import { addToCart } from "utils/cartService";
+import { toast } from "sonner";
+import { useCart } from "app/contexts/cart/CartContext";
+import { convertDays } from "utils/utlis";
 
-const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => { //onAddToCart
+const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
+  //onAddToCart
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
@@ -18,8 +26,8 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
   const { refreshCart } = useCart();
 
   useEffect(() => {
-    console.log(open)
-    console.log(state)
+    console.log(open);
+    console.log(state);
     if (!open || !state) return;
     setLoading(true);
     setError(null);
@@ -27,10 +35,13 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
     setQuantities({});
     const fetchData = async () => {
       try {
-        const token = window.localStorage.getItem('authToken');
-        const res = await axios.get(`/marketplace/completed-incomplete-for-sale-days-wise/${state}`, {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
+        const token = window.localStorage.getItem("authToken");
+        const res = await axios.get(
+          `/marketplace/completed-incomplete-for-sale-days-wise/${state}`,
+          {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          },
+        );
         setData(res.data.data || []);
       } catch (err) {
         setError(apiUtils.formatError(err));
@@ -42,7 +53,7 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
   }, [open, state]);
 
   const handleQtyChange = (ageId, type, val, max) => {
-    setQuantities(q => ({
+    setQuantities((q) => ({
       ...q,
       [ageId]: {
         ...q[ageId],
@@ -51,7 +62,12 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
     }));
   };
 
-  const handleAddToCart = async (ageId, group, monthPricingGold, monthPricingSilver) => {
+  const handleAddToCart = async (
+    ageId,
+    group,
+    monthPricingGold,
+    monthPricingSilver,
+  ) => {
     const qty = quantities[ageId] || {};
     if ((qty.completed || 0) + (qty.incomplete || 0) === 0) return;
     setCartLoading(true);
@@ -64,6 +80,8 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
           pricing_id: monthPricingGold.id || monthPricingGold.pricing_id,
           quantity: qty.completed,
           state,
+          start_day: monthPricingGold.start_day,
+          end_day: monthPricingGold.end_day,
         });
         added = true;
       }
@@ -73,16 +91,21 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
           pricing_id: monthPricingSilver.id || monthPricingSilver.pricing_id,
           quantity: qty.incomplete,
           state,
+          start_day: monthPricingSilver.start_day,
+          end_day: monthPricingSilver.end_day,
         });
         added = true;
       }
-      setQuantities(q => ({ ...q, [ageId]: { completed: 0, incomplete: 0 } }));
+      setQuantities((q) => ({
+        ...q,
+        [ageId]: { completed: 0, incomplete: 0 },
+      }));
       if (added) {
-        toast.success('Added to cart!');
+        toast.success("Added to cart!");
         await refreshCart();
       }
     } catch (error) {
-      setCartError(error.message || 'Failed to add to cart.');
+      setCartError(error.message || "Failed to add to cart.");
     } finally {
       setCartLoading(false);
     }
@@ -90,7 +113,11 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
 
   return (
     <Transition appear show={open} as={Fragment}>
-      <Dialog as="div" className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden px-4 py-6 sm:px-5" onClose={onClose}>
+      <Dialog
+        as="div"
+        className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden px-4 py-6 sm:px-5"
+        onClose={onClose}
+      >
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
@@ -111,20 +138,32 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <DialogPanel className="scrollbar-sm relative flex max-w-lg flex-col overflow-y-auto rounded-lg bg-white dark:bg-gray-800 px-4 py-6 text-center transition-opacity duration-300 dark:bg-dark-700 sm:px-5">
-            <DialogTitle as="h3" className="text-xl font-bold text-left mb-4">
-              {state ? `${state} - Lead Age Variants` : 'Lead Age Variants'}
+          <DialogPanel className="scrollbar-sm dark:bg-dark-700 relative flex max-w-lg flex-col overflow-y-auto rounded-lg bg-white px-4 py-6 text-center transition-opacity duration-300 sm:px-5 dark:bg-gray-800">
+            <DialogTitle as="h3" className="mb-4 text-left text-xl font-bold">
+              {state ? `${state} - Lead Age Variants` : "Lead Age Variants"}
             </DialogTitle>
-            {loading ? <Spinner /> : error ? (
-              <div className="text-red-500 bg-red-100 p-4 rounded-md">{error}</div>
+            {loading ? (
+              <Spinner />
+            ) : error ? (
+              <div className="rounded-md bg-red-100 p-4 text-red-500">
+                {error}
+              </div>
             ) : (
               <div className="space-y-6">
                 {data.map((group, idx) => {
-                  console.log(group)
+                  console.log(group);
                   const ageId = group.id || idx;
-                  const qty = quantities[ageId] || { completed: 0, incomplete: 0 };
-                  const available = ((group.completed ? group.completed : 0) + (group.incomplete ? group.incomplete : 0)) || 0;
-                  const badgeColor = available < 10 ? 'bg-red-200 text-red-700' : 'bg-green-100 text-green-700';
+                  const qty = quantities[ageId] || {
+                    completed: 0,
+                    incomplete: 0,
+                  };
+                  const available =
+                    (group.completed ? group.completed : 0) +
+                      (group.incomplete ? group.incomplete : 0) || 0;
+                  const badgeColor =
+                    available < 10
+                      ? "bg-red-200 text-red-700"
+                      : "bg-green-100 text-green-700";
 
                   // Find pricing for this state and month
                   /*let statePricing = null;
@@ -134,59 +173,186 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
                   let monthPricingGold = null;
                   let monthPricingSilver = null;
                   if (pricingData && pricingData?.length > 0) {
-                    monthPricingGold = pricingData.find(m => (String(m.month) === String(group.month) && m.completed === true));
-                    monthPricingSilver = pricingData.find(m => (String(m.month) === String(group.month) && m.completed === false));
-                    console.log(monthPricingGold, monthPricingSilver)
+                    monthPricingGold = pricingData.find(
+                      (m) =>
+                        m.start_day === group.start_day && m.completed === true,
+                    );
+                    monthPricingSilver = pricingData.find(
+                      (m) =>
+                        m.start_day === group.start_day &&
+                        m.completed === false,
+                    );
+                    console.log(monthPricingGold, monthPricingSilver);
                   }
                   // Get unit prices
-                  const completedPrice = monthPricingGold ? monthPricingGold.unit_price : null;
-                  const incompletePrice = monthPricingSilver ? monthPricingSilver.unit_price : null;
-                  console.log(completedPrice, incompletePrice)
+                  const completedPrice = monthPricingGold
+                    ? monthPricingGold.unit_price
+                    : null;
+                  const incompletePrice = monthPricingSilver
+                    ? monthPricingSilver.unit_price
+                    : null;
+                  console.log(completedPrice, incompletePrice);
                   return (
                     <Card key={ageId} className="p-4 text-left">
-                      <div className="flex justify-between items-center mb-2">
+                      <div className="mb-2 flex items-center justify-between">
                         <div>
-                          <span className="font-bold text-lg">{group.month}+</span>
-                          <span className="ml-2 text-gray-500 dark:text-gray-400 text-sm">Month Old</span>
+                          <span className="text-lg font-bold">
+                            {convertDays(group.start_day)}+
+                          </span>
+                          <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                            Month Old
+                          </span>
                         </div>
-                        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeColor}`}>{available} available</span>
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeColor}`}
+                        >
+                          {available} available
+                        </span>
                       </div>
-                      <div className="mb-2 text-xs text-gray-500 dark:text-gray-400">Add Leads</div>
-                      <div className="flex items-center gap-4 mb-2">
+                      <div className="mb-2 text-xs text-gray-500 dark:text-gray-400">
+                        Add Leads
+                      </div>
+                      <div className="mb-2 flex items-center gap-4">
                         <div className="flex-1">
-                          <div className="text-green-700 font-semibold">Completed Leads({group?.completed ? group.completed : 0})</div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-gray-500 dark:text-gray-400">{completedPrice !== null ? `$${completedPrice} per lead` : 'N/A'}</span>
-                            <Button size="xs" onClick={() => handleQtyChange(ageId, 'completed', (qty.completed || 0) - 1, group.completed)}>-</Button>
-                            <input type="number" min={0} max={group.gold} value={qty.completed || 0} onChange={e => handleQtyChange(ageId, 'completed', Number(e.target.value), group.completed)} className="w-10 text-center border rounded" />
-                            <Button size="xs" onClick={() => handleQtyChange(ageId, 'completed', (qty.completed || 0) + 1, group.completed)}>+</Button>
+                          <div className="font-semibold text-green-700">
+                            Completed Leads(
+                            {group?.completed ? group.completed : 0})
+                          </div>
+                          <div className="mt-1 flex items-center gap-2">
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {completedPrice !== null
+                                ? `$${completedPrice} per lead`
+                                : "N/A"}
+                            </span>
+                            <Button
+                              size="xs"
+                              onClick={() =>
+                                handleQtyChange(
+                                  ageId,
+                                  "completed",
+                                  (qty.completed || 0) - 1,
+                                  group.completed,
+                                )
+                              }
+                            >
+                              -
+                            </Button>
+                            <input
+                              type="number"
+                              min={0}
+                              max={group.gold}
+                              value={qty.completed || 0}
+                              onChange={(e) =>
+                                handleQtyChange(
+                                  ageId,
+                                  "completed",
+                                  Number(e.target.value),
+                                  group.completed,
+                                )
+                              }
+                              className="w-10 rounded border text-center"
+                            />
+                            <Button
+                              size="xs"
+                              onClick={() =>
+                                handleQtyChange(
+                                  ageId,
+                                  "completed",
+                                  (qty.completed || 0) + 1,
+                                  group.completed,
+                                )
+                              }
+                            >
+                              +
+                            </Button>
                           </div>
                         </div>
                         <div className="flex-1">
-                          <div className="text-yellow-700 font-semibold">Incomplete Leads({group?.incomplete ? group.incomplete : 0})</div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-gray-500 dark:text-gray-400">{incompletePrice !== null ? `$${incompletePrice} per lead` : 'N/A'}</span>
-                            <Button size="xs" onClick={() => handleQtyChange(ageId, 'incomplete', (qty.incomplete || 0) - 1, group.incomplete)}>-</Button>
-                            <input type="number" min={0} max={group.incomplete} value={qty.incomplete || 0} onChange={e => handleQtyChange(ageId, 'incomplete', Number(e.target.value), group.incomplete)} className="w-10 text-center border rounded" />
-                            <Button size="xs" onClick={() => handleQtyChange(ageId, 'incomplete', (qty.incomplete || 0) + 1, group.incomplete)}>+</Button>
+                          <div className="font-semibold text-yellow-700">
+                            Incomplete Leads(
+                            {group?.incomplete ? group.incomplete : 0})
+                          </div>
+                          <div className="mt-1 flex items-center gap-2">
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {incompletePrice !== null
+                                ? `$${incompletePrice} per lead`
+                                : "N/A"}
+                            </span>
+                            <Button
+                              size="xs"
+                              onClick={() =>
+                                handleQtyChange(
+                                  ageId,
+                                  "incomplete",
+                                  (qty.incomplete || 0) - 1,
+                                  group.incomplete,
+                                )
+                              }
+                            >
+                              -
+                            </Button>
+                            <input
+                              type="number"
+                              min={0}
+                              max={group.incomplete}
+                              value={qty.incomplete || 0}
+                              onChange={(e) =>
+                                handleQtyChange(
+                                  ageId,
+                                  "incomplete",
+                                  Number(e.target.value),
+                                  group.incomplete,
+                                )
+                              }
+                              className="w-10 rounded border text-center"
+                            />
+                            <Button
+                              size="xs"
+                              onClick={() =>
+                                handleQtyChange(
+                                  ageId,
+                                  "incomplete",
+                                  (qty.incomplete || 0) + 1,
+                                  group.incomplete,
+                                )
+                              }
+                            >
+                              +
+                            </Button>
                           </div>
                         </div>
                       </div>
-                      {cartError && <div className="text-red-500 text-xs mb-2">{cartError}</div>}
+                      {cartError && (
+                        <div className="mb-2 text-xs text-red-500">
+                          {cartError}
+                        </div>
+                      )}
                       <Button
                         color="success"
-                        className="w-full mt-2"
-                        disabled={((qty.completed || 0) + (qty.incomplete || 0)) === 0 || cartLoading}
-                        onClick={() => handleAddToCart(ageId, group, monthPricingGold, monthPricingSilver)}
+                        className="mt-2 w-full"
+                        disabled={
+                          (qty.completed || 0) + (qty.incomplete || 0) === 0 ||
+                          cartLoading
+                        }
+                        onClick={() =>
+                          handleAddToCart(
+                            ageId,
+                            group,
+                            monthPricingGold,
+                            monthPricingSilver,
+                          )
+                        }
                       >
-                        {cartLoading ? 'Adding...' : 'Add to Cart'}
+                        {cartLoading ? "Adding..." : "Add to Cart"}
                       </Button>
                     </Card>
                   );
                 })}
               </div>
             )}
-            <Button variant="outline" className="mt-6" onClick={onClose}>Close</Button>
+            <Button variant="outline" className="mt-6" onClick={onClose}>
+              Close
+            </Button>
           </DialogPanel>
         </TransitionChild>
       </Dialog>
@@ -194,4 +360,4 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
   );
 };
 
-export default MarketplaceLeadDetailsModal; 
+export default MarketplaceLeadDetailsModal;

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import axios from "utils/axios";
 import { toast } from "sonner";
+import { convertDays } from "utils/utlis";
 const CartSidebar = ({
   open,
   onClose,
@@ -131,8 +132,7 @@ const CartSidebar = ({
                           {item.state || item.state_code}
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">
-                          Month: {item.month} |{" "}
-                          {item.completed ? "Completed" : "Incomplete"}
+                         {convertDays(item.start_day)}&nbsp;{item.completed ? "Completed" : "Incomplete"}
                         </div>
                       </div>
                       <button
