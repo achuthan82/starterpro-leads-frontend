@@ -45,6 +45,12 @@ const publicRoutes = {
         Component: (await import("app/pages/AegisSuite/ResetPassword")).default,
       }),
     },
+     {
+      path: "subscription",
+      lazy: async () => ({
+        Component: (await import("app/pages/AegisSuite/Subscriptions/Subscription")).default,
+      }),
+    },
   ],
 };
 
