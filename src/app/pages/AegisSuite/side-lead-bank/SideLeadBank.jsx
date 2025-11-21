@@ -97,7 +97,7 @@ const SideLeadBank = () => {
           </div>
           <MarketplaceLeadDetailsModal open={modalState.open} state={modalState.state} onClose={() => setModalState({ open: false, state: null })} pricingData={pricingData} cartData={cartData} setCartData={setCartData} selectedAgency={selectedAgency} />
           <CartButton onClick={() => setCartOpen(true)} cartData={cartData}/>
-          <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} cartData={cartData} setCartData={setCartData}/>
+          <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} cartData={cartData} setCartData={setCartData} selectedAgency={selectedAgency}/>
         </div>
       </CartProvider>
     );

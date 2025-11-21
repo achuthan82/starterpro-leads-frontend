@@ -1,17 +1,100 @@
 // import React from 'react';
 
-const CartSidebar = ({ open, onClose, cartData }) => {
-  console.log('cart-data', cartData)
+import { useEffect, useState } from "react";
+import Select from "react-select";
+import axios from "utils/axios";
+import { toast } from "sonner";
+const CartSidebar = ({
+  open,
+  onClose,
+  cartData,
+  setCartData,
+  selectedAgency,
+}) => {
+  const [agents, setAgents] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchValue, setSearchValue] =useState('')
+  const [selectedAgent, setSelectedAgent] = useState(null)
+  const [assignLoading, setAssignLoading] = useState(false)
   // Sync local state with cart when cart changes
 
-  // Stock verifier API
-
-  // Handle quantity input change
-
-  // Handle update with stock check
-  const removeFromCart = () => {
-
+  const handleAgent = (selectedOption) => {
+    if (selectedOption) {
+      setSelectedAgent(selectedOption)
+    }
   }
+  const fetchAgents = async (name) => {
+    setLoading(true);
+    const query = { page: 1, per_page: 50 };
+    if (!name) {
+      query["name"] = name;
+    }
+    try {
+      const token = window.localStorage.getItem("authToken");
+      const res = await axios.get(
+        `/starter-data/users-for-assigning/${selectedAgency?.value}`,
+        {params:query},
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+      );
+      setAgents(res.data.data.map((item) => {
+        return {value:item.agent_id , label:item.name, user_id:item.user_id}
+      }));
+    } catch {
+      toast.error("Could not fetch Agents");
+    } finally {
+      setLoading(false);
+    }
+  };
+   const assignLeads = async () => {
+    setAssignLoading(true);
+   
+    try {
+      const token = window.localStorage.getItem("authToken");
+      /* eslint-disable no-unused-vars */
+      const payload = cartData.map(({pricing_id, ...rest}) => {
+        return {...rest}
+      })
+      /* eslint-disable no-unused-vars */
+      const res = await axios.post(
+        `/starter-data/assign/${selectedAgency?.value}/${selectedAgent?.value}/${selectedAgent?.user_id}`, {cart_items:payload},
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+      );
+      console.log(res.data)
+      if (res.data.status === 201) {
+        console.log('entered')
+        sessionStorage.removeItem('cart')
+        setCartData([])
+        toast.success('Success!!')
+        onClose()
+      } 
+      
+    } catch {
+      toast.error("Failed to Assign");
+    } finally {
+      setAssignLoading(false);
+    }
+  };
+  const loadOptions = (inputValue, actionMeta) => {
+    setSearchValue(inputValue);
+    if (actionMeta.action === "input-change") {
+      fetchAgents(inputValue);
+    }
+  };
+  const removeFromCart = (id) => {
+    const filteredData = cartData.filter((item) => item.pricing_id !== id);
+    setCartData([...filteredData]);
+    sessionStorage.removeItem("cart", JSON.stringify(filteredData));
+  };
+  useEffect(() => {
+    if (open && cartData.length > 0) {
+      fetchAgents();
+    }
+  }, [cartData, open]);
+
   return (
     <div
       className={`fixed top-0 right-0 z-[200] h-full w-96 max-w-full transform bg-white shadow-2xl transition-transform duration-300 dark:bg-gray-800 ${open ? "translate-x-0" : "translate-x-full"}`}
@@ -35,40 +118,62 @@ const CartSidebar = ({ open, onClose, cartData }) => {
               Your cart is empty.
             </div>
           ) : (
-            <ul className="space-y-4">
-              {cartData.map((item) => (
-                <li
-                  key={item.id}
-                  className="flex flex-col gap-2 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-700"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-semibold text-gray-800 dark:text-gray-100">
-                        {item.state || item.state_code}
+            <>
+              <ul className="space-y-4">
+                {cartData.map((item) => (
+                  <li
+                    key={item.id}
+                    className="flex flex-col gap-2 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-700"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-gray-800 dark:text-gray-100">
+                          {item.state || item.state_code}
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          Month: {item.month} |{" "}
+                          {item.completed ? "Completed" : "Incomplete"}
+                        </div>
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        Month: {item.month} |{" "}
-                        {item.completed ? "Completed" : "Incomplete"}
-                      </div>
+                      <button
+                        className="text-lg text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                        onClick={() => removeFromCart(item.pricing_id)}
+                        title="Remove"
+                      >
+                        &times;
+                      </button>
                     </div>
-                    <button
-                      className="text-lg text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                      onClick={() => removeFromCart(item.id)}
-                      title="Remove"
-                    >
-                      &times;
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-700 dark:text-gray-300">
-                      Qty:
-                    </span>
-                    <p>{item.quantity}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                        Qty:
+                      </span>
+                      <p>{item.quantity}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4">
+                <Select
+                  placeholder="Select Agent to be Assigned"
+                  isLoading={loading}
+                  onInputChange={loadOptions}
+                  inputValue={searchValue}
+                  options={agents}
+                  onChange={handleAgent}
+                ></Select>
+              </div>
+            </>
           )}
+        </div>
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+         
+          <button
+            className="w-full bg-[#0a2463] dark:bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-[#0a1a4a] dark:hover:bg-blue-700 transition-colors text-lg disabled:opacity-50"
+            disabled={cartData.length === 0 || !selectedAgent || assignLoading}
+            onClick={assignLeads}
+          >
+            Click to Assign
+          </button>
         </div>
       </div>
     </div>
