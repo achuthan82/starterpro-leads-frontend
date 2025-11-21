@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { verifyStock, reserveLeads, createStripeSession } from 'utils/cartService';
 import { STRIPE_KEY } from 'configs/auth.config';
+import { convertDays } from 'utils/utlis';
 
 const CartSidebar = ({ open, onClose }) => {
   const { cart, loading, error, updateCartItem, removeFromCart, refreshCart } = useCart();
@@ -199,7 +200,7 @@ const CartSidebar = ({ open, onClose }) => {
                   <div className="flex justify-between items-center">
                     <div>
                       <div className="font-semibold text-gray-800 dark:text-gray-100">{item.state || item.state_code}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Month: {item.month} | {item.completed ? 'Completed' : 'Incomplete'}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Month: {convertDays(item.start_day)} | {item.completed ? 'Completed' : 'Incomplete'}</div>
                     </div>
                     <button
                       className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-lg"
