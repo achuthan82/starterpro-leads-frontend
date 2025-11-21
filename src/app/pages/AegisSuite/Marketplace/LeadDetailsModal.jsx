@@ -197,10 +197,10 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
                       <div className="mb-2 flex items-center justify-between">
                         <div>
                           <span className="text-lg font-bold">
-                            {convertDays(group.start_day)}+
+                            {convertDays(group.start_day)}
                           </span>
                           <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-                            Month Old
+                            Old
                           </span>
                         </div>
                         <span
