@@ -20,7 +20,7 @@ const subscriptionService = {
   },
 
   getAvailablePlans: (page, per_page) => {
-    return axios.get(`${JWT_HOST_API}/pricing/subscriptions?page=${page}&per_page=${per_page}`); ///details?is_fresh_leads=1
+    return axios.get(`${JWT_HOST_API}/pricing/mailer-subscriptions?page=${page}&per_page=${per_page}`); ///details?is_fresh_leads=1
   },
 
   getAdminPlans: () => {

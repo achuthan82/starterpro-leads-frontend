@@ -45,7 +45,7 @@ export default function Register() {
   const registeredName = searchParams.get("name") || "";
   const registeredPhone = searchParams.get("phone") || "";
   const npn_number = searchParams.get("npn") || "";
-  // const agencyName = searchParams.get("agency_name") || "";
+  const agencyName = searchParams.get("agency_name") || "";
   const params = useParams();
   const register_token = params.token.replace(/\${5}/g, ".");
 
@@ -173,13 +173,19 @@ export default function Register() {
         </div>
         {/* Register Form Card */}
         <div className="rounded-lg bg-white dark:bg-gray-800 p-8 shadow-xl">
-          <div className="mb-8 text-center">
+          <div className="mb-6 text-center">
             <h2 className="mb-2 text-2xl font-bold text-[#0a2463] dark:text-blue-400">
               Create your account
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Complete your registration to access Starterpro Leads
-            </p>
+            {agencyName && agencyName !== 'StarterPro' ? (
+              <p className="mb-2 text-sm font-medium text-[#0a2463] dark:text-blue-400">
+                [ {agencyName} ] has invited you to join StarterPro Leads.
+              </p>
+            ) : (
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Complete your registration to access Starterpro Leads
+              </p>
+            )}
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {error && (
@@ -369,6 +375,12 @@ export default function Register() {
               )}
             </div>
             <div>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Before you sign up, please read the terms and conditions.
+                <a href="https://StarterProleads.com/terms-and-conditions/" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
+                  
+                </a>
+              </p>
               <button
                 type="submit"
                 disabled={isLoading || alreadyLoggedIn}
