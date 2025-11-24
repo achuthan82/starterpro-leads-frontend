@@ -375,7 +375,7 @@ export default function Register() {
               )}
             </div>
             <div>
-              <p className="mb-2 text-sm text-gray-600 dark:text-gray-300">
+              {/* <p className="mb-2 text-sm text-gray-600 dark:text-gray-300">
                 <Link
                   to="/subscription"
                   target="_blank"
@@ -385,7 +385,7 @@ export default function Register() {
                   Subscribe to StarterPro Leads
                 </Link>
                 &nbsp;before you sign up, to get access to the leads.
-              </p>
+              </p> */}
               <button
                 type="submit"
                 disabled={isLoading || alreadyLoggedIn}

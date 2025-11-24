@@ -1,14 +1,14 @@
 import { Card } from "components/ui";
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import Logo from "assets/app-logo/logo-text.svg?.react"; 
-
+import { useState } from "react";
+import { useDisclosure } from "hooks";
+import CommitmentAgreementModal from "./AgreementModal";
 export default function SubscriptionPlan() {
 
   const FeatureItem = ({ text, active = true }) => {
-  
     const activeIconColor = 'text-[#0a2463]'; 
     const inactiveIconColor = 'text-gray-400'; 
-    
     const textColor = 'text-gray-500'; 
 
     return (
@@ -27,13 +27,13 @@ export default function SubscriptionPlan() {
     price,
     period,
     subText,
-    // isRecommended,
     buttonText,
     isLeftCard
   }) => {
+    
     const cardBorderClasses = isLeftCard 
-    ? "border-t-[4px] border-t-[#0a2463] border-gray-100 shadow-lg" 
-    : "border-t-[4px] border-t-[#ffd700] border-gray-100 shadow-md";
+      ? "border-t-[4px] border-t-[#0a2463] border-gray-100 shadow-lg" 
+      : "border-t-[4px] border-t-[#ffd700] border-gray-100 shadow-md";
     
     const buttonStyle = {
       background:"linear-gradient(to right, #b8860b, #d4af37, #ffd700)",
@@ -50,19 +50,13 @@ export default function SubscriptionPlan() {
                 {title}
               </h3>
             </div>
-            
-            {/* {isRecommended && (
-              <span className="text-xs font-bold px-3 py-1 rounded-sm bg-[#ffd700] text-[#0a2463] tracking-wider mt-1 self-end">
-                BEST VALUE
-              </span>
-            )} */}
           </div>
         </div>
 
         {isLeftCard ? (
           <ul className="text-[#0a2463] text-left space-y-4 pt-4 ml-2">
             {features.map((feature, index) => (
-              <FeatureItem key={index} text={feature} active={true} /> 
+              <FeatureItem key={index} text={feature} active={true} />
             ))}
           </ul>
         ) : (
@@ -75,6 +69,7 @@ export default function SubscriptionPlan() {
             </p>
             
             <button
+              onClick={open}
               className="w-full py-3 rounded-md font-semibold text-gray-900 text-lg transition-all duration-300 hover:opacity-90 shadow-md"
               style={buttonStyle}
             >
@@ -85,7 +80,6 @@ export default function SubscriptionPlan() {
       </Card>
     );
   };
-  
 
   const goProFeatures = [
     "Unlimited Lead Tracking",
@@ -94,6 +88,13 @@ export default function SubscriptionPlan() {
     "Cloud Sync & Security",
   ];
 
+  // NEW: Billing toggle state
+  const [billingType, setBillingType] = useState("yearly");
+
+  const yearlyPrice = "$49.99";
+  const monthlyPrice = "$69.99";
+   const [isOpen, { open, close }] = useDisclosure(false);
+
   return (
     <main className="min-h-screen flex flex-col items-center bg-white px-4 py-8">
       
@@ -101,7 +102,7 @@ export default function SubscriptionPlan() {
         <img
           src={Logo}
           alt="Starter Pro Leads Logo"
-          className="h-30 w-auto object-contain" 
+          className="h-30 w-auto object-contain"
         />
       </div>
 
@@ -112,6 +113,28 @@ export default function SubscriptionPlan() {
         <p className="text-base text-gray-600">
           Activate your account to start transforming business
         </p>
+      </div>
+
+      {/* Billing Switch */}
+      <div className="flex items-center gap-4 mb-8">
+        <span className={`text-sm font-semibold ${billingType === "monthly" ? "text-[#0a2463]" : "text-gray-400"}`}>
+          Monthly
+        </span>
+
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            className="sr-only peer"
+            checked={billingType === "yearly"}
+            onChange={() => setBillingType(billingType === "yearly" ? "monthly" : "yearly")}
+          />
+          <div className="w-12 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:bg-[#0a2463] transition-all"></div>
+          <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transition-all peer-checked:translate-x-6"></div>
+        </label>
+
+        <span className={`text-sm font-semibold ${billingType === "yearly" ? "text-[#0a2463]" : "text-gray-400"}`}>
+          Yearly
+        </span>
       </div>
       
       <div className="flex flex-col md:flex-row gap-6 max-w-4xl w-full justify-center">
@@ -124,11 +147,10 @@ export default function SubscriptionPlan() {
 
         <PricingCard
           title="Premium Access"
-          price="$49.99"
-          period="/ YEAR"
-          subText="Equivalent to $4.16 month"
-          isRecommended={true}
-          buttonText="Activate Account"
+          price={billingType === "yearly" ? yearlyPrice : monthlyPrice}
+          period={billingType === "yearly" ? "/MONTH" : "/ MONTH"}
+          subText={billingType === "yearly" ? "Equivalent to $4.16 month" : "Billed Monthly"}
+          buttonText={"Activate Account"}
           isLeftCard={false}
         />
       </div>
@@ -136,6 +158,7 @@ export default function SubscriptionPlan() {
       <div className="mt-8 pt-4 w-full text-center text-xs text-gray-500">
         <p>Your subscription will automatically renew unless you cancel through the Privacy Policy and Terms of Service.</p>
       </div>
+      <CommitmentAgreementModal isOpen={isOpen} onClose={close} billingType={billingType}/>
 
     </main>
   );
