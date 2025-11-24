@@ -51,6 +51,12 @@ const publicRoutes = {
         Component: (await import("app/pages/AegisSuite/Subscriptions/Subscription")).default,
       }),
     },
+    {
+      path: "mortgage-protection-preview/:token",
+      lazy: async () => ({
+        Component: (await import("app/pages/powerDialer/MortgageProtectionPreview")).default,
+      }),
+    },
   ],
 };
 

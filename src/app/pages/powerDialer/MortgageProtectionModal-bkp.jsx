@@ -8,10 +8,14 @@ import {
 } from "@headlessui/react";
 import { useForm, Controller } from "react-hook-form";
 import { Button, Input, Spinner } from "components/ui";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, DocumentArrowDownIcon } from "@heroicons/react/24/outline";
+import PreviewComponent from "./PreviewComponent";
 import { useCallContext } from "app/contexts/call/context";
 import { dialerService } from "utils/apiService";
 import { toast } from "sonner";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
+import domtoimage from "dom-to-image";
 
 const MortgageProtectionModal = ({
   isOpen,
@@ -22,6 +26,8 @@ const MortgageProtectionModal = ({
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({});
   const [submittedData, setSubmittedData] = useState(null);
+  const [isPreview, setIsPreview] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [showCloseWarning, setShowCloseWarning] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -95,6 +101,7 @@ const MortgageProtectionModal = ({
     setFormData({});
     setSubmittedData(null);
     setCurrentStep(1);
+    setIsPreview(false);
     setShowCloseWarning(false);
     close();
   };
@@ -133,52 +140,8 @@ const MortgageProtectionModal = ({
       setCurrentStep(currentStep + 1);
     } else {
       setSubmittedData(updatedData);
-      // Generate unique token for preview (URL-safe)
-      const token = `preview_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // Store data in sessionStorage
-      const storageKey = `mortgage_preview_${token}`;
-      const dataToStore = {
-        submittedData: updatedData,
-        licenseDetails: licenseDetails
-      };
-      
-      try {
-        // Store in both sessionStorage and localStorage for reliability
-        // localStorage is more reliable across windows
-        sessionStorage.setItem(storageKey, JSON.stringify(dataToStore));
-        localStorage.setItem(storageKey, JSON.stringify(dataToStore));
-        console.log("Data stored in sessionStorage and localStorage with key:", storageKey);
-        console.log("Stored data:", dataToStore);
-        
-        // Verify it was stored
-        const verifySession = sessionStorage.getItem(storageKey);
-        const verifyLocal = localStorage.getItem(storageKey);
-        if (!verifySession && !verifyLocal) {
-          console.error("Failed to store data in both storage mechanisms");
-          toast.error("Failed to prepare preview. Please try again.");
-          return;
-        }
-        
-        // Open preview in new window
-        const previewUrl = `${window.location.origin}/mortgage-protection-preview/${encodeURIComponent(token)}`;
-        console.log("Opening preview URL:", previewUrl);
-        
-        // Small delay to ensure sessionStorage is committed
-        setTimeout(() => {
-          const newWindow = window.open(previewUrl, '_blank', 'noopener,noreferrer');
-          if (!newWindow) {
-            toast.error("Popup blocked. Please allow popups for this site.");
-          }
-        }, 100);
-        
-        // Close modal and call onFormSubmit
-        onFormSubmit(updatedData);
-        closeModal();
-      } catch (error) {
-        console.error("Error storing preview data:", error);
-        toast.error("Failed to prepare preview. Please try again.");
-      }
+      setIsPreview(true);
+      onFormSubmit(updatedData);
     }
   };
 
@@ -190,6 +153,10 @@ const MortgageProtectionModal = ({
     setCurrentStep(step);
   };
 
+  const handleBackToForm = () => {
+    setIsPreview(false);
+    setCurrentStep(2);
+  };
 
 //   const handleDownloadSlides = async () => {
 //     if (isGeneratingPDF) return;
@@ -331,6 +298,534 @@ const MortgageProtectionModal = ({
 //     }
 //   };
 
+  // Fallback PDF creation without html2canvas
+  const createSimplePDF = async () => {
+    try {
+      const pdf = new jsPDF("landscape", "pt", "a4");
+      let yPosition = 50;
+      
+      // Title
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(24);
+      pdf.setTextColor(0, 0, 128);
+      pdf.text("Mortgage Protection Assessment", 50, yPosition);
+      yPosition += 40;
+
+      // Date
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(12);
+      pdf.setTextColor(0, 0, 0);
+      pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, 50, yPosition);
+      yPosition += 30;
+
+      // Personal Information
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(16);
+      pdf.text("Personal Information:", 50, yPosition);
+      yPosition += 25;
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(12);
+      pdf.text(`Age: ${submittedData?.age || '-'}`, 50, yPosition);
+      yPosition += 15;
+      pdf.text(`Height: ${submittedData?.height || '-'} inches`, 50, yPosition);
+      yPosition += 15;
+      pdf.text(`Weight: ${submittedData?.weight || '-'} lbs`, 50, yPosition);
+      yPosition += 15;
+      pdf.text(`Occupation: ${submittedData?.occupation || '-'}`, 50, yPosition);
+      yPosition += 25;
+
+      // Financial Summary
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(16);
+      pdf.text("Financial Summary:", 50, yPosition);
+      yPosition += 25;
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(12);
+      pdf.text(`Payoff Amount: $${(submittedData?.payoff || 0).toLocaleString()}`, 50, yPosition);
+      yPosition += 15;
+      pdf.text(`Equity Amount: $${(submittedData?.equity || 0).toLocaleString()}`, 50, yPosition);
+      yPosition += 15;
+      pdf.text(`Total Assets: $${(
+        (parseInt(submittedData?.checking) || 0) +
+        (parseInt(submittedData?.savings) || 0) +
+        (parseInt(submittedData?.retirement401k) || 0) +
+        (parseInt(submittedData?.ira) || 0) +
+        (parseInt(submittedData?.annuities) || 0)
+      ).toLocaleString()}`, 50, yPosition);
+
+      pdf.save("Mortgage_Protection_Summary.pdf");
+      
+    } catch (fallbackError) {
+      console.error("Fallback PDF also failed:", fallbackError);
+      alert("Unable to generate PDF. Please try again or contact support.");
+    }
+  };
+
+  // Alternative: Use html2canvas for better external image support
+  const handleDownloadWithDomToImage = async () => {
+    if (isGeneratingPDF) return;
+    
+    setIsGeneratingPDF(true);
+    try {
+      const pdf = new jsPDF("landscape", "pt", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      
+      // Get the slider container
+      const sliderContainer = document.querySelector('.slick-slider');
+      if (!sliderContainer) {
+        throw new Error('Slider not found');
+      }
+      
+      // Get the slider track which contains all slides
+      const sliderTrack = sliderContainer.querySelector('.slick-track');
+      if (!sliderTrack) {
+        throw new Error('Slider track not found');
+      }
+      
+      // Get ALL slides (not just visible ones) - filter out cloned slides
+      // Also limit to expected number of slides (6) to avoid processing duplicates
+      const allSlides = Array.from(sliderTrack.querySelectorAll('.slick-slide'))
+        .filter(slide => {
+          // Filter out cloned slides
+          if (slide.classList.contains('slick-cloned')) return false;
+          // Only process slides with valid data-index (0-5 for 6 slides)
+          const index = parseInt(slide.getAttribute('data-index') || '-1');
+          return index >= 0 && index < 6;
+        })
+        .sort((a, b) => {
+          const indexA = parseInt(a.getAttribute('data-index') || '0');
+          const indexB = parseInt(b.getAttribute('data-index') || '0');
+          return indexA - indexB;
+        })
+        .slice(0, 6); // Limit to 6 slides maximum
+      
+      console.log(`Found ${allSlides.length} slides to process`);
+      
+      if (allSlides.length === 0) {
+        throw new Error('No slides found');
+      }
+      
+      // Process each slide
+      for (let i = 0; i < allSlides.length; i++) {
+        const slide = allSlides[i];
+        const slideIndex = parseInt(slide.getAttribute('data-index') || i.toString());
+        
+        try {
+          console.log(`Processing slide ${i + 1}/${allSlides.length} (index: ${slideIndex})`);
+          
+          // Get the content div inside the slide
+          const slideContent = slide.querySelector('div') || slide;
+          
+          // Create a temporary off-screen container for this slide
+          const tempContainer = document.createElement('div');
+          tempContainer.style.cssText = `
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: ${pdfWidth}px;
+            height: ${pdfHeight}px;
+            background: white;
+            z-index: 99999;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+          `;
+          
+          // Deep clone the slide content
+          const slideClone = slideContent.cloneNode(true);
+          
+          // Function to clean and prepare the clone
+          const prepareElement = (el) => {
+            // Remove slick classes
+            if (el.classList) {
+              el.classList.remove('slick-cloned', 'slick-active', 'slick-current');
+            }
+            
+            // Get computed styles and apply them
+            const computed = window.getComputedStyle(el);
+            
+            // Apply important styles
+            if (el.style) {
+              // Copy computed styles that matter
+              el.style.width = computed.width;
+              el.style.height = computed.height;
+              el.style.display = computed.display === 'none' ? 'block' : computed.display;
+              el.style.visibility = 'visible';
+              el.style.opacity = '1';
+              el.style.position = 'relative';
+              el.style.transform = 'none';
+              el.style.left = '0';
+              el.style.top = '0';
+              el.style.margin = computed.margin;
+              el.style.padding = computed.padding;
+              
+              // Fix background colors - use computed value which is already converted to rgb
+              const bgColor = computed.backgroundColor;
+              if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && !bgColor.includes('oklch')) {
+                el.style.backgroundColor = bgColor;
+              } else if (bgColor && bgColor.includes('oklch')) {
+                // If computed style still has oklch (shouldn't happen, but just in case)
+                el.style.backgroundColor = 'transparent';
+              }
+              
+              // Fix background images
+              if (computed.backgroundImage && computed.backgroundImage !== 'none') {
+                el.style.backgroundImage = computed.backgroundImage;
+                el.style.backgroundSize = computed.backgroundSize;
+                el.style.backgroundPosition = computed.backgroundPosition;
+                el.style.backgroundRepeat = computed.backgroundRepeat;
+              }
+              
+              // Fix colors - use computed value
+              const textColor = computed.color;
+              if (textColor && !textColor.includes('oklch')) {
+                el.style.color = textColor;
+              } else if (textColor && textColor.includes('oklch')) {
+                // Fallback to black if oklch
+                el.style.color = '#000000';
+              }
+              
+              // Fix border colors
+              if (computed.borderColor && !computed.borderColor.includes('oklch')) {
+                el.style.borderColor = computed.borderColor;
+              }
+              
+              // Fix fonts
+              el.style.fontFamily = computed.fontFamily;
+              el.style.fontSize = computed.fontSize;
+              el.style.fontWeight = computed.fontWeight;
+              
+              // Remove any inline oklch colors from style attribute
+              const styleAttr = el.getAttribute('style') || '';
+              if (styleAttr.includes('oklch')) {
+                // Remove oklch colors from style attribute
+                const cleanedStyle = styleAttr
+                  .split(';')
+                  .filter(prop => !prop.includes('oklch'))
+                  .join(';');
+                el.setAttribute('style', cleanedStyle);
+              }
+              
+              // Fix images
+              if (el.tagName === 'IMG') {
+                el.style.display = 'block';
+                el.style.visibility = 'visible';
+                el.style.opacity = '1';
+                el.style.maxWidth = '100%';
+                el.style.height = 'auto';
+              }
+            }
+            
+            // Process children recursively
+            Array.from(el.children || []).forEach(prepareElement);
+          };
+          
+          // Prepare the clone
+          prepareElement(slideClone);
+          
+          // Set container dimensions on clone
+          slideClone.style.cssText = `
+            width: ${pdfWidth}px !important;
+            height: ${pdfHeight}px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: relative !important;
+            display: block !important;
+            overflow: visible !important;
+            box-sizing: border-box !important;
+            transform: none !important;
+            left: 0 !important;
+            top: 0 !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+          `;
+          
+          tempContainer.appendChild(slideClone);
+          document.body.appendChild(tempContainer);
+          
+          // Wait for DOM to update
+          await new Promise(resolve => setTimeout(resolve, 300));
+          
+          // AGGRESSIVE oklch removal - walk through entire DOM and replace all oklch with RGB
+          const removeOklchFromElement = (el) => {
+            if (!el || !el.style) return;
+            
+            // Get computed styles and replace any oklch with RGB
+            const computed = window.getComputedStyle(el);
+            
+            // Replace background color
+            if (computed.backgroundColor) {
+              const bgColor = computed.backgroundColor;
+              if (bgColor.includes('oklch')) {
+                // Use computed RGB value (browser converts oklch to RGB)
+                el.style.backgroundColor = bgColor.replace(/oklch\([^)]+\)/g, computed.backgroundColor);
+              } else {
+                el.style.backgroundColor = bgColor;
+              }
+            }
+            
+            // Replace text color
+            if (computed.color) {
+              const textColor = computed.color;
+              if (textColor.includes('oklch')) {
+                el.style.color = textColor.replace(/oklch\([^)]+\)/g, computed.color);
+              } else {
+                el.style.color = textColor;
+              }
+            }
+            
+            // Replace border colors
+            ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor'].forEach(prop => {
+              try {
+                const borderColor = computed[prop];
+                if (borderColor && borderColor.includes('oklch')) {
+                  el.style[prop] = borderColor.replace(/oklch\([^)]+\)/g, computed[prop]);
+                }
+              } catch {
+                // Skip if error accessing computed style
+              }
+            });
+            
+            // Remove oklch from style attribute string
+            const styleAttr = el.getAttribute('style') || '';
+            if (styleAttr.includes('oklch')) {
+              const cleanedStyle = styleAttr
+                .split(';')
+                .map(prop => {
+                  if (prop.includes('oklch')) {
+                    // Extract property name
+                    const propName = prop.split(':')[0]?.trim();
+                    if (propName) {
+                      // Use computed value instead
+                      try {
+                        const computedValue = computed[propName];
+                        if (computedValue && !computedValue.includes('oklch')) {
+                          return `${propName}: ${computedValue}`;
+                        }
+                      } catch {
+                        // Skip if error accessing computed style
+                      }
+                    }
+                    return ''; // Remove oklch property
+                  }
+                  return prop;
+                })
+                .filter(prop => prop.trim().length > 0 && !prop.includes('oklch'))
+                .join(';');
+              el.setAttribute('style', cleanedStyle);
+            }
+            
+            // Process children
+            Array.from(el.children || []).forEach(removeOklchFromElement);
+          };
+          
+          // Remove oklch from entire container
+          removeOklchFromElement(tempContainer);
+          
+          // Force all elements to use computed RGB values and remove classes that might have oklch
+          const allElements = tempContainer.querySelectorAll('*');
+          allElements.forEach(el => {
+            try {
+              // Remove all CSS classes to avoid oklch in stylesheets
+              // We'll rely only on inline styles from computed values
+              if (el.classList && el.classList.length > 0) {
+                const classesToKeep = [];
+                el.classList.forEach(className => {
+                  // Keep only non-color related classes
+                  if (!className.includes('bg-') && 
+                      !className.includes('text-') && 
+                      !className.includes('border-') &&
+                      !className.includes('color')) {
+                    classesToKeep.push(className);
+                  }
+                });
+                // Remove all classes and re-add only safe ones
+                el.className = '';
+                classesToKeep.forEach(cls => el.classList.add(cls));
+              }
+              
+              const computed = window.getComputedStyle(el);
+              
+              // Get computed RGB values (browser automatically converts oklch to RGB)
+              const bgColor = computed.backgroundColor;
+              const textColor = computed.color;
+              const borderColor = computed.borderColor;
+              
+              // Set inline styles using computed RGB values (these are already converted from oklch)
+              // This ensures no oklch strings remain in the DOM
+              if (bgColor && !bgColor.includes('oklch') && bgColor !== 'rgba(0, 0, 0, 0)') {
+                el.style.setProperty('background-color', bgColor, 'important');
+              }
+              if (textColor && !textColor.includes('oklch')) {
+                el.style.setProperty('color', textColor, 'important');
+              }
+              if (borderColor && !borderColor.includes('oklch') && borderColor !== 'rgba(0, 0, 0, 0)') {
+                el.style.setProperty('border-color', borderColor, 'important');
+              }
+              
+              // Also copy other important computed styles
+              if (computed.backgroundImage && computed.backgroundImage !== 'none') {
+                el.style.setProperty('background-image', computed.backgroundImage, 'important');
+                el.style.setProperty('background-size', computed.backgroundSize, 'important');
+                el.style.setProperty('background-position', computed.backgroundPosition, 'important');
+                el.style.setProperty('background-repeat', computed.backgroundRepeat, 'important');
+              }
+              
+              // Copy layout styles
+              el.style.setProperty('display', computed.display, 'important');
+              el.style.setProperty('width', computed.width, 'important');
+              el.style.setProperty('height', computed.height, 'important');
+              el.style.setProperty('margin', computed.margin, 'important');
+              el.style.setProperty('padding', computed.padding, 'important');
+              el.style.setProperty('font-family', computed.fontFamily, 'important');
+              el.style.setProperty('font-size', computed.fontSize, 'important');
+              el.style.setProperty('font-weight', computed.fontWeight, 'important');
+            } catch {
+              // Skip if error accessing computed styles
+            }
+          });
+          
+          // Ensure all images are loaded
+          const images = tempContainer.querySelectorAll('img');
+          await Promise.all(Array.from(images).map(img => {
+            if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+            return new Promise((resolve) => {
+              img.onload = resolve;
+              img.onerror = resolve;
+              setTimeout(resolve, 5000);
+            });
+          }));
+          
+          // Wait a bit more for rendering
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          // Verify content exists
+          const hasText = tempContainer.textContent.trim().length > 0;
+          const hasImages = tempContainer.querySelectorAll('img').length > 0;
+          
+          if (!hasText && !hasImages) {
+            console.warn(`Slide ${i + 1} appears to have no content, skipping`);
+            document.body.removeChild(tempContainer);
+            continue;
+          }
+          
+          // Try using dom-to-image first (simpler, handles oklch better)
+          let dataUrl;
+          try {
+            // Use dom-to-image which handles modern CSS better
+            dataUrl = await domtoimage.toPng(tempContainer, {
+              quality: 1.0,
+              width: pdfWidth,
+              height: pdfHeight,
+            style: {
+              transform: 'scale(1)',
+              transformOrigin: 'top left'
+            },
+            filter: (node) => {
+                // Filter out elements that might cause issues
+                if (node.classList && node.classList.contains('slick-cloned')) {
+                  return false;
+              }
+              return true;
+            }
+          });
+          } catch (domError) {
+            console.warn(`dom-to-image failed for slide ${i + 1}, trying html2canvas:`, domError);
+            
+            // Fallback to html2canvas with even more aggressive oklch removal
+            try {
+              // One more pass to remove oklch
+              removeOklchFromElement(tempContainer);
+              
+              const canvas = await html2canvas(tempContainer, {
+                width: pdfWidth,
+                height: pdfHeight,
+                scale: 2,
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: '#ffffff',
+                logging: false,
+                removeContainer: false,
+                imageTimeout: 30000,
+                windowWidth: pdfWidth,
+                windowHeight: pdfHeight,
+                onclone: (clonedDoc) => {
+                  // Final aggressive oklch removal in cloned document
+                  const clonedElements = clonedDoc.querySelectorAll('*');
+                  clonedElements.forEach((el) => {
+                    // Remove style attribute completely if it has oklch
+                    const styleAttr = el.getAttribute('style') || '';
+                    if (styleAttr.includes('oklch')) {
+                      el.removeAttribute('style');
+                    }
+                    
+                    // Force RGB colors via inline styles
+                    if (el.style) {
+                      try {
+                        const computed = window.getComputedStyle(el);
+                        if (computed.backgroundColor && !computed.backgroundColor.includes('oklch')) {
+                          el.style.backgroundColor = computed.backgroundColor;
+                        }
+                        if (computed.color && !computed.color.includes('oklch')) {
+                          el.style.color = computed.color;
+                        }
+                      } catch {
+                        // Skip if error accessing computed styles
+                      }
+                    }
+                  });
+                }
+              });
+              dataUrl = canvas.toDataURL('image/png', 1.0);
+            } catch (canvasError) {
+              console.error(`Both methods failed for slide ${i + 1}:`, canvasError);
+              document.body.removeChild(tempContainer);
+              continue;
+            }
+          }
+          
+          // Clean up temp container
+          if (document.body.contains(tempContainer)) {
+            document.body.removeChild(tempContainer);
+          }
+          
+          // Add page (except for first slide)
+          if (i > 0) {
+            pdf.addPage();
+          }
+          
+          // Add image to PDF
+          pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+          
+          console.log(`✓ Processed slide ${i + 1}/${allSlides.length}`);
+          
+        } catch (slideError) {
+          console.error(`Error processing slide ${i + 1}:`, slideError);
+          // Continue with next slide
+          continue;
+        }
+        
+        // Small delay between slides
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      // Save PDF
+      pdf.save("Mortgage_Protection_Presentation.pdf");
+      console.log('PDF generation completed successfully');
+      
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+      toast.error("Failed to generate PDF. Please try again.");
+      
+      // Fall back to simple PDF
+      await createSimplePDF();
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   // Progress Steps and other components remain the same...
   const ProgressSteps = () => (
@@ -831,6 +1326,26 @@ const MortgageProtectionModal = ({
                 Mortgage Protection Assessment
               </DialogTitle>
               <div className="flex items-center gap-2">
+                {isPreview && (
+                  <div className="flex gap-2">
+                    {/* <button
+                      onClick={handleDownloadSlides}
+                      disabled={isGeneratingPDF}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <DocumentArrowDownIcon className="w-4 h-4" />
+                      {isGeneratingPDF ? 'Generating PDF...' : 'Download PDF'}
+                    </button> */}
+                    <button
+                      onClick={handleDownloadWithDomToImage}
+                      disabled={isGeneratingPDF}
+                      className="flex hidden items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <DocumentArrowDownIcon className="w-4 h-4" />
+                      {isGeneratingPDF ? 'Generating PDF...' : 'Download PDF'}
+                    </button>
+                  </div>
+                )}
                 <button
                   onClick={closeModal}
                   className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full transition-colors"
@@ -840,12 +1355,58 @@ const MortgageProtectionModal = ({
               </div>
             </div>
 
-            {/* Progress Steps */}
-            <ProgressSteps />
-            <StepLabels />
+            {/* Progress Steps - Only show when not in preview */}
+            {!isPreview && (
+              <>
+                <ProgressSteps />
+                <StepLabels />
+              </>
+            )}
 
-            {currentStep === 1 && <Step1VerifyingInfo />}
-            {currentStep === 2 && <Step2FinancialRisk />}
+            {!isPreview ? (
+              <>
+                {currentStep === 1 && <Step1VerifyingInfo />}
+                {currentStep === 2 && <Step2FinancialRisk />}
+              </>
+            ) : (
+              // Preview View
+              <div className="text-left">
+                <div className="flex justify-between items-center mb-1">
+                  <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                    Assessment Preview
+                  </h4>
+                  {isSaving && (
+                    <div className="text-sm text-blue-600 dark:text-blue-400">
+                      Saving...
+                    </div>
+                  )}
+                </div>
+                
+                <PreviewComponent 
+                  submittedData={submittedData} 
+                  licenseDetails={licenseDetails}
+                />
+
+                <div className="mt-6 flex justify-between gap-4">
+                  <Button
+                    type="button"
+                    className="rounded border border-gray-400 px-6 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+                    onClick={handleBackToForm}
+                  >
+                    Back to Edit
+                  </Button>
+                  <div className="flex gap-4">
+                    <Button
+                      type="button"
+                      className="rounded border border-gray-400 px-6 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+                      onClick={closeModal}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </DialogPanel>
         </TransitionChild>
       </Dialog>
