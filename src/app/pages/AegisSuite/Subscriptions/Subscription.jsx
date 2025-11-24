@@ -65,7 +65,7 @@ export default function SubscriptionPlan() {
               {price} <span className="text-xl font-semibold">{period}</span>
             </p>
             <p className="text-sm text-gray-500 mb-6">
-              {subText}
+              {subText} &nbsp;
             </p>
             
             <button
@@ -118,7 +118,7 @@ export default function SubscriptionPlan() {
       {/* Billing Switch */}
       <div className="flex items-center gap-4 mb-8">
         <span className={`text-sm font-semibold ${billingType === "monthly" ? "text-[#0a2463]" : "text-gray-400"}`}>
-          Monthly
+          For 1 Month of Access
         </span>
 
         <label className="relative inline-flex items-center cursor-pointer">
@@ -133,7 +133,7 @@ export default function SubscriptionPlan() {
         </label>
 
         <span className={`text-sm font-semibold ${billingType === "yearly" ? "text-[#0a2463]" : "text-gray-400"}`}>
-          Yearly
+          For 1 Year of Access
         </span>
       </div>
       
@@ -148,8 +148,8 @@ export default function SubscriptionPlan() {
         <PricingCard
           title="Premium Access"
           price={billingType === "yearly" ? yearlyPrice : monthlyPrice}
-          period={billingType === "yearly" ? "/MONTH" : "/ MONTH"}
-          subText={billingType === "yearly" ? "Equivalent to $4.16 month" : "Billed Monthly"}
+          period={billingType === "yearly" ? "/MONTH" : ""}
+          subText={billingType === "yearly" ? "Billed Monthly" : " "}
           buttonText={"Activate Account"}
           isLeftCard={false}
         />
