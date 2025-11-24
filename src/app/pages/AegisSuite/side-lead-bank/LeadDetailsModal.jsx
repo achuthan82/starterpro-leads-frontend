@@ -76,7 +76,7 @@ const MarketplaceLeadDetailsModal = ({
     monthPricingSilver,
   ) => {
     const qty = quantities[ageId] || {};
-    console.log("entered", qty, monthPricingGold);
+    console.log("entered", monthPricingGold);
 
     if ((qty.completed || 0) + (qty.incomplete || 0) === 0) return;
     let added = false;
@@ -89,28 +89,26 @@ const MarketplaceLeadDetailsModal = ({
         description: monthPricingGold.description,
         title: monthPricingGold.title,
       };
-      sessionStorage.setItem(
-        "cart",
-        JSON.stringify([
-          ...cartData,
-          {
-            pricing_id: monthPricingGold.id || monthPricingGold.pricing_id,
-            quantity: qty.completed,
-            state,
-            ...obj
-          },
-        ]),
-      );
-      added = true;
-      setCartData((prev) => [
-        ...prev,
-        {
-          pricing_id: monthPricingGold.id || monthPricingGold.pricing_id,
+      const newId = `${monthPricingGold.id}${state}complete`;
+      const tempLeads = [...cartData];
+      const index = tempLeads.findIndex((item) => item.pricing_id === newId);
+      if (index > -1) {
+        tempLeads[index].quantity = tempLeads[index].quantity + qty.completed;
+      } else {
+        tempLeads.push({
+          pricing_id: `${monthPricingGold.id}${state}complete`,
           quantity: qty.completed,
           state,
-          ...obj
-        },
-      ]);
+          ...obj,
+        });
+      }
+      console.log(tempLeads)
+      sessionStorage.setItem(
+        "cart",
+        JSON.stringify(tempLeads)
+      );
+      added = true;
+      setCartData([...tempLeads])
     }
     if (qty.incomplete && monthPricingSilver) {
       const obj = {
@@ -121,34 +119,32 @@ const MarketplaceLeadDetailsModal = ({
         description: monthPricingSilver.description,
         title: monthPricingSilver.title,
       };
-      sessionStorage.setItem(
-        "cart",
-        JSON.stringify([
-          ...cartData,
-          {
-            pricing_id: monthPricingSilver.id || monthPricingSilver.pricing_id,
-            quantity: qty.incomplete,
-            state,
-            ...obj
-          },
-        ]),
-      );
-      added = true;
-
-      setCartData((prev) => [
-        ...prev,
-        {
-          pricing_id: monthPricingSilver.id || monthPricingSilver.pricing_id,
+      const newId = `${monthPricingSilver.id}${state}incomplete`;
+      const tempLeads = [...cartData];
+      const index = tempLeads.findIndex((item) => item.pricing_id === newId);
+      if (index > -1) {
+        tempLeads[index].quantity = tempLeads[index].quantity + qty.incomplete;
+      } else {
+        tempLeads.push({
+          pricing_id: `${monthPricingSilver.id}${state}incomplete`,
           quantity: qty.incomplete,
           state,
-          ...obj
-        },
-      ]);
+          ...obj,
+        });
+      }
+      sessionStorage.setItem(
+        "cart",
+        JSON.stringify(tempLeads)
+      );
+      added = true;
+      setCartData([...tempLeads])
+
+      added = true;
     }
     if (added) {
       toast.success("Added to cart!");
     } else {
-      toast.error("Couldn't find matching Pricing Id")
+      toast.error("Couldn't find matching Pricing Id");
     }
 
     setQuantities((q) => ({ ...q, [ageId]: { completed: 0, incomplete: 0 } }));

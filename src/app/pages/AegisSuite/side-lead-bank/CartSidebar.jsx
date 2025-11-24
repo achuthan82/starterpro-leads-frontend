@@ -14,41 +14,44 @@ const CartSidebar = ({
 }) => {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchValue, setSearchValue] =useState('')
-  const [selectedAgent, setSelectedAgent] = useState(null)
-  const [assignLoading, setAssignLoading] = useState(false)
+  const [searchValue, setSearchValue] = useState("");
+  const [selectedAgent, setSelectedAgent] = useState(null);
+  const [assignLoading, setAssignLoading] = useState(false);
   // Sync local state with cart when cart changes
-    const toFloatWithoutRounding = (num, decimalPlaces) => {
+  const toFloatWithoutRounding = (num, decimalPlaces) => {
     const numStr = String(num);
-    const dotIndex = numStr.indexOf('.');
-  
+    const dotIndex = numStr.indexOf(".");
+
     if (dotIndex === -1) {
       return parseFloat(numStr); // No decimal part, return as is
     }
-  
+
     const desiredLength = dotIndex + 1 + decimalPlaces;
     const truncatedStr = numStr.substring(0, desiredLength);
     return parseFloat(truncatedStr);
-  }
+  };
 
   // Grand total calculation
   const grandTotal = useMemo(() => {
-      return cartData.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
-  }, [cartData]) 
-  const commission =useMemo(() => {
-    return toFloatWithoutRounding((grandTotal * 0.03 * 100 / 100), 2);
-  })  
+    return cartData.reduce(
+      (sum, item) => sum + item.unit_price * item.quantity,
+      0,
+    );
+  }, [cartData]);
+  const commission = useMemo(() => {
+    return toFloatWithoutRounding((grandTotal * 0.03 * 100) / 100, 2);
+  });
   const roundedTotalWithCommission = useMemo(() => {
-    return  toFloatWithoutRounding(grandTotal + commission, 2); 
-  }, [commission, grandTotal])
+    return toFloatWithoutRounding(grandTotal + commission, 2);
+  }, [commission, grandTotal]);
 
   const roundedGrandTotal = grandTotal; //Math.round(grandTotal);
 
   const handleAgent = (selectedOption) => {
     if (selectedOption) {
-      setSelectedAgent(selectedOption)
+      setSelectedAgent(selectedOption);
     }
-  }
+  };
   const fetchAgents = async (name) => {
     setLoading(true);
     const query = { page: 1, per_page: 50 };
@@ -59,45 +62,51 @@ const CartSidebar = ({
       const token = window.localStorage.getItem("authToken");
       const res = await axios.get(
         `/starter-data/users-for-assigning/${selectedAgency?.value}`,
-        {params:query},
+        { params: query },
         {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         },
       );
-      setAgents(res.data.data.map((item) => {
-        return {value:item.agent_id , label:item.name, user_id:item.user_id}
-      }));
+      setAgents(
+        res.data.data.map((item) => {
+          return {
+            value: item.agent_id,
+            label: item.name,
+            user_id: item.user_id,
+          };
+        }),
+      );
     } catch {
       toast.error("Could not fetch Agents");
     } finally {
       setLoading(false);
     }
   };
-   const assignLeads = async () => {
+  const assignLeads = async () => {
     setAssignLoading(true);
-   
+
     try {
       const token = window.localStorage.getItem("authToken");
       /* eslint-disable no-unused-vars */
-      const payload = cartData.map(({pricing_id, ...rest}) => {
-        return {...rest}
-      })
+      const payload = cartData.map(({ pricing_id, ...rest }) => {
+        return { ...rest };
+      });
       /* eslint-disable no-unused-vars */
       const res = await axios.post(
-        `/starter-data/assign/${selectedAgency?.value}/${selectedAgent?.value}/${selectedAgent?.user_id}`, {cart_items:payload},
+        `/starter-data/assign/${selectedAgency?.value}/${selectedAgent?.value}/${selectedAgent?.user_id}`,
+        { cart_items: payload },
         {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         },
       );
-      console.log(res.data)
+      console.log(res.data);
       if (res.data.status === 201) {
-        console.log('entered')
-        sessionStorage.removeItem('cart')
-        setCartData([])
-        toast.success('Success!!')
-        onClose()
-      } 
-      
+        console.log("entered");
+        sessionStorage.removeItem("cart");
+        setCartData([]);
+        toast.success("Success!!");
+        onClose();
+      }
     } catch {
       toast.error("Failed to Assign");
     } finally {
@@ -157,7 +166,8 @@ const CartSidebar = ({
                           {item.state || item.state_code}
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">
-                         {convertDays(item.start_day)}&nbsp;{item.completed ? "Completed" : "Incomplete"}
+                          {convertDays(item.start_day)}&nbsp;
+                          {item.completed ? "Completed" : "Incomplete"}
                         </div>
                       </div>
                       <button
@@ -173,6 +183,9 @@ const CartSidebar = ({
                         Qty:
                       </span>
                       <p>{item.quantity}</p>
+                      <span className="ml-auto font-semibold text-[#0a2463] dark:text-blue-400">
+                        ${item.unit_price} each
+                      </span>
                     </div>
                   </li>
                 ))}
@@ -190,23 +203,35 @@ const CartSidebar = ({
             </>
           )}
         </div>
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
-         <div className="flex flex-col gap-1 mb-2">
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-base text-gray-900 dark:text-gray-100">Subtotal:</span>
-              <span className="text-base font-bold text-gray-700 dark:text-gray-200">${roundedGrandTotal}</span>
+        <div className="border-t border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-700">
+          <div className="mb-2 flex flex-col gap-1">
+            <div className="flex items-center justify-between">
+              <span className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                Subtotal:
+              </span>
+              <span className="text-base font-bold text-gray-700 dark:text-gray-200">
+                ${roundedGrandTotal}
+              </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-base text-gray-900 dark:text-gray-100">Processing Fee (3%):</span>
-              <span className="text-base font-bold text-gray-700 dark:text-gray-200">${commission}</span>
+            <div className="flex items-center justify-between">
+              <span className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                Processing Fee (3%):
+              </span>
+              <span className="text-base font-bold text-gray-700 dark:text-gray-200">
+                ${commission}
+              </span>
             </div>
-            <div className="flex justify-between items-center mt-1">
-              <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">Total:</span>
-              <span className="text-xl font-bold text-[#0a2463] dark:text-blue-400">${roundedTotalWithCommission}</span>
+            <div className="mt-1 flex items-center justify-between">
+              <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Total:
+              </span>
+              <span className="text-xl font-bold text-[#0a2463] dark:text-blue-400">
+                ${roundedTotalWithCommission}
+              </span>
             </div>
           </div>
           <button
-            className="w-full bg-[#0a2463] dark:bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-[#0a1a4a] dark:hover:bg-blue-700 transition-colors text-lg disabled:opacity-50"
+            className="w-full rounded-lg bg-[#0a2463] py-3 text-lg font-bold text-white transition-colors hover:bg-[#0a1a4a] disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700"
             disabled={cartData.length === 0 || !selectedAgent || assignLoading}
             onClick={assignLeads}
           >
