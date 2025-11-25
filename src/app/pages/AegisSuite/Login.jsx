@@ -66,7 +66,7 @@ const Login = () => {
         password: formData.password
       });
 
-      console.log('Login API response:', response);
+      console.log('Login API response:', response.data);
 
       // Handle the response structure from your API
       const responseData = response;
@@ -75,7 +75,7 @@ const Login = () => {
       const userData = responseData.data;
 
       console.log('Parsed login data:', { responseData, token, userData, fullResponse: response });
-
+      console.log('res', responseData)
       // Check if we have a successful response and a valid token
       if (response && token && userData?.email) {
         // Map role ID to role name (1 = admin, 2 = agent)
@@ -129,7 +129,10 @@ const Login = () => {
         } else {
           navigate('/agent-dashboard', { replace: true });
         }
+      } else if (response?.data?.temp_membership_token){
+         navigate(`subscription/${response?.data?.temp_membership_token}`)   
       } else if (!token) {
+        console.log('res-else', fullResponse)
         setError('Login failed: No authentication token received from server.');
       } else {
         setError('Login successful but user data not found. Please try again.');

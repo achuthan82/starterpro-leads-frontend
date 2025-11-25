@@ -46,9 +46,21 @@ const publicRoutes = {
       }),
     },
      {
-      path: "subscription",
+      path: "subscription/:token",
       lazy: async () => ({
         Component: (await import("app/pages/AegisSuite/Subscriptions/Subscription")).default,
+      }),
+    },
+     {
+      path: "checkout-success",
+      lazy: async () => ({
+        Component: (await import("app/pages/AegisSuite/Subscriptions/CheckoutSuccessNew")).default,
+      }),
+    },
+     {
+      path: "checkout-cancel",
+      lazy: async () => ({
+        Component: (await import("app/pages/AegisSuite/Subscriptions/CheckoutCancelNew")).default,
       }),
     },
     {

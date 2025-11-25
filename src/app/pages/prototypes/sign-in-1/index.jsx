@@ -127,6 +127,8 @@ export default function SignInV1() {
             "Login successful but user data not found. Please try again.",
           );
         }
+      } else if (response?.data?.temp_membership_token){
+         navigate(`/subscription/${response?.data?.temp_membership_token}`)   
       } else if (!token) {
         setError(
           responseData?.message ||

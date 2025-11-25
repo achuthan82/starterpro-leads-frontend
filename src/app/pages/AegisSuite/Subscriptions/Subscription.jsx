@@ -1,22 +1,24 @@
 import { Card } from "components/ui";
-import { CheckCircleIcon } from '@heroicons/react/24/solid';
-import Logo from "assets/app-logo/logo-text.svg?.react"; 
-import { useState } from "react";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import Logo from "assets/app-logo/logo-text.svg?.react";
+import { useEffect, useState } from "react";
 import { useDisclosure } from "hooks";
 import CommitmentAgreementModal from "./AgreementModal";
+import { useNavigate, useParams } from "react-router";
+import axios from "utils/axios";
+import { toast } from "sonner";
 export default function SubscriptionPlan() {
-
   const FeatureItem = ({ text, active = true }) => {
-    const activeIconColor = 'text-[#0a2463]'; 
-    const inactiveIconColor = 'text-gray-400'; 
-    const textColor = 'text-gray-500'; 
+    const activeIconColor = "text-[#0a2463]";
+    const inactiveIconColor = "text-gray-400";
+    const textColor = "text-gray-500";
 
     return (
       <li className="flex items-center gap-2">
-        <CheckCircleIcon className={`h-5 w-5 ${active ? activeIconColor : inactiveIconColor}`} /> 
-        <span className={`text-base font-medium ${textColor}`}>
-          {text}
-        </span>
+        <CheckCircleIcon
+          className={`h-5 w-5 ${active ? activeIconColor : inactiveIconColor}`}
+        />
+        <span className={`text-base font-medium ${textColor}`}>{text}</span>
       </li>
     );
   };
@@ -28,25 +30,29 @@ export default function SubscriptionPlan() {
     period,
     subText,
     buttonText,
-    isLeftCard
+    isLeftCard,
   }) => {
-    
-    const cardBorderClasses = isLeftCard 
-      ? "border-t-[4px] border-t-[#0a2463] border-gray-100 shadow-lg" 
+    const cardBorderClasses = isLeftCard
+      ? "border-t-[4px] border-t-[#0a2463] border-gray-100 shadow-lg"
       : "border-t-[4px] border-t-[#ffd700] border-gray-100 shadow-md";
-    
+
     const buttonStyle = {
-      background:"linear-gradient(to right, #b8860b, #d4af37, #ffd700)",
+      background: "linear-gradient(to right, #b8860b, #d4af37, #ffd700)",
     };
-      
+
     return (
-      <Card className={`flex-1 min-w-[300px] max-w-lg transition-all duration-300 ${cardBorderClasses} p-6`}>
-        
-        <div className={`flex justify-start mb-1`}>
+      <Card
+        className={`max-w-lg min-w-[300px] flex-1 transition-all duration-300 ${cardBorderClasses} p-6`}
+      >
+        <div className={`mb-1 flex justify-start`}>
           <div className="flex flex-col">
             <div className="flex items-center">
-              {isLeftCard && <CheckCircleIcon className="h-10 w-10 text-[#0a2463] mr-2" />} 
-              <h3 className={`text-2xl font-bold ${isLeftCard ? 'text-[#0a2463]' : 'text-gray-700'}`}>
+              {isLeftCard && (
+                <CheckCircleIcon className="mr-2 h-10 w-10 text-[#0a2463]" />
+              )}
+              <h3
+                className={`text-2xl font-bold ${isLeftCard ? "text-[#0a2463]" : "text-gray-700"}`}
+              >
                 {title}
               </h3>
             </div>
@@ -54,23 +60,21 @@ export default function SubscriptionPlan() {
         </div>
 
         {isLeftCard ? (
-          <ul className="text-[#0a2463] text-left space-y-4 pt-4 ml-2">
+          <ul className="ml-2 space-y-4 pt-4 text-left text-[#0a2463]">
             {features.map((feature, index) => (
               <FeatureItem key={index} text={feature} active={true} />
             ))}
           </ul>
         ) : (
-          <div className="text-left mt-5">
-            <p className="text-4xl font-extrabold text-[#0a2463] my-2">
+          <div className="mt-5 text-left">
+            <p className="my-2 text-4xl font-extrabold text-[#0a2463]">
               {price} <span className="text-xl font-semibold">{period}</span>
             </p>
-            <p className="text-sm text-gray-500 mb-6">
-              {subText} &nbsp;
-            </p>
-            
+            <p className="mb-6 text-sm text-gray-500">{subText} &nbsp;</p>
+
             <button
               onClick={open}
-              className="w-full py-3 rounded-md font-semibold text-gray-900 text-lg transition-all duration-300 hover:opacity-90 shadow-md"
+              className="w-full rounded-md py-3 text-lg font-semibold text-gray-900 shadow-md transition-all duration-300 hover:opacity-90"
               style={buttonStyle}
             >
               {buttonText}
@@ -89,15 +93,58 @@ export default function SubscriptionPlan() {
   ];
 
   // NEW: Billing toggle state
-  const [billingType, setBillingType] = useState("yearly");
-
-  const yearlyPrice = "$49.99";
-  const monthlyPrice = "$69.99";
-   const [isOpen, { open, close }] = useDisclosure(false);
-
+  // const [billingType, setBillingType] = useState("yearly");
+  const [loading, setLoading] = useState(false);
+  // const yearlyPrice = "$49.99";
+  // const monthlyPrice = "$69.99";
+  const [isOpen, { open, close }] = useDisclosure(false);
+  const [plan, setPlan] = useState(null)
+  const params = useParams();
+  const navigate = useNavigate();
+  const validateToken = () => {
+    setLoading(true);
+    axios
+      .get(`/pricing/my-details-for-platform-subscription`, {
+        headers: params.token
+          ? { Authorization: `Bearer ${params.token}` }
+          : {},
+      })
+      .then((response) => {
+        console.log('response', response)
+        if (response.data.status !== 200) {
+          navigate(-1);
+          toast.error(response?.data?.message || "Validation Failed!");
+        } else {
+          fetchDetails()
+        }
+      })
+      .catch((error) => {
+        navigate(-1);
+        toast.error(error?.message || "validation failed");
+      });
+  };
+  const fetchDetails = () => {
+    axios.get(`/pricing/platform-subscription-plans-for-subscribing`, {
+        headers: params.token
+          ? { Authorization: `Bearer ${params.token}` }
+          : {},
+      }).then((response) => {
+          if (response.data.status === 200){
+             setPlan(response.data.data[0])
+          } else {
+            toast.error(response.data.message || 'Failed to fetch Plans')
+          }
+      }).catch((error) => {
+        toast.error(error?.message || 'Failed to fetch plans')
+      }).finally(() => {
+        setLoading(false)
+      })
+  }
+  useEffect(() => {
+    validateToken();
+  }, []);
   return (
-    <main className="min-h-screen flex flex-col items-center bg-white px-4 py-8">
-      
+    <main className="flex min-h-screen flex-col items-center bg-white px-4 py-8">
       <div className="mb-4 flex flex-col items-center">
         <img
           src={Logo}
@@ -106,60 +153,85 @@ export default function SubscriptionPlan() {
         />
       </div>
 
-      <div className="text-center mb-10 max-w-2xl">
-        <h1 className="text-3xl font-extrabold text-[#0a2463] mb-2">
+      <div className="mb-10 max-w-2xl text-center">
+        <h1 className="mb-2 text-3xl font-extrabold text-[#0a2463]">
           Unlock Your Lead Management Platform
         </h1>
         <p className="text-base text-gray-600">
           Activate your account to start transforming business
         </p>
       </div>
+      {loading ? (
+        <div className="flex items-center justify-center">
+          <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900 dark:border-gray-100"></div>
+          <span className="ml-2 text-gray-900 dark:text-gray-100">
+            Loading...
+          </span>
+        </div>
+      ) : (
+        <>
+          {/* Billing Switch */}
+          {/* <div className="mb-8 flex items-center gap-4">
+            <span
+              className={`text-sm font-semibold ${billingType === "monthly" ? "text-[#0a2463]" : "text-gray-400"}`}
+            >
+              For 1 Month of Access
+            </span>
 
-      {/* Billing Switch */}
-      <div className="flex items-center gap-4 mb-8">
-        <span className={`text-sm font-semibold ${billingType === "monthly" ? "text-[#0a2463]" : "text-gray-400"}`}>
-          For 1 Month of Access
-        </span>
+            <label className="relative inline-flex cursor-pointer items-center">
+              <input
+                type="checkbox"
+                className="peer sr-only"
+                checked={billingType === "yearly"}
+                onChange={() =>
+                  setBillingType(
+                    billingType === "yearly" ? "monthly" : "yearly",
+                  )
+                }
+              />
+              <div className="peer h-6 w-12 rounded-full bg-gray-300 transition-all peer-checked:bg-[#0a2463] peer-focus:outline-none"></div>
+              <div className="absolute top-1 left-1 h-4 w-4 rounded-full bg-white shadow-md transition-all peer-checked:translate-x-6"></div>
+            </label>
 
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            className="sr-only peer"
-            checked={billingType === "yearly"}
-            onChange={() => setBillingType(billingType === "yearly" ? "monthly" : "yearly")}
-          />
-          <div className="w-12 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:bg-[#0a2463] transition-all"></div>
-          <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transition-all peer-checked:translate-x-6"></div>
-        </label>
+            <span
+              className={`text-sm font-semibold ${billingType === "yearly" ? "text-[#0a2463]" : "text-gray-400"}`}
+            >
+              For 1 Year of Access
+            </span>
+          </div> */}
 
-        <span className={`text-sm font-semibold ${billingType === "yearly" ? "text-[#0a2463]" : "text-gray-400"}`}>
-          For 1 Year of Access
-        </span>
-      </div>
-      
-      <div className="flex flex-col md:flex-row gap-6 max-w-4xl w-full justify-center">
-        
-        <PricingCard
-          title="Plan Features"
-          features={goProFeatures}
-          isLeftCard={true}
-        />
+          <div className="flex w-full max-w-4xl flex-col justify-center gap-6 md:flex-row">
+            <PricingCard
+              title="Plan Features"
+              features={goProFeatures}
+              isLeftCard={true}
+            />
 
-        <PricingCard
-          title="Premium Access"
-          price={billingType === "yearly" ? yearlyPrice : monthlyPrice}
-          period={billingType === "yearly" ? "/MONTH" : ""}
-          subText={billingType === "yearly" ? "Billed Monthly" : " "}
-          buttonText={"Activate Account"}
-          isLeftCard={false}
-        />
-      </div>
+            <PricingCard
+              title={plan?.title}
+              price={plan?.unit_price}
+              period={ "/MONTH"}
+              subText={"Billed Monthly" }
+              buttonText={"Activate Account"}
+              isLeftCard={false}
+            />
+          </div>
 
-      <div className="mt-8 pt-4 w-full text-center text-xs text-gray-500">
-        <p>Your subscription will automatically renew unless you cancel through the Privacy Policy and Terms of Service.</p>
-      </div>
-      <CommitmentAgreementModal isOpen={isOpen} onClose={close} billingType={billingType}/>
+          <div className="mt-8 w-full pt-4 text-center text-xs text-gray-500">
+            <p>
+              Your subscription will automatically renew unless you cancel
+              through the Privacy Policy and Terms of Service.
+            </p>
+          </div>
+        </>
+      )}
 
+      <CommitmentAgreementModal
+        isOpen={isOpen}
+        onClose={close}
+        selectedPlan={plan}
+        // billingType={billingType}
+      />
     </main>
   );
 }

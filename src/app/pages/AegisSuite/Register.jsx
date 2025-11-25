@@ -103,13 +103,17 @@ export default function Register() {
         payload,
         register_token,
       );
-      console.log(response);
+      console.log(response.data);
       if (response.status === 200) {
-        setSuccess(true);
-        setError("");
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+        if (response.data.temp_membership_token) {
+          navigate(`/subscription/${response.data.temp_membership_token}`);
+ 
+          setSuccess(true);
+          setError("");
+        } else {
+          setSuccess(false);
+          setError("Membership token not recieved");
+        }
       } else {
         setError(
           response.message
@@ -132,7 +136,7 @@ export default function Register() {
   }, [])*/
 
   return (
-    <div className="flex min-h-screen items-center py-4 justify-center bg-[#f2f2f2] dark:bg-gray-900">
+    <div className="flex min-h-screen items-center justify-center bg-[#f2f2f2] py-4 dark:bg-gray-900">
       <div className="mx-auto w-full max-w-md px-4">
         {/* Logo and Brand */}
         {/* <div className="text-center mb-8">
@@ -172,12 +176,12 @@ export default function Register() {
           />
         </div>
         {/* Register Form Card */}
-        <div className="rounded-lg bg-white dark:bg-gray-800 p-8 shadow-xl">
+        <div className="rounded-lg bg-white p-8 shadow-xl dark:bg-gray-800">
           <div className="mb-6 text-center">
             <h2 className="mb-2 text-2xl font-bold text-[#0a2463] dark:text-blue-400">
               Create your account
             </h2>
-            {agencyName && agencyName !== 'StarterPro' ? (
+            {agencyName && agencyName !== "StarterPro" ? (
               <p className="mb-2 text-sm font-medium text-[#0a2463] dark:text-blue-400">
                 [ {agencyName} ] has invited you to join StarterPro Leads.
               </p>
@@ -189,12 +193,12 @@ export default function Register() {
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {error && (
-              <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-700 dark:text-red-400">
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
                 {error}
               </div>
             )}
             {success && (
-              <div className="rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 p-3 text-sm text-green-700 dark:text-green-400">
+              <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400">
                 Registration successful! Redirecting to login...
               </div>
             )}
@@ -210,7 +214,7 @@ export default function Register() {
                 name="name"
                 type="text"
                 {...register("name")}
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 transition-colors focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 transition-colors focus:border-[#0a2463] focus:ring-2 focus:ring-[#0a2463] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 placeholder="Enter your name"
                 defaultValue={registeredName}
               />
@@ -254,7 +258,7 @@ export default function Register() {
                 name="npn_number"
                 type="text"
                 {...register("npn_number")}
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 transition-colors focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 transition-colors focus:border-[#0a2463] focus:ring-2 focus:ring-[#0a2463] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 placeholder="Enter your NPN number"
                 defaultValue={npn_number}
               />
@@ -276,7 +280,7 @@ export default function Register() {
                 name="phone"
                 type="text"
                 {...register("phone")}
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 transition-colors focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 transition-colors focus:border-[#0a2463] focus:ring-2 focus:ring-[#0a2463] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 placeholder="Enter your US phone number"
                 defaultValue={registeredPhone}
               />
@@ -309,7 +313,7 @@ export default function Register() {
                       e.preventDefault();
                     }
                   }}
-                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 pr-10 transition-colors focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-10 text-gray-900 placeholder-gray-400 transition-colors focus:border-[#0a2463] focus:ring-2 focus:ring-[#0a2463] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                   placeholder="Enter your password"
                 />
                 <button
@@ -353,7 +357,7 @@ export default function Register() {
                       e.preventDefault();
                     }
                   }}
-                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 pr-10 transition-colors focus:border-[#0a2463] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-10 text-gray-900 placeholder-gray-400 transition-colors focus:border-[#0a2463] focus:ring-2 focus:ring-[#0a2463] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                   placeholder="Repeat your password"
                 />
                 <button
@@ -389,7 +393,7 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={isLoading || alreadyLoggedIn}
-                className="w-full rounded-lg bg-gradient-to-b from-[#f4d03f] to-[#e6c23a] dark:from-blue-600 dark:to-blue-700 px-4 py-3 font-semibold text-white transition-all duration-200 hover:from-[#e6c23a] hover:to-[#d4b82a] dark:hover:from-blue-700 dark:hover:to-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-lg bg-gradient-to-b from-[#f4d03f] to-[#e6c23a] px-4 py-3 font-semibold text-white transition-all duration-200 hover:from-[#e6c23a] hover:to-[#d4b82a] disabled:cursor-not-allowed disabled:opacity-50 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
@@ -407,7 +411,7 @@ export default function Register() {
               </span>
               <Link
                 to="/login"
-                className="text-sm text-[#0a2463] dark:text-blue-400 transition-colors duration-200 hover:text-[#0a1a4a] dark:hover:text-blue-300"
+                className="text-sm text-[#0a2463] transition-colors duration-200 hover:text-[#0a1a4a] dark:text-blue-400 dark:hover:text-blue-300"
               >
                 Sign In
               </Link>
