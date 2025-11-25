@@ -22,7 +22,7 @@ export default function CommitmentAgreementModal({
   //   const displayedNonCompliance =
   //     billingType === "yearly" ? yearlyNonCompliance : monthlyNonCompliance;
 
-  const [isChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
@@ -284,6 +284,11 @@ export default function CommitmentAgreementModal({
                 By replying YES, the Agent confirms agreement to these terms and
                 consents to receive SMS updates.
               </p>
+
+              <div className="mt-6 flex justify-end items-center gap-3">
+                <input type="checkbox" checked={isChecked} onChange={() => setIsChecked(!isChecked)} className="w-4 h-4" />
+                <label htmlFor="agreement" className="text-sm font-medium">I agree to the terms and conditions</label>
+              </div>
             </div>
 
             {/* Footer */}
