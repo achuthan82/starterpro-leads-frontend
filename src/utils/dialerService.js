@@ -136,6 +136,42 @@ class DialerService {
       throw error;
     }
   }
+
+  /**
+   * Get wallet balance
+   * @returns {Promise} Response with wallet balance data
+   */
+  async getWalletBalance() {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.DIALER.WALLET_BALANCE);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching wallet balance:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create Stripe checkout session for wallet recharge
+   * @param {Object} params - Recharge parameters
+   * @param {number} params.recharged_amount - Amount to recharge
+   * @param {number} params.total_amount - Total amount including commission
+   * @param {string} params.success_url - Success redirect URL
+   * @param {string} params.cancel_url - Cancel redirect URL
+   * @returns {Promise} Response with Stripe session data
+   */
+  async createWalletRechargeSession(params) {
+    try {
+      const response = await axiosInstance.post(
+        '/stripe/wallet-recharge-create-checkout-session',
+        params
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error creating wallet recharge session:', error);
+      throw error;
+    }
+  }
 }
 
 const dialerService = new DialerService();

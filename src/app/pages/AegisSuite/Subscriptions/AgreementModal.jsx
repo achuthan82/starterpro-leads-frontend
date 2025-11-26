@@ -32,7 +32,7 @@ export default function CommitmentAgreementModal({
   };
   const stripePromise = loadStripe(STRIPE_KEY);
   const [isSigned, setIsSigned] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  // const [isChecked, setIsChecked] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
   const generateAndSendPDF = async () => {
@@ -57,7 +57,7 @@ export default function CommitmentAgreementModal({
       const imgData = canvas.toDataURL("image/png");
       const config = {
         method: "post",
-        url: `${JWT_HOST_API}/files/upload/purchase_agreement/${uuid4}`,
+        url: `${JWT_HOST_API}/files/upload/platform/purchase_agreement/${uuid4}`,
         headers: {
           Authorization: `Bearer ${params?.token}`,
         },
@@ -415,7 +415,7 @@ export default function CommitmentAgreementModal({
                   and consents to receive SMS updates.
                 </p>
 
-                <div className="mt-6 flex items-center justify-end gap-3">
+                {/* <div className="mt-6 flex items-center justify-end gap-3">
                   <input
                     type="checkbox"
                     checked={isChecked}
@@ -425,7 +425,7 @@ export default function CommitmentAgreementModal({
                   <label htmlFor="agreement" className="text-sm font-medium">
                     I agree to the terms and conditions
                   </label>
-                </div>
+                </div> */}
                 <div className="space-y-2">
                   <label htmlFor="signature" className="block font-semibold">
                     Signature *

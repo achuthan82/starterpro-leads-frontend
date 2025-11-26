@@ -191,6 +191,20 @@ const protectedRoutes = {
           }),
         },
         {
+          path: "power-dialer/recharge-success",
+          lazy: async () => ({
+            Component: (await import("app/pages/powerDialer/RechargeSuccess"))
+              .default,
+          }),
+        },
+        {
+          path: "power-dialer/recharge-cancel",
+          lazy: async () => ({
+            Component: (await import("app/pages/powerDialer/RechargeCancel"))
+              .default,
+          }),
+        },
+        {
           path: "settings",
           lazy: async () => ({
             Component: (await import("app/pages/AegisSuite/Settings")).default,

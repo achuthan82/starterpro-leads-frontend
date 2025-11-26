@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { UserIcon, CpuChipIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { UserIcon, CpuChipIcon, ChevronDownIcon, WalletIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import SharedSidebar from '../AegisSuite/components/SharedSidebar';
 import LeadList from './LeadList';
 import LeadInfo from './LeadInfo';
@@ -7,8 +7,11 @@ import CallControls from './CallControls';
 import ScriptTranscript from './ScriptTranscript';
 import OutboundNumberModal from './OutboundNumberModal';
 import ScheduleAppointmentModal from './ScheduleAppointmentModal';
+import RechargeModal from './RechargeModal';
 import { STATUS_NAME_TO_ID } from 'constants/app.constant';
 import { useCallContext } from 'app/contexts/call/context';
+import dialerService from 'utils/dialerService';
+import { toast } from 'sonner';
 
 const PowerDialer = () => {
   // Get call state and functions from context
@@ -45,6 +48,12 @@ const PowerDialer = () => {
   const [showOutboundModal, setShowOutboundModal] = useState(false);
   const [outboundModalShown, setOutboundModalShown] = useState(false);
   const [previousCallEnded, setPreviousCallEnded] = useState(false);
+  const [showRechargeModal, setShowRechargeModal] = useState(false);
+  
+  // Wallet balance state
+  const [walletBalance, setWalletBalance] = useState(null);
+  const [walletLoading, setWalletLoading] = useState(false);
+  const pollingIntervalRef = useRef(null);
 
   // Use context selectedLead as local selectedLead
   const selectedLead = contextSelectedLead;
@@ -134,6 +143,55 @@ const PowerDialer = () => {
     }
   }, [selectedOutboundNumber, outboundModalShown]);
 
+  // Fetch wallet balance
+  const fetchWalletBalance = useCallback(async (showToast = false) => {
+    try {
+      setWalletLoading(true);
+      const response = await dialerService.getWalletBalance();
+      // API response structure: { data: { wallet_amount: 104.0 }, message: "success", status: 200 }
+      const balance = response?.data?.wallet_amount || 0;
+      setWalletBalance(balance);
+      if (showToast) {
+        toast.success('Wallet balance updated');
+      }
+    } catch (error) {
+      console.error('Error fetching wallet balance:', error);
+      if (showToast) {
+        toast.error('Failed to fetch wallet balance');
+      }
+    } finally {
+      setWalletLoading(false);
+    }
+  }, []);
+
+  // Initial fetch and setup polling for wallet balance
+  useEffect(() => {
+    // Fetch immediately on mount
+    fetchWalletBalance();
+
+    // Set up polling every 10 minutes (600000 milliseconds)
+    pollingIntervalRef.current = setInterval(() => {
+      fetchWalletBalance();
+    }, 600000); // 10 minutes
+
+    // Cleanup interval on unmount
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [fetchWalletBalance]);
+
+  // Handle manual refresh
+  const handleRefreshBalance = () => {
+    fetchWalletBalance(true);
+  };
+
+  // Handle recharge - open modal
+  const handleRecharge = () => {
+    setShowRechargeModal(true);
+  };
+
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       <SharedSidebar currentPath="/power-dialer" />
@@ -147,6 +205,35 @@ const PowerDialer = () => {
             </div>
             
             <div className="flex items-center space-x-4">
+              {/* Wallet Balance Section */}
+              <div className="flex items-center space-x-3 bg-gray-50 dark:bg-gray-700 rounded-lg px-4 py-2 border border-gray-200 dark:border-gray-600">
+                <WalletIcon className="w-5 h-5 text-[var(--color-atoll)] dark:text-blue-400" />
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Balance:</span>
+                  {walletLoading ? (
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Loading...</span>
+                  ) : (
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                      ${walletBalance !== null ? parseFloat(walletBalance).toFixed(2) : '0.00'}
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={handleRefreshBalance}
+                  disabled={walletLoading}
+                  className="ml-2 p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Refresh balance"
+                >
+                  <ArrowPathIcon className={`w-4 h-4 text-gray-600 dark:text-gray-300 ${walletLoading ? 'animate-spin' : ''}`} />
+                </button>
+                <button
+                  onClick={handleRecharge}
+                  className="ml-2 px-3 py-1.5 text-xs font-medium bg-[var(--color-atoll)] text-white rounded-md hover:bg-[var(--color-atoll)]/90 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
+                >
+                  Recharge
+                </button>
+              </div>
+
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Calling Mode:</span>
               <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                 <button
@@ -278,6 +365,12 @@ const PowerDialer = () => {
         isOpen={showScheduleModal}
         onClose={() => setShowScheduleModal(false)}
         selectedLead={selectedLead}
+      />
+
+      {/* Recharge Modal */}
+      <RechargeModal
+        isOpen={showRechargeModal}
+        onClose={() => setShowRechargeModal(false)}
       />
     </div>
   );

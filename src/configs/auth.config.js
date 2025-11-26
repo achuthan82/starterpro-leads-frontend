@@ -99,7 +99,8 @@ export const API_ENDPOINTS = {
     OUTBOUND_NUMBERS: "/dialer/outbound-numbers-from-db",
     TOKEN: "/dialer/token",
     CALL_LOGS: "/dialer/call-logs",
-    DATA_ENTRY: "/dialer/data-entry"
+    DATA_ENTRY: "/dialer/data-entry",
+    WALLET_BALANCE: "/dialer/wallet-balance"
   },
   CARRIERS: {
     LOGO_COLLAGE: "/carriers/logos/collage"
