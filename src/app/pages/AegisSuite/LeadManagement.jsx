@@ -802,6 +802,12 @@ const LeadManagement = () => {
           else result += val || "";
         } else if (key.customSelector === "lead_status") {
           result += LEAD_STATUS[val] || "";
+        }  else if (key.customSelector === 'call_in_date_time') {
+          if (item.campaign_name.startsWith('SD')){
+             result += 'N/A'
+          } else {
+            result += val
+          }
         } else {
           if (typeof val === "string" && val.includes(",")) {
             result += `"${val}"`;

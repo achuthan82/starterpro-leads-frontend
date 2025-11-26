@@ -120,10 +120,13 @@ const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddN
                                 <p className="text-sm text-blue-700 dark:text-blue-300">Source</p>
                                 <p className="font-medium text-blue-900 dark:text-blue-200">{getSourceName(selectedLead.source_id) || ''}</p>
                             </div>
-                            <div className="flex justify-between">
+                            {
+                              !selectedLead.campaign_name.startsWith('SD') && <div className="flex justify-between">
                                 <p className="text-sm text-blue-700 dark:text-blue-300">Registered Date</p>
                                 <p className="font-medium text-blue-900 dark:text-blue-200">{selectedLead.call_in_date_time || ''}</p>
-                            </div>
+                            </div> 
+                            }
+                            
                             {/* <div>
                             <p className="text-sm text-gray-500">Lead Status</p>
                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full shieldnest-badge-${(selectedLead.lead_status || selectedLead.status)}`}>
@@ -282,7 +285,7 @@ const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddN
                                 </span>
                               </div>
                               <div className="text-sm text-gray-600 dark:text-gray-300">
-                                {log.timestamp || log.call_in_date_time || 'No timestamp'}
+                                {log.timestamp || !selectedLead.campaign_name.startsWith('SD') ? 'N/A' : log.call_in_date_time || 'No timestamp'}
                               </div>
                               {log.call_in_phone && (
                                 <div className="text-sm text-gray-600 dark:text-gray-300">

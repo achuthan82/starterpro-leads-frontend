@@ -770,7 +770,7 @@ const LeadBank = () => {
                             {activeTab !== "mailed" && (
                               <td className="px-3 py-4 whitespace-nowrap">
                                 <div className="text-sm text-gray-900 dark:text-white">
-                                  {lead.call_in_date_time || ""}
+                                  {!lead.campaign_name.startWith('SD') ?lead.call_in_date_time : 'N/A'}
                                 </div>
                               </td>
                             )}
