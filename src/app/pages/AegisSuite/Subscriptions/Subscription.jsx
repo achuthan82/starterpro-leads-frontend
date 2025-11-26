@@ -8,6 +8,9 @@ import { useNavigate, useParams } from "react-router";
 import axios from "utils/axios";
 import { toast } from "sonner";
 export default function SubscriptionPlan() {
+   const buttonStyle = {
+      background:"linear-gradient(to right, #b8860b, #d4af37, #ffd700)",
+    };
   // const FeatureItem = ({ text, active = true }) => {
   //   const activeIconColor = "text-[#0a2463]";
   //   const inactiveIconColor = "text-gray-400";
@@ -252,11 +255,12 @@ export default function SubscriptionPlan() {
 
                     <div className="mt-6">
                       <button
+                        style={buttonStyle}
                         onClick={() => {
                           setSelectedPlan(planItem);
                           open();
                         }}
-                        className="w-full rounded-lg bg-[#0a2463] py-3 font-semibold text-white transition-all hover:bg-[#081b4d]"
+                        className="w-full rounded-lg  py-3 font-semibold text-white transition-all "
                       >
                         Activate Account
                       </button>
