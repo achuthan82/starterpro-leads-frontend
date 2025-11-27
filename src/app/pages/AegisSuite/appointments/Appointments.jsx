@@ -10,7 +10,7 @@ import calendarService from "utils/clendarService";
 import ScheduleAppointmentModal from "app/pages/powerDialer/ScheduleAppointmentModal";
 import DeleteAppointmentModal from "./DeleteAppointmentModal";
 import InviteModal from "./InviteModal";
-import { STATUS_COLORS } from "constants/app.constant";
+import { LEAD_STATUS, STATUS_COLORS, STATUS_NAME_TO_ID } from "constants/app.constant";
 const Appointments = () => {
   const [viewType, setViewType] = useState("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -35,7 +35,10 @@ const Appointments = () => {
     Intl.DateTimeFormat().resolvedOptions().timeZone === "Asia/Calcutta"
       ? "Asia/Kolkata"
       : Intl.DateTimeFormat().resolvedOptions().timeZone;
-
+    const statusOptions = [
+      'All Statuses',
+      ...Object.values(LEAD_STATUS).filter(status => status !== 'UNKNOWN')
+    ];
   // const appointments = [
   //   {
   //     id: "p001",
@@ -126,12 +129,14 @@ const Appointments = () => {
                 endTime:
                   moment(item.meeting_end_datetime).format("HH:mm") || "00:00",
                 // type: "consultation",
-                status:item.lead_status,
+                status: item.lead_status,
                 date: moment(
                   item.meeting_datetime,
                   "MM-DD-YYYY HH:mm:ss",
                 ).format("YYYY-MM-DD"),
-                color: STATUS_COLORS[item.lead_status] ? STATUS_COLORS[item.lead_status] : STATUS_COLORS[1],
+                color: STATUS_COLORS[item.lead_status]
+                  ? STATUS_COLORS[item.lead_status]
+                  : STATUS_COLORS[1],
                 title: item.title || "Untitled Meeting", // keep the title
               };
             }),
@@ -168,6 +173,27 @@ const Appointments = () => {
       appointment.filter((item) => item.date === moment().format("YYYY-MM-DD")),
     );
   };
+   const getStatusId = (status) => {
+      if (!status) return null;
+      
+      // If it's already a number, return it
+      if (typeof status === 'number') {
+        return status;
+      }
+      
+      // If it's a string, try to find the ID
+      if (typeof status === 'string') {
+        // Try STATUS_NAME_TO_ID first
+        const statusId = STATUS_NAME_TO_ID[status.toUpperCase()];
+        if (statusId) return statusId;
+        
+        // Try to find in LEAD_STATUS
+        const foundId = Object.keys(LEAD_STATUS).find(key => LEAD_STATUS[key] === status || LEAD_STATUS[key] === status.toUpperCase());
+        if (foundId) return Number(foundId);
+      }
+      
+      return null;
+    };
   useEffect(() => {
     let start_date;
     let end_date = moment(selectedDate).format("MM-DD-YYYY HH:mm:ss");
@@ -202,8 +228,8 @@ const Appointments = () => {
     }
   }, [appointments, viewType]);
   useEffect(() => {
-    console.log(appointments, 'appointments')
-  }, [appointments])
+    console.log(appointments, "appointments");
+  }, [appointments]);
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
@@ -258,7 +284,7 @@ const Appointments = () => {
                 className="flex items-center space-x-2 rounded-lg px-4 py-2 font-semibold text-white shadow-lg transition-all"
                 style={{ backgroundColor: "#0a2463" }}
                 onClick={() => {
-                  inviteOpen()
+                  inviteOpen();
                 }}
               >
                 {/* Envelope Icon */}
@@ -448,42 +474,49 @@ const Appointments = () => {
                           APPOINTMENT TYPES
                         </span>
                       </div>
-
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <div className="h-3 w-3 rounded-full bg-blue-500"></div>
-                            <span className="text-sm text-gray-700 dark:text-gray-200">
-                              Calls
-                            </span>
-                          </div>
-                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                            {total}
-                          </span>
+                      <div className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-600">
+                        <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
+                          Status Legend:
+                        </p>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          {statusOptions.slice(1).map((status) => {
+                            const statusId = getStatusId(status);
+                            // Get the background color from the badge class
+                            const getStatusDotColor = (id) => {
+                              if (!id) return "bg-gray-400";
+                              // Map status IDs to their corresponding colors from shieldnest-theme.css
+                              const colorMap = {
+                                1: "bg-[var(--atoll)]", // NEW
+                                2: "bg-[var(--atoll)]", // FIRST CALL
+                                3: "bg-[var(--atlantis)]", // SECOND CALL
+                                4: "bg-[#f97316]", // THIRD CALL
+                                5: "bg-[#8b5cf6]", // TEXT
+                                6: "bg-[#3b82f6]", // APPOINTMENT
+                                7: "bg-[var(--fern)]", // SOLD
+                                8: "bg-[var(--waterloo)]", // NOT INTERESTED
+                                9: "bg-[var(--gray-suit)]", // SIT / NO SALE
+                                10: "bg-[#ef4444]", // NO SHOW
+                                11: "bg-[#374151]", // DNC
+                                12: "bg-[#4e1515]", // SUPPRESSED
+                                13: "bg-[#10151d]", // Suppression Denied
+                              };
+                              return colorMap[id] || "bg-gray-400";
+                            };
+                            return (
+                              <div
+                                key={status}
+                                className="flex items-center gap-2"
+                              >
+                                <div
+                                  className={`h-2 w-2 rounded-full ${getStatusDotColor(statusId)}`}
+                                ></div>
+                                <span className="text-gray-600 dark:text-gray-400">
+                                  {status}
+                                </span>
+                              </div>
+                            );
+                          })}
                         </div>
-
-                        {/* <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <div className="h-3 w-3 rounded-full bg-green-500"></div>
-                            <span className="text-sm text-gray-700 dark:text-gray-200">
-                              Meetings
-                            </span>
-                          </div>
-                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                            11
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <div className="h-3 w-3 rounded-full bg-purple-500"></div>
-                            <span className="text-sm text-gray-700 dark:text-gray-200">
-                              Presentations
-                            </span>
-                          </div>
-                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                            7
-                          </span>
-                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -508,7 +541,10 @@ const Appointments = () => {
             appointment={selectedAppointment}
             setDeleteModal={setDeleteModal}
           ></AppointmentModal>
-          <InviteModal isInviteOpen={isInviteOpen} inviteClose={inviteClose}></InviteModal>
+          <InviteModal
+            isInviteOpen={isInviteOpen}
+            inviteClose={inviteClose}
+          ></InviteModal>
           {deleteModal && (
             <DeleteAppointmentModal
               appointment={selectedAppointment}

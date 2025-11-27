@@ -1,92 +1,14 @@
-// import { Card } from "components/ui";
-// import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import Logo from "assets/app-logo/logo-text.svg?.react";
 import { useEffect, useState } from "react";
 import { useDisclosure } from "hooks";
 import CommitmentAgreementModal from "./AgreementModal";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import axios from "utils/axios";
 import { toast } from "sonner";
 export default function SubscriptionPlan() {
   const buttonStyle = {
     background: "linear-gradient(to right, #b8860b, #d4af37, #ffd700)",
   };
-  // const FeatureItem = ({ text, active = true }) => {
-  //   const activeIconColor = "text-[#0a2463]";
-  //   const inactiveIconColor = "text-gray-400";
-  //   const textColor = "text-gray-500";
-
-  //   return (
-  //     <li className="flex items-center gap-2">
-  //       <CheckCircleIcon
-  //         className={`h-5 w-5 ${active ? activeIconColor : inactiveIconColor}`}
-  //       />
-  //       <span className={`text-base font-medium ${textColor}`}>{text}</span>
-  //     </li>
-  //   );
-  // };
-
-  // const PricingCard = ({
-  //   title,
-  //   features,
-  //   price,
-  //   period,
-  //   subText,
-  //   buttonText,
-  //   isLeftCard,
-  // }) => {
-  //   const cardBorderClasses = isLeftCard
-  //     ? "border-t-[4px] border-t-[#0a2463] border-gray-100 shadow-lg"
-  //     : "border-t-[4px] border-t-[#ffd700] border-gray-100 shadow-md";
-
-  //   const buttonStyle = {
-  //     background: "linear-gradient(to right, #b8860b, #d4af37, #ffd700)",
-  //   };
-
-  //   return (
-  //     <Card
-  //       className={`max-w-lg min-w-[300px] flex-1 transition-all duration-300 ${cardBorderClasses} p-6`}
-  //     >
-  //       <div className={`mb-1 flex justify-start`}>
-  //         <div className="flex flex-col">
-  //           <div className="flex items-center">
-  //             {isLeftCard && (
-  //               <CheckCircleIcon className="mr-2 h-10 w-10 text-[#0a2463]" />
-  //             )}
-  //             <h3
-  //               className={`text-2xl font-bold ${isLeftCard ? "text-[#0a2463]" : "text-gray-700"}`}
-  //             >
-  //               {title}
-  //             </h3>
-  //           </div>
-  //         </div>
-  //       </div>
-
-  //       {isLeftCard ? (
-  //         <ul className="ml-2 space-y-4 pt-4 text-left text-[#0a2463]">
-  //           {features.map((feature, index) => (
-  //             <FeatureItem key={index} text={feature} active={true} />
-  //           ))}
-  //         </ul>
-  //       ) : (
-  //         <div className="mt-5 text-left">
-  //           <p className="my-2 text-4xl font-extrabold text-[#0a2463]">
-  //             {price} <span className="text-xl font-semibold">{period}</span>
-  //           </p>
-  //           <p className="mb-6 text-sm text-gray-500">{subText} &nbsp;</p>
-
-  //           <button
-  //             onClick={open}
-  //             className="w-full rounded-md py-3 text-lg font-semibold text-gray-900 shadow-md transition-all duration-300 hover:opacity-90"
-  //             style={buttonStyle}
-  //           >
-  //             {buttonText}
-  //           </button>
-  //         </div>
-  //       )}
-  //     </Card>
-  //   );
-  // };
 
   const goProFeatures = [
     "Unlimited Lead Tracking",
@@ -95,13 +17,10 @@ export default function SubscriptionPlan() {
     "Cloud Sync & Security",
   ];
 
-  // NEW: Billing toggle state
   // const [billingType, setBillingType] = useState("yearly");
   const [loading, setLoading] = useState(false);
-  // const yearlyPrice = "$49.99";
-  // const monthlyPrice = "$69.99";
   const [isOpen, { open, close }] = useDisclosure(false);
-  const [plans, setPlans] = useState(null);
+  const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const params = useParams();
   const navigate = useNavigate();
@@ -151,6 +70,15 @@ export default function SubscriptionPlan() {
   useEffect(() => {
     validateToken();
   }, []);
+  useEffect(() => {
+    if (plans && plans.length > 0) {
+      const middle = document.body.scrollHeight / 2;
+      window.scrollTo({
+        top: middle,
+        behavior: "smooth",
+      });
+    }
+  }, [plans]);
   return (
     <main className="flex min-h-screen flex-col items-center bg-white px-4 py-8">
       <div className="mb-4 flex flex-col items-center">
@@ -159,6 +87,13 @@ export default function SubscriptionPlan() {
           alt="Starter Pro Leads Logo"
           className="h-30 w-auto object-contain"
         />
+        <Link
+          className="mt-3 font-semibold text-[#0a2463] transition-colors hover:text-[#081b4d] hover:underline"
+          to="/login"
+        >
+          {" "}
+          ← Back to Login
+        </Link>
       </div>
 
       <div className="mb-10 max-w-2xl text-center">
@@ -208,69 +143,64 @@ export default function SubscriptionPlan() {
             </span>
           </div> */}
 
-          <div className="mx-auto mt-10 w-full max-w-6xl">
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-              {/* LEFT FEATURES CARD (spans 1 column on desktop) */}
-              <div className="lg:col-span-1">
-                <div className="flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-                  <h2 className="mb-4 text-2xl font-bold text-[#0a2463]">
-                    Plan Features
-                  </h2>
+          <div className="mx-auto mt-3 w-full max-w-5xl">
+            {/* FEATURES – COMPACT */}
+            {/* FEATURES – SINGLE LINE ON DESKTOP */}
+            <div className="rounded-2xl border border-gray-200 bg-white px-6 py-5 shadow-sm">
+              <h2 className="mb-4 text-center text-xl font-bold text-[#0a2463]">
+                What&apos;s Included
+              </h2>
 
-                  <ul className="mt-4 space-y-3 text-gray-700">
-                    {goProFeatures.map((item, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <span className="mt-1 text-[#0a2463]">✔</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-auto pt-6 text-sm text-gray-500">
-                    Choose a plan to activate your account.
-                  </div>
-                </div>
-              </div>
-
-              {/* RIGHT SIDE PLANS (2 columns on large screens) */}
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:col-span-2">
-                {plans?.map((planItem, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-md transition-all hover:shadow-lg"
-                  >
-                    <h3 className="text-xl font-bold text-[#0a2463]">
-                      {planItem.title}
-                    </h3>
-
-                    <div className="mt-4 text-4xl font-extrabold text-[#0a2463]">
-                      ${planItem.unit_price}
-                      <span className="text-base font-medium text-gray-500">
-                        {" "}
-                        /month
-                      </span>
-                    </div>
-
-                    <p className="mt-2 text-sm text-gray-500">Billed Monthly</p>
-
-                    <div className="mt-6">
-                      <button
-                        style={buttonStyle}
-                        onClick={() => {
-                          setSelectedPlan(planItem);
-                          open();
-                        }}
-                        className="w-full rounded-md py-3 text-lg font-semibold text-gray-900 shadow-md transition-all duration-300 hover:opacity-90"
-                      >
-                        Activate Account
-                      </button>
-                    </div>
-                  </div>
+              <ul className="grid grid-cols-1 gap-3 text-gray-700 sm:grid-cols-2 lg:grid-cols-3">
+                {goProFeatures.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm">
+                    <span className="mt-1 text-[#0a2463]">✔</span>
+                    <span>{item}</span>
+                  </li>
                 ))}
-              </div>
+              </ul>
+
+              <p className="mt-3 text-center text-xs text-gray-500">
+                These features apply to all plans.
+              </p>
             </div>
 
-            <div className="mt-8 w-full pt-4 text-center text-xs text-gray-500">
+            <div className="mt-6 flex flex-wrap justify-center gap-6">
+              {plans?.map((planItem, index) => (
+                <div
+                  key={index}
+                  className="/* slightly bigger cards */ /* more padding but not too much */ w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-7 text-center shadow-md transition-all hover:shadow-lg"
+                >
+                  <h3 className="text-xl font-bold text-[#0a2463]">
+                    {planItem.title}
+                  </h3>
+
+                  <div className="mt-3 text-4xl font-extrabold text-[#0a2463]">
+                    ${planItem.unit_price}
+                    <span className="text-base font-medium text-gray-500">
+                      {" "}
+                      /month
+                    </span>
+                  </div>
+
+                  <p className="mt-2 text-sm text-gray-500">Billed Monthly</p>
+
+                  <button
+                    style={buttonStyle}
+                    onClick={() => {
+                      setSelectedPlan(planItem);
+                      open();
+                    }}
+                    className="mt-6 w-full rounded-md py-3 text-lg font-semibold text-gray-900 shadow-md transition-all hover:opacity-90"
+                  >
+                    Activate Account
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* FOOTER */}
+            <div className="mt-6 w-full pt-3 text-center text-[11px] text-gray-500">
               Your subscription will automatically renew unless you cancel.
             </div>
           </div>

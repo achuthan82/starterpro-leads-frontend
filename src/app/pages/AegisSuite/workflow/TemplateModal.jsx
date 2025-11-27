@@ -12,7 +12,11 @@ import { Button } from "components/ui";
 import { useMemo } from "react";
 import { TextEditor } from "components/shared/form/TextEditor";
 const TemplateModal = ({ isOpen, onClose }) => {
-  const { control, handleSubmit } = useForm();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const frequencyOptions = [{ value: "day", label: "Day" }];
 
@@ -26,7 +30,7 @@ const TemplateModal = ({ isOpen, onClose }) => {
 
   const submitData = (data) => {
     console.log("Selected:", data);
-    onClose();
+    // onClose();
   };
 
   return (
@@ -80,9 +84,11 @@ const TemplateModal = ({ isOpen, onClose }) => {
                   render={({ field }) => (
                     <Select
                       {...field}
+                      defaultValue={frequencyOptions[0]}
                       options={frequencyOptions}
                       placeholder="Choose…"
                       classNamePrefix="react-select"
+                      isDisabled
                     />
                   )}
                 />
@@ -95,25 +101,36 @@ const TemplateModal = ({ isOpen, onClose }) => {
                 <Controller
                   name="period"
                   control={control}
+                  rules={{
+                    required: "This field is required",
+                  }}
                   render={({ field }) => (
                     <Select
                       {...field}
                       options={periodOptions}
                       placeholder="Choose…"
                       classNamePrefix="react-select"
+                      className={
+                        errors.period ? "rounded border border-red-500" : ""
+                      }
                     />
                   )}
                 />
+                {errors.period && (
+                  <span className="text-sm text-red-500">
+                    {errors.period.message}
+                  </span>
+                )}
               </div>
-              <div className="max-w-xl mb-6">
+              <div className="mb-6 max-w-xl">
                 <TextEditor placeholder="Enter your content here..." />
               </div>
               {/* Buttons */}
               <div className="flex justify-center gap-4">
                 <Button
-                  color='primary'
+                  color="primary"
                   type="submit"
-                  className="rounded  px-6 py-2 text-white "
+                  className="rounded px-6 py-2 text-white"
                 >
                   Save
                 </Button>

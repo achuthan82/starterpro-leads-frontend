@@ -33,7 +33,7 @@ const LeadStateFilter = ({ selected, onChange }) => {
     <Card className="mb-8 bg-white dark:bg-gray-800">
       <div className="p-6">
         <h2 className="mb-4 text-xl font-semibold text-[#0a2463] dark:text-gray-100">
-          Find Your Perfect Leads
+          Find Your preferred Leads
         </h2>
         {loading ? (
           <Spinner />

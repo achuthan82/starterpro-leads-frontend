@@ -238,10 +238,14 @@ const ScheduleAppointmentModal = ({
       });
   };
   const loadOptions = (inputValue, actionMeta) => {
+    if (inputValue) {
     setSearchValue(inputValue);
     if (actionMeta.action === "input-change") {
       getClients(inputValue);
     }
+  } else {
+    getClients('')
+  }
   };
   const handleClient = (selectedOption) => {
     if (selectedOption) {

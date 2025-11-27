@@ -1,31 +1,95 @@
-import  { useState } from 'react'
-import SharedSidebar from '../components/SharedSidebar';
-import EmailText from './EmailText';
+import { useState } from "react";
+import SharedSidebar from "../components/SharedSidebar";
+import { Switch } from "@headlessui/react";
+// import EmailText from './EmailText';
 const Index = () => {
- const [loading] = useState(false)
- const [activeTab, setActiveTab] = useState('email-sms')
+  const [leadAutomation, setLeadAutomation] = useState(true);
+  const [appointmentAutomation, setAppointmentAutomation] = useState(false);
+  //  const [loading] = useState(false)
+  //  const [activeTab, setActiveTab] = useState('email-sms')
   return (
-     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
-          {/* Sidebar */}
-          <SharedSidebar currentPath="/workflow" />
-          <div className="flex flex-1 flex-col overflow-hidden">
-            <header className="border-b border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-              <div className="flex items-center justify-between">
+    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
+      {/* Sidebar */}
+      <SharedSidebar currentPath="/workflow" />
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <header className="border-b border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
+                Workflows
+              </h1>
+              <p className="mt-1 text-gray-600 dark:text-gray-300">
+                Manage your workflow
+              </p>
+            </div>
+          </div>
+        </header>
+         <main className="flex-1 overflow-auto p-6">
+          <div className="mx-auto max-w-3xl rounded-xl bg-white p-8 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-6 text-xl font-semibold text-[#0a2463] dark:text-[#f4d03f]">
+              Automation Settings
+            </h2>
+
+            <div className="space-y-8">
+              {/* Lead Automation Toggle */}
+              <div className="flex items-center justify-between rounded-lg border border-gray-200 p-5 dark:border-gray-700">
                 <div>
-                  <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
-                    Workflows
-                  </h1>
-                  <p className="mt-1 text-gray-600 dark:text-gray-300">
-                    Manage your workflow
+                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
+                    Lead Automation
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Automatically handle incoming leads using your configured workflows.
                   </p>
                 </div>
+
+                <Switch
+                  checked={leadAutomation}
+                  onChange={() => setLeadAutomation(!leadAutomation)}
+                  className={`${
+                    leadAutomation ? "bg-[#0a2463]" : "bg-gray-300"
+                  } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+                >
+                  <span
+                    className={`${
+                      leadAutomation ? "translate-x-6" : "translate-x-1"
+                    } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                  />
+                </Switch>
               </div>
-            </header>
-    
-            <main className="mt-1 flex-1 overflow-auto p-6">
-              <div className="min-h-screen w-full bg-white dark:bg-gray-900">
-                {/* Tabs */}
-                <nav className="border-b border-gray-200 bg-gray-50 px-8 dark:border-gray-700 dark:bg-gray-800">
+
+              {/* Appointment Automation Toggle */}
+              <div className="flex items-center justify-between rounded-lg border border-gray-200 p-5 dark:border-gray-700">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
+                    Appointment Automation
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Auto-manage appointment confirmations and reminders.
+                  </p>
+                </div>
+
+                <Switch
+                  checked={appointmentAutomation}
+                  onChange={() => setAppointmentAutomation(!appointmentAutomation)}
+                  className={`${
+                    appointmentAutomation ? "bg-[#f4d03f]" : "bg-gray-300"
+                  } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+                >
+                  <span
+                    className={`${
+                      appointmentAutomation ? "translate-x-6" : "translate-x-1"
+                    } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                  />
+                </Switch>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        {/* <main className="mt-1 flex-1 overflow-auto p-6">
+          <div className="min-h-screen w-full bg-white dark:bg-gray-900"> */}
+            {/* Tabs */}
+            {/* <nav className="border-b border-gray-200 bg-gray-50 px-8 dark:border-gray-700 dark:bg-gray-800">
                   <div className="-mb-px flex space-x-8 overflow-x-auto">
                     {[
                       { id: "email-sms", label: "Email/SMS" },
@@ -44,10 +108,9 @@ const Index = () => {
                       </button>
                     ))}
                   </div>
-                </nav>
-    
-                {/* Content */}
-                <div className="px-8 py-6">
+                </nav> */}
+            {/* Content */}
+            {/* <div className="px-8 py-6">
                   {loading ? (
                     <div className="flex items-center justify-center">
                       <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900 dark:border-gray-100"></div>
@@ -62,12 +125,12 @@ const Index = () => {
                       }
                     </>
                   )}
-                </div>
-              </div>
-            </main>
-          </div>
-        </div>
-  )
-}
+                </div> */}
+          {/* </div>
+        </main> */}
+      </div>
+    </div>
+  );
+};
 
-export default Index
+export default Index;

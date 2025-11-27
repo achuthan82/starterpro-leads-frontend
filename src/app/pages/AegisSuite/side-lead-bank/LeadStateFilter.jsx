@@ -58,7 +58,7 @@ const LeadStateFilter = ({
     }
   };
   const handleAgencyChange = (selectedOption) => {
-    setSelectedAgency(selectedOption)
+    setSelectedAgency(selectedOption);
   };
   useEffect(() => {
     const fetchStates = async () => {
@@ -86,7 +86,7 @@ const LeadStateFilter = ({
       <div>
         <div className="p-6">
           <h2 className="mb-4 text-xl font-semibold text-[#0a2463] dark:text-gray-100">
-            Find Your Perfect Leads
+            Find Your preferred Leads
           </h2>
           {loading ? (
             <Spinner />
