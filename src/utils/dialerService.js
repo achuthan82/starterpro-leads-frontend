@@ -172,6 +172,77 @@ class DialerService {
       throw error;
     }
   }
+
+  /**
+   * Get available phone numbers from Twilio
+   * @returns {Promise} Response with list of available phone numbers
+   */
+  async getAvailableNumbers() {
+    try {
+      const response = await axiosInstance.get('/twilio-management/available-numbers');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching available numbers:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Purchase a phone number from Twilio
+   * @param {Object} params - Purchase parameters
+   * @param {string} params.phone - Phone number to purchase (e.g., "+18001234567")
+   * @param {string} params.friendly_name - Friendly name for the number
+   * @returns {Promise} Response with purchased number data
+   */
+  async purchaseNumber(params) {
+    try {
+      const response = await axiosInstance.post(
+        '/twilio-management/purchase-number',
+        params
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error purchasing number:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update a phone number's friendly name
+   * @param {string|number} numberId - The ID of the number to update
+   * @param {Object} params - Update parameters
+   * @param {string} params.friendly_name - New friendly name
+   * @returns {Promise} Response with updated number data
+   */
+  async updateNumber(numberId, params) {
+    try {
+      const response = await axiosInstance.patch(
+        `/twilio-management/update-number/${numberId}`,
+        params
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error updating number:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a phone number
+   * @param {string|number} numberId - The ID of the number to delete
+   * @returns {Promise} Response from delete operation
+   */
+  async deleteNumber(numberId) {
+    try {
+      const response = await axiosInstance.delete(
+        `/twilio-management/delete-number/${numberId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting number:', error);
+      throw error;
+    }
+  }
 }
 
 const dialerService = new DialerService();

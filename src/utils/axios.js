@@ -30,13 +30,16 @@ axiosInstance.interceptors.response.use(
       const { code, error, message, status } = response.data;
       // Example: if API returns { code: 401, ... } in a 200 response
       if (code === 401 || status === 401 || error === 401) {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('userRole');
-        localStorage.removeItem('userEmail');
-        localStorage.removeItem('agentId');
-        localStorage.removeItem('currentUser');
-        window.location.href = '/login?error=token';
+        const isOnLoginPage = window.location.pathname === '/login' || window.location.pathname.includes('/login');
+        if (!isOnLoginPage) {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('isAuthenticated');
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('userEmail');
+          localStorage.removeItem('agentId');
+          localStorage.removeItem('currentUser');
+          window.location.href = '/login?error=token';
+        }
         return Promise.reject({ message: 'Your token has expired. Please log in again.' });
       }
       if (code === 403 || status === 403 || error === 403) {
@@ -59,8 +62,9 @@ axiosInstance.interceptors.response.use(
         case 401: {
           // Unauthorized - only clear auth if it's not a login request
           const isLoginRequest = error.config?.url?.includes('/login') || error.config?.url?.includes('/auth');
-          console.log('401 Error - URL:', error.config?.url, 'Is Login Request:', isLoginRequest);
-          if (!isLoginRequest) {
+          const isOnLoginPage = window.location.pathname === '/login' || window.location.pathname.includes('/login');
+          console.log('401 Error - URL:', error.config?.url, 'Is Login Request:', isLoginRequest, 'Is On Login Page:', isOnLoginPage);
+          if (!isLoginRequest && !isOnLoginPage) {
             console.log('Clearing localStorage due to 401 error');
             localStorage.removeItem('authToken');
             localStorage.removeItem('isAuthenticated');

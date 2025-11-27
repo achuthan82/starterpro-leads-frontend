@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { UserIcon, CpuChipIcon, ChevronDownIcon, WalletIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, WalletIcon, ArrowPathIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import SharedSidebar from '../AegisSuite/components/SharedSidebar';
 import LeadList from './LeadList';
 import LeadInfo from './LeadInfo';
@@ -8,6 +8,7 @@ import ScriptTranscript from './ScriptTranscript';
 import OutboundNumberModal from './OutboundNumberModal';
 import ScheduleAppointmentModal from './ScheduleAppointmentModal';
 import RechargeModal from './RechargeModal';
+import PurchaseNumberModal from './PurchaseNumberModal';
 import { STATUS_NAME_TO_ID } from 'constants/app.constant';
 import { useCallContext } from 'app/contexts/call/context';
 import dialerService from 'utils/dialerService';
@@ -42,13 +43,14 @@ const PowerDialer = () => {
 
   // Local state for PowerDialer-specific UI
   const [searchTerm, setSearchTerm] = useState('');
-  const [callingMode, setCallingMode] = useState('Human Agent');
+  // const [callingMode, setCallingMode] = useState('Human Agent');
   const [selectedScript, setSelectedScript] = useState('Opening');
   const [activeTabs, setActiveTabs] = useState(['script']);
   const [showOutboundModal, setShowOutboundModal] = useState(false);
   const [outboundModalShown, setOutboundModalShown] = useState(false);
   const [previousCallEnded, setPreviousCallEnded] = useState(false);
   const [showRechargeModal, setShowRechargeModal] = useState(false);
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   
   // Wallet balance state
   const [walletBalance, setWalletBalance] = useState(null);
@@ -192,6 +194,18 @@ const PowerDialer = () => {
     setShowRechargeModal(true);
   };
 
+  // Handle purchase number success - refresh outbound numbers
+  const handlePurchaseSuccess = () => {
+    // Refresh outbound numbers by closing and reopening the modal if it's open
+    // Or trigger a refresh in the context if available
+    setShowPurchaseModal(false);
+    // Optionally refresh the selected outbound number
+    if (showOutboundModal) {
+      setShowOutboundModal(false);
+      setTimeout(() => setShowOutboundModal(true), 100);
+    }
+  };
+
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       <SharedSidebar currentPath="/power-dialer" />
@@ -217,6 +231,17 @@ const PowerDialer = () => {
                       ${walletBalance !== null ? parseFloat(walletBalance).toFixed(2) : '0.00'}
                     </span>
                   )}
+                  <div className="relative group">
+                    <InformationCircleIcon 
+                      className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 cursor-help transition-colors" 
+                      title="It may take 2 to 3 minutes to update the balance after recharge or call ends"
+                    />
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 dark:bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-10">
+                      It may take 2 to 3 minutes to update the balance after recharge or call ends
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+                    </div>
+                  </div>
                 </div>
                 <button
                   onClick={handleRefreshBalance}
@@ -234,7 +259,7 @@ const PowerDialer = () => {
                 </button>
               </div>
 
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Calling Mode:</span>
+              {/* <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Calling Mode:</span>
               <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                 <button
                   onClick={() => setCallingMode('Human Agent')}
@@ -256,7 +281,7 @@ const PowerDialer = () => {
                 >
                   <CpuChipIcon className="w-4 h-4 mr-1"/> AI Agent
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
           
@@ -278,13 +303,21 @@ const PowerDialer = () => {
                 <span className="text-sm text-gray-400 dark:text-gray-500 italic">No number selected</span>
               )}
             </div>
-            <button
-              onClick={() => setShowOutboundModal(true)}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
-            >
-              Change Number
-              <ChevronDownIcon className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowOutboundModal(true)}
+                className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+              >
+                Change Number
+                <ChevronDownIcon className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setShowPurchaseModal(true)}
+                className="flex items-center gap-1 px-3 py-1.5 text-sm bg-[var(--color-atoll)] dark:bg-blue-600 text-white rounded-md hover:bg-[var(--color-atoll)]/90 dark:hover:bg-blue-700 transition-colors"
+              >
+                Purchase Number
+              </button>
+            </div>
           </div>
         </header>
 
@@ -318,6 +351,7 @@ const PowerDialer = () => {
                 licenseDetails={licenseDetails}
                 licenseError={licenseError}
                 licenseLoading={licenseLoading}
+                walletBalance={walletBalance}
               />
 
               {/* Lead Information */}
@@ -358,6 +392,7 @@ const PowerDialer = () => {
         onClose={() => setShowOutboundModal(false)}
         selectedLead={selectedLead}
         onSelectNumber={handleSelectOutboundNumber}
+        onPurchaseNumber={() => setShowPurchaseModal(true)}
       />
 
       {/* Schedule Appointment Modal */}
@@ -371,6 +406,13 @@ const PowerDialer = () => {
       <RechargeModal
         isOpen={showRechargeModal}
         onClose={() => setShowRechargeModal(false)}
+      />
+
+      {/* Purchase Number Modal */}
+      <PurchaseNumberModal
+        isOpen={showPurchaseModal}
+        onClose={() => setShowPurchaseModal(false)}
+        onPurchaseSuccess={handlePurchaseSuccess}
       />
     </div>
   );

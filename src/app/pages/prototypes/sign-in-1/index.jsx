@@ -1,6 +1,6 @@
 // Import Dependencies
 // import { Link } from "react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 
 import { EnvelopeIcon, EyeIcon, EyeSlashIcon, LockClosedIcon } from "@heroicons/react/24/outline";
@@ -26,7 +26,24 @@ export default function SignInV1() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState('')
   const navigate = useNavigate();
-  const { login } = useAuthContext();
+  const { login, isAuthenticated } = useAuthContext();
+  
+  // Check if user is already authenticated and redirect
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+    
+    // Only redirect if we have both token and authenticated flag
+    // This prevents redirect loops with invalid tokens
+    if (token && isAuth && isAuthenticated) {
+      // Small delay to ensure auth context is initialized
+      const timer = setTimeout(() => {
+        navigate('/agent-dashboard', { replace: true });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Empty dependency array - only run once on mount
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
