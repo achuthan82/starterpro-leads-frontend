@@ -431,7 +431,7 @@ const objectionHandlersList = [
       </div>
     ) : (
             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm text-gray-500 dark:text-gray-400 italic">
-              Click on &quot;Objection Handlers&quot; badge above to view objection handling strategies
+              Click on each badge above to view objection handling strategies
             </div>
           )}
         </div>
