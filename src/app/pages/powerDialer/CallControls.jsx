@@ -22,7 +22,8 @@ const CallControls = ({
   onScheduleAppointment,
   licenseDetails,
   licenseError,
-  licenseLoading
+  licenseLoading,
+  walletBalance
 }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
@@ -205,7 +206,9 @@ const CallControls = ({
   const hasValidOutboundNumber = selectedOutboundNumber && 
     selectedOutboundNumber.phone && 
     selectedOutboundNumber.phone.trim();
-  const canMakeCall = hasValidOutboundNumber && licenseDetails && !licenseError;
+  // Check if wallet balance is sufficient (must be > 0)
+  const hasSufficientBalance = walletBalance !== null && walletBalance > 0;
+  const canMakeCall = hasValidOutboundNumber && licenseDetails && !licenseError && hasSufficientBalance;
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 p-6 w-full max-w-sm text-center">
@@ -242,6 +245,17 @@ const CallControls = ({
         <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg p-3 mb-4 text-sm">
           <p className="font-medium">✓ License Verified</p>
           <p className="mt-1 text-xs">State: {licenseDetails.state || 'N/A'}</p>
+        </div>
+      )}
+
+      {/* Wallet Balance Warning */}
+      {selectedLead && (!hasSufficientBalance && walletBalance !== null) && (
+        <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg p-3 mb-4 text-sm">
+          <p className="font-medium">⚠️ Insufficient Wallet Balance</p>
+          <p className="mt-1 text-xs">
+            Your wallet balance is ${typeof walletBalance === 'number' && !isNaN(walletBalance) ? parseFloat(walletBalance).toFixed(2) : '0.00'}. 
+            Please recharge your wallet to make calls.
+          </p>
         </div>
       )}
 
@@ -343,6 +357,8 @@ const CallControls = ({
           title={
             isCallActive || isDialing 
               ? 'Hang up call' 
+              : !hasSufficientBalance
+              ? 'Insufficient wallet balance. Please recharge to make calls.'
               : !hasValidOutboundNumber 
               ? 'Please select a valid outbound number first' 
               : !licenseDetails

@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useCallContext } from 'app/contexts/call/context';
 import CallControls from 'app/pages/powerDialer/CallControls';
 import ScheduleAppointmentModal from 'app/pages/powerDialer/ScheduleAppointmentModal';
 import { ArrowsPointingOutIcon } from '@heroicons/react/24/outline';
+import dialerService from 'utils/dialerService';
 
 const StickyCallBar = () => {
   const {
@@ -30,7 +31,39 @@ const StickyCallBar = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isInitialized, setIsInitialized] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(null);
   const boxRef = useRef(null);
+  const pollingIntervalRef = useRef(null);
+
+  // Fetch wallet balance
+  const fetchWalletBalance = useCallback(async () => {
+    try {
+      const response = await dialerService.getWalletBalance();
+      // API response structure: { data: { wallet_amount: 104.0 }, message: "success", status: 200 }
+      const balance = response?.data?.wallet_amount || 0;
+      setWalletBalance(balance);
+    } catch (error) {
+      console.error('Error fetching wallet balance:', error);
+      setWalletBalance(0);
+    }
+  }, []);
+
+  // Fetch wallet balance on mount and set up polling
+  useEffect(() => {
+    fetchWalletBalance();
+
+    // Set up polling every 10 minutes (600000 milliseconds)
+    pollingIntervalRef.current = setInterval(() => {
+      fetchWalletBalance();
+    }, 600000); // 10 minutes
+
+    // Cleanup interval on unmount
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [fetchWalletBalance]);
 
   // Initialize position to top right corner after first render
   useEffect(() => {
@@ -144,6 +177,7 @@ const StickyCallBar = () => {
               licenseDetails={licenseDetails}
               licenseError={licenseError}
               licenseLoading={licenseLoading}
+              walletBalance={walletBalance}
             />
           </div>
         </div>

@@ -6,15 +6,22 @@ import {
   TransitionChild,
   DialogTitle
 } from "@headlessui/react";
-import { XMarkIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, CheckCircleIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { dialerService } from 'utils/apiService';
+import dialerServiceDirect from 'utils/dialerService';
 import { toast } from 'sonner';
 
-const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber }) => {
+const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, onPurchaseNumber }) => {
   const [outboundNumbers, setOutboundNumbers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedNumber, setSelectedNumber] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [editingName, setEditingName] = useState('');
+  const [deletingId, setDeletingId] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Extract state from lead (could be from state field or territory)
   const getLeadState = () => {
@@ -133,6 +140,81 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber }) 
     }
   };
 
+  // Handle edit
+  const handleEdit = (number, e) => {
+    e.stopPropagation();
+    setEditingId(number.id);
+    setEditingName(number.friendly_name || '');
+  };
+
+  const handleCancelEdit = (e) => {
+    e?.stopPropagation();
+    setEditingId(null);
+    setEditingName('');
+  };
+
+  const handleSaveEdit = async (numberId, e) => {
+    e?.stopPropagation();
+    if (!editingName.trim()) {
+      toast.error('Friendly name cannot be empty');
+      return;
+    }
+
+    setUpdating(true);
+    try {
+      await dialerServiceDirect.updateNumber(numberId, {
+        friendly_name: editingName.trim()
+      });
+      toast.success('Number updated successfully');
+      setEditingId(null);
+      setEditingName('');
+      // Refresh the list
+      await fetchOutboundNumbers();
+    } catch (err) {
+      console.error('Error updating number:', err);
+      toast.error(err?.message || 'Failed to update number');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  // Handle delete
+  const handleDeleteClick = (number, e) => {
+    e.stopPropagation();
+    setDeletingId(number.id);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingId) return;
+
+    setDeleting(true);
+    try {
+      await dialerServiceDirect.deleteNumber(deletingId);
+      toast.success('Number deleted successfully');
+      setShowDeleteConfirm(false);
+      setDeletingId(null);
+      
+      // If deleted number was selected, clear selection
+      if (selectedNumber && selectedNumber.id === deletingId) {
+        setSelectedNumber(null);
+      }
+      
+      // Refresh the list
+      await fetchOutboundNumbers();
+    } catch (err) {
+      console.error('Error deleting number:', err);
+      toast.error(err?.message || 'Failed to delete number');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setDeletingId(null);
+  };
+
   const formatPhoneNumber = (phone) => {
     if (!phone) return '';
     // Remove +1 and format
@@ -227,15 +309,18 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber }) 
                 {outboundNumbers.map((number) => {
                   const isRecommended = recommendedNumber && number.id === recommendedNumber.id;
                   const isSelected = selectedNumber && number.id === selectedNumber.id;
+                  const isEditing = editingId === number.id;
                   
                   return (
                     <div
                       key={number.id}
-                      onClick={() => handleSelect(number)}
-                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                        isSelected
-                          ? 'border-[#0a2463] dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-700'
+                      onClick={() => !isEditing && handleSelect(number)}
+                      className={`p-4 rounded-lg border-2 transition-all ${
+                        isEditing
+                          ? 'border-blue-300 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 cursor-default'
+                          : isSelected
+                          ? 'border-[#0a2463] dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-pointer'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-700 cursor-pointer'
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -251,24 +336,82 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber }) 
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {number.friendly_name || 'Outbound Number'}
-                          </p>
-                          {getOutboundNumberState(number) && (
-                            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                              State: {getOutboundNumberState(number)}
-                            </p>
+                          {isEditing ? (
+                            <div className="flex items-center gap-2 mt-2">
+                              <input
+                                type="text"
+                                value={editingName}
+                                onChange={(e) => {
+                                  e.stopPropagation();
+                                  setEditingName(e.target.value);
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    handleSaveEdit(number.id, e);
+                                  } else if (e.key === 'Escape') {
+                                    handleCancelEdit(e);
+                                  }
+                                }}
+                                className="flex-1 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 focus:border-transparent"
+                                autoFocus
+                                disabled={updating}
+                              />
+                              <button
+                                onClick={(e) => handleSaveEdit(number.id, e)}
+                                disabled={updating || !editingName.trim()}
+                                className="px-3 py-1.5 text-xs bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                              >
+                                {updating ? 'Saving...' : 'Save'}
+                              </button>
+                              <button
+                                onClick={handleCancelEdit}
+                                disabled={updating}
+                                className="px-3 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 disabled:opacity-50 transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                {number.friendly_name || 'Outbound Number'}
+                              </p>
+                              {getOutboundNumberState(number) && (
+                                <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                                  State: {getOutboundNumberState(number)}
+                                </p>
+                              )}
+                            </>
                           )}
                         </div>
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                          isSelected
-                            ? 'border-[#0a2463] dark:border-blue-500 bg-[#0a2463] dark:bg-blue-500'
-                            : 'border-gray-300 dark:border-gray-600'
-                        }`}>
-                          {isSelected && (
-                            <div className="w-2 h-2 rounded-full bg-white"></div>
-                          )}
-                        </div>
+                        {!isEditing && (
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={(e) => handleEdit(number, e)}
+                              className="p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                              title="Edit friendly name"
+                            >
+                              <PencilIcon className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={(e) => handleDeleteClick(number, e)}
+                              className="p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                              title="Delete number"
+                            >
+                              <TrashIcon className="w-4 h-4" />
+                            </button>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ml-2 ${
+                              isSelected
+                                ? 'border-[#0a2463] dark:border-blue-500 bg-[#0a2463] dark:bg-blue-500'
+                                : 'border-gray-300 dark:border-gray-600'
+                            }`}>
+                              {isSelected && (
+                                <div className="w-2 h-2 rounded-full bg-white"></div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
@@ -279,7 +422,18 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber }) 
             {/* No Numbers State */}
             {!loading && !error && outboundNumbers.length === 0 && (
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                <p>No outbound numbers available</p>
+                <p className="mb-4">No outbound numbers available</p>
+                {onPurchaseNumber && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onPurchaseNumber();
+                    }}
+                    className="px-4 py-2 text-sm bg-[#0a2463] dark:bg-blue-500 text-white rounded-md hover:bg-[#0a2463]/90 dark:hover:bg-blue-600 transition-colors"
+                  >
+                    Purchase Number
+                  </button>
+                )}
               </div>
             )}
 
@@ -303,6 +457,37 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber }) 
                 >
                   Select Number
                 </button>
+              </div>
+            )}
+
+            {/* Delete Confirmation Dialog */}
+            {showDeleteConfirm && (
+              <div className="fixed inset-0 z-[110] flex items-center justify-center px-4">
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCancelDelete} />
+                <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    Delete Phone Number
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    Are you sure you want to delete this phone number? This action cannot be undone.
+                  </p>
+                  <div className="flex items-center justify-end gap-3">
+                    <button
+                      onClick={handleCancelDelete}
+                      disabled={deleting}
+                      className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleConfirmDelete}
+                      disabled={deleting}
+                      className="px-4 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 transition-colors"
+                    >
+                      {deleting ? 'Deleting...' : 'Delete'}
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </DialogPanel>
