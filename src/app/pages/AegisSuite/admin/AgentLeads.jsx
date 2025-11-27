@@ -579,6 +579,12 @@ const AgentLeads = () => {
           else result += val || "";
         } else if (key.customSelector === "lead_status") {
           result += LEAD_STATUS[val] || "";
+        } else if (key.customSelector === 'call_in_date_time') {
+          if (item.campaign_name.startsWith('SD')){
+             result += 'N/A'
+          } else {
+            result += val
+          }
         } else {
           if (typeof val === "string" && val.includes(",")) {
             result += `"${val}"`;
@@ -1072,7 +1078,8 @@ const AgentLeads = () => {
                           </td>
                         </tr>
                       ) : (
-                        leads.map((lead, index) => (
+                        leads.map((lead, index) =>{ 
+                          return (
                           <tr
                             key={lead.assignee_id || index}
                             // className="hover:bg-gray-50 hover:text-[#0a2463]"
@@ -1135,7 +1142,7 @@ const AgentLeads = () => {
                             {activeTab !== "mailed" && (
                               <td className="px-3 py-4 whitespace-nowrap">
                                 <div className="text-sm text-gray-900 dark:text-gray-100">
-                                  {lead.call_in_date_time || ""}
+                                  {lead.campaign_name?.startsWith('SD') ? 'N/A' : lead.call_in_date_time}
                                 </div>
                               </td>
                             )}
@@ -1183,7 +1190,7 @@ const AgentLeads = () => {
                               </button>
                             </td>
                           </tr>
-                        ))
+                        )})
                       )}
                     </tbody>
                   </table>
@@ -1371,7 +1378,7 @@ const AgentLeads = () => {
                         {source[selectedLead.source_id] || "N/A"}
                       </p>
                     </div>
-                    {activeTab !== "mailed" && (
+                    {activeTab !== "mailed" && !selectedLead.campaign_name.startsWith('SD') && (
                       <div>
                         <p className="text-sm text-gray-500">Registered Date</p>
                         <p className="font-medium">

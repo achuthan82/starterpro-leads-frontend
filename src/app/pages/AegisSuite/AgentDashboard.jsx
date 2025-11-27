@@ -280,7 +280,7 @@ const AgentDashboard = () => {
                           <div className="text-sm text-gray-500 dark:text-gray-400">{lead.state}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900 dark:text-gray-100">{lead.call_in_date_time}</div>
+                          <div className="text-sm text-gray-900 dark:text-gray-100">{lead.campaign_name?.startsWith('SD') ? 'N/A' : lead.call_in_date_time}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full shieldnest-badge-${(lead.lead_status)}`}>

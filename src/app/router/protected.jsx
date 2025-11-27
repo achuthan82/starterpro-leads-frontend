@@ -36,21 +36,31 @@ const protectedRoutes = {
         {
           path: "profile-page",
           lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/profile/ProfilePage"))
-              .default,
+            Component: (
+              await import("app/pages/AegisSuite/profile/ProfilePage")
+            ).default,
           }),
         },
         {
           path: "appointments",
           lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/appointments/Appointments"))
-              .default,
+            Component: (
+              await import("app/pages/AegisSuite/appointments/Appointments")
+            ).default,
           }),
         },
-         {
+        {
           path: "side-leads",
           lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/side-lead-bank/SideLeadBank"))
+            Component: (
+              await import("app/pages/AegisSuite/side-lead-bank/SideLeadBank")
+            ).default,
+          }),
+        },
+        {
+          path: "workflow",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/workflow/Index"))
               .default,
           }),
         },
