@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useCallContext } from 'app/contexts/call/context';
+import { useAuthContext } from 'app/contexts/auth/context';
 import CallControls from 'app/pages/powerDialer/CallControls';
 import ScheduleAppointmentModal from 'app/pages/powerDialer/ScheduleAppointmentModal';
 import { ArrowsPointingOutIcon } from '@heroicons/react/24/outline';
@@ -23,6 +24,8 @@ const StickyCallBar = () => {
     licenseError,
     licenseLoading
   } = useCallContext();
+  
+  const { isAuthenticated } = useAuthContext();
 
   const [position, setPosition] = useState(() => {
     // Initialize to top right corner (will be adjusted after first render)
@@ -48,8 +51,13 @@ const StickyCallBar = () => {
     }
   }, []);
 
-  // Fetch wallet balance on mount and set up polling
+  // Fetch wallet balance on mount and set up polling (only if authenticated)
   useEffect(() => {
+    // Only fetch wallet balance if user is authenticated
+    if (!isAuthenticated) {
+      return;
+    }
+
     fetchWalletBalance();
 
     // Set up polling every 10 minutes (600000 milliseconds)
@@ -63,7 +71,7 @@ const StickyCallBar = () => {
         clearInterval(pollingIntervalRef.current);
       }
     };
-  }, [fetchWalletBalance]);
+  }, [fetchWalletBalance, isAuthenticated]);
 
   // Initialize position to top right corner after first render
   useEffect(() => {

@@ -27,12 +27,26 @@ const Login = () => {
     }
   }, [location.search]);
 
+  // Check if user is already authenticated and redirect
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      navigate('/agent-dashboard');
-    }
-  }, [navigate])
+    const checkAuth = async () => {
+      const token = localStorage.getItem('authToken');
+      const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+      
+      // Only redirect if we have both token and authenticated flag
+      // This prevents redirect loops with invalid tokens
+      if (token && isAuthenticated) {
+        // Small delay to ensure auth context is initialized
+        const timer = setTimeout(() => {
+          navigate('/agent-dashboard', { replace: true });
+        }, 100);
+        return () => clearTimeout(timer);
+      }
+    };
+    
+    checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Empty dependency array - only run once on mount
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
