@@ -28,7 +28,7 @@ export default function ScriptTranscript({
 
   // Script content for each badge
   const scriptContent = {
-    Opening: `Hello ${lead?.name || '[Lead Name]'}, this is [Your Name] from ${user?.agency?.name || 'ShieldNest'}. I hope I'm catching you at a good time.
+    Opening: `Hello ${lead?.name || lead?.first_name + ' ' + lead?.last_name || '[Lead Name]'}, this is [Your Name] from ${user?.agency?.name || 'ShieldNest'}. I hope I'm catching you at a good time.
 
 I'm calling because you recently responded to our information about mortgage protection insurance. I understand you own a home in ${lead?.originalData?.state || '[State]'} and may be interested in protecting your family's mortgage payments if something unexpected happens to you.`,
     
