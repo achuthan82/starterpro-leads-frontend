@@ -219,10 +219,10 @@ const ForgotPassword = () => {
           </form>
         </Card>
 
-        <div className="mt-8 flex justify-center text-xs text-gray-600 dark:text-gray-300">
-          <a href="##">Privacy Notice</a>
-          <div className="mx-2.5 my-0.5 w-px bg-gray-200 dark:bg-gray-500 text-gray-600"></div>
-          <a href="##">Term of service</a>
+        <div className="dark:text-dark-300 mt-8 flex justify-center text-xs text-gray-700 dark:text-gray-100">
+          <a target="_blank" rel="noopener noreferrer" href="https://www.starterproleads.com/privacy-policy">Privacy Notice</a>
+          <div className="dark:bg-dark-500 mx-2.5 my-0.5 w-px bg-gray-200 text-gray-700 dark:text-gray-100"></div>
+          <a target="_blank" rel="noopener noreferrer" href="https://www.starterproleads.com/terms-of-service">Term of service</a>
         </div>
       </div>
     </main>
