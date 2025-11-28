@@ -21,6 +21,7 @@ export default function ScriptTranscript({
   console.log(user)
   const [activeTab, setActiveTab] = useState(activeTabs[0] || "script");
   const [selectedBadge, setSelectedBadge] = useState(null);
+  const [selectedObjection, setSelectedObjection] = useState(null);
   
   // Sync with parent activeTabs
   useEffect(() => {
@@ -327,107 +328,110 @@ const objectionHandlersList = [
       )}
 
       {activeTab === "objections" && (
-        <div className="space-y-3">
-          <h2 className="font-semibold text-lg text-gray-700 dark:text-gray-200">Objection Handlers</h2>
+  <div className="space-y-3">
+    <h2 className="font-semibold text-lg text-gray-700 dark:text-gray-200">
+      Objection Handlers
+    </h2>
 
-          {/* Objection Handlers Badge */}
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => handleBadgeClick("Objection Handlers")}
-              className={`text-xs font-medium px-3 py-2 rounded-md transition-all cursor-pointer ${
-                selectedBadge === "Objection Handlers"
-                  ? "bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800 ring-yellow-500"
-                  : "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-800"
-              }`}
+    {/* --- Tabs --- */}
+    <div className="flex flex-wrap gap-2">
+      {objectionHandlersList.map((obj) => {
+        const isSelected = selectedObjection === obj.title;
+
+        return (
+          <button
+            key={obj.title}
+            onClick={() => setSelectedObjection(obj.title)}
+            className={`text-xs font-medium px-2 py-1 rounded-md transition-all cursor-pointer ${
+              isSelected
+                ? "ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800"
+                : ""
+            } ${
+              obj.color === "orange"
+                ? isSelected
+                  ? "bg-orange-200 text-orange-800 ring-orange-500"
+                  : "bg-orange-100 text-orange-700 hover:bg-orange-200"
+                : obj.color === "blue"
+                ? isSelected
+                  ? "bg-blue-200 text-blue-800 ring-blue-500"
+                  : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                : obj.color === "indigo"
+                ? isSelected
+                  ? "bg-indigo-200 text-indigo-800 ring-indigo-500"
+                  : "bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
+                : obj.color === "green"
+                ? isSelected
+                  ? "bg-green-200 text-green-800 ring-green-500"
+                  : "bg-green-100 text-green-700 hover:bg-green-200"
+                : obj.color === "rose"
+                ? isSelected
+                  ? "bg-rose-200 text-rose-800 ring-rose-500"
+                  : "bg-rose-100 text-rose-700 hover:bg-rose-200"
+                : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+            }`}
+          >
+            {obj.title}
+          </button>
+        );
+      })}
+    </div>
+
+    {/* --- Steps View --- */}
+    {selectedObjection ? (
+      <div className="space-y-4">
+        {objectionHandlersList
+          .find((item) => item.title === selectedObjection)
+          ?.steps.map((line, index) => (
+            <div
+              key={index}
+              className="flex items-start gap-3 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600"
             >
-              Objection Handlers
-            </button>
-          </div>
-
-          {/* Objection Handlers Content */}
-            {selectedBadge === "Objection Handlers" ? ( 
-              <div className="space-y-6">
-
-                {objectionHandlersList.map((obj, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-xl border overflow-hidden shadow-sm"
-                    style={{
-                      borderColor:
-                        obj.color === "orange" ? "#FECBA1" :
-                        obj.color === "blue" ? "#BFDBFE" :
-                        obj.color === "indigo" ? "#C7D2FE" :
-                        obj.color === "green" ? "#70c058ff" :
-                        obj.color === "rose" ? "#FECACA" :
-                        "#FDE68A"
-                    }}
-                  >
-
-                    {/* Header */}
-                    <div
-                      className="p-4 font-semibold flex items-center gap-2 text-lg font-medium"
-                      style={{
-                        background:
-                          obj.color === "orange" ? "#FFF7ED" :
-                          obj.color === "blue" ? "#EFF6FF" :
-                          obj.color === "indigo" ? "#EEF2FF" :
-                          obj.color === "green" ? "#edffe7ff" :
-                          obj.color === "rose" ? "#FFF1F2" :
-                          "#FFFBEB",
-                        color:
-                          obj.color === "orange" ? "#C2410C" :
-                          obj.color === "blue" ? "#1D4ED8" :
-                          obj.color === "indigo" ? "#1738a3ff" :
-                          obj.color === "green" ? "#5b9128ff" :
-                          obj.color === "rose" ? "#B91C1C" :
-                          "#908906ff"
-                      }}
-                    >
-                      {/* <span className="text-lg">⚠️</span> */}
-                      “{obj.title}”
-                    </div>
-
-                    {/* Steps */}
-                    <div className="p-4 space-y-4 bg-white dark:bg-gray-800">
-                      {obj.steps.map((step, stepIndex) => {
-                        const cleanText = step.trim();
-
-                        return (
-                          <div key={stepIndex} className="flex items-start gap-3">
-
-                            {/* Number circle */}
-                            <div
-                              className="w-6 h-6 flex items-center justify-center rounded-full font-bold text-sm flex-shrink-0"
-                              style={{
-                                background:
-                                  obj.color === "orange" ? "#FDBA74" :
-                                  obj.color === "blue" ? "#93C5FD" :
-                                  obj.color === "indigo" ? "#A5B4FC" :
-                                  obj.color === "green" ? "#70c058ff" :
-                                  obj.color === "rose" ? "#FCA5A5" :
-                                  "#FCD34D",
-                                color: "#fff"
-                              }}
-                            >
-                              {stepIndex + 1}
-                            </div>
-
-                            {/* Step text */}
-                            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                              {cleanText}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                  </div>
-                ))}
-
+              {/* Number circle */}
+              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#0A1A3F] text-white flex items-center justify-center font-bold text-sm">
+                {index + 1}
               </div>
-            ) : (
+
+              {/* Line text */}
+              <p className="text-gray-700 dark:text-gray-200 text-sm leading-relaxed">
+                {line.trim()}
+              </p>
+            </div>
+          ))}
+
+        {/* --- Copy Button --- */}
+        <button
+          onClick={() => {
+            const obj = objectionHandlersList.find(
+              (o) => o.title === selectedObjection
+            );
+            const fullText = obj.steps.join("\n");
+            navigator.clipboard.writeText(fullText);
+            toast.success("Objection handler copied!");
+          }}
+          className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 
+                     border border-gray-300 dark:border-gray-600 rounded-lg text-sm 
+                     text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-4 h-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2m2 0h6a2 2 0 002-2V10a2 2 0 00-2-2h-2M8 16v2a2 2 0 002 2h6a2 2 0 002-2v-6a2 2 0 00-2-2h-2"
+            />
+          </svg>
+          Copy Handler
+        </button>
+      </div>
+    ) : (
             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm text-gray-500 dark:text-gray-400 italic">
-              Click on &quot;Objection Handlers&quot; badge above to view objection handling strategies
+              Click on each badge above to view objection handling strategies
             </div>
           )}
         </div>
