@@ -466,7 +466,7 @@ const MortgageProtectionModal = ({
                       {...field}
                       className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-600 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 p-2 text-sm"
                     >
-                      <option value="">Select</option>
+                      <option value="" disabled>Select</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
                     </select>
@@ -516,7 +516,7 @@ const MortgageProtectionModal = ({
                       {...field}
                       className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-600 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 p-2 text-sm"
                     >
-                      <option value="">Select</option>
+                      <option value="" disabled>Select</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
                     </select>

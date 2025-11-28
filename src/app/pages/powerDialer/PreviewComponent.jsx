@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from "react";
+import * as htmlToImage from "html-to-image";
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import Slider from "react-slick";
 import { ChevronLeftIcon, ChevronRightIcon, MegaphoneIcon } from "@heroicons/react/24/outline";
 import profileService from "utils/profileService";
@@ -10,9 +12,22 @@ import bg from "./images/mortgageProtection.jpg"
 import smiley from "./images/smile-icon.svg"; 
 
 const PreviewComponent = ({ submittedData, licenseDetails = null }) => {
+  console.log(submittedData)
   const [currentSlide, setCurrentSlide] = useState(0);
   const [carriersLogo, setCarriersLogo] = useState(null);
   const [carriersLoading, setCarriersLoading] = useState(false);
+
+  // Derived URLs so we can use them in download logic as well
+  const licenseImage =
+    licenseDetails?.image || licenseDetails?.certificate || null;
+
+  const carriersImage =
+    carriersLogo?.image ||
+    carriersLogo?.url ||
+    carriersLogo?.logo_url ||
+    carriersLogo ||
+    null;
+
   const sliderRef = useRef(null);
 
   // Fetch carriers logo on mount
@@ -94,8 +109,66 @@ const PreviewComponent = ({ submittedData, licenseDetails = null }) => {
     )
   };
 
+const downloadImageFile = async (url, fileName) => {
+  try {
+    const response = await fetch(url, { mode: "cors" });
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = fileName;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.URL.revokeObjectURL(blobUrl);
+  } catch (error) {
+    console.error("Image download failed", error);
+  }
+};
+
+const downloadCurrentSlide = async () => {
+  // Slide 2 (index 1): CertificateInfo
+  if (currentSlide === 1 && licenseImage) {
+    downloadImageFile(licenseImage, "slide-2-certificate.png");
+    return;
+  }
+
+  // Slide 3 (index 2): CarrierInfo
+  if (currentSlide === 2 && carriersImage) {
+    downloadImageFile(carriersImage, "slide-3-carriers.png");
+    return;
+  }
+
+  // All other slides → html-to-image
+  const slide = document.querySelector(
+    `.slick-slide[data-index="${currentSlide}"]:not(.slick-cloned)`
+  );
+
+  if (!slide) return;
+
+  const node = slide.firstElementChild || slide;
+
+  try {
+    const dataUrl = await htmlToImage.toPng(node, {
+      cacheBust: true,
+      pixelRatio: 2,
+    });
+
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = `slide-${currentSlide + 1}.png`;
+    link.click();
+  } catch (err) {
+    console.error("Failed to download slide:", err);
+  }
+};
+
+
+
   // Slide Components
-  
   const MortgageProtectionInfo = () => {
     return (
       <div
@@ -345,24 +418,24 @@ const PreviewComponent = ({ submittedData, licenseDetails = null }) => {
         </div>
 
         {/* Blue Oval for Major Bills */}
-        <div className="relative border-3 me-25 border-blue-400 rounded-[90%] px-25 py-8 bg-white bg-opacity-10 mt-40 w-[60%] max-w-5xl mx-auto flex flex-col items-center justify-center text-center shadow-md">
+        <div className="relative border-3 me-25 border-blue-400 rounded-[90%] px-25 py-8 bg-white bg-opacity-10 mt-38 w-[60%] max-w-5xl mx-auto flex flex-col items-center justify-center text-center shadow-md">
           <h2 className="text-xl font-semibold mb-4">Major Bills</h2>
 
           <div className="grid grid-cols-2 gap-x-24 gap-y-3 text-md w-full justify-items-center">
             <div className="space-y-2 italic text-left">
-              <p className="text-sm">Monthly mortgage & property taxes</p>
-              <p className="text-sm">Car Payments</p>
-              <p className="text-sm">Electric / Gas</p>
-              <p className="text-sm">Water</p>
-              <p className="text-sm">Other Bills</p>
+              <p className="text-sm">Monthly mortgage & property taxes - {formatCurrency(submittedData.mortgagePropertyTax)}</p>
+              <p className="text-sm">Car Payments - {formatCurrency(submittedData.carPayments)}</p> 
+              <p className="text-sm">Electric / Gas - {formatCurrency(submittedData.electricGas)}</p>
+              <p className="text-sm">Water - {formatCurrency(submittedData.water)}</p>
+              {/* <p className="text-sm">Other Bills</p> */}
             </div>
             <div className="space-y-3 italic text-left">
-              <p className="text-sm">Cable Internet</p>
-              <p className="text-sm">Cell Phone</p>
-              <p className="text-sm">Car Insurance</p>
-              <p className="text-sm">Gas for car</p>
-              <p className="text-sm">Food</p>
-              <p className="text-sm">Other loans</p>
+              <p className="text-sm">Cable Internet - {formatCurrency(submittedData.cableInternet)}</p>
+              <p className="text-sm">Cell Phone - {formatCurrency(submittedData.cellPhone)}</p>
+              <p className="text-sm">Car Insurance - {formatCurrency(submittedData.carInsurance)}</p>
+              <p className="text-sm">Gas for car - {formatCurrency(submittedData.gasForCar)}</p>
+              <p className="text-sm">Food - {formatCurrency(submittedData.food)}</p>
+              <p className="text-sm">Other loans - {formatCurrency(submittedData.otherLoans)}</p>
             </div>
           </div>
         </div>
@@ -370,30 +443,40 @@ const PreviewComponent = ({ submittedData, licenseDetails = null }) => {
     );
   };
 
-  return (
-    <div className="relative h-[500px]">
-      <Slider ref={sliderRef} {...sliderSettings}>
-        <div className="h-[500px] slick-slide">
-          <MortgageProtectionInfo />
-        </div>
-        <div className="h-[500px] slick-slide">
-          <CertificateInfo />
-        </div>
-        <div className="h-[500px] slick-slide">
-          <CarrierInfo />
-        </div>
-        <div className="h-[500px] slick-slide">
-          <KeyThingsToCover />
-        </div>
-        <div className="h-[500px] slick-slide">
-          <SlidePersonalInfo />
-        </div>
-        <div className="h-[500px] slick-slide">
-          <SlideFinancialOverview />
-        </div>
-      </Slider>
+return (
+ <div className="relative h-[500px]">
+  <button
+    onClick={downloadCurrentSlide}
+    className="absolute top-3 right-3 z-40 bg-white p-2 rounded-full shadow hover:bg-gray-100"
+    title="Download this slide"
+  >
+    <ArrowDownTrayIcon className="w-6 h-6 text-gray-700" />
+  </button>
+
+  <Slider ref={sliderRef} {...sliderSettings}>
+    <div className="h-[500px] slick-slide">
+      <MortgageProtectionInfo />
     </div>
-  );
+    <div className="h-[500px] slick-slide">
+      <CertificateInfo />
+    </div>
+    <div className="h-[500px] slick-slide">
+      <CarrierInfo />
+    </div>
+    <div className="h-[500px] slick-slide">
+      <KeyThingsToCover />
+    </div>
+    <div className="h-[500px] slick-slide">
+      <SlidePersonalInfo />
+    </div>
+    <div className="h-[500px] slick-slide">
+      <SlideFinancialOverview />
+    </div>
+  </Slider>
+</div>
+
+);
+
 };
 
 export default PreviewComponent;
