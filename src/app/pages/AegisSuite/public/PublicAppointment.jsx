@@ -333,7 +333,11 @@ const PublicAppointment = () => {
             if (response.status === 200) {
                 console.log('enteres')
                 setTitle(response.data.title)
+            } else {
+              toast.error(response?.data?.message || 'Token Expired')
             }
+          }).catch((error) => {
+                           toast.error(error?.message || 'Token Expired')
           })
       }
     useEffect(() => {

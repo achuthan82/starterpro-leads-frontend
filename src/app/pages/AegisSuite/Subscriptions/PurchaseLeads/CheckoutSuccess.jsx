@@ -30,6 +30,7 @@ const CheckoutSuccess = () => {
       .then(async (response) => {
         setLoading(false);
         if (response.data.status === 200) {
+          console.log(response.data.data)
           setOrderDetails(response.data.data);
         } else if (response.data.status === 401) {
           toast.error(response.data.message);
@@ -85,7 +86,7 @@ const CheckoutSuccess = () => {
               {orderDetails?.invoice_id || orderDetails?.subscription_id}
             </p>
             <p className="text-gray-700 dark:text-gray-300">
-              Amount: ${subscriptionAmount || orderDetails?.amount_total}
+              Amount: ${ orderDetails?.amount_total || subscriptionAmount }
             </p>
             <p
               className="text-gray-700 dark:text-gray-300"

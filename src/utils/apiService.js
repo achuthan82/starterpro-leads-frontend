@@ -33,6 +33,7 @@ import dialerService from './dialerService';
 import appointmentService from './appointmentService';
 import calendarService from './clendarService';
 import appointmentPublicService from './publicService';
+import automationService from './automationService';
 import { JWT_HOST_API } from 'configs/auth.config';
 
 // Export individual services
@@ -58,6 +59,7 @@ export {dialerService}
 export {appointmentService}
 export {calendarService}
 export {appointmentPublicService}
+export {automationService}
 // Export combined API service object
 const apiService = {
   auth: authService,
@@ -81,7 +83,8 @@ const apiService = {
   dialer: dialerService,
   appointment: appointmentService,
   appointmentPublic:appointmentPublicService,
-  calendarService:calendarService
+  calendarService:calendarService,
+  automation:automationService
 };
 
 export default apiService;
