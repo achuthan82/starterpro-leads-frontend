@@ -31,16 +31,7 @@ const LeadStateCard = ({ stateName, stateCode, completed, incomplete, onViewLead
           </div>
         </div>
       </div>
-      <div className="flex gap-4 text-xs mt-2 mb-2 text-gray-700 dark:text-gray-300">
-        <div className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded inline-block" style={{ backgroundColor: '#f4d03f' }}></span>
-          <span>Incomplete Leads</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded inline-block" style={{ backgroundColor: '#0a2463' }}></span>
-          <span>Completed Leads</span>
-        </div>
-      </div>
+     
       <div className="flex justify-between items-center mt-auto pt-2">
         <span className="text-gray-700 dark:text-gray-300 font-medium">{completed + incomplete} Total Leads</span>
         <Button style={{ backgroundColor: '#0a2463' }} className="px-6 text-white hover:bg-[#0a1a4a] transition-colors" onClick={onViewLeads}>

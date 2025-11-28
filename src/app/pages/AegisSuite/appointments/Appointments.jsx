@@ -468,7 +468,7 @@ const Appointments = () => {
                     </div> */}
 
                     {/* Appointment Types */}
-                    <div className="mt-4 rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
+                    <div className="mt-4 rounded-lg ">
                       <div className="mb-2 flex items-center justify-between">
                         <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
                           APPOINTMENT TYPES

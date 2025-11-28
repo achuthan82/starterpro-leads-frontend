@@ -186,6 +186,7 @@ const AgentOrders = () => {
 
   // Handle view order details
   const handleViewOrder = (order) => {
+    console.log(order)
     setSelectedOrder(order);
     setShowOrderModal(true);
   };
@@ -756,19 +757,17 @@ const AgentOrders = () => {
                       <p className="text-sm text-gray-900 dark:text-gray-100">${selectedOrder.discounted_price}</p>
                     </div>
                   )}
-
                   {/* Amount Received */}
-                  {selectedOrder?.amount_received && (
+                  {/* {selectedOrder?.amount_received && ( */}
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                       Amount Received:
                     </span>
                     <span className="text-sm text-gray-900 dark:text-gray-100 font-semibold">
-                      ${selectedOrder.amount_received || '0'}
+                      ${selectedOrder?.amount_received || 0}
                     </span>
                   </div>
-                  )}
-
+                   {/* )} */}
                 {/* Status */}
                  <div className="flex justify-between items-center">
                    <span className="text-sm font-medium text-gray-600">Status:</span>

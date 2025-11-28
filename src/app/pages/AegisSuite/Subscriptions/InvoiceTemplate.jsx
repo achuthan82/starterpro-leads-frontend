@@ -151,8 +151,8 @@ const InvoiceTemplate = () => {
         {/* Header */}
         <div className="mb-8 flex items-start justify-between">
           {/* Company Logo and Details */}
-          <div className="flex items-center space-x-1">
-            <div className="flex items-center justify-center rounded-lg bg-white">
+          <div className="flex items-center">
+            <div className="flex items-center justify-between rounded-lg bg-white">
               <img
                 src={Logo}
                 alt="Logo"
@@ -201,7 +201,9 @@ const InvoiceTemplate = () => {
         </div>
         {/* Company Address */}
         <div className="mb-8">
-          <div className="rounded-lg bg-gray-50 p-4">
+          {/* <div className="rounded-lg bg-gray-50 p-4"> */}
+                    <div className="rounded-lg">
+
             <h3 className="text-atoll mb-2 font-semibold">From:</h3>
             <div className="space-y-1 text-sm text-gray-700">
               <p className="font-medium">

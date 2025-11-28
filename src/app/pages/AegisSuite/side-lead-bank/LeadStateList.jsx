@@ -69,6 +69,25 @@ const LeadStateList = ({ selectedStates = [], onViewLeads, pricingData, options,
       ) : error ? (
         <div className="text-red-500 bg-red-100 p-4 rounded-md">{error}</div>
       ) : (
+        <> 
+        {data.length > 0 && (
+            <div className="mt-2 mb-6 flex justify-center gap-6 text-xs text-gray-700 dark:text-gray-300">
+              <div className="flex items-center gap-1">
+                <span
+                  className="inline-block h-4 w-4 rounded"
+                  style={{ backgroundColor: "#f4d03f" }}
+                ></span>
+                <span className="font-semibold">Incomplete Leads</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span
+                  className="inline-block h-4 w-4 rounded"
+                  style={{ backgroundColor: "#0a2463" }}
+                ></span>
+                <span className="font-semibold">Completed Leads</span>
+              </div>
+            </div>
+          )}       
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {data.length === 0 ? (
             <Card className="col-span-full text-center py-12">No leads found.</Card>
@@ -94,6 +113,7 @@ const LeadStateList = ({ selectedStates = [], onViewLeads, pricingData, options,
             })
           )}
         </div>
+        </>
       )}
       <div className="flex justify-between items-center mt-8">
         <Button

@@ -1,12 +1,32 @@
 import { useState } from "react";
 import SharedSidebar from "../components/SharedSidebar";
 import { Switch } from "@headlessui/react";
+import automationService from "utils/automationService";
+import { useAuthContext } from "app/contexts/auth/context";
+
 // import EmailText from './EmailText';
 const Index = () => {
-  const [leadAutomation, setLeadAutomation] = useState(true);
+  const { user } = useAuthContext();
+  const [leadAutomation, setLeadAutomation] = useState(false);
   const [appointmentAutomation, setAppointmentAutomation] = useState(false);
+  const [leadLoading, setLeadLoading] = useState(false);
   //  const [loading] = useState(false)
   //  const [activeTab, setActiveTab] = useState('email-sms')
+  const handleLeadAutomation = (status) => {
+    setLeadLoading(true);
+    const payload = { sms_automation_enabled: status };
+    automationService
+      .toggleLeadAutomation(user.agency.id, payload)
+      .then((response) => {
+        console.log(response);
+        if (response.data.status === 201) {
+          setLeadAutomation(status);
+        }
+      })
+      .finally(() => {
+        setLeadLoading(false);
+      });
+  };
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
@@ -24,7 +44,12 @@ const Index = () => {
             </div>
           </div>
         </header>
-         <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto p-6">
+          {leadLoading && (
+            <div className="pointer-events-auto fixed inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-md">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-[#0a2463]"></div>
+            </div>
+          )}
           <div className="mx-auto max-w-3xl rounded-xl bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 text-xl font-semibold text-[#0a2463] dark:text-[#f4d03f]">
               Automation Settings
@@ -38,22 +63,25 @@ const Index = () => {
                     Lead Automation
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Automatically handle incoming leads using your configured workflows.
+                    Automatically handle incoming leads using your configured
+                    workflows.
                   </p>
                 </div>
 
                 <Switch
                   checked={leadAutomation}
-                  onChange={() => setLeadAutomation(!leadAutomation)}
+                  onChange={() => handleLeadAutomation(!leadAutomation)}
                   className={`${
                     leadAutomation ? "bg-[#0a2463]" : "bg-gray-300"
-                  } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+                  } relative inline-flex h-6 w-11 items-center rounded-full transition ${
+                    leadLoading && "cursor-not-allowed opacity-70"
+                  }`}
                 >
                   <span
                     className={`${
                       leadAutomation ? "translate-x-6" : "translate-x-1"
-                    } inline-block h-4 w-4 transform rounded-full bg-white transition`}
-                  />
+                    } flex inline-block h-4 w-4 transform items-center justify-center rounded-full bg-white transition`}
+                  ></span>
                 </Switch>
               </div>
 
@@ -70,7 +98,9 @@ const Index = () => {
 
                 <Switch
                   checked={appointmentAutomation}
-                  onChange={() => setAppointmentAutomation(!appointmentAutomation)}
+                  onChange={() =>
+                    setAppointmentAutomation(!appointmentAutomation)
+                  }
                   className={`${
                     appointmentAutomation ? "bg-[#f4d03f]" : "bg-gray-300"
                   } relative inline-flex h-6 w-11 items-center rounded-full transition`}
@@ -88,8 +118,8 @@ const Index = () => {
 
         {/* <main className="mt-1 flex-1 overflow-auto p-6">
           <div className="min-h-screen w-full bg-white dark:bg-gray-900"> */}
-            {/* Tabs */}
-            {/* <nav className="border-b border-gray-200 bg-gray-50 px-8 dark:border-gray-700 dark:bg-gray-800">
+        {/* Tabs */}
+        {/* <nav className="border-b border-gray-200 bg-gray-50 px-8 dark:border-gray-700 dark:bg-gray-800">
                   <div className="-mb-px flex space-x-8 overflow-x-auto">
                     {[
                       { id: "email-sms", label: "Email/SMS" },
@@ -109,8 +139,8 @@ const Index = () => {
                     ))}
                   </div>
                 </nav> */}
-            {/* Content */}
-            {/* <div className="px-8 py-6">
+        {/* Content */}
+        {/* <div className="px-8 py-6">
                   {loading ? (
                     <div className="flex items-center justify-center">
                       <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900 dark:border-gray-100"></div>
@@ -126,7 +156,7 @@ const Index = () => {
                     </>
                   )}
                 </div> */}
-          {/* </div>
+        {/* </div>
         </main> */}
       </div>
     </div>

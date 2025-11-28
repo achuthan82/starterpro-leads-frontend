@@ -69,6 +69,15 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
       setLoading(false);
     }
   };
+
+  const close = () => {
+     setValue('phone', '')
+     setValue('email', '')
+     setValue('client', '')
+     setValue('title', '')
+     setValue('type', '')
+     inviteClose()
+  }
   const handleClient = (selectedClient) => {
     setValue('phone', selectedClient?.ivr_response?.ani.slice(2))
     setValue('email', selectedClient?.email)
@@ -122,7 +131,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
       <Dialog
         as="div"
         className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
-        onClose={inviteClose}
+        onClose={close}
       >
         {/* Overlay */}
         <TransitionChild
@@ -343,7 +352,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                   <Button
                     type="button"
                     className="rounded border border-gray-400 px-6 py-2 text-gray-700 hover:bg-gray-100"
-                    onClick={inviteClose}
+                    onClick={close}
                     disabled={loading}
                   >
                     Cancel

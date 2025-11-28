@@ -23,7 +23,7 @@ const Marketplace = () => {
   const [pricingData, setPricingData] = useState(null);
   const [pricingLoading, setPricingLoading] = useState(true);
   const [pricingError, setPricingError] = useState(null);
-
+  const [options, setOptions] = useState([])
   useEffect(() => {
     const fetchPricing = async () => {
       setPricingLoading(true);
@@ -78,11 +78,12 @@ const Marketplace = () => {
 
           {/* Main Content */}
           <main className="flex-1 overflow-auto px-6 py-8">
-            <LeadStateFilter selected={selectedStates} onChange={setSelectedStates} />
+            <LeadStateFilter selected={selectedStates} onChange={setSelectedStates} setOptions={setOptions} options={options}/>
             {pricingLoading && <div className="text-gray-900 dark:text-gray-100">Loading pricing...</div>}
             {pricingError && <div className="text-red-500 dark:text-red-400">{pricingError}</div>}
             {!pricingLoading && !pricingError && (
               <LeadStateList
+                options={options}
                 selectedStates={selectedStates}
                 pricingData={pricingData}
                 onViewLeads={(state) => setModalState({ open: true, state })}

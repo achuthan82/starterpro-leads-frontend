@@ -2,6 +2,7 @@ import { useState, useEffect, Fragment } from "react";
 import { Card, Checkbox } from "components/ui";
 import SharedSidebar from "./components/SharedSidebar";
 import { leadsService, stateService } from "utils/apiService";
+import { Switch } from "@headlessui/react";
 import {
   Dialog,
   DialogPanel,
@@ -802,11 +803,11 @@ const LeadManagement = () => {
           else result += val || "";
         } else if (key.customSelector === "lead_status") {
           result += LEAD_STATUS[val] || "";
-        }  else if (key.customSelector === 'call_in_date_time') {
-          if (item.campaign_name.startsWith('SD')){
-             result += 'N/A'
+        } else if (key.customSelector === "call_in_date_time") {
+          if (item.campaign_name.startsWith("SD")) {
+            result += "N/A";
           } else {
-            result += val
+            result += val;
           }
         } else {
           if (typeof val === "string" && val.includes(",")) {
@@ -1315,6 +1316,9 @@ const LeadManagement = () => {
                         <th className="min-w-[80px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                           Zip
                         </th>
+                        <th className="min-w-[80px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
+                           Sms Automation
+                        </th>
                         {/* <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider min-w-[120px]">
                           Loan Amount
                         </th> */}
@@ -1565,12 +1569,30 @@ const LeadManagement = () => {
                               </div>
                             </td> */}
 
-                            {/* Borrower Phone */}
-                            {/* <td className="px-3 py-4 whitespace-nowrap">
+                            {/* SMS automation*/}
+                            <td className="px-3 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900 dark:text-gray-100">
-                                {getBorrowerPhone(lead) || lead.borrower_phone || ''}
+                                <Switch
+                                  checked={lead?.sms_automation}
+                                  // onChange={() =>
+                                  //   handleLeadAutomation(!leadAutomation)
+                                  // }
+                                  className={`${
+                                    lead?.sms_automation
+                                      ? "bg-[#0a2463]"
+                                      : "bg-gray-300"
+                                  } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+                                >
+                                  <span
+                                    className={`${
+                                      lead?.sms_automation
+                                        ? "translate-x-6"
+                                        : "translate-x-1"
+                                    } flex inline-block h-4 w-4 transform items-center justify-center rounded-full bg-white transition`}
+                                  ></span>
+                                </Switch>
                               </div>
-                            </td> */}
+                            </td>
 
                             {/* Actions */}
                             <td className="px-3 py-4 text-sm font-medium whitespace-nowrap">

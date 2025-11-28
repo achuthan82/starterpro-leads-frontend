@@ -170,7 +170,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
     // },
     {
       id: "side-lead-bank",
-      label: "Side Lead Bank",
+      label: "Side Bank",
       icon: ShoppingCartIcon,
       href: "/side-leads",
     },
