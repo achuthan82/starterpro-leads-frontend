@@ -19,7 +19,7 @@ const Index = () => {
       .toggleLeadAutomation(user.agency.id, payload)
       .then((response) => {
         console.log(response);
-        if (response.data.status === 201) {
+        if (response.data.status === 200) {
           setLeadAutomation(status);
         } else {
           toast.error(response?.data?.message || "Failed to Update")

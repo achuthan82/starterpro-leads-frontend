@@ -238,20 +238,22 @@ const ScheduleAppointmentModal = ({
       });
   };
   const loadOptions = (inputValue, actionMeta) => {
-    if (inputValue) {
     setSearchValue(inputValue);
+    console.log('meta', actionMeta)
     if (actionMeta.action === "input-change") {
       getClients(inputValue);
     }
-  } else {
-    getClients('')
-  }
+    if (actionMeta.action === 'input-blur') {
+       getClients('')
+    }
   };
   const handleClient = (selectedOption) => {
     if (selectedOption) {
       setSelectedClient(selectedOption);
       setClientName(selectedOption.label);
       setPhoneNumber(selectedOption?.ivr_response?.ani);
+    } else {
+      getClients('')
     }
   };
   // Reset form when modal closes
