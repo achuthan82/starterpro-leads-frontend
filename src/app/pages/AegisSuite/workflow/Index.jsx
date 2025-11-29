@@ -3,7 +3,7 @@ import SharedSidebar from "../components/SharedSidebar";
 import { Switch } from "@headlessui/react";
 import automationService from "utils/automationService";
 import { useAuthContext } from "app/contexts/auth/context";
-
+import { toast } from "sonner";
 // import EmailText from './EmailText';
 const Index = () => {
   const { user } = useAuthContext();
@@ -21,7 +21,11 @@ const Index = () => {
         console.log(response);
         if (response.data.status === 201) {
           setLeadAutomation(status);
+        } else {
+          toast.error(response?.data?.message || "Failed to Update")
         }
+      }).catch((error) => {
+        toast.error(error?.message || "Failed to Update");
       })
       .finally(() => {
         setLeadLoading(false);

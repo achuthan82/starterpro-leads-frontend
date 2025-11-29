@@ -11,14 +11,14 @@ import dialerService from 'utils/dialerService';
 import stateService from 'utils/stateService';
 import { toast } from 'sonner';
 
-const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess }) => {
+const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance, onRecharge }) => {
   const [availableNumbers, setAvailableNumbers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
   const [error, setError] = useState(null);
   const [selectedNumber, setSelectedNumber] = useState(null);
   const [friendlyName, setFriendlyName] = useState('');
-  const [numberType, setNumberType] = useState('toll-free'); // 'toll-free' or 'local'
+  const [numberType, setNumberType] = useState('local'); // 'local' only (toll-free option removed)
   const [selectedState, setSelectedState] = useState('');
   const [states, setStates] = useState([]);
   const [loadingStates, setLoadingStates] = useState(false);
@@ -125,9 +125,9 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess }) => {
 
   const handleSelectNumber = (number) => {
     setSelectedNumber(number);
-    // Auto-fill friendly name if not set
+    // Auto-fill friendly name based on selected number
     const phone = number?.phone || number?.phoneNumber || number;
-    if (!friendlyName && phone) {
+    if (phone) {
       const formatted = formatPhoneNumber(phone);
       setFriendlyName(formatted || '');
     }
@@ -147,13 +147,24 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess }) => {
       return;
     }
 
+    // Check wallet balance
+    if (!hasSufficientBalance) {
+      toast.error('Insufficient wallet balance. Please recharge your wallet to purchase this number.');
+      if (onRecharge) {
+        onClose();
+        onRecharge();
+      }
+      return;
+    }
+
     setPurchasing(true);
     setError(null);
 
     try {
       const payload = {
         phone: phoneNumber,
-        friendly_name: friendlyName.trim()
+        friendly_name: friendlyName.trim(),
+        number_type: numberType
       };
 
       const response = await dialerService.purchaseNumber(payload);
@@ -183,6 +194,36 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess }) => {
     }
     return phone;
   };
+
+  // Get current price for selected number type
+  const getCurrentPrice = useCallback(() => {
+    if (!pricing) return null;
+    const pricingData = pricing?.data || pricing;
+    
+    if (Array.isArray(pricingData)) {
+      const apiTypeValue = numberType === 'toll-free' ? 'toll free' : 'local';
+      const pricingItem = pricingData.find(
+        item => item?.number_type?.toLowerCase() === apiTypeValue.toLowerCase()
+      );
+      
+      if (pricingItem && pricingItem.price !== undefined && pricingItem.price !== null) {
+        const price = pricingItem.price;
+        if (typeof price === 'number') {
+          return price;
+        }
+        if (typeof price === 'string' && !isNaN(parseFloat(price))) {
+          return parseFloat(price);
+        }
+      }
+    }
+    return null;
+  }, [pricing, numberType]);
+
+  // Check if wallet balance is sufficient
+  const currentPrice = getCurrentPrice();
+  const hasSufficientBalance = walletBalance !== null && 
+                                currentPrice !== null && 
+                                walletBalance >= currentPrice;
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -256,7 +297,6 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess }) => {
                   disabled={loading || purchasing}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[var(--color-atoll)] dark:focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
                 >
-                  <option value="toll-free">Toll-Free</option>
                   <option value="local">Local</option>
                 </select>
                 {/* Display Price */}
@@ -353,6 +393,31 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess }) => {
               </div>
             )}
 
+            {/* Wallet Balance Warning */}
+            {selectedNumber && currentPrice !== null && walletBalance !== null && !hasSufficientBalance && (
+              <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm font-medium text-red-700 dark:text-red-400 mb-2">
+                  ⚠️ Insufficient Wallet Balance
+                </p>
+                <p className="text-sm text-red-600 dark:text-red-300 mb-3">
+                  Number price: ${currentPrice.toFixed(2)}<br />
+                  Your balance: ${typeof walletBalance === 'number' && !isNaN(walletBalance) ? parseFloat(walletBalance).toFixed(2) : '0.00'}<br />
+                  Required: ${currentPrice.toFixed(2)}
+                </p>
+                {onRecharge && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onRecharge();
+                    }}
+                    className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
+                  >
+                    Recharge Wallet
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* Available Numbers List */}
             {!loading && !error && availableNumbers.length > 0 && (
               <div className="mb-6">
@@ -435,12 +500,13 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess }) => {
                 </button>
                 <button
                   onClick={handlePurchase}
-                  disabled={!selectedNumber || !friendlyName?.trim() || purchasing}
+                  disabled={!selectedNumber || !friendlyName?.trim() || purchasing || !hasSufficientBalance}
                   className={`px-4 py-2 text-sm rounded-md transition-colors ${
-                    selectedNumber && friendlyName?.trim() && !purchasing
+                    selectedNumber && friendlyName?.trim() && !purchasing && hasSufficientBalance
                       ? 'bg-[#0a2463] dark:bg-blue-500 text-white hover:bg-[#0a2463]/90 dark:hover:bg-blue-600'
                       : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                   }`}
+                  title={!hasSufficientBalance ? 'Insufficient wallet balance. Please recharge to purchase.' : ''}
                 >
                   {purchasing ? 'Purchasing...' : 'Purchase Number'}
                 </button>

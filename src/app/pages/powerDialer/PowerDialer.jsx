@@ -49,6 +49,7 @@ const PowerDialer = () => {
   const [showOutboundModal, setShowOutboundModal] = useState(false);
   const [outboundModalShown, setOutboundModalShown] = useState(false);
   const [previousCallEnded, setPreviousCallEnded] = useState(false);
+  const [hasSwitchedToTranscript, setHasSwitchedToTranscript] = useState(false);
   const [showRechargeModal, setShowRechargeModal] = useState(false);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   
@@ -71,22 +72,30 @@ const PowerDialer = () => {
     // Track when call ends
     if (isCallEnded && !previousCallEnded) {
       setPreviousCallEnded(true);
-    }
-
-    // When call has ended and call logs are loaded (not loading and has data)
-    if (isCallEnded && previousCallEnded && !callLogsLoading && callLogs.length > 0) {
-      // Switch to transcript tab
-      if (activeTabs[0] !== 'transcript') {
-        setActiveTabs(['transcript']);
-      }
-      setPreviousCallEnded(false); // Reset for next call
+      setHasSwitchedToTranscript(false); // Reset flag when new call ends
     }
 
     // Reset when call starts again
     if (isCallActive || isDialing) {
       setPreviousCallEnded(false);
+      setHasSwitchedToTranscript(false);
+      return;
     }
-  }, [isCallEnded, callLogsLoading, callLogs, isCallActive, isDialing, previousCallEnded, activeTabs]);
+
+    // When call has ended and call logs are loaded (not loading and has data)
+    // Only switch once per call end
+    // Check if call ended, logs finished loading, and we have logs
+    if (isCallEnded && !callLogsLoading && callLogs.length > 0 && !hasSwitchedToTranscript) {
+      // Small delay to ensure UI is ready
+      const timer = setTimeout(() => {
+        setActiveTabs(['transcript']);
+        setHasSwitchedToTranscript(true);
+        console.log('Auto-switched to transcript tab after call ended');
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isCallEnded, callLogsLoading, callLogs.length, isCallActive, isDialing, previousCallEnded, hasSwitchedToTranscript]);
 
   const formatPhoneNumber = (phone) => {
     if (!phone) return '';
@@ -413,6 +422,8 @@ const PowerDialer = () => {
         isOpen={showPurchaseModal}
         onClose={() => setShowPurchaseModal(false)}
         onPurchaseSuccess={handlePurchaseSuccess}
+        walletBalance={walletBalance}
+        onRecharge={handleRecharge}
       />
     </div>
   );

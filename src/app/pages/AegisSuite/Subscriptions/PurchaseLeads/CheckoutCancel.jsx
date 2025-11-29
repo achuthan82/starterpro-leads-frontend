@@ -19,7 +19,7 @@ const CheckoutCancel = () => {
         <div className="mt-6">
           <Button
             onClick={() => navigate("/subscriptions")}
-            className="inline-block rounded-md bg-[#0a2463] px-5 py-2 font-semibold text-white transition-colors duration-200 hover:bg-[#5a0f08] dark:bg-blue-600 dark:text-gray-100 dark:hover:bg-blue-500"
+            className="inline-block rounded-md bg-red-600 px-5 py-2 font-semibold text-white transition-colors duration-200 hover:bg-red-700 dark:bg-red-400 dark:hover:bg-red-500"
           >
             Back to Subscriptions
           </Button>

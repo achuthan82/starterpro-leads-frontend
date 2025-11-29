@@ -25,10 +25,13 @@ export default function ScriptTranscript({
   
   // Sync with parent activeTabs
   useEffect(() => {
-    if (activeTabs.length > 0 && activeTabs[0] !== activeTab) {
-      setActiveTab(activeTabs[0]);
+    if (activeTabs.length > 0) {
+      const newTab = activeTabs[0];
+      if (newTab !== activeTab) {
+        setActiveTab(newTab);
+      }
     }
-  }, [activeTabs, activeTab]);
+  }, [activeTabs]);
 
   const splitIntoSteps = (text) => {
     if (!text) return [];
