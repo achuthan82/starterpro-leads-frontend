@@ -64,41 +64,109 @@ const CallControls = ({
   }, [isCallActive, isDialing, isCallEnded]);
 
   const checkAudioPermissions = async () => {
+    // Check if getUserMedia is available
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.warn('getUserMedia is not supported in this browser');
+      setAudioPermission(false);
+      return;
+    }
+
     try {
-      const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
-      setAudioPermission(permissionStatus.state === 'granted');
-      permissionStatus.onchange = () => {
-        setAudioPermission(permissionStatus.state === 'granted');
-      };
-    } catch (error) {
-      console.warn('Permission API not supported:', error);
+      // Try Permission API first (not supported in all browsers, especially Safari)
+      if (navigator.permissions && navigator.permissions.query) {
+        try {
+          const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
+          setAudioPermission(permissionStatus.state === 'granted');
+          permissionStatus.onchange = () => {
+            setAudioPermission(permissionStatus.state === 'granted');
+          };
+          return;
+        } catch (permError) {
+          // Permission API not supported or failed, fall through to getUserMedia check
+          console.warn('Permission API not supported:', permError);
+        }
+      }
+      
+      // Fallback: Try to get a media stream to check permission
+      // Use basic constraints to avoid browser compatibility issues
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         stream.getTracks().forEach(track => track.stop());
         setAudioPermission(true);
-      } catch {
+      } catch (streamError) {
+        // Permission not granted or other error
+        console.warn('Microphone access check failed:', streamError);
         setAudioPermission(false);
       }
+    } catch (error) {
+      console.warn('Error checking audio permissions:', error);
+      setAudioPermission(false);
     }
   };
 
   const requestMicrophonePermission = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        }
-      });
-      stream.getTracks().forEach(track => track.stop());
-      setAudioPermission(true);
-      return true;
-    } catch (error) {
-      console.error('Microphone permission denied:', error);
+    // Check if getUserMedia is available
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      const errorMsg = 'Microphone access is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.';
+      console.error(errorMsg);
+      alert(errorMsg);
       setAudioPermission(false);
       return false;
     }
+
+    try {
+      // Try with enhanced audio constraints first
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+      } catch (enhancedError) {
+        // If enhanced constraints fail, try with basic constraints
+        // Some browsers don't support all audio constraints
+        console.warn('Enhanced audio constraints not supported, trying basic:', enhancedError);
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      }
+
+      // Successfully got stream, stop tracks and update permission
+      if (stream) {
+        stream.getTracks().forEach(track => {
+          track.stop();
+        });
+        setAudioPermission(true);
+        console.log('Microphone permission granted');
+        return true;
+      }
+    } catch (error) {
+      console.error('Microphone permission error:', error);
+      setAudioPermission(false);
+      
+      // Provide user-friendly error messages based on error type
+      let errorMessage = 'Microphone permission is required for calling.';
+      
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        errorMessage = 'Microphone permission was denied. Please allow microphone access in your browser settings and try again.';
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        errorMessage = 'No microphone found. Please connect a microphone and try again.';
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+        errorMessage = 'Microphone is already in use by another application. Please close other applications using the microphone and try again.';
+      } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
+        errorMessage = 'Microphone settings are not supported. Please try again.';
+      } else if (error.name === 'SecurityError') {
+        errorMessage = 'Microphone access is blocked. Please ensure you are using HTTPS or localhost, and check your browser security settings.';
+      } else if (error.name === 'TypeError') {
+        errorMessage = 'Microphone access failed. Please check your browser settings and try again.';
+      }
+      
+      alert(errorMessage);
+      return false;
+    }
+    
+    return false;
   };
 
   // ✅ MUTE CONTROL
@@ -147,8 +215,16 @@ const CallControls = ({
         return;
       }
 
-      // Request permission to get audio devices
-      await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Request permission to get audio devices (if not already granted)
+      if (!audioPermission && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          await navigator.mediaDevices.getUserMedia({ audio: true });
+        } catch (permError) {
+          console.warn('Permission needed for speaker control:', permError);
+          // Continue anyway, as we might still be able to enumerate devices
+        }
+      }
+      
       const devices = await navigator.mediaDevices.enumerateDevices();
       const outputDevices = devices.filter((d) => d.kind === 'audiooutput');
 
@@ -216,8 +292,12 @@ const CallControls = ({
         <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-lg p-3 mb-4 text-sm">
           <p>Microphone access required</p>
           <button
-            onClick={requestMicrophonePermission}
-            className="mt-2 px-3 py-1 bg-yellow-500 text-white rounded text-xs hover:bg-yellow-600"
+            onClick={async () => {
+              await requestMicrophonePermission();
+              // Re-check permissions after request
+              await checkAudioPermissions();
+            }}
+            className="mt-2 px-3 py-1 bg-yellow-500 text-white rounded text-xs hover:bg-yellow-600 transition-colors"
           >
             Grant Permission
           </button>

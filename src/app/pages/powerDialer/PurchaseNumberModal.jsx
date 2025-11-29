@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, useCallback, Fragment } from 'react';
 import {
   Dialog,
   DialogPanel,
@@ -8,6 +8,7 @@ import {
 } from "@headlessui/react";
 import { XMarkIcon, PhoneIcon } from '@heroicons/react/24/outline';
 import dialerService from 'utils/dialerService';
+import stateService from 'utils/stateService';
 import { toast } from 'sonner';
 
 const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess }) => {
@@ -17,22 +18,72 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess }) => {
   const [error, setError] = useState(null);
   const [selectedNumber, setSelectedNumber] = useState(null);
   const [friendlyName, setFriendlyName] = useState('');
+  const [numberType, setNumberType] = useState('toll-free'); // 'toll-free' or 'local'
+  const [selectedState, setSelectedState] = useState('');
+  const [states, setStates] = useState([]);
+  const [loadingStates, setLoadingStates] = useState(false);
+  const [pricing, setPricing] = useState(null);
+  const [loadingPricing, setLoadingPricing] = useState(false);
 
-  // Fetch available numbers
-  useEffect(() => {
-    if (isOpen) {
-      fetchAvailableNumbers();
-      setSelectedNumber(null);
-      setFriendlyName('');
+  const fetchPricing = useCallback(async () => {
+    setLoadingPricing(true);
+    try {
+      const response = await dialerService.getNumberPricing();
+      const pricingData = response?.data || response || null;
+      setPricing(pricingData);
+    } catch (err) {
+      console.error('Error fetching pricing:', err);
+      // Don't show error toast for pricing as it's not critical
+      setPricing(null);
+    } finally {
+      setLoadingPricing(false);
     }
-  }, [isOpen]);
+  }, []);
 
-  const fetchAvailableNumbers = async () => {
+  const fetchStates = useCallback(async () => {
+    setLoadingStates(true);
+    try {
+      const response = await stateService.getStates();
+      const statesData = response?.data?.data || response?.data || response || {};
+      
+      // Convert object format { "Alabama": "AL", ... } to array format
+      if (typeof statesData === 'object' && !Array.isArray(statesData)) {
+        const statesArray = Object.entries(statesData).map(([name, code]) => ({
+          name,
+          code
+        }));
+        // Sort by state name
+        statesArray.sort((a, b) => a.name.localeCompare(b.name));
+        setStates(statesArray);
+      } else if (Array.isArray(statesData)) {
+        setStates(statesData);
+      } else {
+        setStates([]);
+      }
+    } catch (err) {
+      console.error('Error fetching states:', err);
+      toast.error('Failed to load states');
+      setStates([]);
+    } finally {
+      setLoadingStates(false);
+    }
+  }, []);
+
+  const fetchAvailableNumbers = useCallback(async () => {
     setLoading(true);
     setError(null);
     
     try {
-      const response = await dialerService.getAvailableNumbers();
+      const params = {
+        type: numberType
+      };
+      
+      // Only add state param if type is 'local' and state is selected
+      if (numberType === 'local' && selectedState) {
+        params.state = selectedState;
+      }
+      
+      const response = await dialerService.getAvailableNumbers(params);
       const numbers = response?.data || response || [];
       setAvailableNumbers(Array.isArray(numbers) ? numbers : []);
     } catch (err) {
@@ -42,7 +93,35 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [numberType, selectedState]);
+
+  // Fetch pricing when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      if (!pricing) {
+        fetchPricing();
+      }
+    } else {
+      // Reset pricing when modal closes
+      setPricing(null);
+    }
+  }, [isOpen, pricing, fetchPricing]);
+
+  // Fetch states when type is 'local'
+  useEffect(() => {
+    if (isOpen && numberType === 'local' && states.length === 0) {
+      fetchStates();
+    }
+  }, [isOpen, numberType, states.length, fetchStates]);
+
+  // Fetch available numbers when filters change
+  useEffect(() => {
+    if (isOpen) {
+      fetchAvailableNumbers();
+      setSelectedNumber(null);
+      setFriendlyName('');
+    }
+  }, [isOpen, fetchAvailableNumbers]);
 
   const handleSelectNumber = (number) => {
     setSelectedNumber(number);
@@ -158,6 +237,106 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess }) => {
             <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-6">
               Select an available phone number and provide a friendly name
             </p>
+
+            {/* Filter Section */}
+            <div className="mb-6 space-y-4">
+              {/* Number Type Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Number Type <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={numberType}
+                  onChange={(e) => {
+                    setNumberType(e.target.value);
+                    setSelectedState(''); // Reset state when type changes
+                    setSelectedNumber(null); // Reset selected number
+                    setFriendlyName(''); // Reset friendly name
+                  }}
+                  disabled={loading || purchasing}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[var(--color-atoll)] dark:focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                >
+                  <option value="toll-free">Toll-Free</option>
+                  <option value="local">Local</option>
+                </select>
+                {/* Display Price */}
+                {pricing && (
+                  <div className="mt-2">
+                    {loadingPricing ? (
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Loading price...</p>
+                    ) : (
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Price: {(() => {
+                          // API response structure: { data: [{ number_type: "local", price: 1.45 }, { number_type: "toll free", price: 2.7 }] }
+                          const pricingData = pricing?.data || pricing;
+                          
+                          if (Array.isArray(pricingData)) {
+                            // Map our numberType to API number_type values
+                            // "toll-free" in our state maps to "toll free" in API
+                            // "local" maps to "local" in API
+                            const apiTypeValue = numberType === 'toll-free' ? 'toll free' : 'local';
+                            
+                            // Find the matching pricing object
+                            const pricingItem = pricingData.find(
+                              item => item?.number_type?.toLowerCase() === apiTypeValue.toLowerCase()
+                            );
+                            
+                            if (pricingItem && pricingItem.price !== undefined && pricingItem.price !== null) {
+                              const price = pricingItem.price;
+                              // Format as currency if it's a number
+                              if (typeof price === 'number') {
+                                return `$${price.toFixed(2)}`;
+                              }
+                              // If it's a string that looks like a number, try to parse it
+                              if (typeof price === 'string' && !isNaN(parseFloat(price))) {
+                                return `$${parseFloat(price).toFixed(2)}`;
+                              }
+                              return price;
+                            }
+                          }
+                          return 'N/A';
+                        })()}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* State Selection - Only show when type is 'local' */}
+              {numberType === 'local' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    State (Optional)
+                  </label>
+                  <select
+                    value={selectedState}
+                    onChange={(e) => {
+                      setSelectedState(e.target.value);
+                      setSelectedNumber(null); // Reset selected number
+                      setFriendlyName(''); // Reset friendly name
+                    }}
+                    disabled={loading || purchasing || loadingStates}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[var(--color-atoll)] dark:focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                  >
+                    <option value="">Select a state (optional)</option>
+                    {states.map((state) => {
+                      const stateCode = state.code || state.state_code || state.abbreviation || '';
+                      const stateName = state.name || state.state_name || '';
+                      return (
+                        <option key={stateCode || stateName} value={stateCode}>
+                          {stateName} {stateCode ? `(${stateCode})` : ''}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  {loadingStates && (
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      Loading states...
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Loading State */}
             {loading && (

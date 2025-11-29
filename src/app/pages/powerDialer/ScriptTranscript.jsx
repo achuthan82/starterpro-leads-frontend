@@ -4,7 +4,8 @@ import {
   ChatBubbleLeftEllipsisIcon,
 } from "@heroicons/react/24/solid";
 import { useAuthContext } from "app/contexts/auth/context";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { toast } from 'sonner';
+import { IoBulbOutline } from "react-icons/io5";
 
 export default function ScriptTranscript({ 
   activeTabs = ["script"], 
@@ -15,9 +16,12 @@ export default function ScriptTranscript({
   callLogs = [],
   callLogsLoading = false
 }) {
+
   const { user } = useAuthContext();
+  console.log(user)
   const [activeTab, setActiveTab] = useState(activeTabs[0] || "script");
   const [selectedBadge, setSelectedBadge] = useState(null);
+  const [selectedObjection, setSelectedObjection] = useState(null);
   
   // Sync with parent activeTabs
   useEffect(() => {
@@ -26,79 +30,133 @@ export default function ScriptTranscript({
     }
   }, [activeTabs, activeTab]);
 
+  const splitIntoSteps = (text) => {
+    if (!text) return [];
+    return text
+      .split("\n")
+      .map(line => line.trim())   // 👈 THIS fixes the alignment
+      .filter(line => line !== "");
+  };
+
   // Script content for each badge
   const scriptContent = {
-    Opening: `Hello ${lead?.name || lead?.first_name + ' ' + lead?.last_name || '[Lead Name]'}, this is [Your Name] from ${user?.agency?.name || 'ShieldNest'}. I hope I'm catching you at a good time.
+    Opening: `Hello, may I speak with ${lead?.name || lead?.first_name + ' ' + lead?.last_name || '[LEAD_NAME]'}? 
 
-I'm calling because you recently responded to our information about mortgage protection insurance. I understand you own a home in ${lead?.originalData?.state || '[State]'} and may be interested in protecting your family's mortgage payments if something unexpected happens to you.`,
+              Hi ${lead?.name || lead?.first_name + ' ' + lead?.last_name || '[LEAD_NAME]'}, my name is ${user?.name || '[YOUR_NAME]'} calling from ${user?.agency?.name || 'StarterProleads'}.
+              
+              I understand you recently purchased a home with a mortgage of approximately ${lead?.originalData?.loan_amount || '[LOAN_AMOUNT]'}. Do you have a moment to discuss protecting your family's investment?
+              
+              Great! The reason for my call today is to ensure your family would be protected if something unexpected were to happen to you.`,
     
-    Qualification: `I'm following up on your interest in mortgage protection. Could you tell me a bit about your current situation?
+  Proposition: `Let me ask you - if something were to happen to you tomorrow, would your family be able to keep the house?
 
-- What is your current mortgage balance?
-- How long have you had your mortgage?
-- Do you have any existing life insurance coverage?
-- What are your main concerns about protecting your mortgage?`,
+                Mortgage protection insurance ensures your mortgage is paid off, so your loved ones never have to worry about losing their home.
+
+                It's surprisingly affordable - for someone your age, we're typically looking at around $[ESTIMATED_PREMIUM] per month.
+
+                That's less than what most people spend on their daily coffee!`,
+
+    Qualification: `To provide you with an accurate quote, I need to ask a few quick questions. Is that okay?
     
-    Objections: `I understand your concerns. Many of our clients felt the same way initially, but here's how we can help:
+                    Are you between 18 and 65 years old?
 
-- "I can't afford it" → We offer flexible payment plans that can fit your budget
-- "I already have insurance" → This specifically covers your mortgage, which may not be fully covered by other policies
-- "I'm too young" → The best time to protect your family is now, when rates are most affordable
-- "I need to think about it" → I understand. What specific concerns do you have that I can address?`,
+                    Are you a US citizen or permanent resident?
+
+                    Are you currently in good health?
+
+                    Have you been hospitalized in the last 12 months?`,
     
-    Closing: `Based on our discussion, the mortgage protection plan would provide you with peace of mind. 
+//     Objections: `I understand your concerns. Many of our clients felt the same way initially, but here's how we can help:
 
-Key benefits:
-- Your mortgage will be paid off if something happens to you
-- Your family can stay in their home
-- Flexible coverage options
-- Affordable monthly payments
-
-Shall we proceed with the application?`,
+// - "I can't afford it" → We offer flexible payment plans that can fit your budget
+// - "I already have insurance" → This specifically covers your mortgage, which may not be fully covered by other policies
+// - "I'm too young" → The best time to protect your family is now, when rates are most affordable
+// - "I need to think about it" → I understand. What specific concerns do you have that I can address?`,
     
-    'Follow-up': `I wanted to follow up on our previous conversation about mortgage protection. Have you had any additional thoughts or questions?
+    Closing: `Based on what you've shared, I can get you coverage starting at just $[QUOTE_AMOUNT] per month. 
 
-I'm here to help answer any concerns you might have and ensure you have all the information you need to make an informed decision.`,
+              This would give your family complete peace of mind knowing the mortgage would be taken care of.
+
+              Shall we go ahead and lock in this rate for you today?
+
+              Perfect! Let me get some additional information to complete your application.`,
     
-    Appointment: `Would you be available for a 15-minute call on [date] at [time] to discuss this further?
+//     Appointment: `Would you be available for a 15-minute call on [date] at [time] to discuss this further?
 
-This will give us a chance to:
-- Review your specific needs
-- Answer any questions you have
-- Discuss coverage options
-- Find a plan that works for your budget`,
+// This will give us a chance to:
+// - Review your specific needs
+// - Answer any questions you have
+// - Discuss coverage options
+// - Find a plan that works for your budget`,
     
-    Voicemail: `Hi ${lead?.name || '[Lead Name]'}, this is [Your Name] from ${user?.agency?.name || 'ShieldNest'} calling about mortgage protection. 
+//     Voicemail: `Hi ${lead?.name || '[Lead Name]'}, this is [Your Name] from ${user?.agency?.name || 'ShieldNest'} calling about mortgage protection. 
 
-I wanted to reach out because you recently showed interest in protecting your mortgage. Please call me back at [your number] when you have a moment. I'd love to discuss how we can help protect your family's home.
+// I wanted to reach out because you recently showed interest in protecting your mortgage. Please call me back at [your number] when you have a moment. I'd love to discuss how we can help protect your family's home.
 
-Thank you, and have a great day!`,
+// Thank you, and have a great day!`,
     
-    Referral: `While I have you on the line, do you know anyone else who might benefit from mortgage protection?
+//     Referral: `While I have you on the line, do you know anyone else who might benefit from mortgage protection?
 
-Many of our clients find value in sharing this protection with friends and family who also own homes. If you know someone who might be interested, I'd be happy to help them as well.`
+// Many of our clients find value in sharing this protection with friends and family who also own homes. If you know someone who might be interested, I'd be happy to help them as well.`
   };
 
   // Objection handlers content
-  const objectionHandlersContent = `Here are effective objection handlers for common concerns:
-
-**&quot;I can&apos;t afford it right now&quot;**
-I completely understand budget concerns. The good news is that mortgage protection is often more affordable than people think. We offer flexible payment plans, and many clients find it costs less than their daily coffee. Would you like to see some options that might fit your budget?
-
-**&quot;I already have life insurance&quot;**
-That&apos;s great that you have life insurance! However, mortgage protection is specifically designed to pay off your mortgage directly, which means your family won&apos;t have to worry about making monthly payments. It works alongside your existing coverage. Would you like to see how they complement each other?
-
-**&quot;I&apos;m too young/healthy&quot;**
-You&apos;re absolutely right that you&apos;re healthy now, and that&apos;s exactly why this is the best time to protect your family. Rates are lowest when you&apos;re young and healthy, and you never know what the future holds. It&apos;s about protecting your family&apos;s home, not just yourself.
-
-**&quot;I need to think about it&quot;**
-I completely understand wanting to think it over. What specific concerns do you have that I can help address? Sometimes having more information can help with the decision-making process.
-
-**&quot;I&apos;m not interested&quot;**
-I appreciate your honesty. Can I ask what specifically makes you feel this isn&apos;t right for you? I want to make sure you have all the information, and if it&apos;s truly not a fit, I&apos;ll respect that.
-
-**&quot;I&apos;ll do it later&quot;**
-I understand the temptation to put it off, but the reality is that life is unpredictable. The best time to protect your family is now, when you&apos;re healthy and rates are affordable. What would need to change for you to feel ready to move forward?`;
+const objectionHandlersList = [
+  {
+    title: "I need to think about it",
+    color: "orange",
+    steps: [
+      "I completely understand wanting to think it over. What specific concerns would you like to think about?",
+      "That's fair. Let me ask - if you were to think about it and decide yes, what would need to happen between now and then?",
+      "I appreciate that. Most people who say that are really concerned about one of three things: the cost, whether they really need it, or if now is the right time. Which of these resonates with you?"
+    ]
+  },
+  {
+    title: "It's too expensive",
+    color: "blue",
+    steps: [
+      "I understand cost is a factor. Let me ask - compared to what? Most people spend more on cable TV or eating out each month.",
+      "Fair point. What if I told you it costs less than $[DAILY_COST] per day to protect your family's home? Is that too expensive?",
+      "I hear you. Let me ask though - what would be too expensive is your family losing the house, right? This prevents that."
+    ]
+  },
+  {
+    title: "I already have life insurance",
+    color: "indigo",
+    steps: [
+      "That's excellent that you're thinking ahead! Can I ask - is that life insurance specifically designated to pay off your mortgage?",
+      "Great! How much coverage do you have? Would it be enough to pay off the entire mortgage and leave money for your family's other needs?",
+      "Perfect! This would work alongside your existing policy to specifically protect your home. Think of it as a safety net for your safety net."
+    ]
+  },
+  {
+    title: "I need to talk to my spouse",
+    color: "green",
+    steps: [
+      "Absolutely, this is a family decision. Is your spouse available now? I'd be happy to explain it to both of you.",
+      "That makes complete sense. What if we scheduled a time when you're both available? When works best for you both?",
+      "Of course! Let me send you some information to review together. Would you prefer email or text?"
+    ]
+  },
+  {
+    title: "I'm not interested",
+    color: "rose",
+    steps: [
+      "I appreciate your honesty. Can I ask - is it that you're not interested in protecting your family, or is it just not a priority right now?",
+      "Fair enough. Let me ask one question - if your family could keep the house without any mortgage payments if something happened to you, would that interest you?",
+      "I understand. Before I let you go, can you help me understand - is it the product itself or just the timing that's not right?"
+    ]
+  },
+  {
+    title: "Can you send me information?",
+    color: "yellow",
+    steps: [
+      "Absolutely! I can send that right over. While I have you though, what specific questions do you have that I could answer right now?",
+      "Of course. I'll send you everything. Just so the information is relevant - are you more concerned about the coverage amount or the monthly cost?",
+      "Sure thing! Let me ask first - what's the best email for you, and is there anything specific you'd like me to include?"
+    ]
+  }
+];
 
   const handleBadgeClick = (badgeName) => {
     if (selectedBadge === badgeName) {
@@ -121,39 +179,39 @@ I understand the temptation to put it off, but the reality is that life is unpre
       <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700 mb-4">
         <button
           onClick={() => handleTabClick("script")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-t-lg font-medium transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1 px-3 py-1 rounded-t-lg text-xs font-medium transition-all whitespace-nowrap ${
             activeTab === "script"
               ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400 -mb-[1px]"
               : "text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50"
           }`}
         >
-          <DocumentTextIcon className="w-4 h-4 flex-shrink-0" />
+          <DocumentTextIcon className="w-3 h-3 flex-shrink-0" />
           <span>Script</span>
         </button>
 
         <button
           onClick={() => handleTabClick("objections")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-t-lg font-medium transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1 px-3 py-1  rounded-t-lg text-xs font-medium transition-all whitespace-nowrap ${
             activeTab === "objections"
               ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400 -mb-[1px]"
               : "text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50"
           }`}
         >
-          <ExclamationTriangleIcon className="w-4 h-4 flex-shrink-0" />
+          <IoBulbOutline className="w-3 h-3 flex-shrink-0" />
           <span>Objections</span>
         </button>
 
         <button
           onClick={() => handleTabClick("transcript")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-t-lg font-medium transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1 px-3 py-1  rounded-t-lg text-xs font-medium transition-all whitespace-nowrap ${
             activeTab === "transcript"
               ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400 -mb-[1px]"
               : "text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50"
           }`}
         >
-          <ChatBubbleLeftEllipsisIcon className="w-4 h-4 flex-shrink-0" />
+          <ChatBubbleLeftEllipsisIcon className="w-3 h-3 flex-shrink-0" />
           <span className="hidden sm:inline">Live Transcript</span>
-          <span className="sm:hidden">Transcript</span>
+          {/* <span className="sm:hidden">Transcript</span> */}
         </button>
       </div>
 
@@ -165,14 +223,16 @@ I understand the temptation to put it off, but the reality is that life is unpre
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
             {[
-              { name: "Opening", color: "indigo" },
+              { name: "Opening", color: "pink" },
+              { name: "Proposition", color: "red" },
               { name: "Qualification", color: "green" },
-              { name: "Objections", color: "yellow" },
               { name: "Closing", color: "purple" },
-              { name: "Follow-up", color: "red" },
-              { name: "Appointment", color: "blue" },
-              { name: "Voicemail", color: "gray" },
-              { name: "Referral", color: "pink" },
+              // { name: "Objections", color: "yellow" },
+              // { name: "Closing", color: "purple" },
+              // { name: "Follow-up", color: "red" },
+              // { name: "Appointment", color: "blue" },
+              // { name: "Voicemail", color: "gray" },
+              // { name: "Referral", color: "pink" },
             ].map((tag) => {
               const isSelected = selectedBadge === tag.name;
               return (
@@ -224,50 +284,154 @@ I understand the temptation to put it off, but the reality is that life is unpre
           </div>
 
           {/* Script Text */}
-          {selectedBadge && scriptContent[selectedBadge] ? (
-            <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap border-2 border-blue-200 dark:border-blue-800">
-              <div className="font-semibold mb-2 text-blue-700 dark:text-blue-400">
-                {selectedBadge} Script:
-              </div>
-              {scriptContent[selectedBadge]}
+          {lead && selectedBadge && scriptContent[selectedBadge] ? (
+            <div className="space-y-4">
+              {splitIntoSteps(scriptContent[selectedBadge]).map((line, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-3 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600"
+                >
+                  {/* Number Circle */}
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#0A1A3F] text-white flex items-center justify-center font-bold text-sm">
+                    {index + 1}
+                  </div>
+
+                  {/* Line Text */}
+                  <p className="text-gray-700 dark:text-gray-200 text-sm leading-relaxed">
+                    {line}
+                  </p>
+                </div>
+              ))}
+
+              {/* Copy Button */}
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(scriptContent[selectedBadge])
+                  toast.success('Script copied!');
+                }}
+                className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2m2 0h6a2 2 0 002-2V10a2 2 0 00-2-2h-2M8 16v2a2 2 0 002 2h6a2 2 0 002-2v-6a2 2 0 00-2-2h-2" />
+                </svg>
+
+                Copy Script
+              </button>
+
             </div>
           ) : (
             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm text-gray-500 dark:text-gray-400 italic">
-              Click on a badge above to view its script content
+            Select a lead and switch between the badges to view its script content.            
             </div>
           )}
         </div>
       )}
 
       {activeTab === "objections" && (
-        <div className="space-y-3">
-          <h2 className="font-semibold text-lg text-gray-700 dark:text-gray-200">Objection Handlers</h2>
+  <div className="space-y-3">
+    <h2 className="font-semibold text-lg text-gray-700 dark:text-gray-200">
+      Objection Handlers
+    </h2>
 
-          {/* Objection Handlers Badge */}
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => handleBadgeClick("Objection Handlers")}
-              className={`text-xs font-medium px-3 py-2 rounded-md transition-all cursor-pointer ${
-                selectedBadge === "Objection Handlers"
-                  ? "bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800 ring-yellow-500"
-                  : "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-800"
-              }`}
+    {/* --- Tabs --- */}
+    <div className="flex flex-wrap gap-2">
+      {objectionHandlersList.map((obj) => {
+        const isSelected = selectedObjection === obj.title;
+
+        return (
+          <button
+            key={obj.title}
+            onClick={() => setSelectedObjection(obj.title)}
+            className={`text-xs font-medium px-2 py-1 rounded-md transition-all cursor-pointer ${
+              isSelected
+                ? "ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800"
+                : ""
+            } ${
+              obj.color === "orange"
+                ? isSelected
+                  ? "bg-orange-200 text-orange-800 ring-orange-500"
+                  : "bg-orange-100 text-orange-700 hover:bg-orange-200"
+                : obj.color === "blue"
+                ? isSelected
+                  ? "bg-blue-200 text-blue-800 ring-blue-500"
+                  : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                : obj.color === "indigo"
+                ? isSelected
+                  ? "bg-indigo-200 text-indigo-800 ring-indigo-500"
+                  : "bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
+                : obj.color === "green"
+                ? isSelected
+                  ? "bg-green-200 text-green-800 ring-green-500"
+                  : "bg-green-100 text-green-700 hover:bg-green-200"
+                : obj.color === "rose"
+                ? isSelected
+                  ? "bg-rose-200 text-rose-800 ring-rose-500"
+                  : "bg-rose-100 text-rose-700 hover:bg-rose-200"
+                : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+            }`}
+          >
+            {obj.title}
+          </button>
+        );
+      })}
+    </div>
+
+    {/* --- Steps View --- */}
+    {selectedObjection ? (
+      <div className="space-y-4">
+        {objectionHandlersList
+          .find((item) => item.title === selectedObjection)
+          ?.steps.map((line, index) => (
+            <div
+              key={index}
+              className="flex items-start gap-3 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600"
             >
-              Objection Handlers
-            </button>
-          </div>
-
-          {/* Objection Handlers Content */}
-          {selectedBadge === "Objection Handlers" ? (
-            <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap border-2 border-yellow-200 dark:border-yellow-800">
-              <div className="font-semibold mb-2 text-yellow-700 dark:text-yellow-400">
-                Objection Handlers:
+              {/* Number circle */}
+              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#0A1A3F] text-white flex items-center justify-center font-bold text-sm">
+                {index + 1}
               </div>
-              {objectionHandlersContent}
+
+              {/* Line text */}
+              <p className="text-gray-700 dark:text-gray-200 text-sm leading-relaxed">
+                {line.trim()}
+              </p>
             </div>
-          ) : (
+          ))}
+
+        {/* --- Copy Button --- */}
+        <button
+          onClick={() => {
+            const obj = objectionHandlersList.find(
+              (o) => o.title === selectedObjection
+            );
+            const fullText = obj.steps.join("\n");
+            navigator.clipboard.writeText(fullText);
+            toast.success("Objection handler copied!");
+          }}
+          className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 
+                     border border-gray-300 dark:border-gray-600 rounded-lg text-sm 
+                     text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-4 h-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2m2 0h6a2 2 0 002-2V10a2 2 0 00-2-2h-2M8 16v2a2 2 0 002 2h6a2 2 0 002-2v-6a2 2 0 00-2-2h-2"
+            />
+          </svg>
+          Copy Handler
+        </button>
+      </div>
+    ) : (
             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm text-gray-500 dark:text-gray-400 italic">
-              Click on &quot;Objection Handlers&quot; badge above to view objection handling strategies
+              Click on each badge above to view objection handling strategies
             </div>
           )}
         </div>

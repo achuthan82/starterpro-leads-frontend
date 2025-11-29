@@ -174,12 +174,44 @@ class DialerService {
   }
 
   /**
+   * Get number pricing list
+   * @returns {Promise} Response with pricing data for different number types
+   */
+  async getNumberPricing() {
+    try {
+      const response = await axiosInstance.get('/twilio-management/number-pricing-list');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching number pricing:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get available phone numbers from Twilio
+   * @param {Object} params - Filter parameters
+   * @param {string} params.type - Number type: 'toll-free' or 'local'
+   * @param {string} params.state - State code (e.g., 'CA') - only used when type is 'local'
    * @returns {Promise} Response with list of available phone numbers
    */
-  async getAvailableNumbers() {
+  async getAvailableNumbers(params = {}) {
     try {
-      const response = await axiosInstance.get('/twilio-management/available-numbers');
+      const queryParams = new URLSearchParams();
+      
+      if (params.type) {
+        queryParams.append('type', params.type);
+      }
+      
+      if (params.state) {
+        queryParams.append('state', params.state);
+      }
+      
+      const queryString = queryParams.toString();
+      const url = queryString 
+        ? `/twilio-management/available-numbers?${queryString}`
+        : '/twilio-management/available-numbers';
+      
+      const response = await axiosInstance.get(url);
       return response.data;
     } catch (error) {
       console.error('Error fetching available numbers:', error);

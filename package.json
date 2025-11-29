@@ -45,6 +45,7 @@
     "fuse.js": "^7.1.0",
     "globals": "^16.0.0",
     "html-react-parser": "^5.2.2",
+    "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
     "html2canvas-pro": "^1.5.11",
     "i18next": "^24.2.3",
