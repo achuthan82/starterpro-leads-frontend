@@ -503,7 +503,7 @@ useEffect(() => {
               <div className="sm:w-48">
                 <select
                   value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value)}
+                  onChange={(e) => {setSelectedRole(e.target.value); setCurrentPage(0)}}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#75150b] focus:border-[#75150b]"
                 >
                   <option value="0">All Roles</option>
@@ -516,7 +516,7 @@ useEffect(() => {
               <div className="sm:w-48">
                 <select
                   value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  onChange={(e) => {setSelectedStatus(e.target.value); setCurrentPage(0)}}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#75150b] focus:border-[#75150b]"
                 >
                   <option value="all">All Status</option>

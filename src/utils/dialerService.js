@@ -224,6 +224,7 @@ class DialerService {
    * @param {Object} params - Purchase parameters
    * @param {string} params.phone - Phone number to purchase (e.g., "+18001234567")
    * @param {string} params.friendly_name - Friendly name for the number
+   * @param {string} params.number_type - Number type: 'local' or 'toll-free'
    * @returns {Promise} Response with purchased number data
    */
   async purchaseNumber(params) {

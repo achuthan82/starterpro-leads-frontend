@@ -413,6 +413,8 @@ const PowerDialer = () => {
         isOpen={showPurchaseModal}
         onClose={() => setShowPurchaseModal(false)}
         onPurchaseSuccess={handlePurchaseSuccess}
+        walletBalance={walletBalance}
+        onRecharge={handleRecharge}
       />
     </div>
   );
