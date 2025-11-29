@@ -123,7 +123,7 @@ const MortgageProtectionModal = ({
         }
       } catch (error) {
         console.error('Error saving assessment data:', error);
-        toast.error(error?.response?.data?.message || 'Failed to save assessment data');
+        // toast.error(error?.response?.data?.message || 'Failed to save assessment data');
       } finally {
         setIsSaving(false);
       }
@@ -398,6 +398,7 @@ const MortgageProtectionModal = ({
                     {...field}
                     type="number"
                     placeholder="Age"
+                    onWheel={(e) => e.target.blur()}
                     className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-600 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                     invalid={errors.age}
                   />
@@ -417,6 +418,7 @@ const MortgageProtectionModal = ({
                     {...field}
                     type="number"
                     placeholder="Height"
+                    onWheel={(e) => e.target.blur()}
                     className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-600 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                   />
                 )}
@@ -432,6 +434,7 @@ const MortgageProtectionModal = ({
                     {...field}
                     type="number"
                     placeholder="Weight"
+                    onWheel={(e) => e.target.blur()}
                     className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-600 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                   />
                 )}
@@ -609,6 +612,7 @@ const MortgageProtectionModal = ({
                     {...field}
                     type="number"
                     placeholder="$"
+                    onWheel={(e) => e.target.blur()}
                     className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-600 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                   />
                 )}
@@ -624,6 +628,7 @@ const MortgageProtectionModal = ({
                     {...field}
                     type="number"
                     placeholder="$"
+                    onWheel={(e) => e.target.blur()}
                     className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-600 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                   />
                 )}
@@ -653,6 +658,7 @@ const MortgageProtectionModal = ({
                       {...field}
                       type="number"
                       placeholder="$"
+                      onWheel={(e) => e.target.blur()}
                       className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-600 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                     />
                   )}
@@ -688,6 +694,7 @@ const MortgageProtectionModal = ({
                       {...field}
                       type="number"
                       placeholder="$"
+                      onWheel={(e) => e.target.blur()}
                       className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-600 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                     />
                   )}
