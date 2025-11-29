@@ -8,7 +8,9 @@ const automationService = {
   toggleLeadAutomation: (agency_id, payload) => {
     return axios.patch(`${JWT_HOST_API}/sms-automation/enable-disable-agency-sms-automation/${agency_id}`, payload);
   },
-  
+  toggleLeadManagementAutomation: (id, payload) => {
+    return axios.patch(`${JWT_HOST_API}/sms-automation/enable-disable-lead-sms-automation/${id}`, payload);
+  },
 };
 
 export default automationService; 

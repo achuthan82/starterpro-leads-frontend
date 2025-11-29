@@ -764,15 +764,15 @@ const AgentLeads = () => {
 
               {/* Statistics */}
               <div className="grid grid-cols-2 gap-4 text-center sm:grid-cols-4 lg:gap-6">
-                <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+                <div className="rounded-lg border border-white/20 bg-white/10 p-2 backdrop-blur-sm">
                   <div className="text-2xl font-bold">{summary.totalLeads}</div>
                   <div className="text-sm text-white/80">Total Leads</div>
                 </div>
-                <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+                <div className="rounded-lg border border-white/20 bg-white/10 p-2 backdrop-blur-sm">
                   <div className="text-2xl font-bold">{summary.goldLeads}</div>
                   <div className="text-sm text-white/80">Completed Leads</div>
                 </div>
-                <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+                <div className="rounded-lg border border-white/20 bg-white/10 p-2 backdrop-blur-sm">
                   <div className="text-2xl font-bold">
                     {summary.partialLeads}
                   </div>

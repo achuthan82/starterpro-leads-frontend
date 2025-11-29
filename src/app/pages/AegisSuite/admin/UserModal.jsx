@@ -27,7 +27,7 @@ const UserModal = ({
     { id: "", auto_generate: false, source: "" },
   ]);
 
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
   console.log("currentUser", currentUser);
 
@@ -108,7 +108,7 @@ const UserModal = ({
     console.log(values);
     setInputFields(values);
   };
-
+ 
   const submitData = (data) => {
     setLoading(true);
     const human = [];
@@ -137,7 +137,6 @@ const UserModal = ({
     } else {
       inputFields.forEach((element) => {
         if (element.source !== "") {
-          console.log(editData.agents.some((el) => el.id === element.id));
           if (editData.agents.some((el) => el.id === element.id)) {
             edit_agents.push({
               id: element.id,
@@ -170,8 +169,13 @@ const UserModal = ({
     const d = {
       email: data.email,
       name: data.name,
-      // phone: data.phone,
       role_id: parseInt(data.user_role.value),
+      agents: {
+        human,
+        auto,
+      },
+    };
+    const editPayload = {
       agents: {
         human,
         auto,
@@ -187,9 +191,26 @@ const UserModal = ({
       d["npn"] = data?.npn_number;
     }
     if (editData !== null) {
-      d["edit_agents"] = edit_agents;
-      d["remove_agents"] = remove_agents;
+      if (data.name !== editData.name) {
+        editPayload["name"] = data.name;
+      }
+      if (data.phone !== editData.phone) {
+        editPayload["phone"] = data.phone;
+      }
+      if (data?.agency_id.value !== editData.agency.id) {
+        editPayload["agency_id"] = data?.agency_id?.value;
+      }
+      if (data?.npn && data.npn_number != editData?.npn_number) {
+        editPayload["npn"] = data?.npn_number;
+      }
+      if (edit_agents.length > 0) {
+          editPayload["edit_agents"] = edit_agents;
+      }
+      if (remove_agents.length > 0) {
+        editPayload["remove_agents"] = remove_agents;
+      }
     }
+    console.log('editPayload', editPayload, editData)
     let val = false;
     for (const element of inputFields) {
       if (element.id === "") {
@@ -223,7 +244,7 @@ const UserModal = ({
           });
       } else {
         adminService
-          .editUser(editData.id, d)
+          .editUser(editData.id, editPayload)
           .then((response) => {
             if (response.status === 200) {
               close();
@@ -272,7 +293,7 @@ const UserModal = ({
     try {
       const response = await adminService.getAgencyList();
       console.log("Agency list response:", response);
-      
+
       // Transform API response to react-select format
       let agencies = [];
       if (response.data && Array.isArray(response.data)) {
@@ -294,7 +315,7 @@ const UserModal = ({
           parent_agency_id: agency.parent_agency_id,
         }));
       }
-      
+
       setAgencyOptions(agencies);
     } catch (error) {
       console.error("Error fetching agency list:", error);
@@ -336,7 +357,9 @@ const UserModal = ({
       setValue("phone", editData.phone);
       setValue("email", editData.email);
       if (editData?.agency && agencyOptions.length > 0) {
-        const agencyOption = agencyOptions.find(item => item.value === editData?.agency?.id);
+        const agencyOption = agencyOptions.find(
+          (item) => item.value === editData?.agency?.id,
+        );
         console.log("agencyOption", agencyOption);
         if (agencyOption) {
           setValue("agency_id", agencyOption);
@@ -462,38 +485,38 @@ const UserModal = ({
                   )}
                 </div>
                 {editData !== null && editData.npn !== null && (
-                <div className="w-full">
-                  <label
-                    className="mb-1 block text-left text-sm font-medium"
-                    htmlFor="npn_number"
-                  >
-                    NPN Number
-                  </label>
-                  <Controller
-                    control={control}
-                    name="npn_number"
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        innerRef={field.ref}
-                        autoFocus
-                        type="text"
-                        id="npn_number"
-                        placeholder="NPN Number"
-                        invalid={errors.npn_number}
-                        className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
-                        onChange={(event) => {
-                          field.onChange(event);
-                        }}
-                      />
+                  <div className="w-full">
+                    <label
+                      className="mb-1 block text-left text-sm font-medium"
+                      htmlFor="npn_number"
+                    >
+                      NPN Number
+                    </label>
+                    <Controller
+                      control={control}
+                      name="npn_number"
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          innerRef={field.ref}
+                          autoFocus
+                          type="text"
+                          id="npn_number"
+                          placeholder="NPN Number"
+                          invalid={errors.npn_number}
+                          className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+                          onChange={(event) => {
+                            field.onChange(event);
+                          }}
+                        />
+                      )}
+                    />
+                    {errors.npn_number && (
+                      <span className="text-red-500">
+                        {errors.npn_number.message}
+                      </span>
                     )}
-                  />
-                  {errors.npn_number && (
-                    <span className="text-red-500">
-                      {errors.npn_number.message}
-                    </span>
-                  )}
-                </div>
+                  </div>
                 )}
 
                 <div className="w-full">
@@ -684,22 +707,23 @@ const UserModal = ({
                     </div>
                   ))}
                 </SlideDown>
-                 
-                 {
-                  inputFields.length === 0 && <div className="mb-2">
-                  <Button
-                    // color='pri'
-                    type="button"
-                    style={{ backgroundColor: "var(--fern)" }}
-                    className="flex items-center gap-2 rounded px-4 py-2 text-white hover:bg-blue-900"
-                    onClick={increaseCount}
-                  >
-                    <PlusIcon className="h-6 w-6" />
-                    <span className="hidden sm:inline-block">Add New Type</span>
-                  </Button>
-                </div>
-                 }
-                
+
+                {inputFields.length === 0 && (
+                  <div className="mb-2">
+                    <Button
+                      // color='pri'
+                      type="button"
+                      style={{ backgroundColor: "var(--fern)" }}
+                      className="flex items-center gap-2 rounded px-4 py-2 text-white hover:bg-blue-900"
+                      onClick={increaseCount}
+                    >
+                      <PlusIcon className="h-6 w-6" />
+                      <span className="hidden sm:inline-block">
+                        Add New Type
+                      </span>
+                    </Button>
+                  </div>
+                )}
 
                 <div className="mt-4 w-full pt-4 text-center">
                   <Button
