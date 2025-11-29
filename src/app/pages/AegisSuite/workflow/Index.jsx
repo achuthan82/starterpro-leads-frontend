@@ -21,6 +21,7 @@ const Index = () => {
         console.log(response);
         if (response.data.status === 200) {
           setLeadAutomation(status);
+          toast.success('Success')
         } else {
           toast.error(response?.data?.message || "Failed to Update")
         }
