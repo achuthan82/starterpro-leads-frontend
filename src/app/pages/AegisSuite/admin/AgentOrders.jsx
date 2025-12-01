@@ -751,12 +751,12 @@ const AgentOrders = () => {
                   )}
 
                   {/* Discount Price */}
-                  {selectedOrder.discounted_price && (
+                  {/* {selectedOrder?.discounted_price != null && selectedOrder?.discounted_price !== 0 ( */}
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Discount Price:</span>
-                      <p className="text-sm text-gray-900 dark:text-gray-100">${selectedOrder.discounted_price}</p>
+                      <p className="text-sm text-gray-900 dark:text-gray-100">${selectedOrder?.discounted_price}</p>
                     </div>
-                  )}
+                  {/* // )} */}
                   {/* Amount Received */}
                   {/* {selectedOrder?.amount_received && ( */}
                   <div className="flex justify-between items-center">

@@ -17,10 +17,10 @@ export const COLORS = ['neutral', 'primary', 'secondary', 'info', 'success', 'wa
 
 export const LEAD_STATUS = {1: 'NEW', 2: 'FIRST CALL', 3: 'SECOND CALL', 4: 'THIRD CALL', 5: 'TEXT',
     6: 'APPOINTMENT', 7: 'SOLD', 8: 'NOT INTERESTED', 9: 'SIT / NO SALE', 
-    10:  'NO SHOW',  11: 'DNC', 12: 'SUPPRESSED', 13: 'Suppression Denied', 19: 'UNKNOWN'}
+    10:  'NO SHOW',  11: 'DNC', 12: 'SUPPRESSED', 13: 'Suppression Denied', 14:'Show Up', 19: 'UNKNOWN'}
 
 export const STATUS_NAME_TO_ID = {'NEW': 1, 'FIRST CALL': 2, 'SECOND CALL': 3, 'THIRD CALL': 4, 'TEXT': 5,
-    'APPOINTMENT': 6, 'SOLD': 7, 'NOT INTERESTED': 8, 'SIT / NO SALE': 9, 'NO SHOW': 10, 'DNC': 11, 'SUPPRESSED': 12, 'Suppression Denied': 13}
+    'APPOINTMENT': 6, 'SOLD': 7, 'NOT INTERESTED': 8, 'SIT / NO SALE': 9, 'NO SHOW': 10, 'DNC': 11, 'SUPPRESSED': 12, 'Suppression Denied': 13, 'Show Up':14}
 
 export const LEAD_STATUSES = [
     { value: 1, label: 'New' },
@@ -33,7 +33,10 @@ export const LEAD_STATUSES = [
     { value: 8, label: 'Not interested' },
     { value: 9, label: 'Sit/No Sale' },
     { value: 10, label: 'No Show' },
-    { value: 11, label: 'DNC' }
+    { value: 11, label: 'DNC' },
+    {value:12, label:'Suppressed'},
+    {value:13,  label:'Suppression Denied'},
+    {value:14, label:'Show Up'}
 ];
 
 export const SOURCE_MAPPING = {
@@ -55,7 +58,7 @@ export const STATUS_COLORS = {
                 10: 'bg-[#ef4444]', // NO SHOW
                 11: 'bg-[#374151]', // DNC
                 12: 'bg-[#4e1515]', // SUPPRESSED
-                13: 'bg-[#10151d]' // Suppression Denied
-              
+                13: 'bg-[#10151d]', // Suppression Denied
+                14:'bg-[#10151d]'
 }
   

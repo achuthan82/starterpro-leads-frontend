@@ -197,10 +197,14 @@ const UserModal = ({
       if (data.phone !== editData.phone) {
         editPayload["phone"] = data.phone;
       }
+      if (parseInt(data.user_role.value) !== editData.role_id) {
+        editPayload['role_id'] = data.user_role.value
+      }
       if (data?.agency_id.value !== editData.agency.id) {
         editPayload["agency_id"] = data?.agency_id?.value;
       }
-      if (data?.npn && data.npn_number != editData?.npn_number) {
+      console.log(data?.npn_number, editData?.npn)
+      if (data?.npn_number && data.npn_number != editData?.npn) {
         editPayload["npn"] = data?.npn_number;
       }
       if (edit_agents.length > 0) {
