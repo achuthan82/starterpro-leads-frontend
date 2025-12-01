@@ -276,6 +276,24 @@ class DialerService {
       throw error;
     }
   }
+
+  /**
+ * Convert file to AWS Base64 using backend
+ * @param {string} fileUrl - Presigned S3 File URL
+ * @returns {Promise} Response with base64 string
+ */
+async getAwsBase64(fileUrl) {
+  try {
+    const response = await axiosInstance.get('/carriers/aws-bas64', {
+      params: { file_url: fileUrl }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error converting file to Base64:', error);
+    throw error;
+  }
+}
+
 }
 
 const dialerService = new DialerService();
