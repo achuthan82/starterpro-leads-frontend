@@ -244,7 +244,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
             </button>
           </div>
           {user.agency?.name !== 'StarterPro' && (
-            <h3 className="text-sm ml-[32px] mt-2 font-bold text-gray-900 dark:text-gray-100">[{user.agency?.name}]</h3>
+            <h3 className="text-sm ml-[32px] mt-2 font-bold text-gray-900 dark:text-gray-100">{user.agency?.name}</h3>
           )}
           </>
         )}
