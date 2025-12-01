@@ -291,7 +291,7 @@ const SubscriptionsTab = () => {
       headers.join(","),
       ...subscriptions.map((subscription) =>
         [
-          escapeCSV(subscription.stripe_subscription_id || ""),
+          escapeCSV(subscription.stripe_subscription_id || subscription.id || ""),
           escapeCSV(subscription.id || ""),
           escapeCSV(subscription.name || ""),
           escapeCSV(subscription.status || ""),

@@ -8,6 +8,7 @@ import { useDisclosure } from "hooks";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import AddLiscence from "./AddLiscence";
 import CalendarPage from "../available/CalendarPage";
+import Script from "./Script";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("basic");
@@ -154,6 +155,7 @@ const ProfilePage = () => {
                   { id: "basic", label: "Basic Details" },
                   { id: "license", label: "Licence Details" },
                   { id: "settings", label: "Calendar Settings" },
+                  {id:'script', label:'Script'}
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -263,6 +265,9 @@ const ProfilePage = () => {
                   {activeTab === "settings" && (
                    <CalendarPage/>
                   )}
+                  {
+                    activeTab === 'script' && <Script/>
+                  }
                 </>
               )}
             </div>

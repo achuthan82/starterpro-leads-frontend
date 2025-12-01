@@ -10,7 +10,7 @@ const profileService = {
     return axiosInstance.get(`${JWT_HOST_API}/user/me`);
   },
   getLicenseDetails: (state = null) => {
-    const url = state 
+    const url = state
       ? `${JWT_HOST_API}/license-number?state=${encodeURIComponent(state)}`
       : `${JWT_HOST_API}/license-number`;
     return axiosInstance.get(url);
@@ -20,12 +20,21 @@ const profileService = {
   },
   addLiscenceDetails: (data) => {
     return axiosInstance.post(`${JWT_HOST_API}/license-number`, data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      },);
+      headers: { "Content-Type": "multipart/form-data" },
+    },);
   },
   getCarriersLogo: () => {
     return axiosInstance.get(`${JWT_HOST_API}${API_ENDPOINTS.CARRIERS.LOGO_COLLAGE}`);
   },
+  addScript: (payload) => {
+    return axiosInstance.post(`${JWT_HOST_API}/dialer/scripts-objections`, payload);
+  },
+   editScript: (id, payload) => {
+    return axiosInstance.put(`${JWT_HOST_API}/dialer/scripts-objections/${id}`, payload);
+  },
+  getScript: (payload) => {
+    return axiosInstance.get(`${JWT_HOST_API}/dialer/scripts-objections`, {params:payload});
+  }
 };
 
 export default profileService;
