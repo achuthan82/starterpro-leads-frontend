@@ -4,6 +4,7 @@ import MortgageProtectionModal from './MortgageProtectionModal';
 import { LEAD_STATUS, LEAD_STATUSES, STATUS_NAME_TO_ID } from 'constants/app.constant';
 import { JWT_HOST_API } from 'configs/auth.config';
 import { toast } from 'sonner';
+import leadsService from 'utils/leadsService';
 // import LeadInfoPDF from './LeadInfoPDF';
 
 const LeadInfo = ({ lead, onUpdateStatus, callHistory, callLogs = [], callLogsLoading = false }) => {
@@ -12,6 +13,8 @@ const LeadInfo = ({ lead, onUpdateStatus, callHistory, callLogs = [], callLogsLo
   const [isMortgageModalOpen, setIsMortgageModalOpen] = useState(false);
   const [formData, setFormData] = useState(null);
   const [statusLoading, setStatusLoading] = useState(false);
+  const [showUp, setShowUp] = useState(false);
+  const [showUpLoading, setShowUpLoading] = useState(false);
   console.log(formData)
 
   useEffect(() => {
@@ -34,6 +37,10 @@ const LeadInfo = ({ lead, onUpdateStatus, callHistory, callLogs = [], callLogsLo
           setCurrentStatusId(null);
         }
       }
+
+      // Get show_up status from lead data
+      const showUpValue = lead.originalData?.show_up ?? lead.show_up ?? false;
+      setShowUp(Boolean(showUpValue));
     }
   }, [lead]);
 
@@ -58,6 +65,66 @@ const LeadInfo = ({ lead, onUpdateStatus, callHistory, callLogs = [], callLogsLo
   const getStatusBadgeClass = (statusId) => {
     if (!statusId) return '';
     return `shieldnest-badge-${statusId}`;
+  };
+
+  // Handle show up toggle
+  const handleShowUpToggle = async () => {
+    if (!lead) return;
+
+    const newShowUpValue = !showUp;
+    const previousShowUpValue = showUp; // Store previous value for error revert
+    setShowUpLoading(true);
+
+    try {
+      // Get mortgage_id from lead
+      const mortgageId = lead.originalData?.mortgage_id || lead.mortgage_id || lead.identifier || lead.id;
+      
+      // Get agent_id from logged in user
+      const storedAgentId = localStorage.getItem('agentId');
+      const storedUser = localStorage.getItem('currentUser');
+      let agentId = null;
+      
+      if (storedAgentId) {
+        agentId = parseInt(storedAgentId);
+      } else if (storedUser) {
+        const user = JSON.parse(storedUser);
+        if (user.agents && user.agents.length > 0) {
+          agentId = user.agents[0].id;
+        } else {
+          agentId = user.agent_id || user.id;
+        }
+      }
+
+      if (!mortgageId || !agentId) {
+        toast.error('Missing mortgage ID or agent ID');
+        setShowUpLoading(false);
+        return;
+      }
+
+      const payload = {
+        mortgage_id: mortgageId.toString(),
+        agent_id: agentId,
+        show_up: newShowUpValue
+      };
+
+      const response = await leadsService.updateShowUpStatus(payload);
+      
+      if (response?.status === 200 || response?.success) {
+        setShowUp(newShowUpValue);
+        toast.success(response?.message || 'Show up status updated successfully!');
+      } else {
+        toast.error(response?.message || 'Failed to update show up status');
+        // Revert on error
+        setShowUp(previousShowUpValue);
+      }
+    } catch (err) {
+      console.error('Error updating show up status:', err);
+      toast.error(err.message || 'Failed to update show up status');
+      // Revert the toggle on error
+      setShowUp(previousShowUpValue);
+    } finally {
+      setShowUpLoading(false);
+    }
   };
 
   // Handle status change using the same API as LeadManagement
@@ -183,6 +250,37 @@ const LeadInfo = ({ lead, onUpdateStatus, callHistory, callLogs = [], callLogsLo
           </p>
         </div> 
         )}
+
+        {/* Show Up Toggle */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Show Up</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Toggle to mark lead as show up</p>
+            </div>
+            <button
+              type="button"
+              onClick={handleShowUpToggle}
+              disabled={showUpLoading}
+              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--color-atoll)] focus:ring-offset-2 ${
+                showUp
+                  ? 'bg-green-600 dark:bg-green-500'
+                  : 'bg-gray-200 dark:bg-gray-600'
+              } ${showUpLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              role="switch"
+              aria-checked={showUp}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  showUp ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+          {showUpLoading && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Updating...</p>
+          )}
+        </div>
 
         {/* Update Status */}
         <div className="mb-6">

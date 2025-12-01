@@ -20,6 +20,7 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
   const [friendlyName, setFriendlyName] = useState('');
   const [numberType, setNumberType] = useState('local'); // 'local' only (toll-free option removed)
   const [selectedState, setSelectedState] = useState('');
+  const [areaCode, setAreaCode] = useState('');
   const [states, setStates] = useState([]);
   const [loadingStates, setLoadingStates] = useState(false);
   const [pricing, setPricing] = useState(null);
@@ -78,9 +79,14 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
         type: numberType
       };
       
-      // Only add state param if type is 'local' and state is selected
-      if (numberType === 'local' && selectedState) {
-        params.state = selectedState;
+      // For local numbers: pass either area_code OR state (not both)
+      // Only use area_code if it's exactly 3 digits
+      if (numberType === 'local') {
+        if (areaCode && areaCode.length === 3) {
+          params.area_code = areaCode;
+        } else if (selectedState) {
+          params.state = selectedState;
+        }
       }
       
       const response = await dialerService.getAvailableNumbers(params);
@@ -93,7 +99,7 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
     } finally {
       setLoading(false);
     }
-  }, [numberType, selectedState]);
+  }, [numberType, selectedState, areaCode]);
 
   // Fetch pricing when modal opens
   useEffect(() => {
@@ -117,11 +123,20 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
   // Fetch available numbers when filters change
   useEffect(() => {
     if (isOpen) {
-      fetchAvailableNumbers();
-      setSelectedNumber(null);
-      setFriendlyName('');
+      // Only fetch if area code is empty, exactly 3 digits, or if state is selected
+      const shouldFetch = !areaCode || areaCode.length === 3 || selectedState;
+      if (shouldFetch) {
+        fetchAvailableNumbers();
+        setSelectedNumber(null);
+        setFriendlyName('');
+      } else {
+        // Clear numbers if area code is partially entered (1-2 digits)
+        setAvailableNumbers([]);
+        setSelectedNumber(null);
+        setFriendlyName('');
+      }
     }
-  }, [isOpen, fetchAvailableNumbers]);
+  }, [isOpen, fetchAvailableNumbers, areaCode, selectedState]);
 
   const handleSelectNumber = (number) => {
     setSelectedNumber(number);
@@ -291,6 +306,7 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
                   onChange={(e) => {
                     setNumberType(e.target.value);
                     setSelectedState(''); // Reset state when type changes
+                    setAreaCode(''); // Reset area code when type changes
                     setSelectedNumber(null); // Reset selected number
                     setFriendlyName(''); // Reset friendly name
                   }}
@@ -342,8 +358,36 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
                 )}
               </div>
 
-              {/* State Selection - Only show when type is 'local' */}
+              {/* Area Code Selection - Only show when type is 'local' */}
               {numberType === 'local' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Area Code (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={areaCode}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 3); // Only numbers, max 3 digits
+                      setAreaCode(value);
+                      if (value) {
+                        setSelectedState(''); // Clear state when area code is entered
+                      }
+                      setSelectedNumber(null); // Reset selected number
+                      setFriendlyName(''); // Reset friendly name
+                    }}
+                    disabled={loading || purchasing}
+                    placeholder="e.g., 212, 310, 415"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[var(--color-atoll)] dark:focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Enter a 3-digit area code (e.g., 212 for New York)
+                  </p>
+                </div>
+              )}
+
+              {/* State Selection - Only show when type is 'local' and area code is not entered */}
+              {numberType === 'local' && !areaCode && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     State (Optional)
@@ -352,6 +396,9 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
                     value={selectedState}
                     onChange={(e) => {
                       setSelectedState(e.target.value);
+                      if (e.target.value) {
+                        setAreaCode(''); // Clear area code when state is selected
+                      }
                       setSelectedNumber(null); // Reset selected number
                       setFriendlyName(''); // Reset friendly name
                     }}
@@ -374,6 +421,9 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
                       Loading states...
                     </p>
                   )}
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Search by state OR area code (not both)
+                  </p>
                 </div>
               )}
             </div>

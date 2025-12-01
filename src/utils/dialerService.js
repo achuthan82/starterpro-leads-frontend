@@ -192,6 +192,7 @@ class DialerService {
    * @param {Object} params - Filter parameters
    * @param {string} params.type - Number type: 'toll-free' or 'local'
    * @param {string} params.state - State code (e.g., 'CA') - only used when type is 'local'
+   * @param {string} params.area_code - Area code (e.g., '212') - only used when type is 'local'
    * @returns {Promise} Response with list of available phone numbers
    */
   async getAvailableNumbers(params = {}) {
@@ -204,6 +205,10 @@ class DialerService {
       
       if (params.state) {
         queryParams.append('state', params.state);
+      }
+      
+      if (params.area_code) {
+        queryParams.append('area_code', params.area_code);
       }
       
       const queryString = queryParams.toString();

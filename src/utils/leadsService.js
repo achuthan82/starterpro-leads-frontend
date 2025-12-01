@@ -1030,6 +1030,34 @@ class LeadsService {
       throw error;
     }
   }
+
+  /**
+   * Update lead show up status
+   * @param {Object} params - Update parameters
+   * @param {string|number} params.mortgage_id - Mortgage ID
+   * @param {number} params.agent_id - Agent ID
+   * @param {boolean} params.show_up - Show up status (true/false)
+   * @returns {Promise} Response from API
+   */
+  async updateShowUpStatus(params) {
+    try {
+      const response = await fetch(`${JWT_HOST_API}/leads/status-show-up-change`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(params)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating show up status:', error);
+      throw error;
+    }
+  }
 }
 
 // Export singleton instance
