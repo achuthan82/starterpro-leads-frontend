@@ -143,29 +143,11 @@ export default function SubscriptionPlan() {
             </span>
           </div> */}
 
-          <div className="mx-auto mt-3 w-full max-w-5xl">
+          <div className="mx-auto  w-full max-w-5xl">
             {/* FEATURES – COMPACT */}
             {/* FEATURES – SINGLE LINE ON DESKTOP */}
-            <div className="rounded-2xl border border-gray-200 bg-white px-6 py-5 shadow-sm">
-              <h2 className="mb-4 text-center text-xl font-bold text-[#0a2463]">
-                What&apos;s Included
-              </h2>
-
-              <ul className="grid grid-cols-1 gap-3 text-gray-700 sm:grid-cols-2 lg:grid-cols-3">
-                {goProFeatures.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm">
-                    <span className="mt-1 text-[#0a2463]">✔</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <p className="mt-3 text-center text-xs text-gray-500">
-                These features apply to all plans.
-              </p>
-            </div>
-
-            <div className="mt-6 flex flex-wrap justify-center gap-6">
+            
+            <div className="mt-3 flex flex-wrap justify-center ">
               {plans?.map((planItem, index) => (
                 <div
                   key={index}
@@ -198,7 +180,24 @@ export default function SubscriptionPlan() {
                 </div>
               ))}
             </div>
+             <div className="rounded-2xl border border-gray-200 bg-white px-6 py-5 shadow-sm mt-9">
+              <h2 className="mb-4 text-center text-xl font-bold text-[#0a2463]">
+                What&apos;s Included
+              </h2>
 
+              <ul className="grid grid-cols-1 gap-3 text-gray-700 sm:grid-cols-2 lg:grid-cols-3">
+                {goProFeatures.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm">
+                    <span className=" text-[#0a2463]">✔</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <p className="mt-3 text-center text-xs text-gray-500">
+                These features apply to all plans.
+              </p>
+            </div>
             {/* FOOTER */}
             <div className="mt-6 w-full pt-3 text-center text-[11px] text-gray-500">
               Your subscription will automatically renew unless you cancel.
