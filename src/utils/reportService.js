@@ -118,7 +118,15 @@ class ReportService {
       throw error;
     }
   }
-
+    async getAppointmentStats(params) {
+    try {
+      const response = await axiosInstance.get(`${JWT_HOST_API}/report/appointments-sold-show-up-count`, { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching status based count:', error);
+      throw error;
+    }
+  }
   async getStateWiseSoldAndCallsCount(params) {
     try {
       const response = await axiosInstance.get(`${JWT_HOST_API}/report/state-wise-sold-and-calls-count`, { params });

@@ -10,7 +10,11 @@ import calendarService from "utils/clendarService";
 import ScheduleAppointmentModal from "app/pages/powerDialer/ScheduleAppointmentModal";
 import DeleteAppointmentModal from "./DeleteAppointmentModal";
 import InviteModal from "./InviteModal";
-import { LEAD_STATUS, STATUS_COLORS, STATUS_NAME_TO_ID } from "constants/app.constant";
+import {
+  LEAD_STATUS,
+  STATUS_COLORS,
+  STATUS_NAME_TO_ID,
+} from "constants/app.constant";
 const Appointments = () => {
   const [viewType, setViewType] = useState("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -35,10 +39,10 @@ const Appointments = () => {
     Intl.DateTimeFormat().resolvedOptions().timeZone === "Asia/Calcutta"
       ? "Asia/Kolkata"
       : Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const statusOptions = [
-      'All Statuses',
-      ...Object.values(LEAD_STATUS).filter(status => status !== 'UNKNOWN')
-    ];
+  const statusOptions = [
+    "All Statuses",
+    ...Object.values(LEAD_STATUS).filter((status) => status !== "UNKNOWN"),
+  ];
   // const appointments = [
   //   {
   //     id: "p001",
@@ -119,6 +123,9 @@ const Appointments = () => {
               return {
                 id: item.id,
                 client: item.client_name,
+                agent_id: item.agent_id,
+                mortgage_id: item.mortgage_id,
+                show_up: item.show_up,
                 phone: item.phone_number,
                 time: moment(item.meeting_datetime).format("HH:mm") || "00:00",
                 notes: item?.notes,
@@ -173,27 +180,31 @@ const Appointments = () => {
       appointment.filter((item) => item.date === moment().format("YYYY-MM-DD")),
     );
   };
-   const getStatusId = (status) => {
-      if (!status) return null;
-      
-      // If it's already a number, return it
-      if (typeof status === 'number') {
-        return status;
-      }
-      
-      // If it's a string, try to find the ID
-      if (typeof status === 'string') {
-        // Try STATUS_NAME_TO_ID first
-        const statusId = STATUS_NAME_TO_ID[status.toUpperCase()];
-        if (statusId) return statusId;
-        
-        // Try to find in LEAD_STATUS
-        const foundId = Object.keys(LEAD_STATUS).find(key => LEAD_STATUS[key] === status || LEAD_STATUS[key] === status.toUpperCase());
-        if (foundId) return Number(foundId);
-      }
-      
-      return null;
-    };
+  const getStatusId = (status) => {
+    if (!status) return null;
+
+    // If it's already a number, return it
+    if (typeof status === "number") {
+      return status;
+    }
+
+    // If it's a string, try to find the ID
+    if (typeof status === "string") {
+      // Try STATUS_NAME_TO_ID first
+      const statusId = STATUS_NAME_TO_ID[status.toUpperCase()];
+      if (statusId) return statusId;
+
+      // Try to find in LEAD_STATUS
+      const foundId = Object.keys(LEAD_STATUS).find(
+        (key) =>
+          LEAD_STATUS[key] === status ||
+          LEAD_STATUS[key] === status.toUpperCase(),
+      );
+      if (foundId) return Number(foundId);
+    }
+
+    return null;
+  };
   useEffect(() => {
     let start_date;
     let end_date = moment(selectedDate).format("MM-DD-YYYY HH:mm:ss");
@@ -468,7 +479,7 @@ const Appointments = () => {
                     </div> */}
 
                     {/* Appointment Types */}
-                    <div className="mt-4 rounded-lg ">
+                    <div className="mt-4 rounded-lg">
                       <div className="mb-2 flex items-center justify-between">
                         <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
                           APPOINTMENT TYPES
@@ -539,6 +550,10 @@ const Appointments = () => {
             isOpen={isDetailsOpen}
             close={detailClose}
             appointment={selectedAppointment}
+            loadAppointments={loadAppointments}
+            startDate={startDate}
+            endDate={endDate}
+            setSelectedAppointment={setSelectedAppointment}
             setDeleteModal={setDeleteModal}
           ></AppointmentModal>
           <InviteModal

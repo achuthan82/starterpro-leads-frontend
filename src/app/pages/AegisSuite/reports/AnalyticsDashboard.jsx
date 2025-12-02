@@ -6,6 +6,7 @@ import subscriptionService from 'utils/subscriptionService';
 import SummaryCards from './SummaryCards';
 import LeadPerformanceFunnel from './LeadPerformanceFunnel';
 import TerritoryPerformanceAnalytics from './TerritoryPerformanceAnalytics';
+import AppointmentStatsCard from './AppointmentStatsCard';
 // import Skeleton from './Skeleton';
 // import ErrorMsg from './ErrorMsg';
 
@@ -20,7 +21,7 @@ const AnalyticsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [stateMap, setStateMap] = useState({});
-
+  const [appointmentStats, setAppointmentStats] = useState({})
   // Fetch state code-to-name mapping
   useEffect(() => {
     const fetchStates = async () => {
@@ -46,11 +47,13 @@ const AnalyticsDashboard = () => {
     setLoading(true);
     setError(null);
     try {
-      const [summaryRes, funnelRes, territoryRes] = await Promise.all([
+      const [summaryRes, funnelRes, territoryRes, appointmentRes] = await Promise.all([
         reportService.getLeadsAndSoldCount({ start_date: start, end_date: end }),
         reportService.getStatusBasedCount({ start_date: start, end_date: end }),
-        reportService.getStateWiseSoldAndCallsCount({ start_date: start, end_date: end })
+        reportService.getStateWiseSoldAndCallsCount({ start_date: start, end_date: end }),
+        reportService.getAppointmentStats({start_date:start, end_date:end})
       ]);
+      setAppointmentStats(appointmentRes.data)
       setSummary(summaryRes.data);
       setFunnel(funnelRes.data);
       setTerritory(territoryRes.data);
@@ -94,9 +97,10 @@ const AnalyticsDashboard = () => {
         />
       </div>
        <SummaryCards summary={summary} loading={loading} error={error} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <LeadPerformanceFunnel funnel={funnel} loading={loading} error={error} />
         <TerritoryPerformanceAnalytics territory={territory} loading={loading} error={error} stateMap={stateMap} />
+         <AppointmentStatsCard stats={appointmentStats} loading={loading} error={error} />
       </div>
     </div>
   );

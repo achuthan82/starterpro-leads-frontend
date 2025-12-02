@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -15,6 +15,8 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { LEAD_STATUS } from "constants/app.constant";
+import leadsService from "utils/leadsService";
+import { toast } from "sonner";
 
 const AppointmentModal = ({
   isOpen,
@@ -22,11 +24,42 @@ const AppointmentModal = ({
   appointment,
   setDeleteModal,
   open,
+  setSelectedAppointment,
+  loadAppointments,
+  startDate,
+  endDate
 }) => {
-   const getStatusBadgeClass = (statusId) => {
-    if (!statusId) return '';
-    return `shieldnest-badge-${statusId}`;
+  const [showUpLoading, setShowUpLoading] = useState(false);
+  const getStatusBadgeClass = (statusId) => {
+    if (!statusId) return "";
+    return `shieldnest-badge-${statusId === 14 ? 13 : statusId}`;
   };
+  const handleShowUpToggle = async (item) => {
+    setShowUpLoading(true);
+    try {
+      const payload = {
+        agent_id: item.agent_id,
+        mortgage_id: item.mortgage_id,
+        show_up: !item.show_up,
+      };
+
+      const result = await leadsService.updateShowUpStatus(payload);
+      // Adjust this based on what your API returns
+      if (result.status === 200) {
+        setSelectedAppointment((prev) => ({...prev, show_up:!item.show_up}))
+        loadAppointments(startDate, endDate)
+        toast.success("Show up status updated");
+      } else {
+        toast.error("Failed to update");
+      }
+    } catch (error) {
+      toast.error("Error updating show-up status");
+      console.error(error);
+    } finally {
+      setShowUpLoading(false);
+    }
+  };
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -61,7 +94,7 @@ const AppointmentModal = ({
             {appointment && (
               <div>
                 {/* Header */}
-                <div className="mb-6 flex items-center justify-between">
+                <div className="mb-6 flex items-center justify-between ">
                   <h2 className="text-2xl font-bold">
                     {appointment?.title || "Appointment Details"}
                   </h2>
@@ -75,16 +108,46 @@ const AppointmentModal = ({
                 </div>
 
                 {/* Status Badge */}
-                <div className="mb-6">
+                <div className="mb-6 flex justify-between items-start">
                   {appointment.status && (
                     <span
-                      className={`rounded-full px-2 py-1 text-xs font-medium status-badge ${getStatusBadgeClass(appointment.status)}`}
+                      className={`status-badge rounded-full px-2 py-1 text-xs font-medium ${getStatusBadgeClass(appointment.status)}`}
                     >
                       {LEAD_STATUS[appointment.status]
                         ? LEAD_STATUS[appointment.status]
                         : LEAD_STATUS[1]}
                     </span>
                   )}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Show Up
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Toggle to mark lead as show up
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleShowUpToggle(appointment)}
+                      disabled={showUpLoading}
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-[var(--color-atoll)] focus:ring-offset-2 focus:outline-none ${
+                        appointment.show_up
+                          ? "bg-green-600 dark:bg-green-500"
+                          : "bg-gray-200 dark:bg-gray-600"
+                      } ${showUpLoading ? "cursor-not-allowed opacity-50" : ""}`}
+                      role="switch"
+                      aria-checked={appointment.show_up}
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          appointment.show_up
+                            ? "translate-x-5"
+                            : "translate-x-0"
+                        }`}
+                      />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Client Information */}

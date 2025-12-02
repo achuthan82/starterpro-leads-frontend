@@ -193,7 +193,7 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .shieldnest-badge-11 { background-color: #374151; color: white; }
 .shieldnest-badge-12 { background-color: #4e1515; color: white; }
 .shieldnest-badge-13 { background-color: #10151d; color: white; }
-
+.shieldnest-badge-14 { background-color: #eab308; color: black; } 
 .status-badge {
   border-radius: 9999px;
   padding: 4px 12px;
