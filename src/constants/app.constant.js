@@ -59,6 +59,6 @@ export const STATUS_COLORS = {
                 11: 'bg-[#374151]', // DNC
                 12: 'bg-[#4e1515]', // SUPPRESSED
                 13: 'bg-[#10151d]', // Suppression Denied
-                14:'bg-[#10151d]'
+                14: 'bg-[#eab308]'
 }
   

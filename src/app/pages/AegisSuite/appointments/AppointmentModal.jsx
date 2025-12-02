@@ -32,7 +32,7 @@ const AppointmentModal = ({
   const [showUpLoading, setShowUpLoading] = useState(false);
   const getStatusBadgeClass = (statusId) => {
     if (!statusId) return "";
-    return `shieldnest-badge-${statusId === 14 ? 13 : statusId}`;
+    return `shieldnest-badge-${statusId}`;
   };
   const handleShowUpToggle = async (item) => {
     setShowUpLoading(true);
