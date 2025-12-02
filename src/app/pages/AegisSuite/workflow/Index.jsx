@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SharedSidebar from "../components/SharedSidebar";
 import { Switch } from "@headlessui/react";
 import automationService from "utils/automationService";
@@ -12,6 +12,26 @@ const Index = () => {
   const [leadLoading, setLeadLoading] = useState(false);
   //  const [loading] = useState(false)
   //  const [activeTab, setActiveTab] = useState('email-sms')
+  const getDetails = () => {
+    setLeadLoading(true)
+    automationService
+      .getAutomationDetails(user.agency.id)
+      .then((response) => {
+        if (response.data.status === 200) {
+          setLeadAutomation(response.data.data.sms_automation_enabled);
+          setAppointmentAutomation(response.data.data.appointment_notification_sms_enabled)
+        } else {
+          toast.error(
+            response?.data?.message || "Failed to fetch automation settings",
+          );
+        }
+      })
+      .catch((error) => {
+        toast.error(error?.message || "Failed to Update");
+      }).finally(() => {
+        setLeadLoading(false)
+      })
+  };
   const handleLeadAutomation = (status) => {
     setLeadLoading(true);
     const payload = { sms_automation_enabled: status };
@@ -21,17 +41,41 @@ const Index = () => {
         console.log(response);
         if (response.data.status === 200) {
           setLeadAutomation(status);
-          toast.success('Success')
+          toast.success("Success");
         } else {
-          toast.error(response?.data?.message || "Failed to Update")
+          toast.error(response?.data?.message || "Failed to Update");
         }
-      }).catch((error) => {
+      })
+      .catch((error) => {
         toast.error(error?.message || "Failed to Update");
       })
       .finally(() => {
         setLeadLoading(false);
       });
   };
+   const handleAppointmentAutomation = (status) => {
+    setLeadLoading(true);
+    const payload = { appointment_notification_sms_enabled: status };
+    automationService
+      .toggleLeadAutomation(user.agency.id, payload)
+      .then((response) => {
+        if (response.data.status === 200) {
+          setAppointmentAutomation(status);
+          toast.success("Success");
+        } else {
+          toast.error(response?.data?.message || "Failed to Update");
+        }
+      })
+      .catch((error) => {
+        toast.error(error?.message || "Failed to Update");
+      })
+      .finally(() => {
+        setLeadLoading(false);
+      });
+  };
+  useEffect(() => {
+    getDetails();
+  }, []);
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
@@ -103,9 +147,7 @@ const Index = () => {
 
                 <Switch
                   checked={appointmentAutomation}
-                  onChange={() =>
-                    setAppointmentAutomation(!appointmentAutomation)
-                  }
+                  onChange={() => handleAppointmentAutomation(!appointmentAutomation)}
                   className={`${
                     appointmentAutomation ? "bg-[#f4d03f]" : "bg-gray-300"
                   } relative inline-flex h-6 w-11 items-center rounded-full transition`}
