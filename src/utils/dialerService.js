@@ -192,6 +192,7 @@ class DialerService {
    * @param {Object} params - Filter parameters
    * @param {string} params.type - Number type: 'toll-free' or 'local'
    * @param {string} params.state - State code (e.g., 'CA') - only used when type is 'local'
+   * @param {string} params.area_code - Area code (e.g., '212') - only used when type is 'local'
    * @returns {Promise} Response with list of available phone numbers
    */
   async getAvailableNumbers(params = {}) {
@@ -204,6 +205,10 @@ class DialerService {
       
       if (params.state) {
         queryParams.append('state', params.state);
+      }
+      
+      if (params.area_code) {
+        queryParams.append('area_code', params.area_code);
       }
       
       const queryString = queryParams.toString();
@@ -276,6 +281,24 @@ class DialerService {
       throw error;
     }
   }
+
+  /**
+ * Convert file to AWS Base64 using backend
+ * @param {string} fileUrl - Presigned S3 File URL
+ * @returns {Promise} Response with base64 string
+ */
+async getAwsBase64(fileUrl) {
+  try {
+    const response = await axiosInstance.get('/carriers/aws-bas64', {
+      params: { file_url: fileUrl }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error converting file to Base64:', error);
+    throw error;
+  }
+}
+
 }
 
 const dialerService = new DialerService();

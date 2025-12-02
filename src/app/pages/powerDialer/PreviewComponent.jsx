@@ -3,12 +3,12 @@ import {
   useRef,
   useEffect,
   forwardRef,
-  // useImperativeHandle,
-  // useCallback,
+  useImperativeHandle,
+  useCallback,
 } from "react";
 import * as htmlToImage from "html-to-image";
-// import jsPDF from "jspdf";
-// import axiosInstance from "utils/axios";
+import jsPDF from "jspdf";
+import axiosInstance from "utils/axios";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import Slider from "react-slick";
 import {
@@ -17,6 +17,8 @@ import {
   MegaphoneIcon,
 } from "@heroicons/react/24/outline";
 import profileService from "utils/profileService";
+import { toast } from 'sonner';
+// import { dialerService } from "utils/apiService";
 // import { useCallContext } from "app/contexts/call/context";
 
 import "slick-carousel/slick/slick.css";
@@ -26,9 +28,7 @@ import bg from "./images/mortgageProtection.jpg";
 import smiley from "./images/smile-icon.svg";
 
 const PreviewComponent = forwardRef(
-  // ({ submittedData, licenseDetails = null }, ref) => {
-      ({ submittedData, licenseDetails = null }) => {
-
+  ({ submittedData, licenseDetails = null }, ref) => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [carriersLogo, setCarriersLogo] = useState(null);
     const [carriersLoading, setCarriersLoading] = useState(false);
@@ -37,43 +37,67 @@ const PreviewComponent = forwardRef(
     // console.log(licenseDetails)
 
     const licenseImage =
-      licenseDetails?.download_url || licenseDetails?.certificate || null;
+      licenseDetails?.certificate || licenseDetails?.download_url || null;
 
     const carriersImage =
+      carriersLogo?.url || 
       carriersLogo?.download_url ||
-      carriersLogo?.url ||
       carriersLogo?.logo_url ||
       carriersLogo ||
       null;
 
     const sliderRef = useRef(null);
 
-    useEffect(() => {
-      const fetchLogo = async () => {
-        setCarriersLoading(true);
-        try {
-          const res = await profileService.getCarriersLogo();
-          if (res?.data?.status === 200) setCarriersLogo(res.data.data);
-        } catch (e) {
-          console.error("Carrier logo load failed:", e);
-        } finally {
-          setCarriersLoading(false);
+
+    const downloadFromAPI = async (fileUrl, fileName = "download.png") => {
+      try {
+        const response = await axiosInstance.get("/carriers/aws-bas64", {
+          params: { file_url: fileUrl },
+        });
+
+        const base64 = response?.data?.data?.image;
+        if (!base64) {
+          console.error("API did not return base64");
+          return;
         }
-      };
-      fetchLogo();
-    }, []);
+
+        // Convert base64 → Blob
+        const byteCharacters = atob(base64);
+        const byteNumbers = new Array(byteCharacters.length)
+          .fill(0)
+          .map((_, i) => byteCharacters.charCodeAt(i));
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], { type: "image/png" });
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Trigger download
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = fileName;
+        link.click();
+
+        URL.revokeObjectURL(blobUrl);
+      } catch (error) {
+        console.error("Download API Error:", error);
+      }
+    };
 
     const downloadCurrentSlide = async () => {
+      toast.success('📄 Downloading... slide');
+      // Slide 2 → licenseImage
       if (currentSlide === 1 && licenseImage) {
-        window.open(licenseImage, "_blank");
+        await downloadFromAPI(licenseImage, "license.png");
         return;
       }
 
+      // Slide 3 → carriersImage
       if (currentSlide === 2 && carriersImage) {
-        window.open(carriersImage, "_blank");
+        await downloadFromAPI(carriersImage, "carriers.png");
         return;
       }
 
+      // Other slides → screenshot PNG
       const slide = document.querySelector(
         `.slick-slide[data-index="${currentSlide}"]:not(.slick-cloned)`
       );
@@ -98,81 +122,128 @@ const PreviewComponent = forwardRef(
       }
     };
 
-    // ----------------------------------------------------
-    // const generateAndUploadPDF = useCallback(async () => {
-    //   console.log("📄 Generating full PDF...");
 
-    //   const pdf = new jsPDF("p", "mm", "a4");
-    //   const totalSlides = 6;
-    //   const slides = [];
+    useEffect(() => {
+      const fetchLogo = async () => {
+        setCarriersLoading(true);
+        try {
+          const res = await profileService.getCarriersLogo();
+          if (res?.data?.status === 200) setCarriersLogo(res.data.data);
+        } catch (e) {
+          console.error("Carrier logo load failed:", e);
+        } finally {
+          setCarriersLoading(false);
+        }
+      };
+      fetchLogo();
 
-    //   for (let i = 0; i < totalSlides; i++) {
-    //     if (i === 1 && licenseImage) {
-    //       slides.push({ type: "url", src: licenseImage });
-    //       continue;
-    //     }
+    }, []);
 
-    //     if (i === 2 && carriersImage) {
-    //       slides.push({ type: "url", src: carriersImage });
-    //       continue;
-    //     }
+    const generateAndUploadPDF = useCallback(async () => { 
+      console.log("📄 Generating PDF...");
+      toast.success('📄 Downloading... Mortgage Protection Assessment');
 
-    //     const slide = document.querySelector(
-    //       `.slick-slide[data-index="${i}"]:not(.slick-cloned)`
-    //     );
-    //     if (!slide) continue;
+      // Wait for slider to mount fully
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
-    //     const node = slide.firstElementChild || slide;
+      const pdf = new jsPDF("p", "mm", "a4");
+      const totalSlides = 6;
+      const slidesArr = [];
 
-    //     try {
-    //       const png = await htmlToImage.toPng(node, {
-    //         pixelRatio: 2,
-    //         cacheBust: true,
-    //         skipFonts: true,
-    //       });
+      // -----------------------------
+      // 1️⃣ Capture All Slides
+      // -----------------------------
+      for (let i = 0; i < totalSlides; i++) {
+        const slide = document.querySelector(
+          `.slick-slide[data-index="${i}"]:not(.slick-cloned)`
+        );
 
-    //       slides.push({ type: "data", src: png });
-    //     } catch (err) {
-    //       console.error("Slide image failed:", err);
-    //     }
-    //   }
+        if (!slide) continue;
 
-    //   slides.forEach((img, idx) => {
-    //     const pageWidth = pdf.internal.pageSize.getWidth();
+        const node = slide.firstElementChild || slide;
 
-    //     if (idx !== 0) pdf.addPage();
-    //     pdf.addImage(img.src, "PNG", 0, 0, pageWidth, 0);
-    //   });
+        const imgData = await htmlToImage.toPng(node, {
+          pixelRatio: 2,
+          cacheBust: true,
+          skipFonts: true,
+        });
 
-    //   const pdfBlob = pdf.output("blob");
+        slidesArr.push(imgData);
+      }
 
-    //   const formData = new FormData();
-    //   formData.append("call_log_id", licenseDetails.id);
-    //   formData.append("file", pdfBlob, "assessment.pdf");
+      // -----------------------------
+      // 2️⃣ Add Slides to PDF (CENTERED)
+      // -----------------------------
+      for (let i = 0; i < slidesArr.length; i++) {
+        if (i !== 0) pdf.addPage();
 
-    //   try {
-    //     await axiosInstance.post(
-    //       `/dialer/upload/ppt/${licenseDetails.id}`,
-    //       formData
-    //     );
-    //     console.log("📤 PDF uploaded successfully");
-    //   } catch (error) {
-    //     console.error("❌ PDF upload failed:", error);
-    //   }
-    // }, [carriersImage, licenseImage, licenseDetails.id]); // ONLY FIXED PART
+        const src = slidesArr[i];
 
-    // // Expose to parent
-    // useImperativeHandle(ref, () => ({
-    //   generateAndUploadPDF,
-    // }));
+        const img = await new Promise((resolve) => {
+          const image = new Image();
+          image.src = src;
+          image.onload = () => resolve(image);
+        });
 
-    // useEffect(() => {
-    //   const timer = setTimeout(() => {
-    //     generateAndUploadPDF();
-    //   }, 1200);
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
 
-    //   return () => clearTimeout(timer);
-    // }, [generateAndUploadPDF]);
+        const renderWidth = pageWidth;
+        const renderHeight = (img.height / img.width) * renderWidth;
+
+        const x = (pageWidth - renderWidth) / 2;
+        const y = (pageHeight - renderHeight) / 2;
+
+        pdf.addImage(src, "PNG", x, y, renderWidth, renderHeight);
+      }
+
+      // -----------------------------
+      // 3️⃣ Download PDF to User
+      // -----------------------------
+      pdf.save("slides.pdf");
+      console.log("📄 PDF downloaded!");
+
+      // -----------------------------
+      // 4️⃣ Convert PDF → Blob for API Upload
+      // -----------------------------
+      const pdfBlob = pdf.output("blob");
+
+      if (!pdfBlob || pdfBlob.size === 0) {
+        console.error("❌ PDF blob is empty — upload cancelled");
+        return;
+      }
+
+      // -----------------------------
+      // 5️⃣ Upload PDF to API
+      // -----------------------------
+      try {
+        const formData = new FormData();
+        formData.append("call_log_id", licenseDetails?.id);
+        formData.append("file", pdfBlob, "assessment.pdf");
+
+        const res = await axiosInstance.post(
+          `/dialer/upload/ppt/${licenseDetails?.id}`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+
+        console.log("📤 PDF uploaded successfully:", res.data);
+      } catch (err) {
+        console.error("❌ PDF upload failed:", err);
+      }
+    }, [licenseDetails?.id]);
+
+    useImperativeHandle(ref, () => ({
+      generateAndUploadPDF,
+    }));
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        generateAndUploadPDF();
+      }, 1200);
+      return () => clearTimeout(timer);
+    }, [generateAndUploadPDF]);
+
 
     const formatYesNo = (value) => {
       if (value === "yes") return "Yes";
@@ -580,27 +651,16 @@ const PreviewComponent = forwardRef(
         >
           <ArrowDownTrayIcon className="w-6 h-6 text-gray-700" />
         </button>
-
+       
         <Slider ref={sliderRef} {...sliderSettings}>
-          <div className="h-[500px] slick-slide">
-            <MortgageProtectionInfo />
-          </div>
-          <div className="h-[500px] slick-slide">
-            <CertificateInfo />
-          </div>
-          <div className="h-[500px] slick-slide">
-            <CarrierInfo />
-          </div>
-          <div className="h-[500px] slick-slide">
-            <KeyThingsToCover />
-          </div>
-          <div className="h-[500px] slick-slide">
-            <SlidePersonalInfo />
-          </div>
-          <div className="h-[500px] slick-slide">
-            <SlideFinancialOverview />
-          </div>
+          <div className="h-[1123px] slick-slide"><MortgageProtectionInfo /></div>
+          <div className="h-[1123px] slick-slide"><CertificateInfo /></div>
+          <div className="h-[1123px] slick-slide"><CarrierInfo /></div>
+          <div className="h-[1123px] slick-slide"><KeyThingsToCover /></div>
+          <div className="h-[1123px] slick-slide"><SlidePersonalInfo /></div>
+          <div className="h-[1123px] slick-slide"><SlideFinancialOverview /></div>
         </Slider>
+
       </div>
     );
   }

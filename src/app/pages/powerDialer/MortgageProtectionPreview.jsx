@@ -85,20 +85,21 @@ const MortgageProtectionPreview = () => {
               Mortgage Protection Assessment Preview
             </h1>
 
-            {/* ⭐ PARENT DOWNLOAD BUTTON CALLING CHILD METHOD */}
-            {/* <button
-              onClick={() => previewRef.current.generateAndUploadPDF()}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Download All Slides (PDF)
-            </button> */}
 
-            <button
-              onClick={() => window.close()}
-              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
-            >
-              Close
-            </button>
+            <div>
+               {/* <button
+                onClick={() => previewRef.current.generateAndUploadPDF()}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mr-3"
+              >
+                Download All Slides (PDF)
+              </button> */}
+               <button
+                onClick={() => window.close()}
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
+              >
+                Close
+              </button>
+            </div>
           </div>
 
           {/* ⭐ PASS REF TO PreviewComponent */}
