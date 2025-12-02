@@ -16,6 +16,7 @@ import profileService from "utils/profileService";
 const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, activeTab, getScriptData}) => {
   const [loading, setLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedVariable, setSelectedVariable] = useState(null)
   const options = [
     { value: "address", label: "Address" },
     { value: "call_in_date_time", label: "Call In Date Time" },
@@ -67,6 +68,7 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
   };
   const handleVariable = (opt) => {
     if (opt) {
+      setSelectedVariable(opt)
       setSelectedOption(opt.value);
     }
   };
@@ -84,14 +86,13 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
     if (!editData) {
         sendData = profileService.addScript(payload)
     } else {
-              sendData = profileService.editScript(editData.id, payload)
-
+       sendData = profileService.editScript(editData.id, payload)
     }
       sendData.then((response) => {
         if (response.data.status === 201 || response.data.status === 200) {
           toast.success(response?.data?.message || "Success!");
           setEditData(null)
-          close();
+           handleClose()
           setCurrentPage(0)
           getScriptData(1, 5, activeTab)
         } else {
@@ -105,6 +106,13 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
         setLoading(false);
       });
   };
+  const handleClose = () => {
+        setValue('title', '')
+        setValue('description', '')
+        setValue('type', '')
+        setSelectedVariable(null)
+        close()
+  }
   useEffect(() => {
     if (editData) {
         setValue('title', editData.title)
@@ -117,7 +125,7 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
         <Dialog
           as="div"
           className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
-          onClose={close}
+          onClose={handleClose}
         >
           {/* Overlay */}
           <TransitionChild
@@ -228,6 +236,7 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
                         onChange={handleVariable}
                         placeholder="Select variable..."
                         className="flex-grow-1"
+                        value={selectedVariable}
                       />
 
                       <button
@@ -284,7 +293,7 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
                     <Button
                       type="button"
                       className="rounded border border-gray-400 px-6 py-2 text-gray-700 hover:bg-gray-100"
-                      onClick={close}
+                      onClick={handleClose}
                       disabled={loading}
                     >
                       Cancel

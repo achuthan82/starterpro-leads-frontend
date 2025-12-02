@@ -29,11 +29,14 @@ const profileService = {
   addScript: (payload) => {
     return axiosInstance.post(`${JWT_HOST_API}/dialer/scripts-objections`, payload);
   },
-   editScript: (id, payload) => {
+  editScript: (id, payload) => {
     return axiosInstance.put(`${JWT_HOST_API}/dialer/scripts-objections/${id}`, payload);
   },
+  deleteScript: (id) => {
+    return axiosInstance.delete(`${JWT_HOST_API}/dialer/scripts-objections/${id}`);
+  },
   getScript: (payload) => {
-    return axiosInstance.get(`${JWT_HOST_API}/dialer/scripts-objections`, {params:payload});
+    return axiosInstance.get(`${JWT_HOST_API}/dialer/scripts-objections`, { params: payload });
   }
 };
 

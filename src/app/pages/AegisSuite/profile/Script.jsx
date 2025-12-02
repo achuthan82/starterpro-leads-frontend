@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import profileService from "utils/profileService";
 import { toast } from "sonner";
 import {Pagination, PaginationItems, PaginationNext, PaginationPrevious} from 'components/ui'
+import DeleteScript from "./DeleteScript";
 const Script = () => {
   const fetchOnce = useRef(false);
   const [isOpen, { open, close }] = useDisclosure(false);
@@ -14,7 +15,8 @@ const Script = () => {
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [editData, setEditData] = useState(null)
- 
+  const [deleteItem, setDeleteItem] = useState(null)
+  const [deleteModal, setDeleteModal] = useState(false)
   const getScriptData = (page, per_page, type) => {
     setLoading(true);
     const params = { page: page, per_page: per_page, type_: type };
@@ -41,7 +43,10 @@ const Script = () => {
     setCurrentPage(val);
     getScriptData(val, 5, activeTab);
   };
-  console.log("script", script);
+  const handleDelete = (item) => {
+    setDeleteItem(item)
+    setDeleteModal(true)
+  }
   useEffect(() => {
     if (!fetchOnce.current) {
       fetchOnce.current = true;
@@ -75,7 +80,7 @@ const Script = () => {
             ))}
           </div>
         </nav>
-        <div className="mt-2 mb-2 flex justify-end">
+        <div className="mt-4 mb-2 flex justify-end">
           <button
             onClick={open}
             className="flex items-center space-x-2 rounded-lg bg-[#f4d03f] px-4 py-2 text-white transition-colors hover:bg-[#e6c035]"
@@ -84,7 +89,7 @@ const Script = () => {
             <span>Add Script</span>
           </button>
         </div>
-        <div className="py-6">
+        <div className="">
           {loading ? (
             <div className="flex items-center justify-center">
               <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900 dark:border-gray-100"></div>
@@ -139,15 +144,15 @@ const Script = () => {
                         <button className="rounded-md bg-[#0a2463] px-3 py-1.5 text-sm text-white hover:bg-[#082050]" onClick={() => {setEditData(item); open()}}>
                           Edit
                         </button>
-                        {/* <button className="rounded-md bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700">
+                        <button className="rounded-md bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700" onClick={() => handleDelete(item)}>
                           Delete
-                        </button> */}
+                        </button>
                       </div>
                     </div>
                   ))
                 )}
               </div>
-              {pagination && (
+              {script && script.length > 0 && pagination && (
                 <div className=" mt-4 flex justify-center">
                   <Pagination
                     total={Math.ceil(pagination.total / 5)}
@@ -165,6 +170,10 @@ const Script = () => {
         </div>
       </>
       <ScriptModal isOpen={isOpen} close={close} editData={editData} setEditData={setEditData} setCurrentPage={setCurrentPage} activeTab={activeTab} getScriptData={getScriptData}/>
+      {
+        deleteModal && <DeleteScript script={deleteItem} deleteModal={deleteModal} getScriptData={getScriptData} setCurrentPage={setCurrentPage} activeTab={activeTab} setDeleteModal={setDeleteModal}/>
+
+      }
     </div>
   );
 };
