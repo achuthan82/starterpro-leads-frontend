@@ -57,7 +57,7 @@ const Index = () => {
     setLeadLoading(true);
     const payload = { appointment_notification_sms_enabled: status };
     automationService
-      .toggleLeadAutomation(user.agency.id, payload)
+      .toggleAppointmentAutomation(user.agency.id, payload)
       .then((response) => {
         if (response.data.status === 200) {
           setAppointmentAutomation(status);
