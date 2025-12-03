@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useRef } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -13,35 +13,53 @@ import { toast } from "sonner";
 import Select from "react-select";
 import profileService from "utils/profileService";
 
-const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, activeTab, getScriptData}) => {
+const ScriptModal = ({
+  isOpen,
+  close,
+  editData,
+  setEditData,
+  setCurrentPage,
+  activeTab,
+  getScriptData,
+}) => {
   const [loading, setLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [selectedVariable, setSelectedVariable] = useState(null)
+  const [selectedVariable, setSelectedVariable] = useState(null);
+  const descRef = useRef(null);
   const options = [
-    { value: "address", label: "Address" },
-    { value: "call_in_date_time", label: "Call In Date Time" },
-    { value: "campaign_name", label: "Campaign Name" },
-    { value: "city", label: "City" },
-    { value: "first_name", label: "First Name" },
-    { value: "full_name", label: "Full Name" },
-    { value: "ivr_logs", label: "Ivr Logs" },
+    { value: "originalData.address", label: "Address" },
+    { value: "originalData.call_in_date_time", label: "Call In Date Time" },
+    { value: "originalData.campaign_name", label: "Campaign Name" },
+    { value: "originalData.city", label: "City" },
+    { value: "originalData.first_name", label: "First Name" },
+    { value: "originalData.full_name", label: "Full Name" },
+    { value: "originalData.ivr_logs", label: "Ivr Logs" },
 
-    { value: "ivr_response.ani", label: "Ivr Response – Ani" },
-    { value: "ivr_response.mortgage_id", label: "Ivr Response – Mortgage Id" },
-    { value: "ivr_response.sid", label: "Ivr Response – Sid" },
-    { value: "ivr_response.status", label: "Ivr Response – Status" },
-    { value: "ivr_response.timestamp", label: "Ivr Response – Timestamp" },
+    { value: "originalData.ivr_response.ani", label: "Ivr Response – Ani" },
+    {
+      value: "originalData.ivr_response.mortgage_id",
+      label: "Ivr Response – Mortgage Id",
+    },
+    { value: "originalData.ivr_response.sid", label: "Ivr Response – Sid" },
+    {
+      value: "originalData.ivr_response.status",
+      label: "Ivr Response – Status",
+    },
+    {
+      value: "originalData.ivr_response.timestamp",
+      label: "Ivr Response – Timestamp",
+    },
 
-    { value: "last_name", label: "Last Name" },
-    { value: "lead_member_id", label: "Lead Member Id" },
-    { value: "lead_status", label: "Lead Status" },
-    { value: "lender_name", label: "Lender Name" },
-    { value: "loan_amount", label: "Loan Amount" },
-    { value: "loan_date", label: "Loan Date" },
-    { value: "mortgage_id", label: "Mortgage Id" },
-    { value: "notes", label: "Notes" },
-    { value: "state", label: "State" },
-    { value: "zip", label: "Zip" },
+    { value: "originalData.last_name", label: "Last Name" },
+    { value: "originalData.lead_member_id", label: "Lead Member Id" },
+    { value: "originalData.lead_status", label: "Lead Status" },
+    { value: "originalData.lender_name", label: "Lender Name" },
+    { value: "originalData.loan_amount", label: "Loan Amount" },
+    { value: "originalData.loan_date", label: "Loan Date" },
+    { value: "originalData.mortgage_id", label: "Mortgage Id" },
+    { value: "originalData.notes", label: "Notes" },
+    { value: "originalData.state", label: "State" },
+    { value: "originalData.zip", label: "Zip" },
   ];
   const typeOptions = [
     {
@@ -63,12 +81,39 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
     mode: "onChange",
   });
   const watchDescription = watch("description");
+  // const handleInsert = () => {
+  //   setValue("description", (watchDescription || "") + `{{${selectedOption}}}`);
+  // };
   const handleInsert = () => {
-    setValue("description", (watchDescription || "") + `{{${selectedOption}}}`);
+    if (!descRef.current) return;
+
+    const textarea = descRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    const insertText = `{{${selectedOption}}}`;
+    const currentValue = watchDescription || "";
+
+    // Build the new string
+    const newValue =
+      currentValue.substring(0, start) +
+      insertText +
+      currentValue.substring(end);
+
+    // Update value in React Hook Form
+    setValue("description", newValue);
+
+    // Give time for DOM update then restore cursor
+    setTimeout(() => {
+      textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd =
+        start + insertText.length;
+    }, 0);
   };
+
   const handleVariable = (opt) => {
     if (opt) {
-      setSelectedVariable(opt)
+      setSelectedVariable(opt);
       setSelectedOption(opt.value);
     }
   };
@@ -77,24 +122,25 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
     const payload = {
       title: data.title,
       description: data.description,
-    //   type_: data.type.value,
+      //   type_: data.type.value,
     };
     if (!editData) {
-        payload['type_'] = data.type.value
+      payload["type_"] = data.type.value;
     }
-    let sendData
+    let sendData;
     if (!editData) {
-        sendData = profileService.addScript(payload)
+      sendData = profileService.addScript(payload);
     } else {
-       sendData = profileService.editScript(editData.id, payload)
+      sendData = profileService.editScript(editData.id, payload);
     }
-      sendData.then((response) => {
+    sendData
+      .then((response) => {
         if (response.data.status === 201 || response.data.status === 200) {
           toast.success(response?.data?.message || "Success!");
-          setEditData(null)
-           handleClose()
-          setCurrentPage(0)
-          getScriptData(1, 5, activeTab)
+          setEditData(null);
+          handleClose();
+          setCurrentPage(0);
+          getScriptData(1, 5, activeTab);
         } else {
           toast.error(response?.data?.message);
         }
@@ -107,18 +153,18 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
       });
   };
   const handleClose = () => {
-        setValue('title', '')
-        setValue('description', '')
-        setValue('type', '')
-        setSelectedVariable(null)
-        close()
-  }
+    setValue("title", "");
+    setValue("description", "");
+    setValue("type", "");
+    setSelectedVariable(null);
+    close();
+  };
   useEffect(() => {
     if (editData) {
-        setValue('title', editData.title)
-        setValue('description', editData.description)
+      setValue("title", editData.title);
+      setValue("description", editData.description);
     }
-  },[editData])
+  }, [editData]);
   return (
     <div>
       <Transition appear show={isOpen} as={Fragment}>
@@ -155,7 +201,7 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
                 as="h3"
                 className="text-2xl font-semibold text-gray-800 dark:text-gray-100"
               >
-                Add Script {!editData ? 'Add Script' : 'Edit Script'}
+                Add Script {!editData ? "Add Script" : "Edit Script"}
               </DialogTitle>
 
               <form onSubmit={handleSubmit(submitData)}>
@@ -189,40 +235,40 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
                       </span>
                     )}
                   </div>
-                  {
-                    !editData &&  <div className="mb-2 w-full">
-                    <label
-                      className="mb-1 block text-left text-sm font-medium"
-                      htmlFor="code"
-                    >
-                      Choose Type<span className="text-red-500">*</span>
-                    </label>
-                    <Controller
-                      name="type"
-                      control={control}
-                      rules={{
-                        required: "Please Select a State",
-                      }}
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          options={typeOptions}
-                          placeholder="Select Type"
-                          classNamePrefix="react-select"
-                          className={
-                            errors.type ? "rounded border border-red-500" : ""
-                          }
-                        />
+                  {!editData && (
+                    <div className="mb-2 w-full">
+                      <label
+                        className="mb-1 block text-left text-sm font-medium"
+                        htmlFor="code"
+                      >
+                        Choose Type<span className="text-red-500">*</span>
+                      </label>
+                      <Controller
+                        name="type"
+                        control={control}
+                        rules={{
+                          required: "Please Select a State",
+                        }}
+                        render={({ field }) => (
+                          <Select
+                            {...field}
+                            options={typeOptions}
+                            placeholder="Select Type"
+                            classNamePrefix="react-select"
+                            className={
+                              errors.type ? "rounded border border-red-500" : ""
+                            }
+                          />
+                        )}
+                      />
+                      {errors.type && (
+                        <span className="text-sm text-red-500">
+                          {errors.type.message}
+                        </span>
                       )}
-                    />
-                    {errors.type && (
-                      <span className="text-sm text-red-500">
-                        {errors.type.message}
-                      </span>
-                    )}
-                  </div>
-                  }
-                 
+                    </div>
+                  )}
+
                   <div className="w-full">
                     <label
                       className="mb-1 block text-left text-sm font-medium"
@@ -242,6 +288,7 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
                       <button
                         type="button"
                         onClick={handleInsert}
+                        disabled={!selectedVariable}
                         className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                       >
                         Insert
@@ -264,6 +311,7 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
                       render={({ field }) => (
                         <Textarea
                           {...field}
+                          ref={descRef}
                           type="text"
                           id="description"
                           // placeholder="e.g., NEWCOUPON123"
@@ -271,7 +319,7 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
                         />
                       )}
                     />
-                    {errors.description&& (
+                    {errors.description && (
                       <span className="text-sm text-red-500">
                         {errors.description.message}
                       </span>
@@ -288,7 +336,7 @@ const ScriptModal = ({ isOpen, close, editData, setEditData, setCurrentPage, act
                       disabled={loading}
                     >
                       {loading && <Spinner className="me-1 h-3 w-3" />}
-                     Submit
+                      Submit
                     </Button>
                     <Button
                       type="button"

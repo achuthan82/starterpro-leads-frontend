@@ -1,7 +1,11 @@
 import { useState, useEffect, Fragment } from "react";
-import { Card, Checkbox } from "components/ui";
+import { Card } from "components/ui";
 import SharedSidebar from "./components/SharedSidebar";
-import { automationService, leadsService, stateService } from "utils/apiService";
+import {
+  automationService,
+  leadsService,
+  stateService,
+} from "utils/apiService";
 import { Switch } from "@headlessui/react";
 import {
   Dialog,
@@ -42,7 +46,7 @@ const LeadManagement = () => {
     name: "",
     campaign: "",
   });
-
+  const [showToolTip, setShowToolTip] = useState(false);
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
@@ -505,23 +509,31 @@ const LeadManagement = () => {
     setCurrentPage(1);
     fetchLeads(activeTab, filters, 1, newPerPage, true, purchased);
   };
-    const handleLeadAutomation = (status, lead) => {
-      setLoading(true)
-      const payload = { sms_automation_enabled: status };
-      automationService
-        .toggleLeadManagementAutomation(lead.assignee_id, payload)
-        .then((response) => {
-          console.log(response);
-          if (response.data.status === 200) {
-           fetchLeads(activeTab, filters, currentPage, perPage, false, purchased); 
-            toast.success('Success')
-          } else {
-            toast.error(response?.data?.message || "Failed to Update")
-          }
-        }).catch((error) => {
-          toast.error(error?.message || "Failed to Update");
-        })
-    };
+  const handleLeadAutomation = (status, lead) => {
+    setLoading(true);
+    const payload = { sms_automation_enabled: status };
+    automationService
+      .toggleLeadManagementAutomation(lead.assignee_id, payload)
+      .then((response) => {
+        console.log(response);
+        if (response.data.status === 200) {
+          fetchLeads(
+            activeTab,
+            filters,
+            currentPage,
+            perPage,
+            false,
+            purchased,
+          );
+          toast.success("Success");
+        } else {
+          toast.error(response?.data?.message || "Failed to Update");
+        }
+      })
+      .catch((error) => {
+        toast.error(error?.message || "Failed to Update");
+      });
+  };
   // Handle status change
   const [statusLoading, setStatusLoading] = useState(false);
   const handleStatusChange = async () => {
@@ -874,6 +886,15 @@ const LeadManagement = () => {
       }
     });
   };
+  useEffect(() => {
+    setShowToolTip(true);
+    let timer = setTimeout(() => {
+      setShowToolTip(false);
+    }, 3000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
   // Initial data fetch
   useEffect(() => {
     fetchSummary();
@@ -1042,7 +1063,42 @@ const LeadManagement = () => {
                   </button>
                 ))}
               </nav>
-              <div className="flex flex-wrap gap-5">
+              <div className="relative flex flex-wrap gap-5">
+                <Switch
+                  checked={purchased}
+                  onChange={(value) => {
+                    // Same logic as your checkbox handler
+                    fetchLeads(activeTab, filters, 1, perPage, true, value);
+
+                    setPurchased(value);
+
+                    if (value) {
+                      fetchSummary("market-place");
+                    } else {
+                      fetchSummary();
+                    }
+                  }}
+                  className={`${
+                    purchased ? "bg-[#0a2463]" : "bg-gray-300 dark:bg-gray-600"
+                  } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+                >
+                  <span
+                    className={`${
+                      purchased ? "translate-x-6" : "translate-x-1"
+                    } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                  />
+                </Switch>
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  View Lead Bank Leads
+                </span>
+                {showToolTip && (
+                  <div className="animate-fadeIn absolute -top-12 left-0 z-20 rounded-lg bg-[#0a2463]px-3 py-2 text-xs text-white shadow-lg">
+                    Toggle to view Lead Bank leads.
+                    <div className="absolute -bottom-2 left-4 h-3 w-3 rotate-45 bg-[#0a2463]"></div>
+                  </div>
+                )}
+              </div>
+              {/* <div className="flex flex-wrap gap-5">
                 <Checkbox
                   label="View Lead Bank Leads"
                   onChange={(event) => {
@@ -1062,7 +1118,7 @@ const LeadManagement = () => {
                     }
                   }}
                 />
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -1333,7 +1389,7 @@ const LeadManagement = () => {
                           Zip
                         </th>
                         <th className="min-w-[80px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
-                           Sms Automation
+                          Sms Automation
                         </th>
                         {/* <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider min-w-[120px]">
                           Loan Amount
@@ -1591,7 +1647,10 @@ const LeadManagement = () => {
                                 <Switch
                                   checked={lead?.sms_automation_enabled}
                                   onChange={() =>
-                                    handleLeadAutomation(!lead?.sms_automation_enabled, lead)
+                                    handleLeadAutomation(
+                                      !lead?.sms_automation_enabled,
+                                      lead,
+                                    )
                                   }
                                   className={`${
                                     lead?.sms_automation_enabled

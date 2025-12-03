@@ -2,14 +2,14 @@
 
 import profileService from "utils/profileService";
 import SharedSidebar from "../components/SharedSidebar";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useDisclosure } from "hooks";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import AddLiscence from "./AddLiscence";
 import CalendarPage from "../available/CalendarPage";
 import Script from "./Script";
-
+import { useAuthContext } from "app/contexts/auth/context";
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("basic");
   const [liscence, setLiscence] = useState([]);
@@ -23,8 +23,23 @@ const ProfilePage = () => {
     agency: "",
     npn: "",
   });
+  const userData = useAuthContext()
+  console.log('user-data', useAuthContext())
   const [isOpen, { open, close }] = useDisclosure(false);
+  const tabs = [
+    { id: "basic", label: "Basic Details", agent_view:true },
+    { id: "license", label: "Licence Details" , agent_view:true },
+    { id: "settings", label: "Calendar Settings", agent_view:true  },
+    { id: "script", label: "Script", agent_view:false},
+  ];
 
+  const filteredTabs = useMemo(() => {
+     if (userData.user.role_id === 1) {
+      return tabs
+     } else {
+      return tabs.filter((item) => item.agent_view)
+     }
+  }, [userData.user.role_id])
   // const licenseDetails = [
   //   {
   //     state: "California",
@@ -48,7 +63,7 @@ const ProfilePage = () => {
           setUser({
             name: temp.name,
             email: temp.email,
-            agency: temp?.agency?.name || '',
+            agency: temp?.agency?.name || "",
             role: temp.role_id === 1 ? "Admin" : "Agent",
             npn: temp.npn,
             phone: temp.phone,
@@ -151,12 +166,7 @@ const ProfilePage = () => {
             {/* Tabs */}
             <nav className="border-b border-gray-200 bg-gray-50 px-8 dark:border-gray-700 dark:bg-gray-800">
               <div className="-mb-px flex space-x-8 overflow-x-auto">
-                {[
-                  { id: "basic", label: "Basic Details" },
-                  { id: "license", label: "Licence Details" },
-                  { id: "settings", label: "Calendar Settings" },
-                  {id:'script', label:'Script'}
-                ].map((tab) => (
+                {filteredTabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
@@ -249,7 +259,10 @@ const ProfilePage = () => {
                               className="mb-4 h-40 w-full rounded-md border border-gray-300 object-contain dark:border-gray-600"
                             />
                             <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                              {states.length > 0 ? states.find((item) => item.value === l.state)?.label || l.state : l.state}
+                              {states.length > 0
+                                ? states.find((item) => item.value === l.state)
+                                    ?.label || l.state
+                                : l.state}
                             </p>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
                               License No:{" "}
@@ -262,12 +275,8 @@ const ProfilePage = () => {
                       </div>
                     </>
                   )}
-                  {activeTab === "settings" && (
-                   <CalendarPage/>
-                  )}
-                  {
-                    activeTab === 'script' && <Script/>
-                  }
+                  {activeTab === "settings" && <CalendarPage />}
+                  {activeTab === "script" && <Script />}
                 </>
               )}
             </div>

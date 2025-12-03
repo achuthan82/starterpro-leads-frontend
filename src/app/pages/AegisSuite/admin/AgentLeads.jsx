@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router";
-import { Card, Checkbox } from "components/ui";
+import { Card } from "components/ui";
+import { Switch } from "@headlessui/react";
 import SharedSidebar from "../components/SharedSidebar";
 import { adminService, leadsService, stateService } from "utils/apiService";
 import {
@@ -28,6 +29,7 @@ const AgentLeads = () => {
   const searchParams = new URLSearchParams(location.search);
   const user_id = searchParams.get("user");
   const source = { 1: "New MTG", 2: "RETRO MTG", 3: "FEX" };
+  const [showToolTip, setShowToolTip] = useState(false);
   const [agent, setAgent] = useState(null);
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -122,6 +124,15 @@ const AgentLeads = () => {
 
   useEffect(() => {
     fetchAgentLeads(1, 10, "gold", {}, false);
+  }, []);
+  useEffect(() => {
+    setShowToolTip(true);
+    let timer = setTimeout(() => {
+    setShowToolTip(false);
+    }, 3000);
+    return () => {
+      clearTimeout(timer);
+    };
   }, []);
 
   const fetchAgentData = async () => {
@@ -579,11 +590,11 @@ const AgentLeads = () => {
           else result += val || "";
         } else if (key.customSelector === "lead_status") {
           result += LEAD_STATUS[val] || "";
-        } else if (key.customSelector === 'call_in_date_time') {
-          if (item.campaign_name.startsWith('SD')){
-             result += 'N/A'
+        } else if (key.customSelector === "call_in_date_time") {
+          if (item.campaign_name.startsWith("SD")) {
+            result += "N/A";
           } else {
-            result += val
+            result += val;
           }
         } else {
           if (typeof val === "string" && val.includes(",")) {
@@ -809,14 +820,35 @@ const AgentLeads = () => {
                   </button>
                 ))}
               </nav>
-              <div className="flex flex-wrap gap-5">
-                <Checkbox
-                  label="View Lead Bank Leads"
-                  onChange={(event) => {
-                    setPurchased(event.target.checked);
-                    handleTypeChange(event.target.checked);
+              <div className="relative flex flex-wrap items-center gap-3">
+                {showToolTip && (
+                  <div className="animate-fadeIn absolute top-8 left-0 z-[9999] rounded-lg bg-[#0a2463] px-3 py-2 text-xs text-white shadow-lg">
+                    Toggle to view Lead Bank leads.
+                    {/* Upward arrow */}
+                    <div className="absolute -top-2 left-4 h-3 w-3 rotate-45 bg-[#0a2463]"></div>
+                  </div>
+                )}
+
+                <Switch
+                  checked={purchased}
+                  onChange={(value) => {
+                    setPurchased(value);
+                    handleTypeChange(value);
                   }}
-                />
+                  className={`${
+                    purchased ? "bg-[#0a2463]" : "bg-gray-300 dark:bg-gray-600"
+                  } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none`}
+                >
+                  <span
+                    className={`${
+                      purchased ? "translate-x-6" : "translate-x-1"
+                    } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                  />
+                </Switch>
+
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  View Lead Bank Leads
+                </span>
               </div>
             </div>
           </div>
@@ -1078,119 +1110,122 @@ const AgentLeads = () => {
                           </td>
                         </tr>
                       ) : (
-                        leads.map((lead, index) =>{ 
+                        leads.map((lead, index) => {
                           return (
-                          <tr
-                            key={lead.assignee_id || index}
-                            // className="hover:bg-gray-50 hover:text-[#0a2463]"
-                          >
-                            {/* Select */}
-                            <td className="px-3 py-4 whitespace-nowrap">
-                              <input
-                                type="checkbox"
-                                checked={selectedLeads.includes(
-                                  lead.assignee_id,
-                                )}
-                                onChange={(event) => {
-                                  handleLeadSelection(lead.assignee_id);
-                                  handlePrintLead(event, lead);
-                                }}
-                                className="h-4 w-4 rounded border-gray-300 text-[#0a2463] focus:ring-[#0a2463]"
-                              />
-                            </td>
+                            <tr
+                              key={lead.assignee_id || index}
+                              // className="hover:bg-gray-50 hover:text-[#0a2463]"
+                            >
+                              {/* Select */}
+                              <td className="px-3 py-4 whitespace-nowrap">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedLeads.includes(
+                                    lead.assignee_id,
+                                  )}
+                                  onChange={(event) => {
+                                    handleLeadSelection(lead.assignee_id);
+                                    handlePrintLead(event, lead);
+                                  }}
+                                  className="h-4 w-4 rounded border-gray-300 text-[#0a2463] focus:ring-[#0a2463]"
+                                />
+                              </td>
 
-                            {/* Identifier */}
-                            {!purchased && (
+                              {/* Identifier */}
+                              {!purchased && (
+                                <td className="px-3 py-4 whitespace-nowrap">
+                                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                    {lead.identifier ||
+                                      lead.mortgage_id ||
+                                      lead.assignee_id ||
+                                      ""}
+                                  </div>
+                                </td>
+                              )}
+
+                              {/* Campaign Name */}
+                              {!purchased && (
+                                <td className="px-3 py-4 whitespace-nowrap">
+                                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                    {lead.campaign_name || ""}
+                                  </div>
+                                </td>
+                              )}
+
+                              {/* Full Name */}
                               <td className="px-3 py-4 whitespace-nowrap">
                                 <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                  {lead.identifier ||
-                                    lead.mortgage_id ||
-                                    lead.assignee_id ||
+                                  {lead.lead_full_name ||
+                                    (lead.first_name && lead.last_name
+                                      ? `${lead.first_name} ${lead.last_name}`
+                                      : "") ||
                                     ""}
                                 </div>
                               </td>
-                            )}
 
-                            {/* Campaign Name */}
-                            {!purchased && (
-                              <td className="px-3 py-4 whitespace-nowrap">
-                                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                  {lead.campaign_name || ""}
-                                </div>
-                              </td>
-                            )}
-
-                            {/* Full Name */}
-                            <td className="px-3 py-4 whitespace-nowrap">
-                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                {lead.lead_full_name ||
-                                  (lead.first_name && lead.last_name
-                                    ? `${lead.first_name} ${lead.last_name}`
-                                    : "") ||
-                                  ""}
-                              </div>
-                            </td>
-
-                            {/* Source */}
-                            <td className="px-3 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900 dark:text-gray-100">
-                                {getSourceName(lead.source_id)}
-                              </div>
-                            </td>
-
-                            {/* Registered Date */}
-                            {activeTab !== "mailed" && (
+                              {/* Source */}
                               <td className="px-3 py-4 whitespace-nowrap">
                                 <div className="text-sm text-gray-900 dark:text-gray-100">
-                                  {lead.campaign_name?.startsWith('SD') ? 'N/A' : lead.call_in_date_time}
+                                  {getSourceName(lead.source_id)}
                                 </div>
                               </td>
-                            )}
-                            {/* Lead Status */}
-                            <td className="px-3 py-4 whitespace-nowrap">
-                              <span
-                                className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold shieldnest-badge-${lead.lead_status || lead.status}`}
-                              >
-                                {getStatusName(
-                                  lead.lead_status || lead.status,
-                                ) || ""}
-                              </span>
-                            </td>
 
-                            {/* Address */}
-                            <td className="px-3 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900 dark:text-gray-100">
-                                {lead.client_address || lead.address || ""}
-                              </div>
-                            </td>
-
-                            {/* Lead Phone */}
-                            {activeTab !== "mailed" && (
-                              <>
+                              {/* Registered Date */}
+                              {activeTab !== "mailed" && (
                                 <td className="px-3 py-4 whitespace-nowrap">
                                   <div className="text-sm text-gray-900 dark:text-gray-100">
-                                    {getIvrValue(lead, "number") || ""}
+                                    {lead.campaign_name?.startsWith("SD")
+                                      ? "N/A"
+                                      : lead.call_in_date_time}
                                   </div>
                                 </td>
-                                <td className="px-3 py-4 whitespace-nowrap">
-                                  <div className="text-sm text-gray-900 dark:text-gray-100">
-                                    {getIvrValue(lead, "ani") || ""}
-                                  </div>
-                                </td>
-                              </>
-                            )}
-                            {/* Actions */}
-                            <td className="px-3 py-4 text-sm font-medium whitespace-nowrap">
-                              <button
-                                onClick={() => setSelectedLead(lead)}
-                                className="text-[#0a2463] hover:text-[#0a2463]/80 dark:text-blue-400 dark:hover:text-blue-300"
-                                title="View Details"
-                              >
-                                <EyeIcon className="h-4 w-4" />
-                              </button>
-                            </td>
-                          </tr>
-                        )})
+                              )}
+                              {/* Lead Status */}
+                              <td className="px-3 py-4 whitespace-nowrap">
+                                <span
+                                  className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold shieldnest-badge-${lead.lead_status || lead.status}`}
+                                >
+                                  {getStatusName(
+                                    lead.lead_status || lead.status,
+                                  ) || ""}
+                                </span>
+                              </td>
+
+                              {/* Address */}
+                              <td className="px-3 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900 dark:text-gray-100">
+                                  {lead.client_address || lead.address || ""}
+                                </div>
+                              </td>
+
+                              {/* Lead Phone */}
+                              {activeTab !== "mailed" && (
+                                <>
+                                  <td className="px-3 py-4 whitespace-nowrap">
+                                    <div className="text-sm text-gray-900 dark:text-gray-100">
+                                      {getIvrValue(lead, "number") || ""}
+                                    </div>
+                                  </td>
+                                  <td className="px-3 py-4 whitespace-nowrap">
+                                    <div className="text-sm text-gray-900 dark:text-gray-100">
+                                      {getIvrValue(lead, "ani") || ""}
+                                    </div>
+                                  </td>
+                                </>
+                              )}
+                              {/* Actions */}
+                              <td className="px-3 py-4 text-sm font-medium whitespace-nowrap">
+                                <button
+                                  onClick={() => setSelectedLead(lead)}
+                                  className="text-[#0a2463] hover:text-[#0a2463]/80 dark:text-blue-400 dark:hover:text-blue-300"
+                                  title="View Details"
+                                >
+                                  <EyeIcon className="h-4 w-4" />
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
                       )}
                     </tbody>
                   </table>
@@ -1378,14 +1413,17 @@ const AgentLeads = () => {
                         {source[selectedLead.source_id] || "N/A"}
                       </p>
                     </div>
-                    {activeTab !== "mailed" && !selectedLead.campaign_name.startsWith('SD') && (
-                      <div>
-                        <p className="text-sm text-gray-500">Registered Date</p>
-                        <p className="font-medium">
-                          {selectedLead.call_in_date_time || ""}
-                        </p>
-                      </div>
-                    )}
+                    {activeTab !== "mailed" &&
+                      !selectedLead.campaign_name.startsWith("SD") && (
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Registered Date
+                          </p>
+                          <p className="font-medium">
+                            {selectedLead.call_in_date_time || ""}
+                          </p>
+                        </div>
+                      )}
                     <div>
                       <p className="text-sm text-gray-500">Lead Status</p>
                       <span
