@@ -1,5 +1,6 @@
 
 const CallScript = ({ selectedScript, onScriptChange, lead }) => {
+  console.log('selected-script', selectedScript)
   const scriptSections = [
     'Opening',
     'Qualification',

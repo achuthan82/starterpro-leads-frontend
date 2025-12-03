@@ -6,6 +6,7 @@ import {
 import { useAuthContext } from "app/contexts/auth/context";
 import { toast } from 'sonner';
 import { IoBulbOutline } from "react-icons/io5";
+import profileService from "utils/profileService";
 
 export default function ScriptTranscript({ 
   activeTabs = ["script"], 
@@ -16,13 +17,39 @@ export default function ScriptTranscript({
   callLogs = [],
   callLogsLoading = false
 }) {
-
+  const tabs = {script:1, objections:2}
   const { user } = useAuthContext();
   console.log(user)
   const [activeTab, setActiveTab] = useState(activeTabs[0] || "script");
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [selectedObjection, setSelectedObjection] = useState(null);
+  const [scriptContent, setScriptContent] = useState(null)
   
+  const getScriptData = ( type) => {
+    const params = { page: 1, per_page: 20, type_: type };
+    profileService
+      .getScript(params)
+      .then((response) => {
+        if (response.data.status === 200) {
+          if (type === 1) {
+             setScriptContent(response.data.data.reduce((acc,item) => {
+               acc[item.title] = item.description
+               return acc
+             }, {}))
+          }
+          // setScript(response.data.data);
+          
+        } else if (response.data.status === 204) {
+          // setScript([]);
+        } else {
+          toast.error(response?.data?.message || "Failed to fetch scripts");
+        }
+      })
+      .catch((error) => {
+        toast.error(error?.message || "Failed to fetch scripts");
+      })
+      
+  };
   // Sync with parent activeTabs
   useEffect(() => {
     if (activeTabs.length > 0) {
@@ -32,6 +59,9 @@ export default function ScriptTranscript({
       }
     }
   }, [activeTabs]);
+  useEffect(() => {
+      getScriptData(tabs[activeTab])
+  }, [activeTab])
 
   const splitIntoSteps = (text) => {
     if (!text) return [];
@@ -42,66 +72,66 @@ export default function ScriptTranscript({
   };
 
   // Script content for each badge
-  const scriptContent = {
-    Opening: `Hello, may I speak with ${lead?.name || lead?.first_name + ' ' + lead?.last_name || '[LEAD_NAME]'}? 
+//   const scriptContent = {
+//     Opening: `Hello, may I speak with ${lead?.name || lead?.first_name + ' ' + lead?.last_name || '[LEAD_NAME]'}? 
 
-              Hi ${lead?.name || lead?.first_name + ' ' + lead?.last_name || '[LEAD_NAME]'}, my name is ${user?.name || '[YOUR_NAME]'} calling from ${user?.agency?.name || 'StarterProleads'}.
+//               Hi ${lead?.name || lead?.first_name + ' ' + lead?.last_name || '[LEAD_NAME]'}, my name is ${user?.name || '[YOUR_NAME]'} calling from ${user?.agency?.name || 'StarterProleads'}.
               
-              I understand you recently purchased a home with a mortgage of approximately ${lead?.originalData?.loan_amount || '[LOAN_AMOUNT]'}. Do you have a moment to discuss protecting your family's investment?
+//               I understand you recently purchased a home with a mortgage of approximately ${lead?.originalData?.loan_amount || '[LOAN_AMOUNT]'}. Do you have a moment to discuss protecting your family's investment?
               
-              Great! The reason for my call today is to ensure your family would be protected if something unexpected were to happen to you.`,
+//               Great! The reason for my call today is to ensure your family would be protected if something unexpected were to happen to you.`,
     
-  Proposition: `Let me ask you - if something were to happen to you tomorrow, would your family be able to keep the house?
+//   Proposition: `Let me ask you - if something were to happen to you tomorrow, would your family be able to keep the house?
 
-                Mortgage protection insurance ensures your mortgage is paid off, so your loved ones never have to worry about losing their home.
+//                 Mortgage protection insurance ensures your mortgage is paid off, so your loved ones never have to worry about losing their home.
 
-                It's surprisingly affordable - for someone your age, we're typically looking at around $[ESTIMATED_PREMIUM] per month.
+//                 It's surprisingly affordable - for someone your age, we're typically looking at around $[ESTIMATED_PREMIUM] per month.
 
-                That's less than what most people spend on their daily coffee!`,
+//                 That's less than what most people spend on their daily coffee!`,
 
-    Qualification: `To provide you with an accurate quote, I need to ask a few quick questions. Is that okay?
+//     Qualification: `To provide you with an accurate quote, I need to ask a few quick questions. Is that okay?
     
-                    Are you between 18 and 65 years old?
+//                     Are you between 18 and 65 years old?
 
-                    Are you a US citizen or permanent resident?
+//                     Are you a US citizen or permanent resident?
 
-                    Are you currently in good health?
+//                     Are you currently in good health?
 
-                    Have you been hospitalized in the last 12 months?`,
+//                     Have you been hospitalized in the last 12 months?`,
     
-//     Objections: `I understand your concerns. Many of our clients felt the same way initially, but here's how we can help:
+// //     Objections: `I understand your concerns. Many of our clients felt the same way initially, but here's how we can help:
 
-// - "I can't afford it" → We offer flexible payment plans that can fit your budget
-// - "I already have insurance" → This specifically covers your mortgage, which may not be fully covered by other policies
-// - "I'm too young" → The best time to protect your family is now, when rates are most affordable
-// - "I need to think about it" → I understand. What specific concerns do you have that I can address?`,
+// // - "I can't afford it" → We offer flexible payment plans that can fit your budget
+// // - "I already have insurance" → This specifically covers your mortgage, which may not be fully covered by other policies
+// // - "I'm too young" → The best time to protect your family is now, when rates are most affordable
+// // - "I need to think about it" → I understand. What specific concerns do you have that I can address?`,
     
-    Closing: `Based on what you've shared, I can get you coverage starting at just $[QUOTE_AMOUNT] per month. 
+//     Closing: `Based on what you've shared, I can get you coverage starting at just $[QUOTE_AMOUNT] per month. 
 
-              This would give your family complete peace of mind knowing the mortgage would be taken care of.
+//               This would give your family complete peace of mind knowing the mortgage would be taken care of.
 
-              Shall we go ahead and lock in this rate for you today?
+//               Shall we go ahead and lock in this rate for you today?
 
-              Perfect! Let me get some additional information to complete your application.`,
+//               Perfect! Let me get some additional information to complete your application.`,
     
-//     Appointment: `Would you be available for a 15-minute call on [date] at [time] to discuss this further?
+// //     Appointment: `Would you be available for a 15-minute call on [date] at [time] to discuss this further?
 
-// This will give us a chance to:
-// - Review your specific needs
-// - Answer any questions you have
-// - Discuss coverage options
-// - Find a plan that works for your budget`,
+// // This will give us a chance to:
+// // - Review your specific needs
+// // - Answer any questions you have
+// // - Discuss coverage options
+// // - Find a plan that works for your budget`,
     
-//     Voicemail: `Hi ${lead?.name || '[Lead Name]'}, this is [Your Name] from ${user?.agency?.name || 'ShieldNest'} calling about mortgage protection. 
+// //     Voicemail: `Hi ${lead?.name || '[Lead Name]'}, this is [Your Name] from ${user?.agency?.name || 'ShieldNest'} calling about mortgage protection. 
 
-// I wanted to reach out because you recently showed interest in protecting your mortgage. Please call me back at [your number] when you have a moment. I'd love to discuss how we can help protect your family's home.
+// // I wanted to reach out because you recently showed interest in protecting your mortgage. Please call me back at [your number] when you have a moment. I'd love to discuss how we can help protect your family's home.
 
-// Thank you, and have a great day!`,
+// // Thank you, and have a great day!`,
     
-//     Referral: `While I have you on the line, do you know anyone else who might benefit from mortgage protection?
+// //     Referral: `While I have you on the line, do you know anyone else who might benefit from mortgage protection?
 
-// Many of our clients find value in sharing this protection with friends and family who also own homes. If you know someone who might be interested, I'd be happy to help them as well.`
-  };
+// // Many of our clients find value in sharing this protection with friends and family who also own homes. If you know someone who might be interested, I'd be happy to help them as well.`
+//   };
 
   // Objection handlers content
 const objectionHandlersList = [
