@@ -82,7 +82,9 @@ export default function ScriptTranscript({
     }
   }, [activeTabs]);
   useEffect(() => {
+    if (tabs[activeTab]){
     getScriptData(tabs[activeTab]);
+    }
   }, [activeTab]);
 
   const splitIntoSteps = (text) => {
