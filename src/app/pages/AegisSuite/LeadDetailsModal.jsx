@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { ClockIcon, PhoneIcon, ChevronDownIcon, XMarkIcon, PencilIcon, MapPinIcon, HomeIcon } from "@heroicons/react/24/solid";
 import { SOURCE_MAPPING } from "../../../constants/app.constant";
 
-const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddNote, fetchStatusHistory, statusHistory, tabs, activeTab, setStatusLead, setNewStatus, setShowStatusModal, getStatusName }) => {
-    
+const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddNote, fetchStatusHistory, statusHistory, tabs, activeTab, setStatusLead, setNewStatus, setShowStatusModal, getStatusName, restricted }) => {
+    console.log('selected-lead', selectedLead)
     const [note, setNote] = useState(selectedLead?.notes || '');
     const [addNote, setAddNote] = useState(false);
 
@@ -14,7 +14,7 @@ const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddN
     };
 
     useEffect(() => {
-        fetchStatusHistory(selectedLead.agent_id, selectedLead.assignee_id);
+        fetchStatusHistory(selectedLead.agent_id, selectedLead.assignee_id || selectedLead?.lead_member_id);
     }, []);
 
     return (
@@ -33,11 +33,11 @@ const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddN
                   <h3 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
                     {selectedLead.full_name || selectedLead.name || 'Unknown'}
                   </h3>
-                  {activeTab !== 'mailed' && 
+                  {/* {activeTab !== 'mailed' &&  */}
                   <p className="text-gray-600 dark:text-gray-300">
                     {(selectedLead.email || selectedLead.ivr_response?.number || selectedLead?.ivr_response?.ani || 'No contact info')}
                   </p>
-                  }
+                  {/* // } */}
                   <div className="flex items-center space-x-2 mt-1">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full shieldnest-badge-${(selectedLead.lead_status || selectedLead.status)}`}>
                       {getStatusName(selectedLead.lead_status || selectedLead.status) || 'Unknown'}
@@ -64,7 +64,7 @@ const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddN
                     <div className="contact-location bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-4">
                         <h4 className="text-lg font-semibold text-[var(--color-atoll)] dark:text-blue-400 mb-4">Contact & Location</h4>
                         <div className="space-y-3">
-                            {activeTab !== 'mailed' &&
+                            {/* {activeTab !== 'mailed' && */}
                             <div className="flex items-center">
                                 <PhoneIcon className="w-6 h-6 text-gray-500 dark:text-gray-400 mr-3" />
                                 <div>
@@ -72,7 +72,7 @@ const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddN
                                     <p className="font-medium text-black dark:text-white">{selectedLead?.ivr_response?.number || selectedLead?.ivr_response?.ani || selectedLead.lead_phone_number || selectedLead.phone || ''}</p>
                                 </div>
                             </div>
-                            }
+                            {/* // } */}
                             {/* <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Borrower Phone</p>
                             <p className="font-medium dark:text-white">{selectedLead.borrower_phone || ''}</p>
@@ -193,7 +193,8 @@ const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddN
                     <div className="contact-location border border-gray-200 dark:border-gray-700 p-6 rounded-lg mb-4">
                         <div className="flex justify-between items-center">
                             <h4 className="text-lg font-semibold text-[var(--color-atoll)] dark:text-blue-400">Status Management</h4>
-                            <div className="flex items-center space-x-2">
+                            {
+                              !restricted && <div className="flex items-center space-x-2">
                                 <button
                                 onClick={() => {
                                     setStatusLead(selectedLead);
@@ -205,6 +206,8 @@ const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddN
                                 Change Status
                                 </button>
                             </div>
+                            }
+                            
                         </div>
                         <hr className="my-4 dark:border-gray-600"/>
                         <h5 className="text-gray-900 dark:text-white font-medium">Status History</h5>
@@ -230,7 +233,7 @@ const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddN
                     <div className="contact-location border border-gray-200 dark:border-gray-700 p-6 rounded-lg mb-4">
                         <div className="flex justify-between items-center">
                             <h4 className="text-lg font-semibold text-[var(--color-atoll)] dark:text-blue-400">Note</h4>
-                            {!selectedLead?.notes &&
+                            {!selectedLead?.notes && !restricted &&
                             <button
                             onClick={() => setAddNote(true)}
                             className="px-4 py-2 text-xs bg-[var(--color-atoll)] dark:bg-blue-500 text-white rounded-md hover:bg-[var(--color-atoll)]/90 dark:hover:bg-blue-600"
@@ -397,7 +400,7 @@ const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddN
               )}
 
               {/* Raw Data Section (for debugging) */}
-              {Object.keys(selectedLead).length > 15 && (
+              {Object.keys(selectedLead).length > 15 && !restricted && (
                 <div className="mt-6">
                   <details className="group">
                     <summary className="cursor-pointer text-lg font-semibold text-[var(--color-atoll)] dark:text-blue-400 mb-4 hover:text-[var(--color-atoll)]/80 dark:hover:text-blue-300">
@@ -415,7 +418,10 @@ const LeadDetailsModal = ({ selectedLead, purchased, setSelectedLead, handleAddN
 
             {/* Modal Footer */}
             <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Lead Category: {tabs.find((item) => item.id === activeTab).label}</span>
+              {
+                !restricted &&  <span className="text-sm text-gray-500 dark:text-gray-400">Lead Category: {tabs.find((item) => item.id === activeTab).label}</span>
+
+              }
 
               {/* <span className="text-sm text-gray-500 dark:text-gray-400">Lead Category: {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</span> */}
               <div className="flex space-x-3">

@@ -296,9 +296,12 @@ const renderTemplate = (str, lead) => {
       {/* Tab Content */}
       {activeTab === "script" && (
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+          {
+            !loading && <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
             Call Script
           </h2>
+          }
+          
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
@@ -416,9 +419,12 @@ const renderTemplate = (str, lead) => {
 
       {activeTab === "objections" && (
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+          {
+            !loading &&  <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
             Objection Handlers
           </h2>
+          }
+         
 
           {/* --- Tabs --- */}
           <div className="flex flex-wrap gap-2">
