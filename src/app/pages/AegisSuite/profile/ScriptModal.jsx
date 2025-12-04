@@ -201,7 +201,7 @@ const ScriptModal = ({
                 as="h3"
                 className="text-2xl font-semibold text-gray-800 dark:text-gray-100"
               >
-                Add Script {!editData ? "Add Script" : "Edit Script"}
+                {!editData ? "Add Script/Objection" : "Edit Script/Objection"}
               </DialogTitle>
 
               <form onSubmit={handleSubmit(submitData)}>

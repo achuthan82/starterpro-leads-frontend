@@ -30,7 +30,7 @@ const ProfilePage = () => {
     { id: "basic", label: "Basic Details", agent_view:true },
     { id: "license", label: "Licence Details" , agent_view:true },
     { id: "settings", label: "Calendar Settings", agent_view:true  },
-    { id: "script", label: "Script", agent_view:false},
+    { id: "script", label: "Script Settings", agent_view:false},
   ];
 
   const filteredTabs = useMemo(() => {

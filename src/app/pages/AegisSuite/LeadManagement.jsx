@@ -1092,7 +1092,7 @@ const LeadManagement = () => {
                   View Lead Bank Leads
                 </span>
                 {showToolTip && (
-                  <div className="animate-fadeIn absolute -top-12 left-0 z-20 rounded-lg bg-[#0a2463]px-3 py-2 text-xs text-white shadow-lg">
+                  <div className="animate-fadeIn absolute -top-12 left-0 z-20 rounded-lg bg-[#0a2463] px-3 py-2 text-xs text-white shadow-lg">
                     Toggle to view Lead Bank leads.
                     <div className="absolute -bottom-2 left-4 h-3 w-3 rotate-45 bg-[#0a2463]"></div>
                   </div>

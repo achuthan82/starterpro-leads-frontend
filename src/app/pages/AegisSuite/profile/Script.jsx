@@ -86,7 +86,7 @@ const Script = () => {
             className="flex items-center space-x-2 rounded-lg bg-[#f4d03f] px-4 py-2 text-white transition-colors hover:bg-[#e6c035]"
           >
             <PlusIcon className="h-4 w-4" />
-            <span>Add Script</span>
+            <span>Add New</span>
           </button>
         </div>
         <div className="">
@@ -102,7 +102,7 @@ const Script = () => {
               <div className="mt-4 space-y-4">
                 {script.length === 0 ? (
                   <div className="py-10 text-center text-gray-500 dark:text-gray-400">
-                    No scripts found
+                    No data found
                   </div>
                 ) : (
                   script.map((item) => (
