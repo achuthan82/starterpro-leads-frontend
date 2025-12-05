@@ -21,7 +21,8 @@ class DialerService {
         page = 1,
         per_page = 10,
         name = '',
-        lead_status = ''
+        lead_status = '',
+        state='',
       } = params;
 
       // Build query parameters
@@ -37,6 +38,9 @@ class DialerService {
 
       if (lead_status && lead_status !== 'All Statuses' && lead_status !== 'all') {
         queryParams.lead_status = lead_status;
+      }
+      if (state && state !== 'all') {
+        queryParams.state = state
       }
 
       const response = await axiosInstance.get(API_ENDPOINTS.DIALER.PAGINATED_LEADS, {
