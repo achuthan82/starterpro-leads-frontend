@@ -431,17 +431,17 @@ const InvoiceTemplate = () => {
                 This invoice was generated electronically and is valid without
                 signature.
               </p>
-              <p>StarterProLeads Insurance Services LLC • Tax ID: 12-3456789</p>
+              <p>StarterProLeads Insurance Services LLC</p>
             </div>
             <div className="text-right">
               <p className="text-atoll text-sm font-medium">Questions?</p>
-              <p className="text-xs text-gray-600">Call (555) 123-4567</p>
+              {/* <p className="text-xs text-gray-600">Call (555) 123-4567</p> */}
               <p className="text-xs text-gray-600">
                 <a
-                  href="mailto:support@starterproleads.com"
+                  href="mailto:helpdesk@starterproleads.com"
                   className="text-blue-600 underline"
                 >
-                  support@starterproleads.com
+                  helpdesk@starterproleads.com
                 </a>
               </p>
             </div>

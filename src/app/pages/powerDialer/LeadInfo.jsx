@@ -9,6 +9,7 @@ import {
 import { JWT_HOST_API } from "configs/auth.config";
 import { toast } from "sonner";
 import leadsService from "utils/leadsService";
+import { useCallContext } from "app/contexts/call/context";
 // import LeadDetailsModal from "../AegisSuite/LeadDetailsModal";
 // import LeadInfoPDF from './LeadInfoPDF';
 
@@ -19,6 +20,7 @@ const LeadInfo = ({
   callLogs = [],
   callLogsLoading = false,
 }) => {
+  const { setSelectedLead } = useCallContext();
   const [currentStatus, setCurrentStatus] = useState(lead?.status || "");
   const [currentStatusId, setCurrentStatusId] = useState(null);
   const [isMortgageModalOpen, setIsMortgageModalOpen] = useState(false);
@@ -66,8 +68,13 @@ const LeadInfo = ({
       // Get show_up status from lead data
       const showUpValue = lead.originalData?.show_up ?? lead.show_up ?? false;
       setShowUp(Boolean(showUpValue));
+      
+      // Sync note state with lead's notes
+      if (!addNote) {
+        setNote(lead.notes || lead.originalData?.notes || "");
+      }
     }
-  }, [lead]);
+  }, [lead, addNote]);
 
   const handleFormSubmit = (data) => {
     setFormData(data);
@@ -254,6 +261,21 @@ const LeadInfo = ({
     );
     console.log("Note update response:", response);
     if (response?.status === 200 || response?.success) {
+      // Update the lead with the new note
+      const updatedLead = {
+        ...lead,
+        notes: note || "",
+        originalData: {
+          ...lead.originalData,
+          notes: note || "",
+        },
+      };
+      
+      // Update the selected lead in context to reflect the new note
+      if (setSelectedLead) {
+        setSelectedLead(updatedLead);
+      }
+      
       setAddNote(false);
       setNote("");      
       toast.success(response?.message || "Note added successfully!");
@@ -311,15 +333,15 @@ const LeadInfo = ({
         {/* Lead Details */}
         <div className="my-4 grid grid-cols-2 gap-4">
           {/* Notes */}
-          {lead.notes ? (
+          {!addNote && lead.originalData?.notes && (
             <div className="mb-1 col-span-2">
               <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                 Notes
               </p>
               <p className="rounded-lg bg-gray-50 text-sm text-gray-900 dark:bg-gray-700 dark:text-gray-100">
-                {lead.notes} {!addNote && (
+                {lead.originalData?.notes} {!addNote && (
                   <button
-                  onClick={() => {setAddNote(true); setNote(lead?.notes || "")}}
+                  onClick={() => {setAddNote(true); setNote(lead?.notes || lead?.originalData?.notes || "")}}
                   className="cursor-pointer ml-2"
                 >
                   <PencilIcon className="h-3 w-3 cursor-pointer" />
@@ -327,14 +349,15 @@ const LeadInfo = ({
                 )}
               </p>
             </div>
-          ) : <div className="mb-1 col-span-2">
+          )}
+          {(addNote || !lead.originalData?.notes) && <div className="mb-1 col-span-2">
               <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                 Notes
               </p>
               <p className="rounded-lg bg-gray-50 text-sm text-gray-900 dark:bg-gray-700 dark:text-gray-100">
                 {!addNote && (
                   <button
-                  onClick={() => {setAddNote(true); setNote(lead?.notes || "")}}
+                  onClick={() => {setAddNote(true);}}
                   className="cursor-pointer"
                 >
                   <PencilIcon className="h-4 w-4 cursor-pointer" />
@@ -345,17 +368,16 @@ const LeadInfo = ({
                     <textarea value={note} onChange={(e) => setNote(e.target.value)} className="w-full rounded-md border border-gray-500 bg-white p-2 text-gray-900 placeholder:text-gray-400 focus:ring-1 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:ring-blue-500" rows="4" />
                     <button onClick={() => {
                       handleAddNote();
-                      setAddNote(false);
-                      setNote("");
                     }} className="rounded-md bg-[var(--color-atoll)] px-4 py-2 text-xs text-white hover:bg-[var(--color-atoll)]/90 dark:bg-blue-500 dark:hover:bg-blue-600">Add Note</button>
                     <button onClick={() => {
                       setAddNote(false);
-                      setNote("");
+                      setNote(lead?.notes || lead?.originalData?.notes || "");
                     }} className="rounded-md ml-2 bg-gray-500 px-4 py-2 text-xs text-white hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700">Cancel</button>
                   </>
                 )}
               </p>
-            </div>}
+            </div>} 
+          {lead?.homeValue && (
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Loan Amount
@@ -364,7 +386,7 @@ const LeadInfo = ({
               ${lead?.homeValue}
             </p>
           </div>
-          
+          )}
           {lead?.originalData?.lender_name && (
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -375,35 +397,35 @@ const LeadInfo = ({
               </p>
             </div>
           )}
-          {lead.ivr_response?.age && (
+          {lead?.originalData?.ivr_response?.age && (
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Client Age</p>
               <p className="font-medium text-gray-900 dark:text-gray-100">
-                {lead.ivr_response?.age}
+                {lead?.originalData?.ivr_response?.age}
               </p>
             </div>
           )}
-          {lead.ivr_response?.coborrower && (
+          {lead?.originalData?.ivr_response?.coborrower && (
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Co-Borrower</p>
               <p className="font-medium text-gray-900 dark:text-gray-100">
-                {lead.ivr_response?.coborrower === "1" ? "Yes" : "No"}
+                {lead?.originalData?.ivr_response?.coborrower === "1" ? "Yes" : "No"}
               </p>
             </div>
           )}
-          {lead.ivr_response?.tobacco && (
+          {lead?.originalData?.ivr_response?.tobacco && (
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Smoker</p>
               <p className="font-medium text-gray-900 dark:text-gray-100">
-                {lead.ivr_response?.tobacco === "1" ? "Yes" : "No"}
+                {lead?.originalData?.ivr_response?.tobacco === "1" ? "Yes" : "No"}
               </p>
             </div>
           )}
-          {lead.ivr_response?.health && (
+          {lead?.originalData?.ivr_response?.health && (
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Medical Issues</p>
               <p className="font-medium text-gray-900 dark:text-gray-100">
-                {lead.ivr_response?.health === "1" ? "Yes" : "No"}
+                {lead?.originalData?.ivr_response?.health === "1" ? "Yes" : "No"}
               </p>
             </div>
           )}

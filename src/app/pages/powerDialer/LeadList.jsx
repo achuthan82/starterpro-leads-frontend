@@ -247,7 +247,7 @@ const LeadList = ({
           placeholder="Search leads..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 bg-white py-3 pr-4 pl-10 text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+          className="w-full rounded-lg border border-gray-300 bg-white py-2 pr-4 pl-10 text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
         />
       </div>
 
@@ -257,7 +257,7 @@ const LeadList = ({
           <select
             value={selectedStatus}
             onChange={(e) => handleStatusChange(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
           >
             {statusOptions.map((status) => (
               <option key={status} value={status}>
@@ -266,7 +266,7 @@ const LeadList = ({
             ))}
           </select>
         </div>
-        <div className="col-span-6">
+        <div className="col-span-6 ml-2">
           <select
             value={selectedState}
             onChange={(e) => handleStateChange(e.target.value)}
@@ -314,8 +314,8 @@ const LeadList = ({
             >
               {/* Lead Header with Name and Dial Icon */}
               <div className="mb-3 flex items-start justify-between">
-                <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
-                  {lead.name}
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  {lead.name} {lead?.originalData?.calls > 0 && <span className="text-xs text-gray-600 dark:text-gray-400">({lead?.originalData?.calls} calls)</span>}
                 </h3>
                 <div className="flex items-center space-x-2">
                   {(() => {
