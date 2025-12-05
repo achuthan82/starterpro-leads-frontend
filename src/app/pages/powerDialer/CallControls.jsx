@@ -137,71 +137,183 @@ const CallControls = ({
   };
 
   const requestMicrophonePermission = async () => {
-    // Check if getUserMedia is available
-    if (!navigator?.mediaDevices?.getUserMedia) {
-      const errorMsg = 'Microphone access is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.';
-      alert(errorMsg);
-      setAudioPermission(false);
-      return false;
-    }
+  console.log("Navigator:", navigator);
 
-    try {
-      // Simple approach: just try to get user media
-      // The browser will handle all the checks and throw appropriate errors
-      let stream;
-      
-      // Try with basic audio first (most compatible)
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      } catch (basicError) {
-        // If basic fails, try with enhanced constraints
-        try {
-          stream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-              echoCancellation: true,
-              noiseSuppression: true,
-              autoGainControl: true
-            }
-          });
-        } catch {
-          throw basicError; // Throw the original error
-        }
-      }
-
-      // Successfully got stream
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        setAudioPermission(true);
-        console.log('Microphone permission granted');
-        return true;
-      }
-    } catch (error) {
-      console.error('Microphone permission error:', error);
-      setAudioPermission(false);
-      
-      // Provide user-friendly error messages
-      let errorMessage = 'Microphone permission is required for calling.';
-      
-      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        errorMessage = 'Microphone permission was denied. Please allow microphone access in your browser settings and try again.';
-      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-        errorMessage = 'No microphone found. Please connect a microphone and try again.';
-      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
-        errorMessage = 'Microphone is already in use by another application. Please close other applications using the microphone and try again.';
-      } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
-        errorMessage = 'Microphone settings are not supported. Please try again.';
-      } else if (error.name === 'SecurityError') {
-        errorMessage = 'Microphone access requires HTTPS or localhost. Please access this page over a secure connection.';
-      } else if (error.name === 'TypeError' || error.message?.includes('getUserMedia')) {
-        errorMessage = 'Microphone access is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.';
-      }
-      
-      alert(errorMessage);
-      return false;
-    }
-    
+  // 1️⃣ Check if browser supports audio
+  if (!navigator?.mediaDevices?.getUserMedia) {
+    alert("Microphone access is not supported in this browser.");
+    setAudioPermission(false);
     return false;
-  };
+  }
+
+  // 2️⃣ Check if microphone devices exist before requesting permission
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  const hasMic = devices.some(d => d.kind === "audioinput");
+
+  if (!hasMic) {
+    alert(
+      "No microphone detected.\n\n" +
+      "👉 If you are on Windows, enable microphone in:\n" +
+      "Settings → Privacy & Security → Microphone.\n\n" +
+      "👉 If using a desktop PC, plug in a microphone or headset."
+    );
+    setAudioPermission(false);
+    return false;
+  }
+
+  try {
+    let stream;
+
+    // 3️⃣ Try getting permission
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (basicError) {
+      // Retry with advanced constraints
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+      } catch {
+  throw basicError;
+      }
+    }
+
+    // 4️⃣ If permission granted
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      setAudioPermission(true);
+      console.log("Microphone permission granted.");
+      return true;
+    }
+
+  } catch (error) {
+    console.error("Microphone permission error:", error);
+
+    let errorMessage = "Microphone permission is required.";
+
+    switch (error.name) {
+      case "NotAllowedError":
+      case "PermissionDeniedError":
+        errorMessage =
+          "Microphone permission was denied.\n\n" +
+          "➡️ FIX:\n" +
+          "1. Click the padlock (🔒) in the browser address bar.\n" +
+          "2. Set Microphone → Allow.\n" +
+          "3. Reload the page.";
+        break;
+
+      case "NotFoundError":
+      case "DevicesNotFoundError":
+        errorMessage =
+          "No microphone found on this device.\n" +
+          "Please connect a microphone and try again.";
+        break;
+
+      case "SecurityError":
+        errorMessage =
+          "Microphone access requires HTTPS or localhost.\n" +
+          "Make sure you're running on https:// or http://localhost.";
+        break;
+
+      case "NotReadableError":
+      case "TrackStartError":
+        errorMessage =
+          "Your microphone is being used by another app.\n" +
+          "Close Zoom / Teams / WhatsApp Desktop and try again.";
+        break;
+
+      case "OverconstrainedError":
+      case "ConstraintNotSatisfiedError":
+        errorMessage =
+          "Microphone settings are not supported by this device.";
+        break;
+
+      default:
+        errorMessage =
+          "Unable to access the microphone.\n" +
+          "Please check browser & OS microphone permissions.";
+    }
+
+    alert(errorMessage);
+    setAudioPermission(false);
+    return false;
+  }
+
+  setAudioPermission(false);
+  return false;
+};
+
+  // const requestMicrophonePermission = async () => {
+  //   console.log(navigator)
+  //   // Check if getUserMedia is available
+  //   if (!navigator?.mediaDevices?.getUserMedia) {
+  //     const errorMsg = 'Microphone access is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.';
+  //     alert(errorMsg);
+  //     setAudioPermission(false);
+  //     return false;
+  //   }
+
+  //   try {
+  //     // Simple approach: just try to get user media
+  //     // The browser will handle all the checks and throw appropriate errors
+  //     let stream;
+      
+  //     // Try with basic audio first (most compatible)
+  //     try {
+  //       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  //     } catch (basicError) {
+  //       // If basic fails, try with enhanced constraints
+  //       try {
+  //         stream = await navigator.mediaDevices.getUserMedia({
+  //           audio: {
+  //             echoCancellation: true,
+  //             noiseSuppression: true,
+  //             autoGainControl: true
+  //           }
+  //         });
+  //       } catch {
+  //         throw basicError; // Throw the original error
+  //       }
+  //     }
+
+  //     // Successfully got stream
+  //     if (stream) {
+  //       stream.getTracks().forEach(track => track.stop());
+  //       setAudioPermission(true);
+  //       console.log('Microphone permission granted');
+  //       return true;
+  //     }
+  //   } catch (error) {
+  //     console.error('Microphone permission error:', error);
+  //     setAudioPermission(false);
+      
+  //     // Provide user-friendly error messages
+  //     let errorMessage = 'Microphone permission is required for calling.';
+      
+  //     if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+  //       errorMessage = 'Microphone permission was denied. Please allow microphone access in your browser settings and try again.';
+  //     } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+  //       errorMessage = 'No microphone found. Please connect a microphone and try again.';
+  //     } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+  //       errorMessage = 'Microphone is already in use by another application. Please close other applications using the microphone and try again.';
+  //     } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
+  //       errorMessage = 'Microphone settings are not supported. Please try again.';
+  //     } else if (error.name === 'SecurityError') {
+  //       errorMessage = 'Microphone access requires HTTPS or localhost. Please access this page over a secure connection.';
+  //     } else if (error.name === 'TypeError' || error.message?.includes('getUserMedia')) {
+  //       errorMessage = 'Microphone access is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.';
+  //     }
+      
+  //     alert(errorMessage);
+  //     return false;
+  //   }
+    
+  //   return false;
+  // };
 
   // ✅ MUTE CONTROL
   const handleMuteToggle = async () => {
