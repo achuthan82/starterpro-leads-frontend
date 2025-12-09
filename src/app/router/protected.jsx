@@ -201,6 +201,20 @@ const protectedRoutes = {
           }),
         },
         {
+          path: "sms-conversation",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/sms/SmsConversation"))
+              .default,
+          }),
+        },
+        {
+          path: "sms-conversation/:mortgage_id/:lead_member_id",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/sms/SmsConversation"))
+              .default,
+          }),
+        },
+        {
           path: "power-dialer/recharge-success",
           lazy: async () => ({
             Component: (await import("app/pages/powerDialer/RechargeSuccess"))
