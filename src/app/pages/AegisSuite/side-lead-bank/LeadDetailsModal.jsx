@@ -76,10 +76,13 @@ const MarketplaceLeadDetailsModal = ({
     monthPricingSilver,
   ) => {
     const qty = quantities[ageId] || {};
-    console.log("entered", monthPricingGold);
+    console.log("qty", qty);
+    // console.log("entered", monthPricingGold);
 
     if ((qty.completed || 0) + (qty.incomplete || 0) === 0) return;
     let added = false;
+    const tempLeads = [...cartData];
+
     if (qty.completed && monthPricingGold) {
       const obj = {
         start_day: monthPricingGold.start_day,
@@ -90,7 +93,6 @@ const MarketplaceLeadDetailsModal = ({
         title: monthPricingGold.title,
       };
       const newId = `${monthPricingGold.id}${state}complete`;
-      const tempLeads = [...cartData];
       const index = tempLeads.findIndex((item) => item.pricing_id === newId);
       if (index > -1) {
         tempLeads[index].quantity = tempLeads[index].quantity + qty.completed;
@@ -102,13 +104,8 @@ const MarketplaceLeadDetailsModal = ({
           ...obj,
         });
       }
-      console.log(tempLeads)
-      sessionStorage.setItem(
-        "cart",
-        JSON.stringify(tempLeads)
-      );
+      console.log(tempLeads);
       added = true;
-      setCartData([...tempLeads])
     }
     if (qty.incomplete && monthPricingSilver) {
       const obj = {
@@ -120,7 +117,6 @@ const MarketplaceLeadDetailsModal = ({
         title: monthPricingSilver.title,
       };
       const newId = `${monthPricingSilver.id}${state}incomplete`;
-      const tempLeads = [...cartData];
       const index = tempLeads.findIndex((item) => item.pricing_id === newId);
       if (index > -1) {
         tempLeads[index].quantity = tempLeads[index].quantity + qty.incomplete;
@@ -132,16 +128,12 @@ const MarketplaceLeadDetailsModal = ({
           ...obj,
         });
       }
-      sessionStorage.setItem(
-        "cart",
-        JSON.stringify(tempLeads)
-      );
-      added = true;
-      setCartData([...tempLeads])
-
+      sessionStorage.setItem("cart", JSON.stringify(tempLeads));
       added = true;
     }
     if (added) {
+      sessionStorage.setItem("cart", JSON.stringify(tempLeads));
+      setCartData([...tempLeads]);
       toast.success("Added to cart!");
     } else {
       toast.error("Couldn't find matching Pricing Id");
