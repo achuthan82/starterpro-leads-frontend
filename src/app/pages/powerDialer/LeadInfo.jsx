@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { EyeIcon, ShieldCheckIcon } from "@heroicons/react/24/outline";
+import { ShieldCheckIcon, PencilIcon } from "@heroicons/react/24/outline";
 import MortgageProtectionModal from "./MortgageProtectionModal";
 import {
   LEAD_STATUS,
@@ -9,7 +9,8 @@ import {
 import { JWT_HOST_API } from "configs/auth.config";
 import { toast } from "sonner";
 import leadsService from "utils/leadsService";
-import LeadDetailsModal from "../AegisSuite/LeadDetailsModal";
+import { useCallContext } from "app/contexts/call/context";
+// import LeadDetailsModal from "../AegisSuite/LeadDetailsModal";
 // import LeadInfoPDF from './LeadInfoPDF';
 
 const LeadInfo = ({
@@ -19,6 +20,7 @@ const LeadInfo = ({
   callLogs = [],
   callLogsLoading = false,
 }) => {
+  const { setSelectedLead } = useCallContext();
   const [currentStatus, setCurrentStatus] = useState(lead?.status || "");
   const [currentStatusId, setCurrentStatusId] = useState(null);
   const [isMortgageModalOpen, setIsMortgageModalOpen] = useState(false);
@@ -26,15 +28,17 @@ const LeadInfo = ({
   const [statusLoading, setStatusLoading] = useState(false);
   const [showUp, setShowUp] = useState(false);
   const [showUpLoading, setShowUpLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [statusHistory, setStatusHistory] = useState([]);
-  const [selectedLead, setSelectedLead] = useState(null);
+  const [addNote, setAddNote] = useState(false);
+  const [note, setNote] = useState("");
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState("");
+  // const [statusHistory, setStatusHistory] = useState([]);
+  // const [selectedLead, setSelectedLead] = useState(null);
   console.log(formData);
-  const getStatusName = (statusId) => {
-    if (!statusId) return "";
-    return LEAD_STATUS[statusId] || statusId;
-  };
+  // const getStatusName = (statusId) => {
+  //   if (!statusId) return "";
+  //   return LEAD_STATUS[statusId] || statusId;
+  // };
   useEffect(() => {
     if (lead) {
       // Get status from lead - could be status name or lead_status ID
@@ -64,8 +68,13 @@ const LeadInfo = ({
       // Get show_up status from lead data
       const showUpValue = lead.originalData?.show_up ?? lead.show_up ?? false;
       setShowUp(Boolean(showUpValue));
+      
+      // Sync note state with lead's notes
+      if (!addNote) {
+        setNote(lead.notes || lead.originalData?.notes || "");
+      }
     }
-  }, [lead]);
+  }, [lead, addNote]);
 
   const handleFormSubmit = (data) => {
     setFormData(data);
@@ -216,7 +225,7 @@ const LeadInfo = ({
       setStatusLoading(false);
     }
   };
-  const fetchStatusHistory = async (agentId, assigneeId) => {
+  /*const fetchStatusHistory = async (agentId, assigneeId) => {
     setLoading(true);
     setError(null);
 
@@ -238,7 +247,43 @@ const LeadInfo = ({
     } finally {
       setLoading(false);
     }
+  };*/
+
+  const handleAddNote = async () => {
+    if (!lead) return;
+    const response = await leadsService.updateLeadNote(
+      lead.originalData?.mortgage_id ||
+        lead.mortgage_id ||
+        lead.identifier ||
+        lead.id,
+      note || "",
+      lead.originalData?.agent_id || lead.agent_id || lead.agentId,
+    );
+    console.log("Note update response:", response);
+    if (response?.status === 200 || response?.success) {
+      // Update the lead with the new note
+      const updatedLead = {
+        ...lead,
+        notes: note || "",
+        originalData: {
+          ...lead.originalData,
+          notes: note || "",
+        },
+      };
+      
+      // Update the selected lead in context to reflect the new note
+      if (setSelectedLead) {
+        setSelectedLead(updatedLead);
+      }
+      
+      setAddNote(false);
+      setNote("");      
+      toast.success(response?.message || "Note added successfully!");
+    } else {
+      toast.error(response?.message || "Failed to add note");
+    }
   };
+
   return (
     <div className="flex h-full flex-col rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <div className="flex-1">
@@ -247,8 +292,18 @@ const LeadInfo = ({
           <div className="flex items-center space-x-2">
             <h4 className="font-semibold text-gray-900 dark:text-gray-100">
               Lead Information
+              {currentStatusId && (
+                <span
+                  style={{ fontSize: "10px" }}
+                  className={`status-badge ml-2 inline-flex rounded-full px-2 py-0.5 font-semibold transition-opacity hover:opacity-80 ${getStatusBadgeClass(
+                    currentStatusId,
+                  )}`}
+                >
+                  {currentStatus || LEAD_STATUS[currentStatusId] || ""}
+                </span>
+              )}
             </h4>
-            <button
+            {/* <button
               onClick={() => {
                 setSelectedLead(lead.originalData);
               }}
@@ -256,7 +311,7 @@ const LeadInfo = ({
               title="View Detailed Info"
             >
               <EyeIcon className="h-5 w-5" />
-            </button>
+            </button> */}
           </div>
           <div className="flex items-center gap-2">
             {/* Styled PDF component */}
@@ -274,64 +329,111 @@ const LeadInfo = ({
             </button>
           </div>
         </div>
-        {currentStatusId && (
-          <span
-            className={`status-badge inline-flex rounded-full px-2 py-1 text-xs font-semibold transition-opacity hover:opacity-80 ${getStatusBadgeClass(
-              currentStatusId,
-            )}`}
-          >
-            {currentStatus || LEAD_STATUS[currentStatusId] || ""}
-          </span>
-        )}
+        
         {/* Lead Details */}
         <div className="my-4 grid grid-cols-2 gap-4">
-          {lead.age && (
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Age</p>
-              <p className="font-medium text-gray-900 dark:text-gray-100">
-                {lead.age}
+          {/* Notes */}
+          {!addNote && lead.originalData?.notes && (
+            <div className="mb-1 col-span-2">
+              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                Notes
+              </p>
+              <p className="rounded-lg bg-gray-50 text-sm text-gray-900 dark:bg-gray-700 dark:text-gray-100">
+                {lead.originalData?.notes} {!addNote && (
+                  <button
+                  onClick={() => {setAddNote(true); setNote(lead?.notes || lead?.originalData?.notes || "")}}
+                  className="cursor-pointer ml-2"
+                >
+                  <PencilIcon className="h-3 w-3 cursor-pointer" />
+                </button>
+                )}
               </p>
             </div>
           )}
+          {(addNote || !lead.originalData?.notes) && <div className="mb-1 col-span-2">
+              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                Notes
+              </p>
+              <p className="rounded-lg bg-gray-50 text-sm text-gray-900 dark:bg-gray-700 dark:text-gray-100">
+                {!addNote && (
+                  <button
+                  onClick={() => {setAddNote(true);}}
+                  className="cursor-pointer"
+                >
+                  <PencilIcon className="h-4 w-4 cursor-pointer" />
+                </button>
+                )}
+                {addNote && (
+                  <>
+                    <textarea value={note} onChange={(e) => setNote(e.target.value)} className="w-full rounded-md border border-gray-500 bg-white p-2 text-gray-900 placeholder:text-gray-400 focus:ring-1 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:ring-blue-500" rows="4" />
+                    <button onClick={() => {
+                      handleAddNote();
+                    }} className="rounded-md bg-[var(--color-atoll)] px-4 py-2 text-xs text-white hover:bg-[var(--color-atoll)]/90 dark:bg-blue-500 dark:hover:bg-blue-600">Add Note</button>
+                    <button onClick={() => {
+                      setAddNote(false);
+                      setNote(lead?.notes || lead?.originalData?.notes || "");
+                    }} className="rounded-md ml-2 bg-gray-500 px-4 py-2 text-xs text-white hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700">Cancel</button>
+                  </>
+                )}
+              </p>
+            </div>} 
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Home Value
+              Loan Amount
             </p>
             <p className="font-medium text-gray-900 dark:text-gray-100">
-              ${lead.homeValue?.toLocaleString()}
+              ${lead?.homeValue || 'N/A'}
             </p>
           </div>
-          {lead.mortgage && (
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Mortgage
-              </p>
-              <p className="font-medium text-gray-900 dark:text-gray-100">
-                ${lead.mortgage?.toLocaleString()}
-              </p>
-            </div>
-          )}
           <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Mortgage Lender
+            </p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
+              {lead?.originalData?.lender_name || 'N/A'}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Client Age</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
+              {lead?.originalData?.ivr_response?.age || 'N/A'}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Co-Borrower</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
+              {lead?.originalData?.ivr_response?.coborrower === "1" ? "Yes" : lead?.originalData?.ivr_response?.coborrower === "0" ? "No" : 'N/A'}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Medical Issues</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
+              {lead?.originalData?.ivr_response?.health === "1" ? "Yes" : lead?.originalData?.ivr_response?.health === "0" ? "No" : 'N/A'}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Smoker</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
+              {lead?.originalData?.ivr_response?.tobacco === "1" ? "Yes" : lead?.originalData?.ivr_response?.tobacco === "0" ? "No" : 'N/A'}
+            </p>
+          </div>
+          <div className="col-span-2">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Address
+            </p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
+              {lead?.address || 'N/A'}
+            </p>
+          </div>
+          {/* <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Territory
             </p>
             <p className="font-medium text-gray-900 dark:text-gray-100">
               {lead.originalData?.state}-{lead.originalData?.zip}
             </p>
-          </div>
+          </div> */}
         </div>
-
-        {/* Notes */}
-        {lead.notes && (
-          <div className="mb-4">
-            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-              Notes
-            </p>
-            <p className="rounded-lg bg-gray-50 p-3 text-sm text-gray-900 dark:bg-gray-700 dark:text-gray-100">
-              {lead.notes}
-            </p>
-          </div>
-        )}
 
         {/* Show Up Toggle */}
         <div className="mb-6">
@@ -497,7 +599,7 @@ const LeadInfo = ({
           )}
         </div>
       </div>
-      {selectedLead && (
+      {/*selectedLead && (
         <LeadDetailsModal
           statusHistory={statusHistory}
           loading={loading}
@@ -508,7 +610,7 @@ const LeadInfo = ({
           fetchStatusHistory={fetchStatusHistory}
           getStatusName={getStatusName}
         />
-      )}
+      )*/}
 
       {/* Mortgage Protection Modal */}
       <MortgageProtectionModal

@@ -137,71 +137,183 @@ const CallControls = ({
   };
 
   const requestMicrophonePermission = async () => {
-    // Check if getUserMedia is available
-    if (!navigator?.mediaDevices?.getUserMedia) {
-      const errorMsg = 'Microphone access is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.';
-      alert(errorMsg);
-      setAudioPermission(false);
-      return false;
-    }
+  console.log("Navigator:", navigator);
 
-    try {
-      // Simple approach: just try to get user media
-      // The browser will handle all the checks and throw appropriate errors
-      let stream;
-      
-      // Try with basic audio first (most compatible)
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      } catch (basicError) {
-        // If basic fails, try with enhanced constraints
-        try {
-          stream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-              echoCancellation: true,
-              noiseSuppression: true,
-              autoGainControl: true
-            }
-          });
-        } catch {
-          throw basicError; // Throw the original error
-        }
-      }
-
-      // Successfully got stream
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        setAudioPermission(true);
-        console.log('Microphone permission granted');
-        return true;
-      }
-    } catch (error) {
-      console.error('Microphone permission error:', error);
-      setAudioPermission(false);
-      
-      // Provide user-friendly error messages
-      let errorMessage = 'Microphone permission is required for calling.';
-      
-      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        errorMessage = 'Microphone permission was denied. Please allow microphone access in your browser settings and try again.';
-      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-        errorMessage = 'No microphone found. Please connect a microphone and try again.';
-      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
-        errorMessage = 'Microphone is already in use by another application. Please close other applications using the microphone and try again.';
-      } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
-        errorMessage = 'Microphone settings are not supported. Please try again.';
-      } else if (error.name === 'SecurityError') {
-        errorMessage = 'Microphone access requires HTTPS or localhost. Please access this page over a secure connection.';
-      } else if (error.name === 'TypeError' || error.message?.includes('getUserMedia')) {
-        errorMessage = 'Microphone access is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.';
-      }
-      
-      alert(errorMessage);
-      return false;
-    }
-    
+  // 1️⃣ Check if browser supports audio
+  if (!navigator?.mediaDevices?.getUserMedia) {
+    alert("Microphone access is not supported in this browser.");
+    setAudioPermission(false);
     return false;
-  };
+  }
+
+  // 2️⃣ Check if microphone devices exist before requesting permission
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  const hasMic = devices.some(d => d.kind === "audioinput");
+
+  if (!hasMic) {
+    alert(
+      "No microphone detected.\n\n" +
+      "👉 If you are on Windows, enable microphone in:\n" +
+      "Settings → Privacy & Security → Microphone.\n\n" +
+      "👉 If using a desktop PC, plug in a microphone or headset."
+    );
+    setAudioPermission(false);
+    return false;
+  }
+
+  try {
+    let stream;
+
+    // 3️⃣ Try getting permission
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (basicError) {
+      // Retry with advanced constraints
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+      } catch {
+  throw basicError;
+      }
+    }
+
+    // 4️⃣ If permission granted
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      setAudioPermission(true);
+      console.log("Microphone permission granted.");
+      return true;
+    }
+
+  } catch (error) {
+    console.error("Microphone permission error:", error);
+
+    let errorMessage = "Microphone permission is required.";
+
+    switch (error.name) {
+      case "NotAllowedError":
+      case "PermissionDeniedError":
+        errorMessage =
+          "Microphone permission was denied.\n\n" +
+          "➡️ FIX:\n" +
+          "1. Click the padlock (🔒) in the browser address bar.\n" +
+          "2. Set Microphone → Allow.\n" +
+          "3. Reload the page.";
+        break;
+
+      case "NotFoundError":
+      case "DevicesNotFoundError":
+        errorMessage =
+          "No microphone found on this device.\n" +
+          "Please connect a microphone and try again.";
+        break;
+
+      case "SecurityError":
+        errorMessage =
+          "Microphone access requires HTTPS or localhost.\n" +
+          "Make sure you're running on https:// or http://localhost.";
+        break;
+
+      case "NotReadableError":
+      case "TrackStartError":
+        errorMessage =
+          "Your microphone is being used by another app.\n" +
+          "Close Zoom / Teams / WhatsApp Desktop and try again.";
+        break;
+
+      case "OverconstrainedError":
+      case "ConstraintNotSatisfiedError":
+        errorMessage =
+          "Microphone settings are not supported by this device.";
+        break;
+
+      default:
+        errorMessage =
+          "Unable to access the microphone.\n" +
+          "Please check browser & OS microphone permissions.";
+    }
+
+    alert(errorMessage);
+    setAudioPermission(false);
+    return false;
+  }
+
+  setAudioPermission(false);
+  return false;
+};
+
+  // const requestMicrophonePermission = async () => {
+  //   console.log(navigator)
+  //   // Check if getUserMedia is available
+  //   if (!navigator?.mediaDevices?.getUserMedia) {
+  //     const errorMsg = 'Microphone access is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.';
+  //     alert(errorMsg);
+  //     setAudioPermission(false);
+  //     return false;
+  //   }
+
+  //   try {
+  //     // Simple approach: just try to get user media
+  //     // The browser will handle all the checks and throw appropriate errors
+  //     let stream;
+      
+  //     // Try with basic audio first (most compatible)
+  //     try {
+  //       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  //     } catch (basicError) {
+  //       // If basic fails, try with enhanced constraints
+  //       try {
+  //         stream = await navigator.mediaDevices.getUserMedia({
+  //           audio: {
+  //             echoCancellation: true,
+  //             noiseSuppression: true,
+  //             autoGainControl: true
+  //           }
+  //         });
+  //       } catch {
+  //         throw basicError; // Throw the original error
+  //       }
+  //     }
+
+  //     // Successfully got stream
+  //     if (stream) {
+  //       stream.getTracks().forEach(track => track.stop());
+  //       setAudioPermission(true);
+  //       console.log('Microphone permission granted');
+  //       return true;
+  //     }
+  //   } catch (error) {
+  //     console.error('Microphone permission error:', error);
+  //     setAudioPermission(false);
+      
+  //     // Provide user-friendly error messages
+  //     let errorMessage = 'Microphone permission is required for calling.';
+      
+  //     if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+  //       errorMessage = 'Microphone permission was denied. Please allow microphone access in your browser settings and try again.';
+  //     } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+  //       errorMessage = 'No microphone found. Please connect a microphone and try again.';
+  //     } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+  //       errorMessage = 'Microphone is already in use by another application. Please close other applications using the microphone and try again.';
+  //     } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
+  //       errorMessage = 'Microphone settings are not supported. Please try again.';
+  //     } else if (error.name === 'SecurityError') {
+  //       errorMessage = 'Microphone access requires HTTPS or localhost. Please access this page over a secure connection.';
+  //     } else if (error.name === 'TypeError' || error.message?.includes('getUserMedia')) {
+  //       errorMessage = 'Microphone access is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Edge.';
+  //     }
+      
+  //     alert(errorMessage);
+  //     return false;
+  //   }
+    
+  //   return false;
+  // };
 
   // ✅ MUTE CONTROL
   const handleMuteToggle = async () => {
@@ -326,10 +438,14 @@ const CallControls = ({
   const hasSufficientBalance = walletBalance !== null && walletBalance > 0;
   const canMakeCall = hasValidOutboundNumber && licenseDetails && !licenseError && hasSufficientBalance;
 
+  const isCallInProgress = isCallActive || isDialing;
+
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 p-6 w-full max-w-sm text-center">
-      {!audioPermission && (
-        <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-lg p-3 mb-4 text-sm">
+    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 w-full max-w-sm text-center ${
+      isCallInProgress ? 'p-3' : 'p-6'
+    }`}>
+      {!audioPermission && !isCallInProgress && (
+        <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-lg p-2 mb-3 text-xs">
           <p>Microphone access required</p>
           <button
             onClick={async () => {
@@ -337,137 +453,145 @@ const CallControls = ({
               // Re-check permissions after request
               await checkAudioPermissions();
             }}
-            className="mt-2 px-3 py-1 bg-yellow-500 text-white rounded text-xs hover:bg-yellow-600 transition-colors"
+            className="mt-1.5 px-2 py-0.5 bg-yellow-500 text-white rounded text-xs hover:bg-yellow-600 transition-colors"
           >
             Grant Permission
           </button>
         </div>
       )}
 
-      {/* License Warning */}
-      {selectedLead && !licenseLoading && !licenseDetails && licenseError && (
-        <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg p-3 mb-4 text-sm">
-          <p className="font-medium">⚠️ License Required</p>
-          <p className="mt-1 text-xs">{licenseError}</p>
-          <p className="mt-2 text-xs">Please upload license in Profile page.</p>
+      {/* License Warning - Hide during active call */}
+      {selectedLead && !licenseLoading && !licenseDetails && licenseError && !isCallInProgress && (
+        <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg p-2 mb-3 text-xs">
+          <p className="font-medium text-xs">⚠️ License Required</p>
+          <p className="mt-0.5 text-xs">{licenseError}</p>
+          <p className="mt-1 text-xs">Please upload license in Profile page.</p>
         </div>
       )}
 
-      {/* License Loading */}
-      {selectedLead && licenseLoading && (
-        <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-lg p-3 mb-4 text-sm">
-          <p>Checking license...</p>
+      {/* License Loading - Hide during active call */}
+      {selectedLead && licenseLoading && !isCallInProgress && (
+        <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-lg p-2 mb-3 text-xs">
+          <p className="text-xs">Checking license...</p>
         </div>
       )}
 
-      {/* License Verified */}
-      {selectedLead && licenseDetails && !licenseError && (
-        <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg p-3 mb-4 text-sm">
-          <p className="font-medium">✓ License Verified</p>
-          <p className="mt-1 text-xs">State: {licenseDetails.state || 'N/A'}</p>
+      {/* License Verified - Hide during active call */}
+      {selectedLead && licenseDetails && !licenseError && !isCallInProgress && (
+        <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg p-2 mb-3 text-xs">
+          <p className="font-medium text-xs">✓ License Verified</p>
+          <p className="mt-0.5 text-xs">State: {licenseDetails.state || 'N/A'}</p>
         </div>
       )}
 
-      {/* Wallet Balance Warning */}
-      {selectedLead && (!hasSufficientBalance && walletBalance !== null) && (
-        <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg p-3 mb-4 text-sm">
-          <p className="font-medium">⚠️ Insufficient Wallet Balance</p>
-          <p className="mt-1 text-xs">
+      {/* Wallet Balance Warning - Hide during active call */}
+      {selectedLead && (!hasSufficientBalance && walletBalance !== null) && !isCallInProgress && (
+        <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg p-2 mb-3 text-xs">
+          <p className="font-medium text-xs">⚠️ Insufficient Wallet Balance</p>
+          <p className="mt-0.5 text-xs">
             Your wallet balance is ${typeof walletBalance === 'number' && !isNaN(walletBalance) ? parseFloat(walletBalance).toFixed(2) : '0.00'}. 
             Please recharge your wallet to make calls.
           </p>
         </div>
       )}
 
-      {/* Outbound Number Warning */}
-      {selectedLead && !hasValidOutboundNumber && (
-        <div className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded-lg p-3 mb-4 text-sm">
-          <p className="font-medium">⚠️ Outbound Number Required</p>
-          <p className="mt-1 text-xs">Please select a valid outbound number to make calls.</p>
+      {/* Outbound Number Warning - Hide during active call */}
+      {selectedLead && !hasValidOutboundNumber && !isCallInProgress && (
+        <div className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded-lg p-2 mb-3 text-xs">
+          <p className="font-medium text-xs">⚠️ Outbound Number Required</p>
+          <p className="mt-0.5 text-xs">Please select a valid outbound number to make calls.</p>
         </div>
       )}
 
-      {/* Lead info */}
-      <div className="flex flex-col items-center mb-4">
-        <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-3">
-          <span className="text-blue-600 dark:text-blue-400 font-bold text-xl">
-            {getInitials(selectedLead.name)}
-          </span>
+      {/* Lead info - Hide avatar during active call, reduce size */}
+      <div className={`flex items-center justify-center gap-3 ${isCallInProgress ? 'mb-2' : 'mb-4'}`}>
+        {!isCallInProgress && (
+          <div className={`${isCallInProgress ? 'w-8 h-8' : 'w-10 h-10'} rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0`}>
+            <span className={`text-blue-600 dark:text-blue-400 font-bold ${isCallInProgress ? 'text-xs' : 'text-sm'}`}>
+              {getInitials(selectedLead.name)}
+            </span>
+          </div>
+        )}
+        <div className="flex flex-col items-center">
+          <h3 className={`font-semibold text-gray-900 dark:text-gray-100 ${isCallInProgress ? 'text-sm' : 'text-base'}`}>
+            {selectedLead.name}
+          </h3>
+          <p className={`text-gray-600 dark:text-gray-300 ${isCallInProgress ? 'text-xs' : 'text-xs'}`}>
+            {selectedLead.phone}
+          </p>
         </div>
-        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{selectedLead.name}</h3>
-        <p className="text-gray-600 dark:text-gray-300 text-sm">{selectedLead.phone}</p>
       </div>
 
-      {/* Status */}
+      {/* Status - Smaller during active call */}
       {isDialing && (
-        <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-full px-4 py-1 inline-block font-medium text-sm mb-4">
+        <div className={`bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-full inline-block font-medium ${isCallInProgress ? 'px-1.5 py-0.5 text-xs mb-2' : 'px-3 py-0.5 text-xs mb-3'}`}>
           Dialing...
         </div>
       )}
       {isCallActive && callDuration > 0 && (
-        <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full px-4 py-1 inline-block font-medium text-sm mb-4">
+        <div className={`bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full inline-block font-medium ${isCallInProgress ? 'px-1.5 py-0.5 text-xs mb-2' : 'px-3 py-0.5 text-xs mb-3'}`}>
           Connected • {formatCallDuration(callDuration)}
         </div>
       )}
-      {isCallEnded && (
-        <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-full px-4 py-1 inline-block font-medium text-sm mb-4">
+      {isCallEnded && !isCallInProgress && (
+        <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-full px-3 py-0.5 inline-block font-medium text-xs mb-3">
           Call Ended
         </div>
       )}
 
-      {/* Indicators */}
+      {/* Indicators - Smaller during active call */}
       {(isCallActive || isDialing) && (
-        <div className="flex justify-center gap-4 mb-4 text-xs">
-          <div className={`flex items-center gap-1 px-2 py-1 rounded ${
+        <div className={`flex justify-center gap-3 ${isCallInProgress ? 'mb-2 text-xs' : 'mb-3 text-xs'}`}>
+          <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded ${
             isMuted ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
           }`}>
-            {isMuted ? <NoSymbolIcon className="w-3 h-3" /> : <MicrophoneIcon className="w-3 h-3" />}
-            <span>{isMuted ? 'Muted' : 'Mic On'}</span>
+            {isMuted ? <NoSymbolIcon className={isCallInProgress ? "w-2 h-2" : "w-2.5 h-2.5"} /> : <MicrophoneIcon className={isCallInProgress ? "w-2 h-2" : "w-2.5 h-2.5"} />}
+            <span className="text-xs">{isMuted ? 'Muted' : 'Mic On'}</span>
           </div>
-          <div className={`flex items-center gap-1 px-2 py-1 rounded ${
+          <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded ${
             isSpeakerOn ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
           }`}>
-            {isSpeakerOn ? <SpeakerWaveIcon className="w-3 h-3" /> : <SpeakerXMarkIcon className="w-3 h-3" />}
-            <span>{isSpeakerOn ? 'Speaker On' : 'Receiver'}</span>
+            {isSpeakerOn ? <SpeakerWaveIcon className={isCallInProgress ? "w-2 h-2" : "w-2.5 h-2.5"} /> : <SpeakerXMarkIcon className={isCallInProgress ? "w-2 h-2" : "w-2.5 h-2.5"} />}
+            <span className="text-xs">{isSpeakerOn ? 'Speaker On' : 'Receiver'}</span>
           </div>
         </div>
       )}
 
-      {/* Buttons */}
-      <div className="flex items-center justify-center gap-6 mt-4">
+      {/* Buttons - Smaller during active call */}
+      <div className={`flex items-center justify-center ${isCallInProgress ? 'gap-2 mt-2' : 'gap-4 mt-3'}`}>
         {/* Mute */}
         <button
           onClick={handleMuteToggle}
           disabled={!isCallActive && !isDialing}
-          className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200 ${
+          className={`${isCallInProgress ? 'w-8 h-8' : 'w-10 h-10'} flex items-center justify-center rounded-full transition-all duration-200 ${
             isMuted
               ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 shadow-inner'
               : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 shadow-sm'
           } ${(!isCallActive && !isDialing) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           title={isMuted ? 'Unmute microphone' : 'Mute microphone'}
         >
-          {isMuted ? <NoSymbolIcon className="w-6 h-6" /> : <MicrophoneIcon className="w-6 h-6" />}
+          {isMuted ? <NoSymbolIcon className={isCallInProgress ? "w-4 h-4" : "w-5 h-5"} /> : <MicrophoneIcon className={isCallInProgress ? "w-4 h-4" : "w-5 h-5"} />}
         </button>
 
         {/* Schedule Appointment */}
         <button
           onClick={onScheduleAppointment}
           disabled={!selectedLead}
-          className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200 ${
+          className={`${isCallInProgress ? 'w-8 h-8' : 'w-10 h-10'} flex items-center justify-center rounded-full transition-all duration-200 ${
             selectedLead
               ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/40 shadow-sm'
               : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500 opacity-50 cursor-not-allowed'
           }`}
           title={selectedLead ? 'Schedule appointment' : 'Select a lead to schedule appointment'}
         >
-          <CalendarIcon className="w-6 h-6" />
+          <CalendarIcon className={isCallInProgress ? "w-4 h-4" : "w-5 h-5"} />
         </button>
 
         {/* Hangup / Call */}
         <button
           onClick={isCallActive || isDialing ? onHangupCall : onMakeCall}
           disabled={(!canMakeCall && !isCallActive && !isDialing)}
-          className={`w-16 h-16 flex items-center justify-center rounded-full shadow-md transition-all duration-200 ${
+          className={`${isCallInProgress ? 'w-10 h-10' : 'w-14 h-14'} flex items-center justify-center rounded-full shadow-md transition-all duration-200 ${
             isCallActive || isDialing
               ? 'bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 transform hover:scale-105'
               : !canMakeCall
@@ -486,21 +610,21 @@ const CallControls = ({
               : 'Make call'
           }
         >
-          <PhoneXMarkIcon className="w-8 h-8 text-white" />
+          <PhoneXMarkIcon className={isCallInProgress ? "w-5 h-5" : "w-7 h-7"} />
         </button>
 
         {/* Speaker */}
         <button
           onClick={handleSpeakerToggle}
           disabled={!isCallActive && !isDialing}
-          className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200 ${
+          className={`${isCallInProgress ? 'w-8 h-8' : 'w-10 h-10'} flex items-center justify-center rounded-full transition-all duration-200 ${
             isSpeakerOn
               ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400 shadow-inner'
               : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 shadow-sm'
           } ${(!isCallActive && !isDialing) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           title={isSpeakerOn ? 'Switch to receiver' : 'Switch to speaker'}
         >
-          {isSpeakerOn ? <SpeakerWaveIcon className="w-6 h-6" /> : <SpeakerXMarkIcon className="w-6 h-6" />}
+          {isSpeakerOn ? <SpeakerWaveIcon className={isCallInProgress ? "w-4 h-4" : "w-5 h-5"} /> : <SpeakerXMarkIcon className={isCallInProgress ? "w-4 h-4" : "w-5 h-5"} />}
         </button>
       </div>
     </div>

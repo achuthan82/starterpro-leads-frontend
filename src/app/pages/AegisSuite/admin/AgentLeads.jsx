@@ -2,8 +2,15 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router";
 import { Card } from "components/ui";
 import { Switch } from "@headlessui/react";
+import {
+  Dialog,
+  DialogPanel,
+  Transition,
+  TransitionChild,
+  DialogTitle,
+} from "@headlessui/react";
 import SharedSidebar from "../components/SharedSidebar";
-import { adminService, leadsService, stateService } from "utils/apiService";
+import { adminService, leadsService, stateService, automationService } from "utils/apiService";
 import {
   ArrowLeftIcon,
   PhoneIcon,
@@ -14,6 +21,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ArrowDownTrayIcon,
+  XCircleIcon,
 } from "@heroicons/react/24/outline";
 import {
   LEAD_STATUS,
@@ -50,6 +58,8 @@ const AgentLeads = () => {
   });
   const [states, setStates] = useState([]);
   const [printLeads, setPrintLeads] = useState([]);
+  const [showExportConfirmModal, setShowExportConfirmModal] = useState(false);
+  const [pendingExportType, setPendingExportType] = useState(null); // 'selected' or 'all'
   // Summary data for tabs
   const [summary, setSummary] = useState({
     goldLeads: 0,
@@ -120,10 +130,12 @@ const AgentLeads = () => {
   useEffect(() => {
     fetchAgentData();
     fetchAgentSummary();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [agentId]);
 
   useEffect(() => {
     fetchAgentLeads(1, 10, "gold", {}, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     setShowToolTip(true);
@@ -512,6 +524,16 @@ const AgentLeads = () => {
       );
     }
   };
+  const handleExportConfirm = () => {
+    if (pendingExportType === 'selected') {
+      downloadCsv();
+    } else if (pendingExportType === 'all') {
+      downloadAgentLeads();
+    }
+    setShowExportConfirmModal(false);
+    setPendingExportType(null);
+  };
+
   const downloadCsv = (csv) => {
     const data = csv ? csv : printLeads;
     const csvString = convertToCSV(data, columns);
@@ -613,6 +635,33 @@ const AgentLeads = () => {
 
     return result;
   }
+
+  const handleLeadAutomation = (status, lead) => {
+    setLoading(true);
+    const payload = { sms_automation_enabled: status };
+    automationService.toggleLeadManagementAutomation(lead.assignee_id, payload)
+    .then((response) => {
+      console.log(response);
+      if (response.data.status === 200) {
+        fetchAgentLeads(
+          currentPage,
+          perPage,
+          activeTab,
+          filters,
+          purchased
+        );
+        toast.success("Success");
+      } else {
+        toast.error(response?.data?.message || "Failed to Update");
+      }
+    })
+    .catch((error) => {
+      toast.error(error?.message || "Failed to Update");
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+  };
 
   if (loading && !agent) {
     return (
@@ -956,7 +1005,10 @@ const AgentLeads = () => {
 
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => downloadCsv()}
+                    onClick={() => {
+                      setPendingExportType('selected');
+                      setShowExportConfirmModal(true);
+                    }}
                     disabled={selectedLeads.length === 0}
                     className={`flex items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                       selectedLeads.length === 0
@@ -969,7 +1021,10 @@ const AgentLeads = () => {
                   </button>
 
                   <button
-                    onClick={downloadAgentLeads}
+                    onClick={() => {
+                      setPendingExportType('all');
+                      setShowExportConfirmModal(true);
+                    }}
                     disabled={totalRecords < 1}
                     className={`flex items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                       totalRecords < 1
@@ -1080,6 +1135,9 @@ const AgentLeads = () => {
                         <th className="min-w-[120px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                           Lead Status
                         </th>
+                        <th className="min-w-[80px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
+                          Sms Automation
+                        </th>
                         <th className="min-w-[150px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                           Address
                         </th>
@@ -1189,6 +1247,34 @@ const AgentLeads = () => {
                                     lead.lead_status || lead.status,
                                   ) || ""}
                                 </span>
+                              </td>
+                              
+                              {/* SMS automation*/}
+                              <td className="px-3 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900 dark:text-gray-100">
+                                  <Switch
+                                    checked={lead?.sms_automation_enabled}
+                                    onChange={() =>
+                                      handleLeadAutomation(
+                                        !lead?.sms_automation_enabled,
+                                        lead,
+                                      )
+                                    }
+                                    className={`${
+                                      lead?.sms_automation_enabled
+                                        ? "bg-[#0a2463]"
+                                        : "bg-gray-300"
+                                    } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+                                  >
+                                    <span
+                                      className={`${
+                                        lead?.sms_automation_enabled
+                                          ? "translate-x-6"
+                                          : "translate-x-1"
+                                      } flex inline-block h-4 w-4 transform items-center justify-center rounded-full bg-white transition`}
+                                    ></span>
+                                  </Switch>
+                                </div>
                               </td>
 
                               {/* Address */}
@@ -1543,6 +1629,83 @@ const AgentLeads = () => {
           </div>
         </div>
       )}
+
+      {/* Export Confirmation Modal */}
+      <Transition show={showExportConfirmModal}>
+        <Dialog
+          className="relative z-50"
+          onClose={() => {
+            setShowExportConfirmModal(false);
+            setPendingExportType(null);
+          }}
+        >
+          <TransitionChild
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </TransitionChild>
+
+          <div className="fixed inset-0 z-10 overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <TransitionChild
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <div className="bg-white dark:bg-gray-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div className="sm:flex sm:items-start">
+                      <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-900/30 sm:mx-0 sm:h-10 sm:w-10">
+                        <XCircleIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                      </div>
+                      <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                        <DialogTitle
+                          as="h3"
+                          className="text-base font-semibold leading-6 text-gray-900 dark:text-gray-100"
+                        >
+                          Confirm Export
+                        </DialogTitle>
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            All these leads belongs to StarterPro Leads. You don&apos;t have permission to export and use it anywhere else and it goes against our terms and conditions.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700/50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                    <button
+                      type="button"
+                      className="inline-flex w-full justify-center rounded-md bg-[#0a2463] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#0a2463]/90 sm:ml-3 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700"
+                      onClick={handleExportConfirm}
+                    >
+                      I Agree, Continue Export
+                    </button>
+                    <button
+                      type="button"
+                      className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto dark:bg-gray-800 dark:text-gray-100 dark:ring-gray-600 dark:hover:bg-gray-700"
+                      onClick={() => {
+                        setShowExportConfirmModal(false);
+                        setPendingExportType(null);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </DialogPanel>
+              </TransitionChild>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   );
 };
