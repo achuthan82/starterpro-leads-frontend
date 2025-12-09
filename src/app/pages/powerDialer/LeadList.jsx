@@ -7,7 +7,9 @@ import {
   CalendarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router";
 import { dialerService, stateService } from "utils/apiService";
 import { LEAD_STATUS, STATUS_NAME_TO_ID } from "constants/app.constant";
 import { toast } from "sonner";
@@ -18,6 +20,7 @@ const LeadList = ({
   searchTerm,
   onSearchChange,
 }) => {
+  const navigate = useNavigate();
   const [selectedStatus, setSelectedStatus] = useState("All Statuses");
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -333,6 +336,22 @@ const LeadList = ({
                       </span>
                     );
                   })()}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const mortgageId = lead.originalData?.mortgage_id || lead.mortgage_id || lead.id;
+                      const leadMemberId = lead.originalData?.lead_member_id || lead.lead_member_id;
+                      if (mortgageId && leadMemberId) {
+                        navigate(`/sms-conversation/${mortgageId}/${leadMemberId}`);
+                      } else {
+                        toast.error("Missing lead information for SMS conversation");
+                      }
+                    }}
+                    className="p-1 text-gray-400 transition-colors hover:text-green-600 dark:hover:text-green-400"
+                    title="View SMS Conversation"
+                  >
+                    <ChatBubbleLeftRightIcon className="h-5 w-5" />
+                  </button>
                 </div>
               </div>
 

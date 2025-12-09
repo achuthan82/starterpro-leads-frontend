@@ -764,7 +764,7 @@ const MortgageProtectionModal = ({
                   Unsaved Changes
                 </DialogTitle>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  You have unsaved changes. Are you sure you want to close without saving?
+                  You have unsaved changes. If you are already done with the assessment, ignore this message and close the modal.
                 </p>
                 <div className="flex justify-end gap-3">
                   <Button
