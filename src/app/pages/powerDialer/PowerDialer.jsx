@@ -330,9 +330,10 @@ const PowerDialer = () => {
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto  p-6">
           <div className="grid grid-cols-12 gap-6 h-full">
             {/* Left Column - Leads List */}
+    
             <div className="col-span-4">
               <LeadList
                 selectedLead={selectedLead}
@@ -378,7 +379,7 @@ const PowerDialer = () => {
             </div>
 
             {/* Right Column - Script and Transcript */}
-            <div className="col-span-4">
+            <div className="fixed right-10 top-48.5 w-1/4 h-screen  overflow-auto  h-[calc(100vh-12rem)]">
               <ScriptTranscript
                 activeTabs={activeTabs}
                 onTabToggle={handleTabToggle}

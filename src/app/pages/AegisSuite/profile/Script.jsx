@@ -4,7 +4,12 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState, useRef } from "react";
 import profileService from "utils/profileService";
 import { toast } from "sonner";
-import {Pagination, PaginationItems, PaginationNext, PaginationPrevious} from 'components/ui'
+import {
+  Pagination,
+  PaginationItems,
+  PaginationNext,
+  PaginationPrevious,
+} from "components/ui";
 import DeleteScript from "./DeleteScript";
 const Script = () => {
   const fetchOnce = useRef(false);
@@ -14,9 +19,9 @@ const Script = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [editData, setEditData] = useState(null)
-  const [deleteItem, setDeleteItem] = useState(null)
-  const [deleteModal, setDeleteModal] = useState(false)
+  const [editData, setEditData] = useState(null);
+  const [deleteItem, setDeleteItem] = useState(null);
+  const [deleteModal, setDeleteModal] = useState(false);
   const getScriptData = (page, per_page, type) => {
     setLoading(true);
     const params = { page: page, per_page: per_page, type_: type };
@@ -44,15 +49,20 @@ const Script = () => {
     getScriptData(val, 5, activeTab);
   };
   const handleDelete = (item) => {
-    setDeleteItem(item)
-    setDeleteModal(true)
-  }
+    setDeleteItem(item);
+    setDeleteModal(true);
+  };
   useEffect(() => {
     if (!fetchOnce.current) {
       fetchOnce.current = true;
       getScriptData(1, 5, 1);
     }
   }, []);
+  const renderDescription = (html) => {
+    return html.replace(/({{.*?}})/g, (match) => {
+      return `<span class="rounded-md bg-yellow-200 px-1 py-0.5 font-mono text-sm text-yellow-900">${match}</span>`;
+    });
+  };
   return (
     <div>
       <>
@@ -66,7 +76,7 @@ const Script = () => {
                 key={tab.id}
                 onClick={() => {
                   setActiveTab(tab.id);
-                  setCurrentPage(1)
+                  setCurrentPage(1);
                   getScriptData(1, 5, tab.id);
                 }}
                 className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition-all ${
@@ -122,7 +132,13 @@ const Script = () => {
                       </div>
 
                       {/* Description */}
-                      <p className="mt-2 whitespace-pre-wrap text-gray-700 dark:text-gray-300">
+                      <div
+                        className="mt-2 whitespace-pre-wrap text-gray-700 dark:text-gray-300"
+                        dangerouslySetInnerHTML={{
+                          __html: renderDescription(item.description),
+                        }}
+                      />
+                      {/* <p className="mt-2 whitespace-pre-wrap text-gray-700 dark:text-gray-300">
                         {item.description
                           .split(/({{.*?}})/g)
                           .map((part, index) =>
@@ -137,14 +153,23 @@ const Script = () => {
                               part
                             ),
                           )}
-                      </p>
+                      </p> */}
 
                       {/* Actions */}
                       <div className="mt-4 flex gap-2">
-                        <button className="rounded-md bg-[#0a2463] px-3 py-1.5 text-sm text-white hover:bg-[#082050]" onClick={() => {setEditData(item); open()}}>
+                        <button
+                          className="rounded-md bg-[#0a2463] px-3 py-1.5 text-sm text-white hover:bg-[#082050]"
+                          onClick={() => {
+                            setEditData(item);
+                            open();
+                          }}
+                        >
                           Edit
                         </button>
-                        <button className="rounded-md bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700" onClick={() => handleDelete(item)}>
+                        <button
+                          className="rounded-md bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700"
+                          onClick={() => handleDelete(item)}
+                        >
                           Delete
                         </button>
                       </div>
@@ -153,7 +178,7 @@ const Script = () => {
                 )}
               </div>
               {script && script.length > 0 && pagination && (
-                <div className=" mt-4 flex justify-center">
+                <div className="mt-4 flex justify-center">
                   <Pagination
                     total={Math.ceil(pagination.total / 5)}
                     value={currentPage}
@@ -169,11 +194,25 @@ const Script = () => {
           )}
         </div>
       </>
-      <ScriptModal isOpen={isOpen} close={close} editData={editData} setEditData={setEditData} setCurrentPage={setCurrentPage} activeTab={activeTab} getScriptData={getScriptData}/>
-      {
-        deleteModal && <DeleteScript script={deleteItem} deleteModal={deleteModal} getScriptData={getScriptData} setCurrentPage={setCurrentPage} activeTab={activeTab} setDeleteModal={setDeleteModal}/>
-
-      }
+      <ScriptModal
+        isOpen={isOpen}
+        close={close}
+        editData={editData}
+        setEditData={setEditData}
+        setCurrentPage={setCurrentPage}
+        activeTab={activeTab}
+        getScriptData={getScriptData}
+      />
+      {deleteModal && (
+        <DeleteScript
+          script={deleteItem}
+          deleteModal={deleteModal}
+          getScriptData={getScriptData}
+          setCurrentPage={setCurrentPage}
+          activeTab={activeTab}
+          setDeleteModal={setDeleteModal}
+        />
+      )}
     </div>
   );
 };
