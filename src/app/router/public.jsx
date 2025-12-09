@@ -64,7 +64,7 @@ const publicRoutes = {
       }),
     },
     {
-      path: "mortgage-protection-preview/:token",
+      path: "mortgage-protection-preview/:token/:currentCallLogId",
       lazy: async () => ({
         Component: (await import("app/pages/powerDialer/MortgageProtectionPreview")).default,
       }),

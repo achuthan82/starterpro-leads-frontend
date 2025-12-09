@@ -11,18 +11,26 @@ class SmsService {
    * @param {Object} params - Query parameters
    * @param {number} params.page - Page number (default: 1)
    * @param {number} params.per_page - Items per page (default: 10)
+   * @param {string} params.name - Optional filter for name/mortgage_id
    * @returns {Promise} Response with paginated leads list
    */
   async getSentLeadsPaginated(params = {}) {
     try {
-      const { page = 1, per_page = 10 } = params;
+      const { page = 1, per_page = 10, name } = params;
+      const requestParams = {
+        page,
+        per_page,
+      };
+      
+      // Add name param only if provided
+      if (name) {
+        requestParams.name = name;
+      }
+      
       const response = await axios.get(
         `${JWT_HOST_API}/sms-automation/list-sent-leads/paginated`,
         {
-          params: {
-            page,
-            per_page,
-          },
+          params: requestParams,
         }
       );
       return response.data;
