@@ -5,6 +5,7 @@ import Select from "react-select";
 import axios from "utils/axios";
 import { toast } from "sonner";
 import { convertDays } from "utils/utlis";
+import { Spinner } from "components/ui";
 const CartSidebar = ({
   open,
   onClose,
@@ -235,6 +236,7 @@ const CartSidebar = ({
             disabled={cartData.length === 0 || !selectedAgent || assignLoading}
             onClick={assignLeads}
           >
+            {assignLoading && <Spinner className="me-2 h-4 w-4 text-white" />}
             Click to Assign
           </button>
         </div>
