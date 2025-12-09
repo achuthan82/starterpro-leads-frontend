@@ -99,18 +99,18 @@ export default function ScriptTranscript({
     }
   }, [activeTab]);
 
-  const splitIntoSteps = (html) => {
-    if (!html) return [];
+  // const splitIntoSteps = (html) => {
+  //   if (!html) return [];
 
-    const container = document.createElement("div");
-    container.innerHTML = html;
+  //   const container = document.createElement("div");
+  //   container.innerHTML = html;
 
-    const paragraphs = [...container.querySelectorAll("p")];
+  //   const paragraphs = [...container.querySelectorAll("p")];
 
-    return paragraphs
-      .map((p) => p.innerHTML.trim())
-      .filter((line) => line !== "" && line !== "<br>");
-  };
+  //   return paragraphs
+  //     .map((p) => p.innerHTML.trim())
+  //     .filter((line) => line !== "" && line !== "<br>");
+  // };
 
   // Script content for each badge
   //   const scriptContent = {
@@ -262,7 +262,7 @@ export default function ScriptTranscript({
   };
 
   return (
-    <div className="w-full rounded-xl border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800">
+    <div className="w-full rounded-xl border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800 h-[calc(100vh-12rem)]">
       {/* Tabs Header */}
       <div className="mb-4 flex gap-1 border-b border-gray-200 dark:border-gray-700">
         <button
@@ -383,24 +383,17 @@ export default function ScriptTranscript({
           {!loading && scriptHeaders && scriptHeaders.length > 0 && (
             <div>
               {lead && selectedBadge && scriptContent[selectedBadge] ? (
-                <div className="space-y-4">
-                  {splitIntoSteps(
-                    renderTemplate(scriptContent[selectedBadge], lead),
-                  ).map((line, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-3 rounded-lg border p-4"
-                    >
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0A1A3F] text-white">
-                        {index + 1}
-                      </div>
-
-                      <p
-                        className="text-sm leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: line }}
-                      ></p>
-                    </div>
-                  ))}
+                <div className="space-y-4 ">
+                  {/* FULL HTML — no steps, no splitting */}
+                  <div
+                    className="rounded-lg border p-4 text-sm leading-relaxed max-h-[45vh] overflow-y-auto"
+                    dangerouslySetInnerHTML={{
+                      __html: renderTemplate(
+                        scriptContent[selectedBadge],
+                        lead,
+                      ),
+                    }}
+                  ></div>
 
                   {/* Copy Button */}
                   <button
@@ -431,12 +424,13 @@ export default function ScriptTranscript({
                     Copy Script
                   </button>
                 </div>
-              ) : (
+              ) : 
+                !lead ?
                 <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-500 italic dark:bg-gray-700 dark:text-gray-400">
                   Select a lead and switch between the badges to view its script
                   content.
-                </div>
-              )}
+                </div> : ''
+              }
             </div>
           )}
         </div>
@@ -506,7 +500,6 @@ export default function ScriptTranscript({
             objectionHandlersList &&
             objectionHandlersList.length > 0 && (
               <div>
-                {" "}
                 {selectedObjection ? (
                   <div className="space-y-4">
                     {(() => {
@@ -516,38 +509,24 @@ export default function ScriptTranscript({
 
                       if (!selected) return null;
 
-                      // Convert dynamic {{values}}
+                      // Render dynamic {{values}}
                       const renderedText = renderTemplate(selected.steps, lead);
 
-                      // Break into individual steps
-                      const stepLines = splitIntoSteps(renderedText);
-
-                      return stepLines.map((line, index) => (
+                      return (
                         <div
-                          key={index}
-                          className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700"
-                        >
-                          {/* Number circle */}
-                          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#0A1A3F] text-sm font-bold text-white">
-                            {index + 1}
-                          </div>
-
-                          {/* Line text */}
-                          <p
-                            className="text-sm leading-relaxed text-gray-700 dark:text-gray-200"
-                            dangerouslySetInnerHTML={{ __html: line }}
-                          ></p>
-                        </div>
-                      ));
+                          className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700 max-h-[45vh] overflow-y-auto"
+                          dangerouslySetInnerHTML={{ __html: renderedText }}
+                        ></div>
+                      );
                     })()}
 
-                    {/* --- Copy Button --- */}
+                    {/* Copy button */}
                     <button
                       onClick={() => {
                         const obj = objectionHandlersList.find(
                           (o) => o.title === selectedObjection,
                         );
-                        const fullText = obj.steps.join("\n");
+                        const fullText = obj.steps;
                         navigator.clipboard.writeText(fullText);
                         toast.success("Objection handler copied!");
                       }}
@@ -570,12 +549,11 @@ export default function ScriptTranscript({
                       Copy Handler
                     </button>
                   </div>
-                ) : (
-                  <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-500 italic dark:bg-gray-700 dark:text-gray-400">
+                ) : !lead ?  <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-500 italic dark:bg-gray-700 dark:text-gray-400">
                     Click on each badge above to view objection handling
                     strategies
-                  </div>
-                )}
+                  </div> : ''
+                }
               </div>
             )}
         </div>
@@ -594,13 +572,13 @@ export default function ScriptTranscript({
                 "Call transcription will appear here when connected"}
             </div>
           ) : callLogsLoading ? (
-            <div className="flex flex-col items-center justify-center rounded-lg bg-gray-50 p-10 text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+            <div className="flex flex-col items-center justify-center rounded-lg bg-gray-50 p-10 text-gray-500 dark:bg-gray-700 dark:text-gray-400 ">
               <ChatBubbleLeftEllipsisIcon className="mb-2 h-8 w-8 animate-pulse opacity-50" />
               <p>Loading transcripts...</p>
             </div>
           ) : callLogs.length > 0 ? (
             // Show call logs transcripts
-            <div className="max-h-[500px] space-y-4 overflow-y-auto">
+            <div className="max-h-[55vh] space-y-4 overflow-y-auto">
               {callLogs.map((log) => {
                 // Get transcription data from API response
                 const transcriptionData =

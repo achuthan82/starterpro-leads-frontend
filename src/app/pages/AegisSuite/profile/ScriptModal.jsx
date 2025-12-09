@@ -219,7 +219,7 @@ const ScriptModal = ({
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <DialogPanel className="dark:bg-dark-700 relative w-full max-w-[600px] rounded-2xl bg-white px-6 py-8 text-center shadow-xl transition-all sm:px-8">
+            <DialogPanel   className="dark:bg-dark-700 relative w-full max-w-[600px] max-h-[90vh] overflow-y-auto rounded-2xl bg-white px-6 py-8 text-center shadow-xl transition-all sm:px-8">
               <DialogTitle
                 as="h3"
                 className="text-2xl font-semibold text-gray-800 dark:text-gray-100"
