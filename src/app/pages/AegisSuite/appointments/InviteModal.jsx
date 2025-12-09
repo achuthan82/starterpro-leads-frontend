@@ -46,7 +46,11 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
       payload['phone'] = `+1${form.phone}`;
     }
 
-   
+    if (form.type === "both") {
+      payload['email'] = form.email;
+      payload['phone'] = `+1${form.phone}`;
+    }
+
     try {
       const response =
         await appointmentService.createPublicAppointment(payload);
@@ -78,48 +82,52 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
      setValue('type', '')
      inviteClose()
   }
+
   const handleClient = (selectedClient) => {
     setValue('phone', selectedClient?.ivr_response?.ani.slice(2))
     setValue('email', selectedClient?.email)
   }
+
   const loadOptions = (inputValue, actionMeta) => {
     setSearchValue(inputValue);
     if (actionMeta.action === "input-change") {
       getClients(inputValue);
     }
   };
+
   const getClients = (name = "") => {
     setClientsLoading(true);
     const params = { page: 1, per_page: 50, name: name };
     appointmentService
-      .getPaginatedLeads(params)
-      .then((response) => {
-        console.log(response);
-        if (response.status === 200) {
-          setClients(
-            response.data.map((item) => {
-              return {
-                label: item.full_name,
-                value: item.lead_member_id,
-                ...item,
-              };
-            }),
-          );
-        } else if (response.status === 204) {
-          setClients([]);
-        } else {
-          setClients([]);
-          toast.error(response?.data?.message || "Failed to fetch clients");
-        }
-      })
-      .catch((error) => {
+    .getPaginatedLeads(params)
+    .then((response) => {
+      console.log(response);
+      if (response.status === 200) {
+        setClients(
+          response.data.map((item) => {
+            return {
+              label: item.full_name,
+              value: item.lead_member_id,
+              ...item,
+            };
+          }),
+        );
+      } else if (response.status === 204) {
         setClients([]);
-        toast.error(error?.message || "Failed to fetch clients");
-      })
-      .finally(() => {
-        setClientsLoading(false);
-      });
+      } else {
+        setClients([]);
+        toast.error(response?.data?.message || "Failed to fetch clients");
+      }
+    })
+    .catch((error) => {
+      setClients([]);
+      toast.error(error?.message || "Failed to fetch clients");
+    })
+    .finally(() => {
+      setClientsLoading(false);
+    });
   };
+
   useEffect(() => {
     if (isInviteOpen) {
       getClients();
@@ -255,6 +263,16 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                             // setValue("email", "");
                           }}
                         />
+
+                        <Radio
+                          label="Both"
+                          name="type"
+                          checked={field.value === "both"}
+                          onChange={() => {
+                            field.onChange("both");
+                            // setValue("phone", "");
+                          }}
+                        />
                       </div>
                     )}
                   />
@@ -334,6 +352,73 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                       </span>
                     )}
                   </div>
+                )}
+
+                {selectedType === "both" && (
+                  <>
+                  <div className="w-full">
+                    <label className="mb-1 block text-left text-sm font-medium">
+                      Email <span className="text-red-500">*</span>
+                    </label>
+
+                    <Controller
+                      control={control}
+                      name="email"
+                      rules={{
+                        required: "Email is required",
+                        pattern: {
+                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                          message: "Enter a valid email address",
+                        },
+                      }}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          type="email"
+                          placeholder="user@example.com"
+                          invalid={errors.email}
+                        />
+                      )}
+                    />
+
+                    {errors.email && (
+                      <span className="text-sm text-red-500">
+                        {errors.email.message}
+                      </span>
+                    )}
+                  </div>
+                  <div className="w-full">
+                  <label className="mb-1 block text-left text-sm font-medium">
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
+
+                  <Controller
+                    control={control}
+                    name="phone"
+                    rules={{
+                      required: "Phone number is required",
+                      pattern: {
+                        value: /^[0-9]{10}$/,
+                        message: "Phone number must be exactly 10 digits",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        type="text"
+                        //   placeholder="+1 555 987 6543"
+                        invalid={errors.phone}
+                      />
+                    )}
+                  />
+
+                  {errors.phone && (
+                    <span className="text-sm text-red-500">
+                      {errors.phone.message}
+                    </span>
+                  )}
+                </div>
+                </>
                 )}
 
                 {/* BUTTONS */}

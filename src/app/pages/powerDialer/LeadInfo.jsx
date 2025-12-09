@@ -377,64 +377,52 @@ const LeadInfo = ({
                 )}
               </p>
             </div>} 
-          {lead?.homeValue && (
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Loan Amount
             </p>
             <p className="font-medium text-gray-900 dark:text-gray-100">
-              ${lead?.homeValue}
+              ${lead?.homeValue || 'N/A'}
             </p>
           </div>
-          )}
-          {lead?.originalData?.lender_name && (
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Mortgage Lender
-              </p>
-              <p className="font-medium text-gray-900 dark:text-gray-100">
-                {lead?.originalData?.lender_name}
-              </p>
-            </div>
-          )}
-          {lead?.originalData?.ivr_response?.age && (
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Client Age</p>
-              <p className="font-medium text-gray-900 dark:text-gray-100">
-                {lead?.originalData?.ivr_response?.age}
-              </p>
-            </div>
-          )}
-          {lead?.originalData?.ivr_response?.coborrower && (
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Co-Borrower</p>
-              <p className="font-medium text-gray-900 dark:text-gray-100">
-                {lead?.originalData?.ivr_response?.coborrower === "1" ? "Yes" : "No"}
-              </p>
-            </div>
-          )}
-          {lead?.originalData?.ivr_response?.tobacco && (
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Smoker</p>
-              <p className="font-medium text-gray-900 dark:text-gray-100">
-                {lead?.originalData?.ivr_response?.tobacco === "1" ? "Yes" : "No"}
-              </p>
-            </div>
-          )}
-          {lead?.originalData?.ivr_response?.health && (
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Medical Issues</p>
-              <p className="font-medium text-gray-900 dark:text-gray-100">
-                {lead?.originalData?.ivr_response?.health === "1" ? "Yes" : "No"}
-              </p>
-            </div>
-          )}
           <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Mortgage Lender
+            </p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
+              {lead?.originalData?.lender_name || 'N/A'}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Client Age</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
+              {lead?.originalData?.ivr_response?.age || 'N/A'}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Co-Borrower</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
+              {lead?.originalData?.ivr_response?.coborrower === "1" ? "Yes" : lead?.originalData?.ivr_response?.coborrower === "0" ? "No" : 'N/A'}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Medical Issues</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
+              {lead?.originalData?.ivr_response?.health === "1" ? "Yes" : lead?.originalData?.ivr_response?.health === "0" ? "No" : 'N/A'}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Smoker</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">
+              {lead?.originalData?.ivr_response?.tobacco === "1" ? "Yes" : lead?.originalData?.ivr_response?.tobacco === "0" ? "No" : 'N/A'}
+            </p>
+          </div>
+          <div className="col-span-2">
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Address
             </p>
             <p className="font-medium text-gray-900 dark:text-gray-100">
-              {lead?.address}
+              {lead?.address || 'N/A'}
             </p>
           </div>
           {/* <div>

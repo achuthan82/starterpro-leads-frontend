@@ -43,6 +43,7 @@ const ScheduleAppointmentModal = ({
   const [clients, setClients] = useState([]);
   const [clientsLoading, setClientsLoading] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  const [selectedDetailOption, setSelectedDetailOption] = useState("");
 
   // Get today's date and format for date input
   const today = new Date().toISOString().split("T")[0];
@@ -266,6 +267,8 @@ const ScheduleAppointmentModal = ({
       setNotes("");
       setClientName("");
       setPhoneNumber("");
+      setSelectedClient(null);
+      setSelectedDetailOption("");
       getClients();
     }
   }, [isOpen]);
@@ -293,6 +296,7 @@ const ScheduleAppointmentModal = ({
     if (editAppointment?.slot_time) {
       findSlot(editAppointment.slot_time);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editAppointment, timeSlots]);
   useEffect(() => {
     if (selectedDate && availability) {
@@ -719,6 +723,100 @@ const ScheduleAppointmentModal = ({
                       <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Notes (Optional)
                       </label>
+                      
+                      {/* Client Details Select */}
+                      {(selectedClient || selectedLead) && (
+                        <div className="mb-2">
+                          <select
+                            value={selectedDetailOption}
+                            onChange={(e) => {
+                              const option = e.target.value;
+                              setSelectedDetailOption(option);
+                              
+                              if (option) {
+                                let value = "";
+                                const clientData = selectedClient || selectedLead?.originalData || selectedLead;
+                                
+                                switch (option) {
+                                  case "loan_amount":
+                                    value = clientData?.loan_amount || clientData?.homeValue || selectedLead?.homeValue || "N/A";
+                                    if (value !== "N/A" && typeof value === "number") {
+                                      value = `$${value}`;
+                                    } else if (value !== "N/A" && typeof value === "string" && !value.startsWith("$")) {
+                                      value = `$${value}`;
+                                    }
+                                    break;
+                                  case "mortgage_lender":
+                                    value = clientData?.lender_name || "N/A";
+                                    break;
+                                  case "client_age":
+                                    value = clientData?.ivr_response?.age || selectedLead?.ivr_response?.age || "N/A";
+                                    break;
+                                  case "co_borrower": {
+                                    const coborrower = clientData?.ivr_response?.coborrower || selectedLead?.ivr_response?.coborrower;
+                                    value = coborrower === "1" ? "Yes" : coborrower === "0" ? "No" : "N/A";
+                                    break;
+                                  }
+                                  case "address": {
+                                    const addressParts = [
+                                      clientData?.address || selectedLead?.address,
+                                      clientData?.city || selectedLead?.city,
+                                      clientData?.state || selectedLead?.state,
+                                      clientData?.zip || clientData?.zipcode || selectedLead?.zip || selectedLead?.zipcode
+                                    ].filter(Boolean);
+                                    value = addressParts.length > 0 ? addressParts.join(", ") : "N/A";
+                                    break;
+                                  }
+                                  case "smoker": {
+                                    const tobacco = clientData?.ivr_response?.tobacco || selectedLead?.ivr_response?.tobacco;
+                                    value = tobacco === "1" ? "Yes" : tobacco === "0" ? "No" : "N/A";
+                                    break;
+                                  }
+                                  case "health_conditions": {
+                                    const health = clientData?.ivr_response?.health || selectedLead?.ivr_response?.health;
+                                    value = health === "1" ? "Yes" : health === "0" ? "No" : "N/A";
+                                    break;
+                                  }
+                                  default:
+                                    value = "N/A";
+                                }
+                                
+                                const labelMap = {
+                                  loan_amount: "Loan amount",
+                                  mortgage_lender: "Mortgage lender",
+                                  client_age: "Client age",
+                                  co_borrower: "Co-Borrower",
+                                  address: "Address",
+                                  smoker: "Smoker",
+                                  health_conditions: "Health conditions"
+                                };
+                                
+                                const formattedText = `${labelMap[option]}: ${value}`;
+                                setNotes((prev) => {
+                                  if (prev.trim()) {
+                                    return `${prev}\n${formattedText}`;
+                                  }
+                                  return formattedText;
+                                });
+                                
+                                // Reset select after adding
+                                setTimeout(() => setSelectedDetailOption(""), 100);
+                              }
+                            }}
+                            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
+                          >
+                            <option value="">Select client detail to add...</option>
+                            <option value="loan_amount">Loan amount</option>
+                            <option value="mortgage_lender">Mortgage lender</option>
+                            <option value="client_age">Client age</option>
+                            <option value="co_borrower">Co-Borrower</option>
+                            <option value="address">Address</option>
+                            <option value="smoker">Smoker</option>
+                            <option value="health_conditions">Health conditions</option>
+                          </select>
+                        </div>
+                      )}
+                      
                       <textarea
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
