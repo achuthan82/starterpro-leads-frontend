@@ -40,6 +40,7 @@ export default function ScriptTranscript({
                 return { name: item.title, color: "pink" };
               }),
             );
+
             setScriptContent(
               response.data.data.reduce((acc, item) => {
                 acc[item.title] = item.description;
@@ -48,6 +49,16 @@ export default function ScriptTranscript({
             );
           }
           if (type === 2) {
+            console.log(
+              "objections",
+              response.data.data.map((item) => {
+                return {
+                  title: item.title,
+                  color: "orange",
+                  steps: item.description,
+                };
+              }),
+            );
             setObjectionHandlersList(
               response.data.data.map((item) => {
                 return {
@@ -88,12 +99,17 @@ export default function ScriptTranscript({
     }
   }, [activeTab]);
 
-  const splitIntoSteps = (text) => {
-    if (!text) return [];
-    return text
-      .split("\n")
-      .map((line) => line.trim()) // 👈 THIS fixes the alignment
-      .filter((line) => line !== "");
+  const splitIntoSteps = (html) => {
+    if (!html) return [];
+
+    const container = document.createElement("div");
+    container.innerHTML = html;
+
+    const paragraphs = [...container.querySelectorAll("p")];
+
+    return paragraphs
+      .map((p) => p.innerHTML.trim())
+      .filter((line) => line !== "" && line !== "<br>");
   };
 
   // Script content for each badge
@@ -236,12 +252,12 @@ export default function ScriptTranscript({
     }, obj);
   };
 
-  const renderTemplate = (str, lead) => {
-    if (!str) return "";
+  const renderTemplate = (html, lead) => {
+    if (!html) return "";
 
-    return str.replace(/{{\s*([\w.]+)\s*}}/g, (_, field) => {
+    return html.replace(/{{\s*([\w.]+)\s*}}/g, (_, field) => {
       const value = getValue(lead, field);
-      return value !== undefined && value !== null ? value : "";
+      return value ?? "";
     });
   };
 
@@ -304,7 +320,7 @@ export default function ScriptTranscript({
           )}
 
           {/* Tags */}
-          {!loading  &&(
+          {!loading && (
             <div className="flex flex-wrap gap-2">
               {scriptHeaders && scriptHeaders.length > 0 ? (
                 scriptHeaders.map((tag) => {
@@ -364,7 +380,7 @@ export default function ScriptTranscript({
           )}
 
           {/* Script Text */}
-          {!loading &&  scriptHeaders && scriptHeaders.length > 0 && (
+          {!loading && scriptHeaders && scriptHeaders.length > 0 && (
             <div>
               {lead && selectedBadge && scriptContent[selectedBadge] ? (
                 <div className="space-y-4">
@@ -373,17 +389,16 @@ export default function ScriptTranscript({
                   ).map((line, index) => (
                     <div
                       key={index}
-                      className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700"
+                      className="flex items-start gap-3 rounded-lg border p-4"
                     >
-                      {/* Number Circle */}
-                      <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#0A1A3F] text-sm font-bold text-white">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0A1A3F] text-white">
                         {index + 1}
                       </div>
 
-                      {/* Line Text */}
-                      <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-200">
-                        {line}
-                      </p>
+                      <p
+                        className="text-sm leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: line }}
+                      ></p>
                     </div>
                   ))}
 
@@ -430,7 +445,7 @@ export default function ScriptTranscript({
       {activeTab === "objections" && (
         <div className="space-y-3">
           {!loading && (
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 dark:text-gray-200">
+            <h2 className="mb-3 text-lg font-semibold text-gray-700 dark:text-gray-200">
               Objection Handlers
             </h2>
           )}
@@ -479,7 +494,7 @@ export default function ScriptTranscript({
                   );
                 })
               ) : (
-                <div className="flex w-full items-center justify-center mb-3">
+                <div className="mb-3 flex w-full items-center justify-center">
                   <span>No data found</span>
                 </div>
               )}
@@ -487,76 +502,82 @@ export default function ScriptTranscript({
           )}
 
           {/* --- Steps View --- */}
-          {
-            !loading && objectionHandlersList && objectionHandlersList.length > 0 && <div> {selectedObjection ? (
-            <div className="space-y-4">
-              {(() => {
-                const selected = objectionHandlersList.find(
-                  (item) => item.title === selectedObjection,
-                );
+          {!loading &&
+            objectionHandlersList &&
+            objectionHandlersList.length > 0 && (
+              <div>
+                {" "}
+                {selectedObjection ? (
+                  <div className="space-y-4">
+                    {(() => {
+                      const selected = objectionHandlersList.find(
+                        (item) => item.title === selectedObjection,
+                      );
 
-                if (!selected) return null;
+                      if (!selected) return null;
 
-                // Convert dynamic {{values}}
-                const renderedText = renderTemplate(selected.steps, lead);
+                      // Convert dynamic {{values}}
+                      const renderedText = renderTemplate(selected.steps, lead);
 
-                // Break into individual steps
-                const stepLines = splitIntoSteps(renderedText);
+                      // Break into individual steps
+                      const stepLines = splitIntoSteps(renderedText);
 
-                return stepLines.map((line, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700"
-                  >
-                    {/* Number circle */}
-                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#0A1A3F] text-sm font-bold text-white">
-                      {index + 1}
-                    </div>
+                      return stepLines.map((line, index) => (
+                        <div
+                          key={index}
+                          className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700"
+                        >
+                          {/* Number circle */}
+                          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#0A1A3F] text-sm font-bold text-white">
+                            {index + 1}
+                          </div>
 
-                    {/* Line text */}
-                    <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-200">
-                      {line}
-                    </p>
+                          {/* Line text */}
+                          <p
+                            className="text-sm leading-relaxed text-gray-700 dark:text-gray-200"
+                            dangerouslySetInnerHTML={{ __html: line }}
+                          ></p>
+                        </div>
+                      ));
+                    })()}
+
+                    {/* --- Copy Button --- */}
+                    <button
+                      onClick={() => {
+                        const obj = objectionHandlersList.find(
+                          (o) => o.title === selectedObjection,
+                        );
+                        const fullText = obj.steps.join("\n");
+                        navigator.clipboard.writeText(fullText);
+                        toast.success("Objection handler copied!");
+                      }}
+                      className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="h-4 w-4"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2m2 0h6a2 2 0 002-2V10a2 2 0 00-2-2h-2M8 16v2a2 2 0 002 2h6a2 2 0 002-2v-6a2 2 0 00-2-2h-2"
+                        />
+                      </svg>
+                      Copy Handler
+                    </button>
                   </div>
-                ));
-              })()}
-
-              {/* --- Copy Button --- */}
-              <button
-                onClick={() => {
-                  const obj = objectionHandlersList.find(
-                    (o) => o.title === selectedObjection,
-                  );
-                  const fullText = obj.steps.join("\n");
-                  navigator.clipboard.writeText(fullText);
-                  toast.success("Objection handler copied!");
-                }}
-                className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-4 w-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2m2 0h6a2 2 0 002-2V10a2 2 0 00-2-2h-2M8 16v2a2 2 0 002 2h6a2 2 0 002-2v-6a2 2 0 00-2-2h-2"
-                  />
-                </svg>
-                Copy Handler
-              </button>
-            </div>
-          ) : (
-            <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-500 italic dark:bg-gray-700 dark:text-gray-400">
-              Click on each badge above to view objection handling strategies
-            </div>
-          )}</div>
-          }
-          
+                ) : (
+                  <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-500 italic dark:bg-gray-700 dark:text-gray-400">
+                    Click on each badge above to view objection handling
+                    strategies
+                  </div>
+                )}
+              </div>
+            )}
         </div>
       )}
 

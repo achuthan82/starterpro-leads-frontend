@@ -6,12 +6,14 @@ import {
   TransitionChild,
   DialogTitle,
 } from "@headlessui/react";
-import { Button, Spinner, Input, Textarea } from "components/ui";
+import { Button, Spinner, Input } from "components/ui";
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
 import Select from "react-select";
 import profileService from "utils/profileService";
+import { TextEditor } from "components/shared/form/TextEditor";
+import { htmlToDelta } from "utils/quillUtils";
 
 const ScriptModal = ({
   isOpen,
@@ -25,7 +27,12 @@ const ScriptModal = ({
   const [loading, setLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedVariable, setSelectedVariable] = useState(null);
-  const descRef = useRef(null);
+  const [editorVal, setEditorVal] = useState("");
+  const [initialDelta, setInitialDelta] = useState(null);
+  const [editorError, setEditorError] = useState('')
+  // const [editorReady, setEditorReady] = useState(false);
+  // const descRef = useRef(null);
+  const editorRef = useRef();
   const options = [
     { value: "originalData.address", label: "Address" },
     { value: "originalData.call_in_date_time", label: "Call In Date Time" },
@@ -74,41 +81,38 @@ const ScriptModal = ({
   const {
     handleSubmit,
     formState: { errors },
-    watch,
+    // watch,
     control,
     setValue,
   } = useForm({
     mode: "onChange",
   });
-  const watchDescription = watch("description");
-  // const handleInsert = () => {
-  //   setValue("description", (watchDescription || "") + `{{${selectedOption}}}`);
-  // };
-  const handleInsert = () => {
-    if (!descRef.current) return;
+  
+  const handleTextChange = () => {
+    const quill = editorRef.current?.getQuillInstance();
+    if (!quill) return;
+    const html = quill.root.innerHTML;
+    setEditorVal(html);
+  };
 
-    const textarea = descRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
 
-    const insertText = `{{${selectedOption}}}`;
-    const currentValue = watchDescription || "";
+  const insertText = () => {
+    const quill = editorRef.current?.getQuillInstance();
+    if (!quill) return;
+    const text = `{{${selectedOption}}}`;
+    const range = quill.getSelection(); // current cursor position
 
-    // Build the new string
-    const newValue =
-      currentValue.substring(0, start) +
-      insertText +
-      currentValue.substring(end);
-
-    // Update value in React Hook Form
-    setValue("description", newValue);
-
-    // Give time for DOM update then restore cursor
-    setTimeout(() => {
-      textarea.focus();
-      textarea.selectionStart = textarea.selectionEnd =
-        start + insertText.length;
-    }, 0);
+    if (range && range.index !== null) {
+      // Insert at cursor
+      quill.insertText(range.index, text);
+      quill.setSelection(range.index + text.length); // move cursor forward
+    } else {
+      // No cursor (editor not focused) → append at end
+      const end = quill.getLength();
+      quill.insertText(end - 1, text);
+      quill.setSelection(end + text.length);
+    }
+    setEditorVal(quill.root.innerHTML);
   };
 
   const handleVariable = (opt) => {
@@ -117,11 +121,20 @@ const ScriptModal = ({
       setSelectedOption(opt.value);
     }
   };
+  const isEditorEmpty = () => {
+  const quill = editorRef.current?.getQuillInstance();
+  if (!quill) return true;
+
+  const text = quill.getText().trim(); // removes whitespace/newlines
+  return text.length === 0; // true → empty
+};
   const submitData = (data) => {
+    const editorData = isEditorEmpty()
+    if (!editorData) {
     setLoading(true);
     const payload = {
       title: data.title,
-      description: data.description,
+      description: editorVal,
       //   type_: data.type.value,
     };
     if (!editData) {
@@ -151,20 +164,30 @@ const ScriptModal = ({
       .finally(() => {
         setLoading(false);
       });
+    } else {
+      setEditorError(`Description can't be empty`)
+    }
   };
   const handleClose = () => {
     setValue("title", "");
     setValue("description", "");
     setValue("type", "");
     setSelectedVariable(null);
+    setEditData(null)
+    editorRef.current?.getQuillInstance()?.setContents([]);
     close();
   };
   useEffect(() => {
     if (editData) {
       setValue("title", editData.title);
-      setValue("description", editData.description);
+      setEditorVal(editData.description);
+      const d = htmlToDelta(editData.description);
+      setInitialDelta(d);
+    } else {
+      setInitialDelta(null)
     }
   }, [editData]);
+
   return (
     <div>
       <Transition appear show={isOpen} as={Fragment}>
@@ -287,7 +310,9 @@ const ScriptModal = ({
 
                       <button
                         type="button"
-                        onClick={handleInsert}
+                        onClick={() => {
+                          insertText();
+                        }}
                         disabled={!selectedVariable}
                         className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                       >
@@ -295,7 +320,7 @@ const ScriptModal = ({
                       </button>
                     </div>
                   </div>
-                  <div className="w-full">
+                  {/* <div className="w-full">
                     <label
                       className="mb-1 block text-left text-sm font-medium"
                       htmlFor="code"
@@ -324,6 +349,26 @@ const ScriptModal = ({
                         {errors.description.message}
                       </span>
                     )}
+                  </div> */}
+                  <div className="max-w-xl">
+                    <label
+                      className="mb-1 block text-left text-sm font-medium"
+                      htmlFor="code"
+                    >
+                      Description<span className="text-red-500">*</span>
+                    </label>
+                    <TextEditor
+                      ref={editorRef}
+                      defaultValue={initialDelta}
+                      placeholder="Enter your content here..."
+                      onTextChange={handleTextChange}
+                      // onReady={() => setEditorReady(true)}
+                    />
+                    {editorError && (
+                        <span className="text-sm text-red-500">
+                          {editorError}
+                        </span>
+                      )}
                   </div>
 
                   {/* Submit Buttons */}
