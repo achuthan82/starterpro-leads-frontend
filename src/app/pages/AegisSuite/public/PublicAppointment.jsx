@@ -331,8 +331,9 @@ const PublicAppointment = () => {
           appointmentPublicService.getAppointmentDetails(token).then((response) => {
             console.log(response.data)
             if (response.status === 200) {
-                console.log('enteres')
-                setTitle(response.data.title)
+              setTitle(response.data.title)
+            } else if (response.status === 400) {
+              setError('Token Expired')
             } else {
               toast.error(response?.data?.message || 'Token Expired')
             }
@@ -390,7 +391,7 @@ const PublicAppointment = () => {
 
                     {/* Error State */}
                     {error && !loading && (
-                    <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
+                    <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20 text-center">
                         <p className="text-sm text-red-700 dark:text-red-400">
                         {error}
                         </p>
