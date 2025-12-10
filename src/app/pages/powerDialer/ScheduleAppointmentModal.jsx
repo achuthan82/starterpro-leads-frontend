@@ -118,6 +118,8 @@ const ScheduleAppointmentModal = ({
       if (response.data) {
         setAvailability(response.data);
         generateTimeSlots(response.data);
+      } else if (response.status === 204) {
+        setError('Please set your availability in your profile before continuing.')
       }
     } catch (err) {
       console.error("Error fetching appointment settings:", err);
