@@ -3,10 +3,13 @@ import {
   DocumentTextIcon,
   ChatBubbleLeftEllipsisIcon,
 } from "@heroicons/react/24/solid";
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { useAuthContext } from "app/contexts/auth/context";
 import { toast } from "sonner";
 import { IoBulbOutline } from "react-icons/io5";
 import profileService from "utils/profileService";
+import axios from "axios";
+import { JWT_HOST_API } from "configs/auth.config";
 
 export default function ScriptTranscript({
   activeTabs = ["script"],
@@ -616,6 +619,92 @@ export default function ScriptTranscript({
                             {transcriptionStatus}
                           </span>
                         )}
+                        {log.ppt_uploaded && log.ppt_url && (() => {
+                          // Handle ppt_url as array or string
+                          const pptUrls = Array.isArray(log.ppt_url) ? log.ppt_url : [log.ppt_url];
+                          const hasMultipleFiles = pptUrls.length > 1;
+                          
+                          const handleDownload = async (url, index) => {
+                            try {
+                              // Check if URL is absolute or relative
+                              const isAbsoluteUrl = url.startsWith("http://") || url.startsWith("https://");
+                              
+                              if (isAbsoluteUrl) {
+                                // For absolute URLs, try direct download first
+                                const link = document.createElement("a");
+                                link.href = url;
+                                // Extract file extension from URL or default to .pptx
+                                const urlExtension = url.match(/\.(pdf|pptx|ppt|doc|docx)$/i)?.[0] || ".pptx";
+                                link.download = `presentation_${log.id || Date.now()}${hasMultipleFiles ? `_${index + 1}` : ""}${urlExtension}`;
+                                link.target = "_blank";
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              } else {
+                                // For relative URLs, fetch with authentication
+                                const token = localStorage.getItem("authToken");
+                                const fullUrl = url.startsWith("/") 
+                                  ? `${JWT_HOST_API}${url}` 
+                                  : `${JWT_HOST_API}/${url}`;
+                                
+                                const response = await axios.get(fullUrl, {
+                                  headers: {
+                                    Authorization: `Bearer ${token}`,
+                                  },
+                                  responseType: "blob",
+                                });
+                                
+                                const blob = new Blob([response.data]);
+                                const blobUrl = window.URL.createObjectURL(blob);
+                                const link = document.createElement("a");
+                                link.href = blobUrl;
+                                const urlExtension = url.match(/\.(pdf|pptx|ppt|doc|docx)$/i)?.[0] || ".pptx";
+                                link.download = `presentation_${log.id || Date.now()}${hasMultipleFiles ? `_${index + 1}` : ""}${urlExtension}`;
+                                document.body.appendChild(link);
+                                link.click();
+                                window.URL.revokeObjectURL(blobUrl);
+                                document.body.removeChild(link);
+                              }
+                            } catch (error) {
+                              console.error("Error downloading file:", error);
+                              toast.error(`Failed to download file ${index + 1}`);
+                            }
+                          };
+                          
+                          const handleDownloadAll = async () => {
+                            for (let i = 0; i < pptUrls.length; i++) {
+                              await handleDownload(pptUrls[i], i);
+                              // Small delay between downloads to avoid browser blocking
+                              if (i < pptUrls.length - 1) {
+                                await new Promise(resolve => setTimeout(resolve, 300));
+                              }
+                            }
+                            toast.success(`Downloaded ${pptUrls.length} file(s)`);
+                          };
+                          
+                          return (
+                            <div className="flex items-center gap-2">
+                              {hasMultipleFiles ? (
+                                <button
+                                  onClick={handleDownloadAll}
+                                  className="flex items-center gap-1 rounded px-2 py-1 text-xs text-[var(--color-atoll)] hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 transition-colors"
+                                  title={`Download all ${pptUrls.length} files`}
+                                >
+                                  <ArrowDownTrayIcon className="h-4 w-4" />
+                                  <span className="hidden sm:inline">Download All ({pptUrls.length})</span>
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => handleDownload(pptUrls[0], 0)}
+                                  className="flex items-center gap-1 rounded px-2 py-1 text-xs text-[var(--color-atoll)] hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 transition-colors"
+                                  title="Download Presentation"
+                                >
+                                  <ArrowDownTrayIcon className="h-4 w-4" />
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
                     {hasTranscript ? (

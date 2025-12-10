@@ -161,7 +161,7 @@ const MortgageProtectionModal = ({
         }
         
         // Open preview in new window
-        const previewUrl = `${window.location.origin}/mortgage-protection-preview/${encodeURIComponent(token)}`;
+        const previewUrl = `${window.location.origin}/mortgage-protection-preview/${encodeURIComponent(token)}/${currentCallLogId}`;
         console.log("Opening preview URL:", previewUrl);
         
         // Small delay to ensure sessionStorage is committed
@@ -772,7 +772,7 @@ const MortgageProtectionModal = ({
                     className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
                     onClick={handleCancelClose}
                   >
-                    Cancel
+                    Close
                   </Button>
                   <Button
                     type="button"

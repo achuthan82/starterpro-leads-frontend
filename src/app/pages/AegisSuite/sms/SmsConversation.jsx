@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   ChatBubbleLeftRightIcon,
-  MagnifyingGlassIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
@@ -24,7 +23,8 @@ const SmsConversation = () => {
   const [perPage, setPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [mortgageIdFilter, setMortgageIdFilter] = useState("");
+  const [nameFilter, setNameFilter] = useState("");
 
   // Conversation state
   const [selectedLead, setSelectedLead] = useState(null);
@@ -38,12 +38,23 @@ const SmsConversation = () => {
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   // Fetch leads list
-  const fetchLeads = useCallback(async (page = currentPage, itemsPerPage = perPage) => {
+  const fetchLeads = useCallback(async (page = currentPage, itemsPerPage = perPage, mortgageId = mortgageIdFilter, name = nameFilter) => {
     setLeadsLoading(true);
     try {
+      // Combine mortgage_id and name into name param if both are provided, or use individually
+      let nameParam = "";
+      if (mortgageId && name) {
+        nameParam = `${mortgageId} ${name}`;
+      } else if (mortgageId) {
+        nameParam = mortgageId;
+      } else if (name) {
+        nameParam = name;
+      }
+
       const response = await smsService.getSentLeadsPaginated({
         page,
         per_page: itemsPerPage,
+        name: nameParam || undefined,
       });
 
       const leadsData = response.data || response.leads || [];
@@ -62,7 +73,7 @@ const SmsConversation = () => {
     } finally {
       setLeadsLoading(false);
     }
-  }, [currentPage, perPage]);
+  }, [currentPage, perPage, mortgageIdFilter, nameFilter]);
 
   // Fetch conversation
   const fetchConversation = useCallback(
@@ -155,7 +166,8 @@ const SmsConversation = () => {
 
   // Initial load
   useEffect(() => {
-    fetchLeads(1, perPage);
+    fetchLeads(1, perPage, mortgageIdFilter, nameFilter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [perPage]);
 
   // Select lead from URL params
@@ -193,14 +205,14 @@ const SmsConversation = () => {
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      fetchLeads(newPage, perPage);
+      fetchLeads(newPage, perPage, mortgageIdFilter, nameFilter);
     }
   };
 
   const handlePerPageChange = (newPerPage) => {
     setPerPage(newPerPage);
     setCurrentPage(1);
-    fetchLeads(1, newPerPage);
+    fetchLeads(1, newPerPage, mortgageIdFilter, nameFilter);
   };
 
   const formatDate = (dateString) => {
@@ -220,16 +232,71 @@ const SmsConversation = () => {
               SMS Conversations
             </h2>
 
-            {/* Search */}
-            <div className="relative mb-4">
-              <MagnifyingGlassIcon className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search leads..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white py-2 pr-4 pl-10 text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
-              />
+            {/* Filters */}
+            <div className="space-y-3 mb-4">
+              {/* Mortgage ID Filter */}
+              <div>
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Mortgage ID
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter mortgage ID..."
+                  value={mortgageIdFilter}
+                  onChange={(e) => setMortgageIdFilter(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setCurrentPage(1);
+                      fetchLeads(1, perPage, e.target.value, nameFilter);
+                    }
+                  }}
+                  className="w-full rounded-lg border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                />
+              </div>
+
+              {/* Name Filter */}
+              <div>
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter name..."
+                  value={nameFilter}
+                  onChange={(e) => setNameFilter(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setCurrentPage(1);
+                      fetchLeads(1, perPage, mortgageIdFilter, e.target.value);
+                    }
+                  }}
+                  className="w-full rounded-lg border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                />
+              </div>
+
+              {/* Filter Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setCurrentPage(1);
+                    fetchLeads(1, perPage, mortgageIdFilter, nameFilter);
+                  }}
+                  className="flex-1 rounded-lg bg-[var(--color-atoll)] px-3 py-2 text-sm font-medium text-white hover:bg-[var(--color-atoll)]/90 dark:bg-blue-600 dark:hover:bg-blue-700"
+                >
+                  Apply Filters
+                </button>
+                <button
+                  onClick={() => {
+                    setMortgageIdFilter("");
+                    setNameFilter("");
+                    setCurrentPage(1);
+                    fetchLeads(1, perPage, "", "");
+                  }}
+                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                >
+                  Clear
+                </button>
+              </div>
             </div>
           </div>
 
@@ -242,16 +309,7 @@ const SmsConversation = () => {
             ) : (
               <>
                 <div className="space-y-2">
-                  {leads
-                    .filter((lead) => {
-                      if (!searchTerm) return true;
-                      const search = searchTerm.toLowerCase();
-                      return (
-                        (lead.full_name || lead.name || "").toLowerCase().includes(search) ||
-                        (lead.phone || "").toLowerCase().includes(search)
-                      );
-                    })
-                    .map((lead) => {
+                  {leads.map((lead) => {
                       const isSelected =
                         selectedLead?.mortgage_id === lead.mortgage_id &&
                         (selectedLead?.lead_member_id === lead.lead_member_id ||

@@ -28,7 +28,7 @@ import bg from "./images/mortgageProtection.jpg";
 import smiley from "./images/smile-icon.svg";
 
 const PreviewComponent = forwardRef(
-  ({ submittedData, licenseDetails = null }, ref) => {
+  ({ submittedData, licenseDetails = null, currentCallLogId = null }, ref) => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [carriersLogo, setCarriersLogo] = useState(null);
     const [carriersLoading, setCarriersLoading] = useState(false);
@@ -200,7 +200,7 @@ const PreviewComponent = forwardRef(
       // -----------------------------
       // 3️⃣ Download PDF to User
       // -----------------------------
-      pdf.save("slides.pdf");
+      pdf.save(`${currentCallLogId}.pdf`);
       console.log("📄 PDF downloaded!");
 
       // -----------------------------
@@ -218,11 +218,12 @@ const PreviewComponent = forwardRef(
       // -----------------------------
       try {
         const formData = new FormData();
-        formData.append("call_log_id", licenseDetails?.id);
+        // formData.append("call_log_id", currentCallLogId);
         formData.append("file", pdfBlob, "assessment.pdf");
 
         const res = await axiosInstance.post(
-          `/dialer/upload/ppt/${licenseDetails?.id}`,
+          `/dialer/upload/ppt/${currentCallLogId}`,
+          // `https://c38ed10c5205.ngrok-free.app/dialer/upload/ppt/${currentCallLogId}`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -231,7 +232,7 @@ const PreviewComponent = forwardRef(
       } catch (err) {
         console.error("❌ PDF upload failed:", err);
       }
-    }, [licenseDetails?.id]);
+    }, [currentCallLogId]);
 
     useImperativeHandle(ref, () => ({
       generateAndUploadPDF,

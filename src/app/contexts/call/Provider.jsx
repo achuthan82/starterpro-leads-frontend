@@ -344,7 +344,9 @@ export function CallProvider({ children }) {
             twilio_call_sid: log.twilio_call_sid || '',
             started_at: log.started_at || '',
             ended_at: log.ended_at || '',
-            transcription_status: log.transcription_status || null
+            transcription_status: log.transcription_status || null,
+            ppt_uploaded: log.ppt_uploaded || false,
+            ppt_url: log.ppt_url || '',
           };
         });
         setCallLogs(transformedLogs);

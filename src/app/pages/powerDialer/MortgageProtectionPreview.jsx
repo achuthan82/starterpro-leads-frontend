@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 import PreviewComponent from "./PreviewComponent";
 
 const MortgageProtectionPreview = () => {
-  const { token } = useParams();
+  const { token, currentCallLogId } = useParams();
   const [previewData, setPreviewData] = useState(null);
   const [licenseDetails, setLicenseDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -107,6 +107,7 @@ const MortgageProtectionPreview = () => {
             ref={previewRef}
             submittedData={previewData}
             licenseDetails={licenseDetails}
+            currentCallLogId={currentCallLogId}
           />
 
         </div>
