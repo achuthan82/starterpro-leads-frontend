@@ -69,6 +69,41 @@ class SmsService {
       throw error;
     }
   }
+
+  /**
+   * Send SMS to lead
+   * @param {Object} payload - Request payload
+   * @param {string|number} payload.mailing_assignee_id - Lead member ID
+   * @param {string|number} payload.mortgage_id - Mortgage ID
+   * @param {string} payload.text - Message text
+   * @param {string} payload.queue_id - Optional queue ID from latest message
+   * @returns {Promise} Response with send result
+   */
+  async sendSmsToLead(payload = {}) {
+    try {
+      const { mailing_assignee_id, mortgage_id, text, queue_id } = payload;
+      
+      const requestPayload = {
+        mailing_assignee_id,
+        mortgage_id,
+        text,
+      };
+      
+      // Add queue_id only if provided
+      if (queue_id) {
+        requestPayload.queue_id = queue_id;
+      }
+      
+      const response = await axios.post(
+        `${JWT_HOST_API}/sms-automation/send-sms-to-lead`,
+        requestPayload
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error sending SMS:', error);
+      throw error;
+    }
+  }
 }
 
 const smsService = new SmsService();

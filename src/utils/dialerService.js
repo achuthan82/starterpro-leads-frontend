@@ -78,11 +78,12 @@ class DialerService {
    */
   async initializeTwilio(params) {
     try {
-      const { to_number, mortgage_id, uuid } = params;
+      const { to_number, mortgage_id, uuid, mailing_assignee_id } = params;
       const response = await axiosInstance.post(API_ENDPOINTS.DIALER.TOKEN, {
         to_number,
         mortgage_id,
-        uuid
+        uuid,
+        mailing_assignee_id
       });
       return response.data;
     } catch (error) {
