@@ -493,6 +493,7 @@ const LeadManagement = () => {
     setSelectedLeads([]);
     setSearchTerm("");
     setFilters({ lead_status: "", state: "", name: "", campaign: "" });
+    setPerPage(10)
     setCurrentPage(1);
     setPrintLeads([]);
   };
