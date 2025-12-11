@@ -28,7 +28,7 @@ export function CallProvider({ children }) {
   const [licenseError, setLicenseError] = useState(null);
   const [licenseLoading, setLicenseLoading] = useState(false);
   const [currentCallLogId, setCurrentCallLogId] = useState(null); // UUID for current call
-
+  
   // Refs
   const deviceRef = useRef(null);
   const callRef = useRef(null);

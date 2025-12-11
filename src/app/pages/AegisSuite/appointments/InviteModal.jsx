@@ -331,10 +331,10 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                       name="phone"
                       rules={{
                         required: "Phone number is required",
-                        pattern: {
-                          value: /^[0-9]{10}$/,
-                          message: "Phone number must be exactly 10 digits",
-                        },
+                        // pattern: {
+                        //   value: /^[0-9]{10}$/,
+                        //   message: "Phone number must be exactly 10 digits",
+                        // },
                       }}
                       render={({ field }) => (
                         <Input
@@ -397,10 +397,10 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                     name="phone"
                     rules={{
                       required: "Phone number is required",
-                      pattern: {
-                        value: /^[0-9]{10}$/,
-                        message: "Phone number must be exactly 10 digits",
-                      },
+                      // pattern: {
+                      //   value: /^[0-9]{10}$/,
+                      //   message: "Phone number must be exactly 10 digits",
+                      // },
                     }}
                     render={({ field }) => (
                       <Input
