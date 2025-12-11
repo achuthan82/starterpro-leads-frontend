@@ -58,45 +58,45 @@ export const SOURCE_MAPPING = {
     3: 'FEX',
     // Add more source mappings as needed
 };
-// export const STATUS_COLORS = {
-//     1: 'bg-[var(--atoll)]', // NEW
-//     2: 'bg-[var(--atoll)]', // FIRST CALL
-//     3: 'bg-[var(--atlantis)]', // SECOND CALL
-//     4: 'bg-[#f97316]', // THIRD CALL
-//     5: 'bg-[#8b5cf6]', // TEXT
-//     6: 'bg-[#3b82f6]', // APPOINTMENT
-//     7: 'bg-[var(--fern)]', // SOLD
-//     8: 'bg-[var(--waterloo)]', // NOT INTERESTED
-//     9: 'bg-[var(--gray-suit)]', // SIT / NO SALE
-//     10: 'bg-[#ef4444]', // NO SHOW
-//     11: 'bg-[#374151]', // DNC
-//     12: 'bg-[#4e1515]', // SUPPRESSED
-//     13: 'bg-[#10151d]', // Suppression Denied
-//     14: 'bg-[#eab308]',
-//     15: 'bg-[#14b8a6]', // Wrong Number  (teal-500)
-//     16: 'bg-[#a855f7]',  // Incomplete Number (purple-500)
-//     17: 'bg-[#0ea5e9]',  // Call Back (sky-500)
-//     18: 'bg-[#f43f5e]',   // Hang Up (rose-500)
-//     19: 'bg-[#facc15]'   // Spanish (yellow-400)
-// }
 export const STATUS_COLORS = {
-  1: 'bg-[#ff0000]', // Red
-  2: 'bg-[#ff8c00]', // Orange
-  3: 'bg-[#ffff00]', // Yellow
-  4: 'bg-[#80ff00]', // Chartreuse Green
-  5: 'bg-[#00ff00]', // Green
-  6: 'bg-[#00ff80]', // Spring Green
-  7: 'bg-[#00ffff]', // Cyan
-  8: 'bg-[#0080ff]', // Azure/Capri
-  9: 'bg-[#0000ff]', // Blue
-  10: 'bg-[#8000ff]', // Violet
-  11: 'bg-[#ff00ff]', // Magenta/Fuchsia
-  12: 'bg-[#ff0080]', // Rose
-  13: 'bg-[#800000]', // Dark Red/Maroon
-  14: 'bg-[#808000]', // Olive
-  15: 'bg-[#008080]', // Dark Green/Teal
-  16: 'bg-[#000080]', // Navy Blue
-  17: 'bg-[#4b0082]', // Purple/Indigo
-  18: 'bg-[#ffd700]', // Gold
-  19: 'bg-[#ff1493]'  // Hot Pink/Cerise
+    1: 'bg-[var(--atoll)]', // NEW
+    2: 'bg-[var(--atoll)]', // FIRST CALL
+    3: 'bg-[var(--atlantis)]', // SECOND CALL
+    4: 'bg-[#f97316]', // THIRD CALL
+    5: 'bg-[#8b5cf6]', // TEXT
+    6: 'bg-[#3b82f6]', // APPOINTMENT
+    7: 'bg-[var(--fern)]', // SOLD
+    8: 'bg-[var(--waterloo)]', // NOT INTERESTED
+    9: 'bg-[var(--gray-suit)]', // SIT / NO SALE
+    10: 'bg-[#ef4444]', // NO SHOW
+    11: 'bg-[#374151]', // DNC
+    12: 'bg-[#4e1515]', // SUPPRESSED
+    13: 'bg-[#10151d]', // Suppression Denied
+    14: 'bg-[#eab308]',
+    15: 'bg-[#0d9488]',  // Teal (darker + greener, distinct from previous teal)
+    16: 'bg-[#9333ea]',  // Vivid Purple (brighter & more saturated)
+    17: 'bg-[#0369a1]',  // Deep Sky Blue (darker, more muted)
+    18: 'bg-[#e11d48]',  // Strong Crimson (deeper than rose)
+    19: 'bg-[#ca8a04]'   // Earthy Gold (darker & warmer than yellow)
 }
+// export const STATUS_COLORS = {
+//   1: 'bg-[#ff0000]', // Red
+//   2: 'bg-[#ff8c00]', // Orange
+//   3: 'bg-[#ffff00]', // Yellow
+//   4: 'bg-[#80ff00]', // Chartreuse Green
+//   5: 'bg-[#00ff00]', // Green
+//   6: 'bg-[#00ff80]', // Spring Green
+//   7: 'bg-[#00ffff]', // Cyan
+//   8: 'bg-[#0080ff]', // Azure/Capri
+//   9: 'bg-[#0000ff]', // Blue
+//   10: 'bg-[#8000ff]', // Violet
+//   11: 'bg-[#ff00ff]', // Magenta/Fuchsia
+//   12: 'bg-[#ff0080]', // Rose
+//   13: 'bg-[#800000]', // Dark Red/Maroon
+//   14: 'bg-[#808000]', // Olive
+//   15: 'bg-[#008080]', // Dark Green/Teal
+//   16: 'bg-[#000080]', // Navy Blue
+//   17: 'bg-[#4b0082]', // Purple/Indigo
+//   18: 'bg-[#ffd700]', // Gold
+//   19: 'bg-[#ff1493]'  // Hot Pink/Cerise
+// }
