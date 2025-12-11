@@ -180,7 +180,7 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 }
 
 /* Status badges */
-.shieldnest-badge-1 { background-color: var(--atoll); color: white; }
+/* .shieldnest-badge-1 { background-color: var(--atoll); color: white; }
 .shieldnest-badge-2 { background-color: var(--atoll); color: white; }
 .shieldnest-badge-3 { background-color: var(--atlantis); color: white; }
 .shieldnest-badge-4 { background-color: #f97316; color: white; }
@@ -193,7 +193,21 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .shieldnest-badge-11 { background-color: #374151; color: white; }
 .shieldnest-badge-12 { background-color: #4e1515; color: white; }
 .shieldnest-badge-13 { background-color: #10151d; color: white; }
-.shieldnest-badge-14 { background-color: #eab308; color: black; } 
+.shieldnest-badge-14 { background-color: #eab308; color: black; }  */
+.shieldnest-badge-1 { background-color: #ff0000; color: white; } /* Red */
+.shieldnest-badge-2 { background-color: #ff8c00; color: white; } /* Orange */
+.shieldnest-badge-3 { background-color: #ffff00; color: white; } /* Yellow */
+.shieldnest-badge-4 { background-color: #80ff00; color: white; } /* Chartreuse Green */
+.shieldnest-badge-5 { background-color: #00ff00; color: white; } /* Green */
+.shieldnest-badge-6 { background-color: #00ff80; color: white; } /* Spring Green */
+.shieldnest-badge-7 { background-color: #00ffff; color: white; } /* Cyan */
+.shieldnest-badge-8 { background-color: #0080ff; color: white; } /* Azure/Capri */
+.shieldnest-badge-9 { background-color: #0000ff; color: white; } /* Blue */
+.shieldnest-badge-10 { background-color: #8000ff; color: white; } /* Violet */
+.shieldnest-badge-11 { background-color: #ff00ff; color: white; } /* Magenta/Fuchsia */
+.shieldnest-badge-12 { background-color: #ff0080; color: white; } /* Rose */
+.shieldnest-badge-13 { background-color: #800000; color: white; } /* Dark Red/Maroon */
+.shieldnest-badge-14 { background-color: #808000; color: white; } /* Olive (Color changed from black to white for better contrast on this dark color) */
 .status-badge {
   border-radius: 9999px;
   padding: 4px 12px;

@@ -46,7 +46,7 @@ const LeadList = ({
       page = currentPage,
       name = searchTerm,
       lead_status = selectedStatus,
-      state= selectedState,
+      state = selectedState,
       itemsPerPage = perPage,
     ) => {
       // Prevent duplicate calls
@@ -71,7 +71,7 @@ const LeadList = ({
         selectedStatus: lead_status,
         page,
         perPage: itemsPerPage,
-        selectedState:state
+        selectedState: state,
       };
       setLoading(true);
       setError(null);
@@ -96,11 +96,10 @@ const LeadList = ({
           const statusId = STATUS_NAME_TO_ID[lead_status] || lead_status;
           params.lead_status = statusId;
         }
-        console.log('state', state)
-        if (state && state !== 'all') {
-          params.state = state
+        console.log("state", state);
+        if (state && state !== "all") {
+          params.state = state;
         }
-        
 
         const response = await dialerService.getPaginatedLeads(params);
 
@@ -174,7 +173,7 @@ const LeadList = ({
     setSelectedStatus(newStatus);
     setCurrentPage(1);
   };
-    const handleStateChange = (newState) => {
+  const handleStateChange = (newState) => {
     setSelectedState(newState);
     setCurrentPage(1);
   };
@@ -318,7 +317,12 @@ const LeadList = ({
               {/* Lead Header with Name and Dial Icon */}
               <div className="mb-3 flex items-start justify-between">
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                  {lead.name} {lead?.originalData?.calls > 0 && <span className="text-xs text-gray-600 dark:text-gray-400">({lead?.originalData?.calls} calls)</span>}
+                  {lead.name}{" "}
+                  {lead?.originalData?.calls > 0 && (
+                    <span className="text-xs text-gray-600 dark:text-gray-400">
+                      ({lead?.originalData?.calls} calls)
+                    </span>
+                  )}
                 </h3>
                 <div className="flex items-center space-x-2">
                   {(() => {
@@ -339,12 +343,21 @@ const LeadList = ({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      const mortgageId = lead.originalData?.mortgage_id || lead.mortgage_id || lead.id;
-                      const leadMemberId = lead.originalData?.lead_member_id || lead.lead_member_id;
+                      const mortgageId =
+                        lead.originalData?.mortgage_id ||
+                        lead.mortgage_id ||
+                        lead.id;
+                      const leadMemberId =
+                        lead.originalData?.lead_member_id ||
+                        lead.lead_member_id;
                       if (mortgageId && leadMemberId) {
-                        navigate(`/sms-conversation/${mortgageId}/${leadMemberId}`);
+                        navigate(
+                          `/sms-conversation/${mortgageId}/${leadMemberId}`,
+                        );
                       } else {
-                        toast.error("Missing lead information for SMS conversation");
+                        toast.error(
+                          "Missing lead information for SMS conversation",
+                        );
                       }
                     }}
                     className="p-1 text-gray-400 transition-colors hover:text-green-600 dark:hover:text-green-400"
@@ -472,19 +485,25 @@ const LeadList = ({
               if (!id) return "bg-gray-400";
               // Map status IDs to their corresponding colors from shieldnest-theme.css
               const colorMap = {
-                1: "bg-[var(--atoll)]", // NEW
-                2: "bg-[var(--atoll)]", // FIRST CALL
-                3: "bg-[var(--atlantis)]", // SECOND CALL
-                4: "bg-[#f97316]", // THIRD CALL
-                5: "bg-[#8b5cf6]", // TEXT
-                6: "bg-[#3b82f6]", // APPOINTMENT
-                7: "bg-[var(--fern)]", // SOLD
-                8: "bg-[var(--waterloo)]", // NOT INTERESTED
-                9: "bg-[var(--gray-suit)]", // SIT / NO SALE
-                10: "bg-[#ef4444]", // NO SHOW
-                11: "bg-[#374151]", // DNC
-                12: "bg-[#4e1515]", // SUPPRESSED
-                13: "bg-[#10151d]", // Suppression Denied
+                1: "bg-[#ff0000]", // Red
+                2: "bg-[#ff8c00]", // Orange
+                3: "bg-[#ffff00]", // Yellow
+                4: "bg-[#80ff00]", // Chartreuse Green
+                5: "bg-[#00ff00]", // Green
+                6: "bg-[#00ff80]", // Spring Green
+                7: "bg-[#00ffff]", // Cyan
+                8: "bg-[#0080ff]", // Azure/Capri
+                9: "bg-[#0000ff]", // Blue
+                10: "bg-[#8000ff]", // Violet
+                11: "bg-[#ff00ff]", // Magenta/Fuchsia
+                12: "bg-[#ff0080]", // Rose
+                13: "bg-[#800000]", // Dark Red/Maroon
+                14: "bg-[#808000]", // Olive
+                15: "bg-[#008080]", // Dark Green/Teal
+                16: "bg-[#000080]", // Navy Blue
+                17: "bg-[#4b0082]", // Purple/Indigo
+                18: "bg-[#ffd700]", // Gold
+                19: "bg-[#ff1493]", // Hot Pink/Cerise
               };
               return colorMap[id] || "bg-gray-400";
             };
