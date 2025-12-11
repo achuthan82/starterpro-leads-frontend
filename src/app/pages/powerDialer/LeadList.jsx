@@ -9,7 +9,7 @@ import {
   ChevronRightIcon,
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router";
 import { dialerService, stateService } from "utils/apiService";
 import { LEAD_STATUS, STATUS_NAME_TO_ID } from "constants/app.constant";
 import { toast } from "sonner";
@@ -19,8 +19,9 @@ const LeadList = ({
   onSelectLead,
   searchTerm,
   onSearchChange,
+  onOpenSmsDrawer
 }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [selectedStatus, setSelectedStatus] = useState("All Statuses");
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -280,7 +281,7 @@ const LeadList = ({
     getUsStates();
   }, []);
   return (
-    <div className="h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <div className="h-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       {/* Search */}
       <div className="relative mb-4">
         <MagnifyingGlassIcon className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
@@ -294,12 +295,12 @@ const LeadList = ({
       </div>
 
       {/* Status Filter */}
-      <div className="mb-6 grid grid-cols-12 gap-3">
+      <div className="mb-6 grid grid-cols-12 gap-1">
         <div className="col-span-6">
           <select
             value={selectedStatus}
             onChange={(e) => handleStatusChange(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            className="w-full rounded-lg border border-gray-300 bg-white px-2 py-2 text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
           >
             {statusOptions.map((status) => (
               <option key={status} value={status}>
@@ -312,7 +313,7 @@ const LeadList = ({
           <select
             value={selectedState}
             onChange={(e) => handleStateChange(e.target.value)}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-400"
+            className="rounded-lg border border-gray-300 bg-white px-2 py-2 text-gray-900 focus:border-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-400"
           >
             <option value="all">All States</option>
             {states.map((status) => (
@@ -391,9 +392,7 @@ const LeadList = ({
                         lead.originalData?.lead_member_id ||
                         lead.lead_member_id;
                       if (mortgageId && leadMemberId) {
-                        navigate(
-                          `/sms-conversation/${mortgageId}/${leadMemberId}`,
-                        );
+                        onOpenSmsDrawer(lead);
                       } else {
                         toast.error(
                           "Missing lead information for SMS conversation",
