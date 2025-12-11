@@ -72,7 +72,7 @@ export function CallProvider({ children }) {
   }, []);
 
   // Initialize Twilio Device (called only when making a call)
-  const initializeTwilio = useCallback(async (toNumber, mortgageId, uuid) => {
+  const initializeTwilio = useCallback(async (toNumber, mortgageId, uuid, lead_member_id) => {
     try {
       setCallStatus('Initializing calling system...');
       
@@ -85,7 +85,8 @@ export function CallProvider({ children }) {
       const data = await dialerService.initializeTwilio({
         to_number: toNumber,
         mortgage_id: mortgageId,
-        uuid: uuid
+        uuid: uuid,
+        mailing_assignee_id: lead_member_id
       });
       
       if (!data?.data?.token) {
@@ -404,6 +405,7 @@ export function CallProvider({ children }) {
 
     // Get mortgage_id from lead
     const mortgageId = selectedLead.originalData?.mortgage_id || selectedLead.mortgage_id || selectedLead.identifier || selectedLead.id;
+    const lead_member_id = selectedLead.originalData?.lead_member_id || selectedLead.lead_member_id || selectedLead.assignee_id;
     if (!mortgageId) {
       setCallStatus('Lead mortgage ID not found');
       return;
@@ -447,7 +449,7 @@ export function CallProvider({ children }) {
       setIsCallEnded(false);
       
       // Initialize Twilio with call parameters (this will call the API)
-      await initializeTwilio(toNumber, mortgageId, callUuid);
+      await initializeTwilio(toNumber, mortgageId, callUuid, lead_member_id);
       
       // Wait a bit for device to be ready
       if (!deviceRef.current) {

@@ -168,6 +168,34 @@ const LeadList = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, selectedStatus, selectedState]);
 
+  // Update lead in list when selectedLead status changes
+  useEffect(() => {
+    if (selectedLead && selectedLead.id) {
+      setLeads((prevLeads) =>
+        prevLeads.map((l) => {
+          // Match by id, mortgage_id, or assignee_id
+          if (
+            l.id === selectedLead.id ||
+            l.originalData?.mortgage_id === selectedLead.originalData?.mortgage_id ||
+            l.originalData?.assignee_id === selectedLead.originalData?.assignee_id ||
+            l.originalData?.mortgage_id === selectedLead.mortgage_id
+          ) {
+            return {
+              ...l,
+              status: selectedLead.status || l.status,
+              statusId: selectedLead.statusId || selectedLead.originalData?.lead_status || l.statusId,
+              originalData: {
+                ...l.originalData,
+                lead_status: selectedLead.statusId || selectedLead.originalData?.lead_status || l.originalData?.lead_status,
+              },
+            };
+          }
+          return l;
+        })
+      );
+    }
+  }, [selectedLead?.statusId, selectedLead?.status, selectedLead?.originalData?.lead_status]);
+
   // Handle status change
   const handleStatusChange = (newStatus) => {
     setSelectedStatus(newStatus);
@@ -189,7 +217,7 @@ const LeadList = ({
   const handlePerPageChange = (newPerPage) => {
     setPerPage(newPerPage);
     setCurrentPage(1);
-    fetchLeads(1, searchTerm, selectedStatus, newPerPage);
+    fetchLeads(1, searchTerm, selectedStatus, selectedState, newPerPage);
   };
 
   // Get status ID from lead status (could be name or ID)

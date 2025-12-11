@@ -211,6 +211,21 @@ const LeadInfo = ({
         toast.success(data.message || "Status updated successfully!");
         setCurrentStatusId(newStatusId);
         setCurrentStatus(LEAD_STATUS[newStatusId] || "");
+        
+        // Update the selectedLead in context with new status
+        if (setSelectedLead && lead) {
+          const updatedLead = {
+            ...lead,
+            status: LEAD_STATUS[newStatusId] || newStatusId,
+            statusId: newStatusId,
+            originalData: {
+              ...lead.originalData,
+              lead_status: newStatusId,
+            },
+          };
+          setSelectedLead(updatedLead);
+        }
+        
         // Call the onUpdateStatus callback if provided
         if (onUpdateStatus) {
           onUpdateStatus(lead.id, LEAD_STATUS[newStatusId] || newStatusId);
