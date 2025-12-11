@@ -13,6 +13,8 @@ import { STATUS_NAME_TO_ID } from 'constants/app.constant';
 import { useCallContext } from 'app/contexts/call/context';
 import dialerService from 'utils/dialerService';
 import { toast } from 'sonner';
+import SmsDrawer from "../AegisSuite/sms/SmsDrawer"; 
+import SmsConversationContent from "../AegisSuite/sms/SmsConversation";
 
 const PowerDialer = () => {
   // Get call state and functions from context
@@ -52,7 +54,9 @@ const PowerDialer = () => {
   const [hasSwitchedToTranscript, setHasSwitchedToTranscript] = useState(false);
   const [showRechargeModal, setShowRechargeModal] = useState(false);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-  
+  const [showSmsDrawer, setShowSmsDrawer] = useState(false);
+  const [drawerLead, setDrawerLead] = useState(null);
+
   // Wallet balance state
   const [walletBalance, setWalletBalance] = useState(null);
   const [walletLoading, setWalletLoading] = useState(false);
@@ -340,6 +344,14 @@ const PowerDialer = () => {
                 onSelectLead={handleSelectLead}
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
+                onOpenSmsDrawer={(lead) => {
+                  setDrawerLead({
+                    mortgageId: lead.originalData?.mortgage_id,
+                    leadMemberId: lead.originalData?.lead_member_id,
+                    leadData: lead,
+                  });
+                  setShowSmsDrawer(true);
+                }}
               />
             </div>
 
@@ -426,6 +438,21 @@ const PowerDialer = () => {
         walletBalance={walletBalance}
         onRecharge={handleRecharge}
       />
+
+      <SmsDrawer
+        isOpen={showSmsDrawer}
+        onClose={() => setShowSmsDrawer(false)}
+        mortgageId={drawerLead?.mortgageId}
+        leadMemberId={drawerLead?.leadMemberId}
+      >
+        {drawerLead && (
+          <SmsConversationContent 
+            mortgageId={drawerLead.mortgageId}
+            leadMemberId={drawerLead.leadMemberId}
+            lead={drawerLead.leadData}
+          />
+        )}
+      </SmsDrawer>
     </div>
   );
 };
