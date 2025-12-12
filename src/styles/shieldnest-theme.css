@@ -194,6 +194,12 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .shieldnest-badge-12 { background-color: #4e1515; color: white; }
 .shieldnest-badge-13 { background-color: #10151d; color: white; }
 .shieldnest-badge-14 { background-color: #eab308; color: black; } 
+
+.shieldnest-badge-15 { background-color: #0d9488; color: white; }  /* Deep Teal */
+.shieldnest-badge-16 { background-color: #9333ea; color: white; }  /* Vivid Purple */
+.shieldnest-badge-17 { background-color: #0369a1; color: white; }  /* Deep Sky Blue */
+.shieldnest-badge-18 { background-color: #e11d48; color: white; }  /* Strong Crimson */
+.shieldnest-badge-19 { background-color: #ca8a04; color: white; }  /* Earthy Gold */
 .status-badge {
   border-radius: 9999px;
   padding: 4px 12px;

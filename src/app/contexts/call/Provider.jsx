@@ -28,7 +28,7 @@ export function CallProvider({ children }) {
   const [licenseError, setLicenseError] = useState(null);
   const [licenseLoading, setLicenseLoading] = useState(false);
   const [currentCallLogId, setCurrentCallLogId] = useState(null); // UUID for current call
-
+  
   // Refs
   const deviceRef = useRef(null);
   const callRef = useRef(null);
@@ -348,6 +348,7 @@ export function CallProvider({ children }) {
             transcription_status: log.transcription_status || null,
             ppt_uploaded: log.ppt_uploaded || false,
             ppt_url: log.ppt_url || '',
+            record_url:log.record_url || ''
           };
         });
         setCallLogs(transformedLogs);

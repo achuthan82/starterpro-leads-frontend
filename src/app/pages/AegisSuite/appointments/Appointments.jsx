@@ -492,6 +492,7 @@ const Appointments = () => {
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           {statusOptions.slice(1).map((status) => {
                             const statusId = getStatusId(status);
+                            console.log("status-id", statusId);
                             // Get the background color from the badge class
                             const getStatusDotColor = (id) => {
                               if (!id) return "bg-gray-400";
@@ -510,7 +511,12 @@ const Appointments = () => {
                                 11: "bg-[#374151]", // DNC
                                 12: "bg-[#4e1515]", // SUPPRESSED
                                 13: "bg-[#10151d]", // Suppression Denied
-                                14: "bg-[#eab308]"
+                                14: "bg-[#eab308]", // Default Yellow
+                                15: "bg-[#0d9488]", // Teal (darker + greener)
+                                16: "bg-[#9333ea]", // Vivid Purple
+                                17: "bg-[#0369a1]", // Deep Sky Blue
+                                18: "bg-[#e11d48]", // Strong Crimson
+                                19: "bg-[#ca8a04]", // Earthy Gold
                               };
                               return colorMap[id] || "bg-gray-400";
                             };

@@ -47,7 +47,7 @@ const LeadList = ({
       page = currentPage,
       name = searchTerm,
       lead_status = selectedStatus,
-      state= selectedState,
+      state = selectedState,
       itemsPerPage = perPage,
     ) => {
       // Prevent duplicate calls
@@ -72,7 +72,7 @@ const LeadList = ({
         selectedStatus: lead_status,
         page,
         perPage: itemsPerPage,
-        selectedState:state
+        selectedState: state,
       };
       setLoading(true);
       setError(null);
@@ -97,11 +97,10 @@ const LeadList = ({
           const statusId = STATUS_NAME_TO_ID[lead_status] || lead_status;
           params.lead_status = statusId;
         }
-        console.log('state', state)
-        if (state && state !== 'all') {
-          params.state = state
+        console.log("state", state);
+        if (state && state !== "all") {
+          params.state = state;
         }
-        
 
         const response = await dialerService.getPaginatedLeads(params);
 
@@ -173,37 +172,49 @@ const LeadList = ({
   // Update lead in list when selectedLead status changes
   useEffect(() => {
     if (selectedLead && selectedLead.id) {
+      console.log(selectedLead, leads);
       setLeads((prevLeads) =>
         prevLeads.map((l) => {
           // Match by id, mortgage_id, or assignee_id
           if (
-            l.id === selectedLead.id ||
-            l.originalData?.mortgage_id === selectedLead.originalData?.mortgage_id ||
-            l.originalData?.assignee_id === selectedLead.originalData?.assignee_id ||
-            l.originalData?.mortgage_id === selectedLead.mortgage_id
+            // l.id === selectedLead.id ||
+            l.originalData?.mortgage_id ===
+            selectedLead.originalData?.mortgage_id
+            // l.originalData?.assignee_id === selectedLead.originalData?.assignee_id
+            // l.originalData?.mortgage_id === selectedLead.mortgage_id
           ) {
             return {
               ...l,
               status: selectedLead.status || l.status,
-              statusId: selectedLead.statusId || selectedLead.originalData?.lead_status || l.statusId,
+              statusId:
+                selectedLead.statusId ||
+                selectedLead.originalData?.lead_status ||
+                l.statusId,
               originalData: {
                 ...l.originalData,
-                lead_status: selectedLead.statusId || selectedLead.originalData?.lead_status || l.originalData?.lead_status,
+                lead_status:
+                  selectedLead.statusId ||
+                  selectedLead.originalData?.lead_status ||
+                  l.originalData?.lead_status,
               },
             };
           }
           return l;
-        })
+        }),
       );
     }
-  }, [selectedLead?.statusId, selectedLead?.status, selectedLead?.originalData?.lead_status]);
+  }, [
+    selectedLead?.statusId,
+    selectedLead?.status,
+    selectedLead?.originalData?.lead_status,
+  ]);
 
   // Handle status change
   const handleStatusChange = (newStatus) => {
     setSelectedStatus(newStatus);
     setCurrentPage(1);
   };
-    const handleStateChange = (newState) => {
+  const handleStateChange = (newState) => {
     setSelectedState(newState);
     setCurrentPage(1);
   };
@@ -347,19 +358,26 @@ const LeadList = ({
               {/* Lead Header with Name and Dial Icon */}
               <div className="mb-1 flex items-start justify-between">
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                  {lead.name}
+                  {lead.name}{" "}
                 </h3>
                 <div className="flex items-center space-x-2">
                  
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      const mortgageId = lead.originalData?.mortgage_id || lead.mortgage_id || lead.id;
-                      const leadMemberId = lead.originalData?.lead_member_id || lead.lead_member_id;
+                      const mortgageId =
+                        lead.originalData?.mortgage_id ||
+                        lead.mortgage_id ||
+                        lead.id;
+                      const leadMemberId =
+                        lead.originalData?.lead_member_id ||
+                        lead.lead_member_id;
                       if (mortgageId && leadMemberId) {
                         onOpenSmsDrawer(lead);
                       } else {
-                        toast.error("Missing lead information for SMS conversation");
+                        toast.error(
+                          "Missing lead information for SMS conversation",
+                        );
                       }
                     }}
                     className="p-1 text-gray-400 transition-colors hover:text-green-600 dark:hover:text-green-400"
@@ -386,8 +404,12 @@ const LeadList = ({
                       </span>
                     );
                   })()}
-                  {lead?.originalData?.calls > 0 && <span className="text-xs text-gray-600 dark:text-gray-400">({lead?.originalData?.calls} calls)</span>}
-              </div>
+                  {lead?.originalData?.calls > 0 && (
+                    <span className="text-xs text-gray-600 dark:text-gray-400">
+                      ({lead?.originalData?.calls} calls)
+                    </span>
+                  )}             
+                  </div>
 
               {/* Lead Details with Heroicons */}
               <div className="ml-1 space-y-2">
@@ -519,6 +541,12 @@ const LeadList = ({
                 11: "bg-[#374151]", // DNC
                 12: "bg-[#4e1515]", // SUPPRESSED
                 13: "bg-[#10151d]", // Suppression Denied
+                14: "bg-[#eab308]", // Default Yellow
+                15: "bg-[#0d9488]", // Teal (darker + greener)
+                16: "bg-[#9333ea]", // Vivid Purple
+                17: "bg-[#0369a1]", // Deep Sky Blue
+                18: "bg-[#e11d48]", // Strong Crimson
+                19: "bg-[#ca8a04]", // Earthy Gold
               };
               return colorMap[id] || "bg-gray-400";
             };
