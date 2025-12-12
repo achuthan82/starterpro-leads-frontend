@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router";
 import {
   ChatBubbleLeftRightIcon,
   ChevronLeftIcon,
@@ -12,7 +12,7 @@ import moment from "moment";
 
 const SmsConversation = ({mortgage_id, lead_member_id}) => {
   // const { mortgage_id, lead_member_id } = useParams();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const conversationEndRef = useRef(null);
   const conversationContainerRef = useRef(null);
 
@@ -348,13 +348,13 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
         <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col">
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="mb-4 flex items-center gap-3">
-              <button
+              {/* <button
                 onClick={() => navigate("/power-dialer")}
                 className="flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-[var(--color-atoll)] dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                 title="Back to Power Dialer"
               >
                 <ChevronLeftIcon className="h-5 w-5" />
-              </button>
+              </button> */}
               <h2 className="text-xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
                 SMS Conversations
               </h2>
