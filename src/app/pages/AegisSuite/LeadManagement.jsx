@@ -2,7 +2,6 @@ import { useState, useEffect, Fragment } from "react";
 import { Card } from "components/ui";
 import SharedSidebar from "./components/SharedSidebar";
 import {
-  automationService,
   leadsService,
   stateService,
 } from "utils/apiService";
@@ -24,17 +23,20 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   XCircleIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import { toast } from "sonner";
 import { LEAD_STATUS, LEAD_STATUSES } from "constants/app.constant";
 import { JWT_HOST_API } from "configs/auth.config";
 import LeadDetailsModal from "./LeadDetailsModal";
 import { useAuthContext } from "app/contexts/auth/context";
-
+import { useDisclosure } from "hooks";
+import LeadAutomationSettings from "./LeadAutomationSettings";
 const LeadManagement = () => {
   const { user } = useAuthContext();
   const userRole = user?.role || localStorage.getItem("userRole") || "agent";
-
+  const [isModalOpen, { open, close }] = useDisclosure(false);
+  
   const [activeTab, setActiveTab] = useState("rich");
   const [selectedLead, setSelectedLead] = useState(null);
   const [selectedLeads, setSelectedLeads] = useState([]);
@@ -76,7 +78,7 @@ const LeadManagement = () => {
   const [showBulkStatusModal, setShowBulkStatusModal] = useState(false);
   const [bulkNewStatus, setBulkNewStatus] = useState("");
   const [statusHistory, setStatusHistory] = useState([]);
-
+  const [settingsLead, setSettingsLead] = useState('')
   // Available statuses as per requirements
   /*const LEAD_STATUSES = [
     { value: 1, label: 'First call' },
@@ -512,31 +514,7 @@ const LeadManagement = () => {
     setCurrentPage(1);
     fetchLeads(activeTab, filters, 1, newPerPage, true, purchased);
   };
-  const handleLeadAutomation = (status, lead) => {
-    setLoading(true);
-    const payload = { sms_automation_enabled: status };
-    automationService
-      .toggleLeadManagementAutomation(lead.assignee_id, payload)
-      .then((response) => {
-        console.log(response);
-        if (response.data.status === 200) {
-          fetchLeads(
-            activeTab,
-            filters,
-            currentPage,
-            perPage,
-            false,
-            purchased,
-          );
-          toast.success("Success");
-        } else {
-          toast.error(response?.data?.message || "Failed to Update");
-        }
-      })
-      .catch((error) => {
-        toast.error(error?.message || "Failed to Update");
-      });
-  };
+
   // Handle status change
   const [statusLoading, setStatusLoading] = useState(false);
   const handleStatusChange = async () => {
@@ -1408,7 +1386,7 @@ const LeadManagement = () => {
                           Zip
                         </th>
                         <th className="min-w-[80px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
-                          Sms Automation
+                         Automation Settings
                         </th>
                         {/* <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider min-w-[120px]">
                           Loan Amount
@@ -1662,30 +1640,7 @@ const LeadManagement = () => {
 
                             {/* SMS automation*/}
                             <td className="px-3 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900 dark:text-gray-100">
-                                <Switch
-                                  checked={lead?.sms_automation_enabled}
-                                  onChange={() =>
-                                    handleLeadAutomation(
-                                      !lead?.sms_automation_enabled,
-                                      lead,
-                                    )
-                                  }
-                                  className={`${
-                                    lead?.sms_automation_enabled
-                                      ? "bg-[#0a2463]"
-                                      : "bg-gray-300"
-                                  } relative inline-flex h-6 w-11 items-center rounded-full transition`}
-                                >
-                                  <span
-                                    className={`${
-                                      lead?.sms_automation_enabled
-                                        ? "translate-x-6"
-                                        : "translate-x-1"
-                                    } flex inline-block h-4 w-4 transform items-center justify-center rounded-full bg-white transition`}
-                                  ></span>
-                                </Switch>
-                              </div>
+                              <Cog6ToothIcon className="size-5 cursor-pointer" title="View Settings" onClick={() => {setSettingsLead(lead); open()}}/>
                             </td>
 
                             {/* Actions */}
@@ -1798,6 +1753,7 @@ const LeadManagement = () => {
           tabs={tabs}
         />
       )}
+      <LeadAutomationSettings isModalOpen={isModalOpen} close={close} lead={settingsLead} fetchLeads={fetchLeads} currentPage={currentPage} perPage={perPage} purchased={purchased} activeTab={activeTab} setSettingsLead={setSettingsLead}/>
 
       {/* Status Change Modal */}
       {showStatusModal && statusLead && (
