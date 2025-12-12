@@ -171,37 +171,36 @@ const LeadList = ({
 
   // Update lead in list when selectedLead status changes
   useEffect(() => {
-    if (selectedLead && selectedLead.id) {
-      console.log(selectedLead, leads);
-      setLeads((prevLeads) =>
-        prevLeads.map((l) => {
-          // Match by id, mortgage_id, or assignee_id
-          if (
-            // l.id === selectedLead.id ||
-            l.originalData?.mortgage_id ===
-            selectedLead.originalData?.mortgage_id
-            // l.originalData?.assignee_id === selectedLead.originalData?.assignee_id
-            // l.originalData?.mortgage_id === selectedLead.mortgage_id
-          ) {
-            return {
-              ...l,
-              status: selectedLead.status || l.status,
-              statusId:
-                selectedLead.statusId ||
-                selectedLead.originalData?.lead_status ||
-                l.statusId,
-              originalData: {
-                ...l.originalData,
-                lead_status:
-                  selectedLead.statusId ||
-                  selectedLead.originalData?.lead_status ||
-                  l.originalData?.lead_status,
-              },
-            };
-          }
-          return l;
-        }),
-      );
+    if (selectedLead) {
+      const mortgageId = selectedLead.originalData?.mortgage_id || selectedLead.mortgage_id;
+      if (mortgageId) {
+        setLeads((prevLeads) =>
+          prevLeads.map((l) => {
+            // Match by mortgage_id
+            const lMortgageId = l.originalData?.mortgage_id || l.mortgage_id;
+            if (lMortgageId === mortgageId) {
+              // Get the updated status ID from selectedLead
+              const updatedStatusId = selectedLead.statusId !== undefined && selectedLead.statusId !== null 
+                ? selectedLead.statusId 
+                : (selectedLead.originalData?.lead_status !== undefined && selectedLead.originalData?.lead_status !== null
+                    ? selectedLead.originalData.lead_status
+                    : l.statusId);
+              
+              return {
+                ...l,
+                status: selectedLead.status || l.status,
+                statusId: updatedStatusId,
+                lead_status: updatedStatusId,
+                originalData: {
+                  ...l.originalData,
+                  lead_status: updatedStatusId,
+                },
+              };
+            }
+            return l;
+          }),
+        );
+      }
     }
   }, [
     selectedLead?.statusId,
