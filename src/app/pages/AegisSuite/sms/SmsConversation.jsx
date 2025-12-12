@@ -6,7 +6,6 @@ import {
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 import { Switch } from "@headlessui/react";
-import SharedSidebar from "../components/SharedSidebar";
 import { smsService, automationService } from "utils/apiService";
 import { toast } from "sonner";
 import moment from "moment";
@@ -127,19 +126,19 @@ const SmsConversation = () => {
 
   // Handle lead selection
   const handleSelectLead = (lead) => {
-    setSelectedLead(lead);
-    setReplyText(""); // Clear reply text when selecting a new lead
-    // Set automation status from lead data
-    setAutomationEnabled(lead.sms_automation_enabled || lead.originalData?.sms_automation_enabled || false);
-    const leadMemberId = lead.assignee_id;
-    if (leadMemberId) {
-      fetchConversation(leadMemberId, 1, false);
-      // Update URL without navigation
-      navigate(`/sms-conversation/${lead.mortgage_id || lead.mortgage_id}/${leadMemberId}`, {
-        replace: true,
-      });
-    }
-  };
+  setSelectedLead(lead);
+  setReplyText("");
+
+  setAutomationEnabled(
+    lead.sms_automation_enabled || lead.originalData?.sms_automation_enabled || false
+  );
+
+  const leadMemberId = lead.assignee_id;
+  if (leadMemberId) {
+    // Just fetch conversation — do NOT navigate
+    fetchConversation(leadMemberId, 1, false);
+  }
+};
 
   // Handle automation toggle
   const handleAutomationToggle = async (enabled) => {
@@ -344,8 +343,6 @@ const SmsConversation = () => {
 
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
-      <SharedSidebar currentPath="/sms-conversation" />
-
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - Lead List */}
         <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col">
@@ -367,7 +364,7 @@ const SmsConversation = () => {
             <div className="mb-4">
               <input
                 type="text"
-                placeholder="Search by name or mortgage id"
+                placeholder="Search by name or ID"
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
                 onKeyDown={(e) => {
@@ -447,10 +444,10 @@ const SmsConversation = () => {
                 {totalRecords > 0 && (
                   <div className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-600">
                     <div className="flex items-center justify-between gap-3">
-                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                      {/* <div className="text-xs text-gray-600 dark:text-gray-400">
                         Showing {(currentPage - 1) * perPage + 1} to{" "}
                         {Math.min(currentPage * perPage, totalRecords)} of {totalRecords}
-                      </div>
+                      </div> */}
                       <div className="flex items-center gap-2">
                         <select
                           value={perPage}
@@ -611,17 +608,26 @@ const SmsConversation = () => {
                     className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 resize-none"
                     disabled={sendingReply}
                   />
-                  <button
-                    onClick={handleSendReply}
-                    disabled={!replyText.trim() || sendingReply || !selectedLead}
-                    className="rounded-lg bg-[var(--color-atoll)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--color-atoll)]/90 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-blue-600 dark:hover:bg-blue-700"
-                  >
-                    {sendingReply ? (
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                    ) : (
-                      "Send"
-                    )}
-                  </button>
+                 <button
+                  onClick={handleSendReply}
+                  disabled={!replyText.trim() || sendingReply || !selectedLead}
+                  className="
+                    rounded-lg bg-[var(--color-atoll)]
+                    px-4 h-10 mt-4
+                    text-sm font-medium text-white 
+                    hover:bg-[var(--color-atoll)]/90 
+                    disabled:opacity-50 disabled:cursor-not-allowed 
+                    dark:bg-blue-600 dark:hover:bg-blue-700
+                    flex items-center justify-center
+                  "
+                >
+                  {sendingReply ? (
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  ) : (
+                    "Send"
+                  )}
+                </button>
+
                 </div>
               </div>
             </>
