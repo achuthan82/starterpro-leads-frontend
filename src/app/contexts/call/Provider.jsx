@@ -479,14 +479,17 @@ export function CallProvider({ children }) {
         return `+${digits}`;
       };
 
-      callRef.current = await deviceRef.current.connect({ 
-        params: { 
+     callRef.current = await deviceRef.current.connect({
+        params: {
           To: formatPhoneForTwilio(selectedLead.phone),
           From: formatPhoneForTwilio(selectedOutboundNumber.phone),
           CallerId: formatPhoneForTwilio(selectedOutboundNumber.phone),
+          MortgageId: mortgageId,
+          CallLogUuid: callUuid,
+          LeadMemberId: lead_member_id,
           leadId: selectedLead.id
-        } 
-      });
+        }
+     });
 
       console.log(formatPhoneForTwilio(selectedLead.phone), formatPhoneForTwilio(selectedOutboundNumber.phone))
       console.log(callRef.current)

@@ -447,8 +447,8 @@ const PowerDialer = () => {
       >
         {drawerLead && (
           <SmsConversationContent 
-            mortgageId={drawerLead.mortgageId}
-            leadMemberId={drawerLead.leadMemberId}
+            mortgage_id={drawerLead.mortgageId}
+            lead_member_id={drawerLead.leadMemberId}
             lead={drawerLead.leadData}
           />
         )}

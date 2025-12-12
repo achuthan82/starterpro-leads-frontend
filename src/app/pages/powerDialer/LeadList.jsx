@@ -345,26 +345,12 @@ const LeadList = ({
               }`}
             >
               {/* Lead Header with Name and Dial Icon */}
-              <div className="mb-3 flex items-start justify-between">
+              <div className="mb-1 flex items-start justify-between">
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                  {lead.name} {lead?.originalData?.calls > 0 && <span className="text-xs text-gray-600 dark:text-gray-400">({lead?.originalData?.calls} calls)</span>}
+                  {lead.name}
                 </h3>
                 <div className="flex items-center space-x-2">
-                  {(() => {
-                    // Use statusId from lead data if available, otherwise try to get it from status name
-                    const statusId = lead.statusId || getStatusId(lead.status);
-                    return statusId ? (
-                      <span
-                        className={`status-badge inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${getStatusBadgeClass(statusId)}`}
-                      >
-                        {lead.status || LEAD_STATUS[statusId] || ""}
-                      </span>
-                    ) : (
-                      <span className="text-xs text-gray-600 dark:text-gray-400">
-                        {lead.status || "Unknown"}
-                      </span>
-                    );
-                  })()}
+                 
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -382,6 +368,25 @@ const LeadList = ({
                     <ChatBubbleLeftRightIcon className="h-5 w-5" />
                   </button>
                 </div>
+              </div>
+
+              <div className="mb-3 flex items-start justify-between">
+                 {(() => {
+                    // Use statusId from lead data if available, otherwise try to get it from status name
+                    const statusId = lead.statusId || getStatusId(lead.status);
+                    return statusId ? (
+                      <span
+                        className={`status-badge inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${getStatusBadgeClass(statusId)}`}
+                      >
+                        {lead.status || LEAD_STATUS[statusId] || ""}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-600 dark:text-gray-400">
+                        {lead.status || "Unknown"}
+                      </span>
+                    );
+                  })()}
+                  {lead?.originalData?.calls > 0 && <span className="text-xs text-gray-600 dark:text-gray-400">({lead?.originalData?.calls} calls)</span>}
               </div>
 
               {/* Lead Details with Heroicons */}

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import {
   ChatBubbleLeftRightIcon,
   ChevronLeftIcon,
@@ -10,8 +10,8 @@ import { smsService, automationService } from "utils/apiService";
 import { toast } from "sonner";
 import moment from "moment";
 
-const SmsConversation = () => {
-  const { mortgage_id, lead_member_id } = useParams();
+const SmsConversation = ({mortgage_id, lead_member_id}) => {
+  // const { mortgage_id, lead_member_id } = useParams();
   const navigate = useNavigate();
   const conversationEndRef = useRef(null);
   const conversationContainerRef = useRef(null);
