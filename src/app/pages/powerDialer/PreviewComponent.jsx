@@ -497,7 +497,7 @@ const PreviewComponent = forwardRef(
               Payoff: {formatCurrency(submittedData.payoff)}
             </p>
             <p className="text-lg">
-              Equity:dailerService.js {formatCurrency(submittedData.equity)}
+              Equity: {formatCurrency(submittedData.equity)}
             </p>
 
             <div className="mt-8">

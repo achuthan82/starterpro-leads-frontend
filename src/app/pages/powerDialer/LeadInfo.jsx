@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ShieldCheckIcon, PencilIcon } from "@heroicons/react/24/outline";
+import { ShieldCheckIcon, PencilIcon, PhoneArrowUpRightIcon, PhoneArrowDownLeftIcon, } from "@heroicons/react/24/outline";
 import MortgageProtectionModal from "./MortgageProtectionModal";
 import {
   LEAD_STATUS,
@@ -35,48 +35,8 @@ const LeadInfo = ({
   // const [statusHistory, setStatusHistory] = useState([]);
   // const [selectedLead, setSelectedLead] = useState(null);
   console.log(formData);
-  
-  // Function to get current status ID from lead - compute on every render to ensure it's always up-to-date
-  const getCurrentStatusId = () => {
-    if (!lead) return null;
-    
-    // Priority: statusId > originalData.lead_status > lead_status > status (converted to ID)
-    if (lead.statusId !== undefined && lead.statusId !== null) {
-      return lead.statusId;
-    }
-    if (lead.originalData?.lead_status !== undefined && lead.originalData?.lead_status !== null) {
-      return lead.originalData.lead_status;
-    }
-    if (lead.lead_status !== undefined && lead.lead_status !== null) {
-      return lead.lead_status;
-    }
-    if (lead.status) {
-      const statusId = STATUS_NAME_TO_ID[lead.status.toUpperCase()] ||
-        Object.keys(LEAD_STATUS).find(
-          (key) => LEAD_STATUS[key] === lead.status,
-        );
-      if (statusId) {
-        return Number(statusId);
-      }
-    }
-    return null;
-  };
-  
-  // Compute current status ID - compute on every render to ensure it's always fresh
-  const computedStatusId = getCurrentStatusId();
-  
-  // Debug: Log status values to help diagnose issues
-  // console.log('LeadInfo Status Debug:', {
-  //   leadId: lead?.id,
-  //   mortgageId: lead?.mortgage_id,
-  //   statusId: lead?.statusId,
-  //   originalDataLeadStatus: lead?.originalData?.lead_status,
-  //   leadStatus: lead?.lead_status,
-  //   status: lead?.status,
-  //   computedStatusId,
-  //   currentStatusId,
-  // });
-  
+  console.log(callHistory);
+
   // const getStatusName = (statusId) => {
   //   if (!statusId) return "";
   //   return LEAD_STATUS[statusId] || statusId;
@@ -634,6 +594,8 @@ const LeadInfo = ({
                       className="flex items-center justify-between text-sm"
                     >
                       <div className="flex items-center space-x-2">
+                   
+
                         {callStatusId && (
                           <span
                             className={`status-badge inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${getStatusBadgeClass(callStatusId)}`}
@@ -645,6 +607,11 @@ const LeadInfo = ({
                           <div
                             className={`h-2 w-2 rounded-full bg-gray-400`}
                           ></div>
+                        )}
+                        {log.is_outgoing ? (
+                          <PhoneArrowUpRightIcon className="h-4 w-4 text-green-600 dark:text-green-400" title="Outgoing Call"/>
+                        ) : (
+                          <PhoneArrowDownLeftIcon className="h-4 w-4 text-blue-600 dark:text-blue-400" title="Incoming Call"/>
                         )}
                         <span className="text-gray-600 dark:text-gray-400">
                           {log.date} · {log.time}
@@ -674,6 +641,7 @@ const LeadInfo = ({
                       className="flex items-center justify-between text-sm"
                     >
                       <div className="flex items-center space-x-2">
+                        
                         {callStatusId && (
                           <span
                             className={`status-badge inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${getStatusBadgeClass(callStatusId)}`}

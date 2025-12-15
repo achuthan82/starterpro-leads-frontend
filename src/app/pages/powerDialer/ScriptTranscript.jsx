@@ -3,7 +3,7 @@ import {
   DocumentTextIcon,
   ChatBubbleLeftEllipsisIcon,
 } from "@heroicons/react/24/solid";
-import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import { ArrowDownTrayIcon,  PhoneArrowUpRightIcon, PhoneArrowDownLeftIcon } from "@heroicons/react/24/outline";
 import { useAuthContext } from "app/contexts/auth/context";
 import { toast } from "sonner";
 import { IoBulbOutline } from "react-icons/io5";
@@ -31,6 +31,8 @@ export default function ScriptTranscript({
   const [scriptHeaders, setScriptHeaders] = useState([]);
   const [objectionHandlersList, setObjectionHandlersList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [callFilter, setCallFilter] = useState("all");
+
   const getScriptData = (type) => {
     setLoading(true);
     const params = { page: 1, per_page: 20, type_: type };
@@ -272,7 +274,7 @@ export default function ScriptTranscript({
       <div className="mb-4 flex gap-1 border-b border-gray-200 dark:border-gray-700">
         <button
           onClick={() => handleTabClick("script")}
-          className={`flex items-center gap-1 rounded-t-lg px-3 py-1 text-xs font-medium whitespace-nowrap transition-all ${
+          className={`flex items-center gap-1 rounded-t-lg px-2 py-1 text-xs font-medium whitespace-nowrap transition-all ${
             activeTab === "script"
               ? "-mb-[1px] border-b-2 border-blue-500 bg-blue-100 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-400"
               : "text-gray-600 hover:bg-gray-50 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-blue-400"
@@ -284,7 +286,7 @@ export default function ScriptTranscript({
 
         <button
           onClick={() => handleTabClick("objections")}
-          className={`flex items-center gap-1 rounded-t-lg px-3 py-1 text-xs font-medium whitespace-nowrap transition-all ${
+          className={`flex items-center gap-1 rounded-t-lg px-2 py-1 text-xs font-medium whitespace-nowrap transition-all ${
             activeTab === "objections"
               ? "-mb-[1px] border-b-2 border-blue-500 bg-blue-100 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-400"
               : "text-gray-600 hover:bg-gray-50 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-blue-400"
@@ -296,7 +298,7 @@ export default function ScriptTranscript({
 
         <button
           onClick={() => handleTabClick("transcript")}
-          className={`flex items-center gap-1 rounded-t-lg px-3 py-1 text-xs font-medium whitespace-nowrap transition-all ${
+          className={`flex items-center gap-1 rounded-t-lg px-2 py-1 text-xs font-medium whitespace-nowrap transition-all ${
             activeTab === "transcript"
               ? "-mb-[1px] border-b-2 border-blue-500 bg-blue-100 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-400"
               : "text-gray-600 hover:bg-gray-50 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-blue-400"
@@ -568,268 +570,221 @@ export default function ScriptTranscript({
         </div>
       )}
 
-      {activeTab === "transcript" && (
-        <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-            {isCallActive ? "Live Transcription" : "Call Recordings"}
-          </h2>
+    {activeTab === "transcript" && (
+  <div className="space-y-3">
+    <div className="flex  items-center justify-between">
+    <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+      {isCallActive ? "Live Transcription" : "Call Recordings"}
+    </h2>
 
-          {isCallActive ? (
-            // Show live transcript during active call
-            <div className="min-h-[200px] rounded-lg bg-gray-50 p-3 text-sm leading-relaxed text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-              {transcript ||
-                "Call transcription will appear here when connected"}
-            </div>
-          ) : callLogsLoading ? (
-            <div className="flex flex-col items-center justify-center rounded-lg bg-gray-50 p-10 text-gray-500 dark:bg-gray-700 dark:text-gray-400">
-              <ChatBubbleLeftEllipsisIcon className="mb-2 h-8 w-8 animate-pulse opacity-50" />
-              <p>Loading recordings...</p>
-            </div>
-          ) : callLogs.length > 0 ? (
-            // Show call logs transcripts
-            <div className="max-h-[55vh] space-y-4 overflow-y-auto">
-              {callLogs.map((log) => {
-                console.log("log", log);
-                const audioUrl = log.record_url?.trim();
-                // Get transcription data from API response
-                // const transcriptionData =
-                //   log.transcription_data || log.transcription || {};
-                // const aggregatedText = transcriptionData.aggregated_text || "";
-                // const sentences = transcriptionData.sentences || [];
-                // const hasTranscript = aggregatedText && aggregatedText.trim();
-                const transcriptionStatus = log.transcription_status;
-                return (
-                  <div
-                    key={log.id}
-                    className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700"
-                  >
-                    <div className="mb-2 flex items-center justify-between">
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        {log.date} · {log.time}
-                      </div>
-                      <div className="flex items-center gap-3">
-                        {log.duration && (
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            Duration: {log.duration}
-                          </div>
-                        )}
-                        {transcriptionStatus && (
-                          <span
-                            className={`rounded px-2 py-1 text-xs ${
-                              transcriptionStatus === "completed"
-                                ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                                : transcriptionStatus === "processing"
-                                  ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                                  : "bg-gray-100 text-gray-700 dark:bg-gray-600 dark:text-gray-300"
-                            }`}
-                          >
-                            {transcriptionStatus}
-                          </span>
-                        )}
-                        {log.ppt_uploaded &&
-                          log.ppt_url &&
-                          (() => {
-                            // Handle ppt_url as array or string
-                            const pptUrls = Array.isArray(log.ppt_url)
-                              ? log.ppt_url
-                              : [log.ppt_url];
-                            const hasMultipleFiles = pptUrls.length > 1;
+    {!isCallActive && (
+      <div className="mb-2">
+        <select
+          value={callFilter}
+          onChange={(e) => setCallFilter(e.target.value)}
+          className="w-30 rounded border border-gray-300 bg-white px-1 py-1 text-xs 
+                     text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+        >
+          <option value="all">All Calls</option>
+          <option value="incoming">Incoming Calls</option>
+          <option value="outgoing">Outgoing Calls</option>
+        </select>
+      </div>
+    )}
+    </div>
+    {isCallActive ? (
+      <div className="min-h-[200px] rounded-lg bg-gray-50 p-3 text-sm leading-relaxed text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+        {transcript || "Call transcription will appear here when connected"}
+      </div>
+    ) : callLogsLoading ? (
+      <div className="flex flex-col items-center justify-center rounded-lg bg-gray-50 p-10 text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+        <ChatBubbleLeftEllipsisIcon className="mb-2 h-8 w-8 animate-pulse opacity-50" />
+        <p>Loading recordings...</p>
+      </div>
+    ) : callLogs.length > 0 ? (
+      // ---- FILTERED LOGS ----
+      (() => {
+        const filteredLogs = callLogs.filter((log) => {
+          if (callFilter === "incoming") return log.outbound_call === 0;
+          if (callFilter === "outgoing") return log.outbound_call === 1;
+          return true;
+        });
 
-                            const handleDownload = async (url, index) => {
-                              try {
-                                // Check if URL is absolute or relative
-                                const isAbsoluteUrl =
-                                  url.startsWith("http://") ||
-                                  url.startsWith("https://");
+        return (
+          <div className="max-h-[55vh] space-y-4 overflow-y-auto">
+            {filteredLogs.map((log) => {
+              const audioUrl = log.record_url?.trim();
+              const transcriptionStatus = log.transcription_status;
 
-                                if (isAbsoluteUrl) {
-                                  // For absolute URLs, try direct download first
-                                  const link = document.createElement("a");
-                                  link.href = url;
-                                  // Extract file extension from URL or default to .pptx
-                                  const urlExtension =
-                                    url.match(
-                                      /\.(pdf|pptx|ppt|doc|docx)$/i,
-                                    )?.[0] || ".pptx";
-                                  link.download = `presentation_${log.id || Date.now()}${hasMultipleFiles ? `_${index + 1}` : ""}${urlExtension}`;
-                                  link.target = "_blank";
-                                  document.body.appendChild(link);
-                                  link.click();
-                                  document.body.removeChild(link);
-                                } else {
-                                  // For relative URLs, fetch with authentication
-                                  const token =
-                                    localStorage.getItem("authToken");
-                                  const fullUrl = url.startsWith("/")
-                                    ? `${JWT_HOST_API}${url}`
-                                    : `${JWT_HOST_API}/${url}`;
-
-                                  const response = await axios.get(fullUrl, {
-                                    headers: {
-                                      Authorization: `Bearer ${token}`,
-                                    },
-                                    responseType: "blob",
-                                  });
-
-                                  const blob = new Blob([response.data]);
-                                  const blobUrl =
-                                    window.URL.createObjectURL(blob);
-                                  const link = document.createElement("a");
-                                  link.href = blobUrl;
-                                  const urlExtension =
-                                    url.match(
-                                      /\.(pdf|pptx|ppt|doc|docx)$/i,
-                                    )?.[0] || ".pptx";
-                                  link.download = `presentation_${log.id || Date.now()}${hasMultipleFiles ? `_${index + 1}` : ""}${urlExtension}`;
-                                  document.body.appendChild(link);
-                                  link.click();
-                                  window.URL.revokeObjectURL(blobUrl);
-                                  document.body.removeChild(link);
-                                }
-                              } catch (error) {
-                                console.error("Error downloading file:", error);
-                                toast.error(
-                                  `Failed to download file ${index + 1}`,
-                                );
-                              }
-                            };
-
-                            const handleDownloadAll = async () => {
-                              for (let i = 0; i < pptUrls.length; i++) {
-                                await handleDownload(pptUrls[i], i);
-                                // Small delay between downloads to avoid browser blocking
-                                if (i < pptUrls.length - 1) {
-                                  await new Promise((resolve) =>
-                                    setTimeout(resolve, 300),
-                                  );
-                                }
-                              }
-                              toast.success(
-                                `Downloaded ${pptUrls.length} file(s)`,
-                              );
-                            };
-
-                            return (
-                              <div className="flex items-center gap-2">
-                                {hasMultipleFiles ? (
-                                  <button
-                                    onClick={handleDownloadAll}
-                                    className="flex items-center gap-1 rounded px-2 py-1 text-xs text-[var(--color-atoll)] transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
-                                    title={`Download all ${pptUrls.length} files`}
-                                  >
-                                    <ArrowDownTrayIcon className="h-4 w-4" />
-                                    <span className="hidden sm:inline">
-                                      Download All ({pptUrls.length})
-                                    </span>
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() =>
-                                      handleDownload(pptUrls[0], 0)
-                                    }
-                                    className="flex items-center gap-1 rounded px-2 py-1 text-xs text-[var(--color-atoll)] transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
-                                    title="Download Presentation"
-                                  >
-                                    <ArrowDownTrayIcon className="h-4 w-4" />
-                                  </button>
-                                )}
-                              </div>
-                            );
-                          })()}
-                      </div>
+              return (
+                <div
+                  key={log.id}
+                  className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700"
+                >
+                  <div className="mb-2 flex items-center justify-between">
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      {log.date} · {log.time}
                     </div>
-                    <div className="mt-2 mb-2">
-                      {log.record_url && (
-                        <>
-                          <audio controls>
-                            <source src={audioUrl} type="audio/mpeg" />
-                          </audio>
-                         
-                        </>
+
+                    <div className="flex items-center gap-2">
+                      {/* INCOMING / OUTGOING ICON */}
+                      {log?.outbound_call === 1 ? (
+                        <PhoneArrowUpRightIcon
+                          className="h-4 w-4 text-green-600 dark:text-green-400"
+                          title="Outgoing Call"
+                        />
+                      ) : (
+                        <PhoneArrowDownLeftIcon
+                          className="h-4 w-4 text-blue-600 dark:text-blue-400"
+                          title="Incoming Call"
+                        />
                       )}
-                    </div>
-                    {/* {hasTranscript ? (
-                      <div className="space-y-3">
-                        <div className="rounded border border-gray-200 bg-white p-3 text-sm leading-relaxed whitespace-pre-wrap text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                          <div className="mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400">
-                            Full Transcript:
-                          </div>
-                          {aggregatedText}
+
+                      {/* DURATION */}
+                      {log.duration && (
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          Duration: {log.duration}
                         </div>
+                      )}
 
-                        {sentences.length > 0 && (
-                          <div className="space-y-2">
-                            <div className="mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400">
-                              Detailed Transcript:
-                            </div>
-                            {sentences.map((sentence, idx) => {
-                              const isCustomer =
-                                sentence.speaker === "Customer";
-                              const startTime = parseFloat(
-                                sentence.start_time || 0,
-                              );
-                              const endTime = parseFloat(
-                                sentence.end_time || 0,
-                              );
-                              const timeStr = `${Math.floor(startTime)}s - ${Math.floor(endTime)}s`;
+                      {/* TRANSCRIPTION STATUS */}
+                      {transcriptionStatus && (
+                        <span
+                          className={`rounded px-1 py-1/2 text-xs ${
+                            transcriptionStatus === "completed"
+                              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                              : transcriptionStatus === "processing"
+                                ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                                : "bg-gray-100 text-gray-700 dark:bg-gray-600 dark:text-gray-300"
+                          }`}
+                        >
+                          {transcriptionStatus}
+                        </span>
+                      )}
 
-                              return (
-                                <div
-                                  key={idx}
-                                  className={`rounded p-2 text-sm ${
-                                    isCustomer
-                                      ? "border-l-2 border-blue-400 bg-blue-50 dark:bg-blue-900/20"
-                                      : "border-l-2 border-gray-400 bg-gray-100 dark:bg-gray-800"
-                                  }`}
+                      {/* PPT DOWNLOAD HANDLING */}
+                      {log.ppt_uploaded &&
+                        log.ppt_url &&
+                        (() => {
+                          const pptUrls = Array.isArray(log.ppt_url)
+                            ? log.ppt_url
+                            : [log.ppt_url];
+                          const hasMultipleFiles = pptUrls.length > 1;
+
+                          const handleDownload = async (url, index) => {
+                            try {
+                              const isAbsoluteUrl =
+                                url.startsWith("http://") || url.startsWith("https://");
+
+                              if (isAbsoluteUrl) {
+                                const link = document.createElement("a");
+                                link.href = url;
+                                const urlExtension =
+                                  url.match(/\.(pdf|pptx|ppt|doc|docx)$/i)?.[0] || ".pptx";
+                                link.download = `presentation_${log.id || Date.now()}${
+                                  hasMultipleFiles ? `_${index + 1}` : ""
+                                }${urlExtension}`;
+                                link.target = "_blank";
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              } else {
+                                const token = localStorage.getItem("authToken");
+                                const fullUrl = url.startsWith("/")
+                                  ? `${JWT_HOST_API}${url}`
+                                  : `${JWT_HOST_API}/${url}`;
+
+                                const response = await axios.get(fullUrl, {
+                                  headers: { Authorization: `Bearer ${token}` },
+                                  responseType: "blob",
+                                });
+
+                                const blob = new Blob([response.data]);
+                                const blobUrl = window.URL.createObjectURL(blob);
+                                const link = document.createElement("a");
+                                link.href = blobUrl;
+                                const urlExtension =
+                                  url.match(/\.(pdf|pptx|ppt|doc|docx)$/i)?.[0] || ".pptx";
+                                link.download = `presentation_${log.id || Date.now()}${
+                                  hasMultipleFiles ? `_${index + 1}` : ""
+                                }${urlExtension}`;
+                                document.body.appendChild(link);
+                                link.click();
+                                window.URL.revokeObjectURL(blobUrl);
+                                document.body.removeChild(link);
+                              }
+                            } catch (error) {
+                              console.error("Error downloading file:", error);
+                              toast.error(`Failed to download file ${index + 1}`);
+                            }
+                          };
+
+                          const handleDownloadAll = async () => {
+                            for (let i = 0; i < pptUrls.length; i++) {
+                              await handleDownload(pptUrls[i], i);
+                              if (i < pptUrls.length - 1)
+                                await new Promise((resolve) => setTimeout(resolve, 300));
+                            }
+                            toast.success(`Downloaded ${pptUrls.length} file(s)`);
+                          };
+
+                          return (
+                            <div className="flex items-center gap-2">
+                              {hasMultipleFiles ? (
+                                <button
+                                  onClick={handleDownloadAll}
+                                  className="flex items-center gap-1 rounded px-2 py-1 text-xs 
+                                             text-[var(--color-atoll)] transition-colors hover:bg-blue-50 
+                                             dark:text-blue-400 dark:hover:bg-blue-900/20"
+                                  title={`Download all ${pptUrls.length} files`}
                                 >
-                                  <div className="mb-1 flex items-center justify-between">
-                                    <span
-                                      className={`text-xs font-medium ${
-                                        isCustomer
-                                          ? "text-blue-700 dark:text-blue-400"
-                                          : "text-gray-700 dark:text-gray-300"
-                                      }`}
-                                    >
-                                      {isCustomer ? "Customer" : "Agent"}
-                                    </span>
-                                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                                      {timeStr}
-                                    </span>
-                                  </div>
-                                  <div
-                                    className={`text-gray-800 dark:text-gray-200 ${
-                                      isCustomer ? "font-medium" : ""
-                                    }`}
-                                  >
-                                    {sentence.text}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    ) : transcriptionStatus === "processing" ? (
-                      <div className="text-sm text-yellow-600 italic dark:text-yellow-400">
-                        Transcription is being processed...
-                      </div>
-                    ) : (
-                      <div className="text-sm text-gray-400 italic dark:text-gray-500">
-                        No transcription available for this call
-                      </div>
-                    )} */}
+                                  <ArrowDownTrayIcon className="h-4 w-4" />
+                                  <span className="hidden sm:inline">
+                                    Download All ({pptUrls.length})
+                                  </span>
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => handleDownload(pptUrls[0], 0)}
+                                  className="flex items-center gap-1 rounded px-2 py-1 text-xs 
+                                             text-[var(--color-atoll)] transition-colors hover:bg-blue-50 
+                                             dark:text-blue-400 dark:hover:bg-blue-900/20"
+                                  title="Download Presentation"
+                                >
+                                  <ArrowDownTrayIcon className="h-4 w-4" />
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })()}
+                    </div>
                   </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center rounded-lg bg-gray-50 p-10 text-gray-500 dark:bg-gray-700 dark:text-gray-400">
-              <ChatBubbleLeftEllipsisIcon className="mb-2 h-8 w-8 opacity-50" />
-              <p>No call transcripts available</p>
-            </div>
-          )}
-        </div>
-      )}
+
+                  {/* AUDIO PLAYER */}
+                  <div className="mt-2 mb-2">
+                    {log.record_url && (
+                      <audio controls>
+                        <source src={audioUrl} type="audio/mpeg" />
+                      </audio>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()
+    ) : (
+      // ---- NO CALLS ----
+      <div className="flex flex-col items-center justify-center rounded-lg bg-gray-50 p-10 
+                      text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+        <ChatBubbleLeftEllipsisIcon className="mb-2 h-8 w-8 opacity-50" />
+        <p>No call transcripts available</p>
+      </div>
+    )}
+  </div>
+)}
+
     </div>
   );
 }

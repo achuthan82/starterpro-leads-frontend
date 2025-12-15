@@ -294,6 +294,7 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
               Select an available phone number and provide a friendly name
             </p>
 
+            <div className="space-y-6 text-left max-h-[60vh] overflow-y-auto">
             {/* Filter Section */}
             <div className="mb-6 space-y-4">
               {/* Number Type Selection */}
@@ -562,6 +563,7 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
                 </button>
               </div>
             )}
+            </div>
           </DialogPanel>
         </TransitionChild>
       </Dialog>

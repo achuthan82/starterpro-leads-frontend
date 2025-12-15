@@ -349,7 +349,8 @@ export function CallProvider({ children }) {
             transcription_status: log.transcription_status || null,
             ppt_uploaded: log.ppt_uploaded || false,
             ppt_url: log.ppt_url || '',
-            record_url:log.record_url || ''
+            record_url:log.record_url || '',
+            is_outgoing: log.is_outgoing || ''
           };
         });
         setCallLogs(transformedLogs);
