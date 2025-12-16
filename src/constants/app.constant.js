@@ -18,16 +18,16 @@ export const COLORS = ['neutral', 'primary', 'secondary', 'info', 'success', 'wa
 export const LEAD_STATUS = {
     1: 'NEW', 2: 'FIRST CALL', 3: 'SECOND CALL', 4: 'THIRD CALL', 5: 'TEXT',
     6: 'APPOINTMENT', 7: 'SOLD', 8: 'NOT INTERESTED', 9: 'SIT / NO SALE',
-    10: 'NO SHOW', 11: 'DNC', 12: 'SUPPRESSED', 13: 'Suppression Denied', 14: 'Show Up', 15: 'Wrong Number', 16: 'Incomplete Number', 17: 'Call Back', 18: 'Hang Up', 19: 'Spanish'
+    10: 'NO SHOW', 11: 'DNC', 12: 'SUPPRESSED', 13: 'SUPPRESSION DENIED', 14: 'SHOW UP', 15: 'WRONG NUMBER', 16: 'INCOMPLETE NUMBER', 17: 'CALL BACK', 18: 'HANG UP', 19: 'SPANISH'
 }
 
 export const STATUS_NAME_TO_ID = {
     'NEW': 1, 'FIRST CALL': 2, 'SECOND CALL': 3, 'THIRD CALL': 4, 'TEXT': 5,
-    'APPOINTMENT': 6, 'SOLD': 7, 'NOT INTERESTED': 8, 'SIT / NO SALE': 9, 'NO SHOW': 10, 'DNC': 11, 'SUPPRESSED': 12, 'Suppression Denied': 13, 'Show Up': 14, 'Wrong Number': 15,
-    'Incomplete Number': 16,
-    'Call Back': 17,
-    'Hang Up': 18,
-    'Spanish': 19
+    'APPOINTMENT': 6, 'SOLD': 7, 'NOT INTERESTED': 8, 'SIT / NO SALE': 9, 'NO SHOW': 10, 'DNC': 11, 'SUPPRESSED': 12, 'SUPPRESSION DENIED': 13, 'SHOW UP': 14, 'WRONG NUMBER': 15,
+    'INCOMPLETE NUMBER': 16,
+    'CALL BACK': 17,
+    'HANG UP': 18,
+    'SPANISH': 19
 }
 
 export const LEAD_STATUSES = [
@@ -68,9 +68,9 @@ export const STATUS_COLORS = {
     7: 'bg-[var(--fern)]', // SOLD
     8: 'bg-[var(--waterloo)]', // NOT INTERESTED
     9: 'bg-[var(--gray-suit)]', // SIT / NO SALE
-    10: 'bg-[#ef4444]', // NO SHOW
-    11: 'bg-[#374151]', // DNC
-    12: 'bg-[#4e1515]', // SUPPRESSED
+    10: 'bg-[#F9A8D4]', // NO SHOW
+    11: 'bg-[#7fa8eb]', // DNC
+    12: 'bg-[#727592]', // SUPPRESSED
     13: 'bg-[#10151d]', // Suppression Denied
     14: 'bg-[#eab308]',
     15: 'bg-[#0d9488]',  // Teal (darker + greener, distinct from previous teal)
