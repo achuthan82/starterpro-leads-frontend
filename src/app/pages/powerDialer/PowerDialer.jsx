@@ -40,7 +40,8 @@ const PowerDialer = () => {
     setShowScheduleModal,
     licenseDetails,
     licenseError,
-    licenseLoading
+    licenseLoading,
+    fetchCallLogs
   } = useCallContext();
 
   // Local state for PowerDialer-specific UI
@@ -402,6 +403,7 @@ const PowerDialer = () => {
                 isCallActive={isCallActive}
                 callLogs={callLogs}
                 callLogsLoading={callLogsLoading}
+                fetchCallLogs={fetchCallLogs}
               />
             </div>
           </div>

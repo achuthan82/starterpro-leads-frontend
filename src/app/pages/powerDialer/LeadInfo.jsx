@@ -35,7 +35,7 @@ const LeadInfo = ({
   // const [statusHistory, setStatusHistory] = useState([]);
   // const [selectedLead, setSelectedLead] = useState(null);
   console.log(formData);
-  console.log(callHistory);
+  console.log(callLogs);
 
   // const getStatusName = (statusId) => {
   //   if (!statusId) return "";

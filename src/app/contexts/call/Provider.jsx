@@ -285,14 +285,21 @@ export function CallProvider({ children }) {
     }
   }, [getLeadState]);
 
-  // Fetch call logs when lead is selected
-  const fetchCallLogs = useCallback(async (lead) => {
+  // Fetch call logs when lead is selected OR when filter is passed
+const fetchCallLogs = useCallback(
+  async (lead, filter = "all") => {
     if (!lead) {
       setCallLogs([]);
       return;
     }
 
-    const mortgageId = lead.originalData?.mortgage_id || lead.mortgage_id || lead.identifier || lead.id;
+    console.log(filter)
+    const mortgageId =
+      lead.originalData?.mortgage_id ||
+      lead.mortgage_id ||
+      lead.identifier ||
+      lead.id;
+
     if (!mortgageId) {
       setCallLogs([]);
       return;
@@ -300,23 +307,31 @@ export function CallProvider({ children }) {
 
     setCallLogsLoading(true);
     try {
-      const response = await dialerService.getCallLogs({
+      // Base params
+      let params = {
         page: 1,
         per_page: 100,
-        mortgage_id: mortgageId
-      });
+        mortgage_id: mortgageId,
+      };
+
+      // Add outbound_call ONLY when required
+      if (filter === "incoming") {
+        params.outbound_call = 0;
+      } else if (filter === "outgoing") {
+        params.outbound_call = 1;
+      }
+      // For "all" → do NOT include outbound_call
+
+      const response = await dialerService.getCallLogs(params);
 
       if (response.status === 200 && response.data) {
-        // Transform API data to match component structure
-        const transformedLogs = response.data.map(log => {
-          // Parse date strings (format: "MM-DD-YYYY HH:MM:SS")
+        const transformedLogs = response.data.map((log) => {
           const parseDate = (dateStr) => {
             if (!dateStr) return null;
             try {
-              // Format: "11-12-2025 07:30:33"
-              const [datePart, timePart] = dateStr.split(' ');
-              const [month, day, year] = datePart.split('-');
-              const [hour, minute, second] = timePart.split(':');
+              const [datePart, timePart] = dateStr.split(" ");
+              const [month, day, year] = datePart.split("-");
+              const [hour, minute, second] = timePart.split(":");
               return new Date(year, month - 1, day, hour, minute, second);
             } catch {
               return null;
@@ -327,42 +342,53 @@ export function CallProvider({ children }) {
 
           return {
             id: log.id,
-            date: startedDate ? startedDate.toISOString().split('T')[0] : '',
-            time: startedDate ? startedDate.toLocaleTimeString('en-US', { 
-              hour: '2-digit', 
-              minute: '2-digit', 
-              hour12: false 
-            }) : '',
-            duration: log.duration_seconds 
-              ? `${Math.floor(log.duration_seconds / 60)}:${String(log.duration_seconds % 60).padStart(2, '0')}`
-              : '0:00',
-            status: log.status || 'completed',
-            to_number: log.to_number || '',
+            date: startedDate
+              ? startedDate.toISOString().split("T")[0]
+              : "",
+            time: startedDate
+              ? startedDate.toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+                })
+              : "",
+            duration: log.duration_seconds
+              ? `${Math.floor(log.duration_seconds / 60)}:${String(
+                  log.duration_seconds % 60
+                ).padStart(2, "0")}`
+              : "0:00",
+            status: log.status || "completed",
+            to_number: log.to_number || "",
             outbound_number: log.outbound_number || {},
             transcription: log.transcription_data || {},
-            transcription_data: log.transcription_data || null, // Keep full transcription data
+            transcription_data: log.transcription_data || null,
             recording: log.recording || {},
-            twilio_call_sid: log.twilio_call_sid || '',
-            started_at: log.started_at || '',
-            ended_at: log.ended_at || '',
+            twilio_call_sid: log.twilio_call_sid || "",
+            started_at: log.started_at || "",
+            ended_at: log.ended_at || "",
             transcription_status: log.transcription_status || null,
             ppt_uploaded: log.ppt_uploaded || false,
-            ppt_url: log.ppt_url || '',
-            record_url:log.record_url || '',
-            is_outgoing: log.is_outgoing || ''
+            ppt_url: log.ppt_url || "",
+            record_url: log.record_url || "",
+            outbound_call: log.outbound_call,
+            mortgage_id: log.mortgage_id || "",
+            data_entry: log.data_entry || {}
           };
         });
+
         setCallLogs(transformedLogs);
       } else {
         setCallLogs([]);
       }
     } catch (error) {
-      console.error('Error fetching call logs:', error);
+      console.error("Error fetching call logs:", error);
       setCallLogs([]);
     } finally {
       setCallLogsLoading(false);
     }
-  }, []);
+  },
+  []
+);
 
   // Generate UUID and check license when lead is selected
   useEffect(() => {
@@ -372,7 +398,7 @@ export function CallProvider({ children }) {
       setCurrentCallLogId(newCallLogId);
       
       checkLicense(selectedLead);
-      fetchCallLogs(selectedLead);
+      fetchCallLogs(selectedLead, "all");
     } else {
       setLicenseDetails(null);
       setLicenseError(null);
@@ -558,7 +584,7 @@ export function CallProvider({ children }) {
         if (selectedLead) {
           // Wait 5 seconds for the API to process the call log
           setTimeout(() => {
-            fetchCallLogs(selectedLead);
+            fetchCallLogs(selectedLead, "all");
           }, 10000);
         }
       });

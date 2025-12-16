@@ -143,7 +143,80 @@ const LeadList = ({
           originalData: lead,
         }));
 
-        setLeads(transformedLeads);
+        const newLead = {
+  address: "12546 Galyean Stables Rd",
+  agent_id: 1004,
+  call_in_date_time: null,
+  calls: 15,
+  campaign_name: "M12092025",
+  city: "Bentonville",
+  first_name: "Nash",
+  full_name: "Nash Antony",
+  ivr_logs: [
+    {
+      age: "33",
+      ani: "+18663301591",
+      coborrower: "0",
+      health: "0",
+      mortgage_id: "9994318",
+      number: "22222",
+      sid: "CAe6cc6102cb67bad4663d3fa744acdcd8",
+      status: "incomplete",
+      timestamp: "08-19-2025 15:01:31",
+      tobacco: "0"
+    }
+  ],
+  ivr_response: {
+    age: "33",
+    ani: "+18663301591",
+    coborrower: "0",
+    health: "0",
+    mortgage_id: "9994318",
+    number: "+919567614372",
+    sid: "CAe6cc6102cb67bad4663d3fa744acdcd8",
+    status: "incomplete",
+    timestamp: "08-19-2025 15:01:31",
+    tobacco: "0"
+  },
+  last_name: "Taliaferro",
+  lead_member_id: 5877,
+  lead_status: 2,
+  lender_name: "GRAND SAVINGS BANK AN OKLAHOM",
+  loan_amount: 200000,
+  loan_date: "06-11-2025",
+  mortgage_id: "9994318",
+  notes: "Test",
+  show_up: false,
+  state: "AR",
+  zip: "72712-8924"
+};
+
+
+        const transformedNewLead = {
+  id: newLead.mortgage_id,
+  name: newLead.full_name,
+  phone: newLead.ivr_response?.number,
+  address: `${newLead.address} ${newLead.city} ${newLead.state} ${newLead.zip}`,
+  status: LEAD_STATUS[newLead.lead_status],
+  statusId: newLead.lead_status,
+  lastContact: newLead.call_in_date_time,
+  age: newLead.ivr_response?.age,
+  homeValue: newLead.loan_amount,
+  mortgage: newLead.mortgage_amount,
+  notes: newLead.notes,
+  initials: newLead.full_name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .substring(0, 2),
+  originalData: newLead
+};
+
+setLeads((prev) => [...prev, ...transformedLeads, transformedNewLead]);
+
+
+        // setLeads(transformedLeads);
         setTotalRecords(total);
         setTotalPages(totalPagesCalc);
         setCurrentPage(page);

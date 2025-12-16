@@ -97,18 +97,23 @@ class DialerService {
    * @param {Object} params - Parameters for fetching call logs
    * @param {number} params.page - Page number (default: 1)
    * @param {number} params.per_page - Items per page (default: 100)
-   * @param {string|number} params.mortgage_id - Optional mortgage ID to filter by lead
+   * @param {number} params.per_page - Items per page (default: 100)
+   * @param {string|number} params.outbound_call - Optional mortgage ID to filter by lead
    * @returns {Promise} Response with call logs data
    */
   async getCallLogs(params = {}) {
     try {
-      const { page = 1, per_page = 100, mortgage_id } = params;
+      const { page = 1, per_page = 100, mortgage_id, outbound_call } = params;
       const queryParams = new URLSearchParams({
         page: page.toString(),
         per_page: per_page.toString(),
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
       });
       
+      if (outbound_call === 0 || outbound_call === 1) {
+        queryParams.append("outbound_call", outbound_call.toString());
+      }
+
       if (mortgage_id) {
         queryParams.append('mortgage_id', mortgage_id.toString());
       }
