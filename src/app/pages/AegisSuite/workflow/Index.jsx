@@ -8,18 +8,27 @@ import { toast } from "sonner";
 const Index = () => {
   const { user } = useAuthContext();
   const [leadAutomation, setLeadAutomation] = useState(false);
-  const [appointmentAutomation, setAppointmentAutomation] = useState(false);
+  const [appointmentSmsAutomation, setAppointmentSmsAutomation] =
+    useState(false);
+  const [appointmentEmailAutomation, setAppointmentEmailAutomation] =
+    useState(false);
+
   const [leadLoading, setLeadLoading] = useState(false);
   //  const [loading] = useState(false)
   //  const [activeTab, setActiveTab] = useState('email-sms')
   const getDetails = () => {
-    setLeadLoading(true)
+    setLeadLoading(true);
     automationService
       .getAutomationDetails(user.agency.id)
       .then((response) => {
         if (response.data.status === 200) {
           setLeadAutomation(response.data.data.sms_automation_enabled);
-          setAppointmentAutomation(response.data.data.appointment_notification_sms_enabled)
+          setAppointmentSmsAutomation(
+            response.data.data.appointment_notification_sms_enabled,
+          );
+          setAppointmentEmailAutomation(
+            response.data.data.appointment_notification_mail_enabled,
+          );
         } else {
           toast.error(
             response?.data?.message || "Failed to fetch automation settings",
@@ -28,9 +37,10 @@ const Index = () => {
       })
       .catch((error) => {
         toast.error(error?.message || "Failed to Update");
-      }).finally(() => {
-        setLeadLoading(false)
       })
+      .finally(() => {
+        setLeadLoading(false);
+      });
   };
   const handleLeadAutomation = (status) => {
     setLeadLoading(true);
@@ -53,14 +63,23 @@ const Index = () => {
         setLeadLoading(false);
       });
   };
-   const handleAppointmentAutomation = (status) => {
+  const handleAppointmentAutomation = (status, text) => {
     setLeadLoading(true);
-    const payload = { appointment_notification_sms_enabled: status };
+    const payload = {};
+    if (text === "sms") {
+      payload["appointment_notification_sms_enabled"] = status;
+    } else {
+      payload["appointment_notification_mail_enabled"] = status;
+    }
     automationService
       .toggleAppointmentAutomation(user.agency.id, payload)
       .then((response) => {
         if (response.data.status === 200) {
-          setAppointmentAutomation(status);
+          if (text === "sms") {
+            setAppointmentSmsAutomation(status)
+          } else {
+            setAppointmentEmailAutomation(status);
+          }
           toast.success("Success");
         } else {
           toast.error(response?.data?.message || "Failed to Update");
@@ -138,23 +157,62 @@ const Index = () => {
               <div className="flex items-center justify-between rounded-lg border border-gray-200 p-5 dark:border-gray-700">
                 <div>
                   <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
-                    Appointment Automation
+                    Appointment SMS Automation
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Auto-manage appointment confirmations and reminders.
+                    Send instant text confirmations and timely reminders to keep clients updated.
                   </p>
                 </div>
 
                 <Switch
-                  checked={appointmentAutomation}
-                  onChange={() => handleAppointmentAutomation(!appointmentAutomation)}
+                  checked={appointmentSmsAutomation}
+                  onChange={() =>
+                    handleAppointmentAutomation(
+                      !appointmentSmsAutomation,
+                      "sms",
+                    )
+                  }
                   className={`${
-                    appointmentAutomation ? "bg-[#f4d03f]" : "bg-gray-300"
+                    appointmentSmsAutomation ? "bg-[#0a2463]" : "bg-gray-300"
                   } relative inline-flex h-6 w-11 items-center rounded-full transition`}
                 >
                   <span
                     className={`${
-                      appointmentAutomation ? "translate-x-6" : "translate-x-1"
+                      appointmentSmsAutomation
+                        ? "translate-x-6"
+                        : "translate-x-1"
+                    } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                  />
+                </Switch>
+              </div>
+
+              <div className="flex items-center justify-between rounded-lg border border-gray-200 p-5 dark:border-gray-700">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
+                    Appointment Email Automation
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                   Deliver professional email confirmations and reminders straight to clients’ inboxes.
+                  </p>
+                </div>
+
+                <Switch
+                  checked={appointmentEmailAutomation}
+                  onChange={() =>
+                    handleAppointmentAutomation(
+                      !appointmentEmailAutomation,
+                      "email",
+                    )
+                  }
+                  className={`${
+                    appointmentEmailAutomation ? "bg-[#0a2463]" : "bg-gray-300"
+                  } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+                >
+                  <span
+                    className={`${
+                      appointmentEmailAutomation
+                        ? "translate-x-6"
+                        : "translate-x-1"
                     } inline-block h-4 w-4 transform rounded-full bg-white transition`}
                   />
                 </Switch>

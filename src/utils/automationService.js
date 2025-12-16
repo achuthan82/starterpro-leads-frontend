@@ -17,6 +17,9 @@ const automationService = {
   toggleLeadManagementAutomation: (id, payload) => {
     return axios.patch(`${JWT_HOST_API}/sms-automation/enable-disable-lead-sms-automation/${id}`, payload);
   },
+   toggleLeadAppointmentAutomation: (id, payload) => {
+    return axios.put(`${JWT_HOST_API}/leads/update-lead-appointment-notification-settings/${id}`, payload);
+  },
 };
 
 export default automationService; 

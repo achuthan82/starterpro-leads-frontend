@@ -76,15 +76,15 @@ class DialerService {
    * @param {string} params.uuid - UUID4 generated on frontend
    * @returns {Promise} Response with Twilio token
    */
-  async initializeTwilio(params) {
+  async initializeTwilio() { //params
     try {
-      const { to_number, mortgage_id, uuid, mailing_assignee_id } = params;
-      const response = await axiosInstance.post(API_ENDPOINTS.DIALER.TOKEN, {
+      // const { to_number, mortgage_id, uuid, mailing_assignee_id } = params;
+      const response = await axiosInstance.post(API_ENDPOINTS.DIALER.TOKEN/*, {
         to_number,
         mortgage_id,
         uuid,
         mailing_assignee_id
-      });
+      }*/);
       return response.data;
     } catch (error) {
       console.error('Error initializing Twilio:', error);

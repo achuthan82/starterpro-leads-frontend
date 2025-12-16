@@ -19,6 +19,7 @@ export function CallProvider({ children }) {
   const [callDuration, setCallDuration] = useState(0);
   const [selectedLead, setSelectedLead] = useState(null);
   const [selectedOutboundNumber, setSelectedOutboundNumber] = useState(null);
+  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState(null); // Store the phone number used for the call
   const [transcript, setTranscript] = useState('Call transcription will appear here when connected');
   const [callHistory, setCallHistory] = useState([]);
   const [callLogs, setCallLogs] = useState([]); // API call logs
@@ -407,7 +408,7 @@ const fetchCallLogs = useCallback(
     }
   }, [selectedLead, checkLicense, fetchCallLogs]);
 
-  const makeCall = useCallback(async () => {
+  const makeCall = useCallback(async (phoneNumber = null) => {
     if (!selectedLead) {
       setCallStatus('Please select a lead first');
       return;
@@ -465,7 +466,37 @@ const fetchCallLogs = useCallback(
       return `+${digits}`;
     };
 
-    const toNumber = formatPhoneForAPI(selectedLead.phone);
+    // Use provided phone number (the selected "to number") or fall back to selectedLead.phone
+    // The phoneNumber parameter is the number selected by the user from the dropdown
+    // IMPORTANT: Always use the provided phoneNumber if available, don't override with selectedLead.phone
+    console.log('makeCall - phoneNumber parameter:', phoneNumber);
+    console.log('makeCall - selectedPhoneNumber context:', selectedPhoneNumber);
+    console.log('makeCall - selectedLead.phone:', selectedLead.phone);
+    
+    // Use the provided phoneNumber first (this is what user selected)
+    // Then fall back to context selectedPhoneNumber, then lead's phone
+    const leadPhoneNumber = phoneNumber || selectedPhoneNumber || selectedLead.phone;
+    
+    console.log('makeCall - final leadPhoneNumber to use:', leadPhoneNumber);
+    
+    if (!leadPhoneNumber) {
+      setCallStatus('No phone number provided');
+      return;
+    }
+    
+    // Store the phone number being used for the call IMMEDIATELY
+    // This ensures the selected number is preserved throughout the call
+    // Do this BEFORE any async operations
+    setSelectedPhoneNumber(leadPhoneNumber);
+    console.log('makeCall - Updated selectedPhoneNumber in context to:', leadPhoneNumber);
+    const toNumber = formatPhoneForAPI(leadPhoneNumber);
+    
+    console.log('Calling with phone number:', {
+      original: leadPhoneNumber,
+      formatted: toNumber,
+      mortgageId,
+      lead_member_id
+    });
     if (!toNumber || toNumber.length < 10) {
       setCallStatus('Lead phone number is invalid');
       return;
@@ -509,7 +540,7 @@ const fetchCallLogs = useCallback(
 
      callRef.current = await deviceRef.current.connect({
         params: {
-          To: formatPhoneForTwilio(selectedLead.phone),
+          To: formatPhoneForTwilio(leadPhoneNumber),
           From: formatPhoneForTwilio(selectedOutboundNumber.phone),
           CallerId: formatPhoneForTwilio(selectedOutboundNumber.phone),
           MortgageId: mortgageId,
@@ -519,7 +550,7 @@ const fetchCallLogs = useCallback(
         }
      });
 
-      console.log(formatPhoneForTwilio(selectedLead.phone), formatPhoneForTwilio(selectedOutboundNumber.phone))
+      console.log(formatPhoneForTwilio(leadPhoneNumber), formatPhoneForTwilio(selectedOutboundNumber.phone))
       console.log(callRef.current)
       console.log(deviceRef.current)
 
@@ -682,6 +713,7 @@ const fetchCallLogs = useCallback(
     callDuration,
     selectedLead,
     selectedOutboundNumber,
+    selectedPhoneNumber, // Phone number being used for the call
     transcript,
     callHistory,
     callLogs,
@@ -692,6 +724,7 @@ const fetchCallLogs = useCallback(
     // Actions
     setSelectedLead,
     setSelectedOutboundNumber,
+    setSelectedPhoneNumber, // Allow updating the phone number
     makeCall,
     hangupCall,
     setCallMute,

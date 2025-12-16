@@ -113,13 +113,14 @@ const PowerDialer = () => {
   };
 
   // Handle making call with modal check
-  const handleMakeCall = async () => {
+  const handleMakeCall = async (phoneNumber = null) => {
     // Verify outbound number is selected and has a valid phone number
     if (!selectedOutboundNumber || !selectedOutboundNumber.phone || !selectedOutboundNumber.phone.trim()) {
       setShowOutboundModal(true);
       return;
     }
-    await makeCall();
+    // Pass the phone number parameter to makeCall
+    await makeCall(phoneNumber);
   };
 
   const updateLeadStatus = (leadId, newStatus) => {
@@ -148,6 +149,18 @@ const PowerDialer = () => {
   // Update context when local lead selection changes
   const handleSelectLead = (lead) => {
     console.log('lead', lead)
+    // If we're selecting a lead that's already selected and has been updated,
+    // merge the updated status from context
+    if (contextSelectedLead && lead) {
+      const leadMortgageId = lead.originalData?.mortgage_id || lead.mortgage_id;
+      const contextMortgageId = contextSelectedLead.originalData?.mortgage_id || contextSelectedLead.mortgage_id;
+      
+      if (leadMortgageId === contextMortgageId) {
+        // Same lead - use the updated version from context
+        setSelectedLead(contextSelectedLead);
+        return;
+      }
+    }
     setSelectedLead(lead);
   };
 

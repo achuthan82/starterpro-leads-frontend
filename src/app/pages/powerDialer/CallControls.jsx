@@ -7,6 +7,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useCallContext } from 'app/contexts/call/context';
 
 const CallControls = ({
   isCallActive,
@@ -25,10 +26,15 @@ const CallControls = ({
   licenseLoading,
   walletBalance
 }) => {
+  const { selectedPhoneNumber: contextSelectedPhoneNumber, setSelectedPhoneNumber: setContextSelectedPhoneNumber } = useCallContext();
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
   const [audioPermission, setAudioPermission] = useState(false);
   const audioContextRef = useRef(null);
+  const [availablePhoneNumbers, setAvailablePhoneNumbers] = useState([]);
+  // Use context selectedPhoneNumber if available, otherwise use local state as fallback
+  const [localSelectedPhoneNumber, setLocalSelectedPhoneNumber] = useState('');
+  const selectedPhoneNumber = contextSelectedPhoneNumber || localSelectedPhoneNumber;
 
   const formatCallDuration = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -39,6 +45,151 @@ const CallControls = ({
   const getTwilioCall = useCallback(() => {
     return window.currentTwilioCall || currentCall || null;
   }, [currentCall]);
+
+  // Extract all available phone numbers from lead data
+  const extractPhoneNumbers = useCallback((lead) => {
+    if (!lead) return [];
+    
+    const phoneNumbers = new Set();
+    
+    // Check ivr_response first (number and ani)
+    const ivrResponse = lead.originalData?.ivr_response;
+    
+    if (ivrResponse) {
+      if (ivrResponse.number && ivrResponse.number.trim()) {
+        phoneNumbers.add(ivrResponse.number.trim());
+      }
+      if (ivrResponse.ani && ivrResponse.ani.trim()) {
+        phoneNumbers.add(ivrResponse.ani.trim());
+      }
+    }
+    
+    // If ivr_response has no phone numbers, check ivr_logs
+    // Also check ivr_logs to get all available numbers (no duplicates)
+    if (lead.originalData?.ivr_logs && Array.isArray(lead.originalData.ivr_logs)) {
+      lead.originalData.ivr_logs.forEach((log) => {
+        if (log.number && log.number.trim()) {
+          phoneNumbers.add(log.number.trim());
+        }
+        if (log.ani && log.ani.trim()) {
+          phoneNumbers.add(log.ani.trim());
+        }
+      });
+    }
+    
+    // Also check direct phone fields as fallback
+    if (lead.phone && lead.phone.trim()) {
+      phoneNumbers.add(lead.phone.trim());
+    }
+    if (lead.originalData?.phone && lead.originalData.phone.trim()) {
+      phoneNumbers.add(lead.originalData.phone.trim());
+    }
+    
+    return Array.from(phoneNumbers).filter(num => num && num !== 'N/A');
+  }, []);
+
+  // Update available phone numbers when lead changes
+  useEffect(() => {
+    // Don't update phone numbers if a call is in progress - preserve the selected number
+    if (isCallActive || isDialing) {
+      return;
+    }
+    
+    if (selectedLead) {
+      const numbers = extractPhoneNumbers(selectedLead);
+      setAvailablePhoneNumbers(numbers);
+      
+      // Only set default phone number if:
+      // 1. No phone number is currently selected in context, OR
+      // 2. The currently selected number is not in the available numbers for this lead
+      const currentSelected = contextSelectedPhoneNumber || localSelectedPhoneNumber;
+      // Check if current number is valid (exists in available numbers or matches lead's phone)
+      const isCurrentNumberValid = currentSelected && (
+        numbers.includes(currentSelected) || 
+        currentSelected === selectedLead.phone ||
+        currentSelected === selectedLead.originalData?.phone
+      );
+      
+      // Only reset if current number is not valid AND we're not in the middle of making a call
+      if (!isCurrentNumberValid && !isDialing && !isCallActive) {
+        // Set the first available number as selected, or use the lead's phone
+        const defaultNumber = numbers.length > 0 ? (selectedLead.phone || numbers[0]) : (selectedLead.phone || '');
+        // Update both context and local state only if we're setting a new default
+        if (setContextSelectedPhoneNumber && defaultNumber) {
+          setContextSelectedPhoneNumber(defaultNumber);
+        }
+        if (defaultNumber) {
+          setLocalSelectedPhoneNumber(defaultNumber);
+        }
+      }
+    } else {
+      setAvailablePhoneNumbers([]);
+      // Clear both context and local state only if lead is cleared
+      if (setContextSelectedPhoneNumber) {
+        setContextSelectedPhoneNumber(null);
+      }
+      setLocalSelectedPhoneNumber('');
+    }
+  }, [selectedLead, extractPhoneNumbers, setContextSelectedPhoneNumber, contextSelectedPhoneNumber, localSelectedPhoneNumber, isCallActive, isDialing]);
+
+  // Format phone number for display
+  const formatPhoneDisplay = (phone) => {
+    if (!phone) return 'N/A';
+    const cleaned = phone.replace(/^\+1/, '').replace(/\D/g, '');
+    if (cleaned.length === 10) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    }
+    return phone;
+  };
+
+  // Handle phone number selection change
+  const handlePhoneNumberChange = (phone) => {
+    // Update both context and local state
+    if (setContextSelectedPhoneNumber) {
+      setContextSelectedPhoneNumber(phone);
+    }
+    setLocalSelectedPhoneNumber(phone);
+  };
+
+  // Override makeCall to use selected phone number
+  const handleMakeCallWithSelectedNumber = useCallback(() => {
+    // Use the currently selected phone number (from context or local state)
+    // This is the number the user selected from the dropdown
+    // Prioritize context value as it's the source of truth
+    let phoneToUse = contextSelectedPhoneNumber || selectedPhoneNumber;
+    
+    // If no phone number is selected, fall back to available numbers or lead's phone
+    if (!phoneToUse || phoneToUse === '') {
+      if (availablePhoneNumbers.length > 0) {
+        phoneToUse = availablePhoneNumbers[0];
+      } else {
+        phoneToUse = selectedLead?.phone;
+      }
+    }
+    
+    if (!phoneToUse) {
+      console.error('No phone number available to make call');
+      return;
+    }
+    
+    // CRITICAL: Store the phone number in context FIRST, before making the call
+    // This ensures it's preserved even if useEffect runs
+    if (setContextSelectedPhoneNumber) {
+      setContextSelectedPhoneNumber(phoneToUse);
+    }
+    
+    // Also update local state to keep in sync
+    setLocalSelectedPhoneNumber(phoneToUse);
+    
+    // Make the call with the selected phone number
+    // Pass the phone number directly to onMakeCall
+    // The phone number is already stored in context, so it will be preserved
+    if (onMakeCall) {
+      // Pass the selected phone number to makeCall - this is the "to number"
+      console.log('CallControls - Making call to selected number:', phoneToUse);
+      onMakeCall(phoneToUse);
+    }
+  }, [contextSelectedPhoneNumber, selectedPhoneNumber, availablePhoneNumbers, selectedLead, onMakeCall, setContextSelectedPhoneNumber]);
 
   useEffect(() => {
     // Wait a bit for navigator to be fully available
@@ -516,9 +667,25 @@ const CallControls = ({
           <h3 className={`font-semibold text-gray-900 dark:text-gray-100 ${isCallInProgress ? 'text-sm' : 'text-base'}`}>
             {selectedLead.name}
           </h3>
-          <p className={`text-gray-600 dark:text-gray-300 ${isCallInProgress ? 'text-xs' : 'text-xs'}`}>
-            {selectedLead.phone}
-          </p>
+          {!isCallInProgress && availablePhoneNumbers.length > 1 ? (
+            <div className="mt-1 w-full">
+              <select
+                value={selectedPhoneNumber}
+                onChange={(e) => handlePhoneNumberChange(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 bg-white px-2 py-1 text-xs text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
+              >
+                {availablePhoneNumbers.map((phone, index) => (
+                  <option key={index} value={phone}>
+                    {formatPhoneDisplay(phone)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <p className={`text-gray-600 dark:text-gray-300 ${isCallInProgress ? 'text-xs' : 'text-xs'}`}>
+              {formatPhoneDisplay(contextSelectedPhoneNumber || selectedPhoneNumber || selectedLead?.phone || 'N/A')}
+            </p>
+          )}
         </div>
       </div>
 
@@ -589,7 +756,7 @@ const CallControls = ({
 
         {/* Hangup / Call */}
         <button
-          onClick={isCallActive || isDialing ? onHangupCall : onMakeCall}
+          onClick={isCallActive || isDialing ? onHangupCall : handleMakeCallWithSelectedNumber}
           disabled={(!canMakeCall && !isCallActive && !isDialing)}
           className={`${isCallInProgress ? 'w-10 h-10' : 'w-14 h-14'} flex items-center justify-center rounded-full shadow-md transition-all duration-200 ${
             isCallActive || isDialing

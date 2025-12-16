@@ -35,7 +35,53 @@ const LeadInfo = ({
   // const [statusHistory, setStatusHistory] = useState([]);
   // const [selectedLead, setSelectedLead] = useState(null);
   console.log(formData);
+<<<<<<< HEAD
   console.log(callLogs);
+=======
+  
+  // Function to get current status ID from lead - compute on every render to ensure it's always up-to-date
+  const getCurrentStatusId = () => {
+    if (!lead) return null;
+    
+    // Priority: statusId > originalData.lead_status > lead_status > status (converted to ID)
+    if (lead.statusId !== undefined && lead.statusId !== null) {
+      return lead.statusId;
+    }
+    if (lead.originalData?.lead_status !== undefined && lead.originalData?.lead_status !== null) {
+      return lead.originalData.lead_status;
+    }
+    if (lead.lead_status !== undefined && lead.lead_status !== null) {
+      return lead.lead_status;
+    }
+    if (lead.status) {
+      const statusId = STATUS_NAME_TO_ID[lead.status.toUpperCase()] ||
+        Object.keys(LEAD_STATUS).find(
+          (key) => LEAD_STATUS[key] === lead.status,
+        );
+      if (statusId) {
+        return Number(statusId);
+      }
+    }
+    return null;
+  };
+  
+  // Compute current status ID - compute on every render to ensure it's always fresh
+  const computedStatusId = getCurrentStatusId();
+  
+  // Debug: Log status values to help diagnose issues
+  // console.log('LeadInfo Status Debug:', {
+  //   leadId: lead?.id,
+  //   mortgageId: lead?.mortgage_id,
+  //   statusId: lead?.statusId,
+  //   originalDataLeadStatus: lead?.originalData?.lead_status,
+  //   leadStatus: lead?.lead_status,
+  //   status: lead?.status,
+  //   computedStatusId,
+  //   currentStatusId,
+  // });
+  
+  console.log(callHistory);
+>>>>>>> f267850e7de52f0169e15cf7deb4e210fc59e2b5
 
   // const getStatusName = (statusId) => {
   //   if (!statusId) return "";
@@ -43,11 +89,34 @@ const LeadInfo = ({
   // };
   useEffect(() => {
     if (lead) {
-      // Get status from lead - could be status name or lead_status ID
-      const leadStatus =
-        lead.originalData?.lead_status || lead.lead_status || lead.status;
+      // Get status from lead - check multiple sources in priority order
+      // Priority: statusId > originalData.lead_status > lead_status > status (converted to ID)
+      let leadStatus = undefined;
+      
+      // First check statusId (most reliable after update) - use !== undefined/null check to allow 0
+      if (lead.statusId !== undefined && lead.statusId !== null) {
+        leadStatus = lead.statusId;
+      }
+      // Then check originalData.lead_status
+      else if (lead.originalData?.lead_status !== undefined && lead.originalData?.lead_status !== null) {
+        leadStatus = lead.originalData.lead_status;
+      }
+      // Then check lead_status directly
+      else if (lead.lead_status !== undefined && lead.lead_status !== null) {
+        leadStatus = lead.lead_status;
+      }
+      // Finally check status name and convert to ID
+      else if (lead.status) {
+        const statusId = STATUS_NAME_TO_ID[lead.status.toUpperCase()] ||
+          Object.keys(LEAD_STATUS).find(
+            (key) => LEAD_STATUS[key] === lead.status,
+          );
+        if (statusId) {
+          leadStatus = Number(statusId);
+        }
+      }
 
-      // If it's a number, it's a status ID
+      // If we found a status ID (number)
       if (typeof leadStatus === "number") {
         setCurrentStatusId(leadStatus);
         setCurrentStatus(LEAD_STATUS[leadStatus] || "");
@@ -65,6 +134,10 @@ const LeadInfo = ({
           setCurrentStatus(leadStatus);
           setCurrentStatusId(null);
         }
+      } else {
+        // No status found, reset
+        setCurrentStatusId(null);
+        setCurrentStatus("");
       }
 
       // Get show_up status from lead data
@@ -75,8 +148,23 @@ const LeadInfo = ({
       if (!addNote) {
         setNote(lead.notes || lead.originalData?.notes || "");
       }
+    } else {
+      // Reset when no lead
+      setCurrentStatusId(null);
+      setCurrentStatus("");
     }
-  }, [lead, addNote]);
+  }, [
+    lead,
+    addNote,
+    // Include specific status fields to ensure effect runs when status changes
+    lead?.id,
+    lead?.mortgage_id,
+    lead?.statusId,
+    lead?.originalData?.lead_status,
+    lead?.lead_status,
+    lead?.status,
+    computedStatusId, // Use computed status ID to trigger updates
+  ]);
 
   const handleFormSubmit = (data) => {
     setFormData(data);
@@ -211,21 +299,29 @@ const LeadInfo = ({
       const data = await response.json();
       if (response.ok && (data.success || data.status === 200)) {
         toast.success(data.message || "Status updated successfully!");
-        setCurrentStatusId(newStatusId);
-        setCurrentStatus(LEAD_STATUS[newStatusId] || "");
         
-        // Update the selectedLead in context with new status
+        // Update the selectedLead in context with new status - create completely new object to trigger re-render
         if (setSelectedLead && lead) {
           const updatedLead = {
             ...lead,
             status: LEAD_STATUS[newStatusId] || newStatusId,
             statusId: newStatusId,
+            lead_status: newStatusId, // Also update direct lead_status field
             originalData: {
-              ...lead.originalData,
+              ...(lead.originalData || {}),
               lead_status: newStatusId,
             },
           };
+          // Update context first - this will trigger re-render with new lead prop
           setSelectedLead(updatedLead);
+          
+          // Update local state immediately as well
+          setCurrentStatusId(newStatusId);
+          setCurrentStatus(LEAD_STATUS[newStatusId] || "");
+        } else {
+          // Fallback if context update fails
+          setCurrentStatusId(newStatusId);
+          setCurrentStatus(LEAD_STATUS[newStatusId] || "");
         }
         
         // Call the onUpdateStatus callback if provided
@@ -495,9 +591,10 @@ const LeadInfo = ({
             Update Status
           </p>
           <select
-            value={currentStatusId || ""}
+            value={String(currentStatusId ?? computedStatusId ?? "")}
             onChange={handleStatusChange}
             disabled={statusLoading}
+            key={`status-${lead?.id || lead?.mortgage_id || 'none'}-${currentStatusId ?? computedStatusId ?? 'none'}`} // Force re-render when status changes
             className={`w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400 ${
               statusLoading ? "cursor-not-allowed opacity-50" : ""
             }`}
