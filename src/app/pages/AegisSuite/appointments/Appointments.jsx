@@ -507,9 +507,9 @@ const Appointments = () => {
                                 7: "bg-[var(--fern)]", // SOLD
                                 8: "bg-[var(--waterloo)]", // NOT INTERESTED
                                 9: "bg-[var(--gray-suit)]", // SIT / NO SALE
-                                10: "bg-[#ef4444]", // NO SHOW
-                                11: "bg-[#374151]", // DNC
-                                12: "bg-[#4e1515]", // SUPPRESSED
+                                10: "bg-[#F9A8D4]", // NO SHOW
+                                11: "bg-[#7fa8eb]", // DNC
+                                12: "bg-[#727592]", // SUPPRESSED
                                 13: "bg-[#10151d]", // Suppression Denied
                                 14: "bg-[#eab308]", // Default Yellow
                                 15: "bg-[#0d9488]", // Teal (darker + greener)
@@ -526,7 +526,7 @@ const Appointments = () => {
                                 className="flex items-center gap-2"
                               >
                                 <div
-                                  className={`h-2 w-2 rounded-full ${getStatusDotColor(statusId)}`}
+                                  className={`h-2 w-2 flex-shrink-0 rounded-full ${getStatusDotColor(statusId)}`}
                                 ></div>
                                 <span className="text-gray-600 dark:text-gray-400">
                                   {status}

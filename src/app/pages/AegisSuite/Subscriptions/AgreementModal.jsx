@@ -28,7 +28,7 @@ export default function CommitmentAgreementModal({
   const params = useParams();
   const clearSignature = () => {
     sigCanvas.current.clear();
-     setIsSigned(false);
+    setIsSigned(false);
   };
   const stripePromise = loadStripe(STRIPE_KEY);
   const [isSigned, setIsSigned] = useState(false);
@@ -460,8 +460,8 @@ export default function CommitmentAgreementModal({
               {/* Footer */}
               <div className="mt-6 flex justify-end gap-3">
                 <Button
-                  // variant="outline"
-                  color="secondary"
+                  className='className="rounded hover:bg-gray-100" border border-gray-400 px-6 py-2 text-gray-700'
+                  // color="secondary"
                   onClick={onClose}
                   disabled={submitting}
                 >
