@@ -35,9 +35,6 @@ const LeadInfo = ({
   // const [statusHistory, setStatusHistory] = useState([]);
   // const [selectedLead, setSelectedLead] = useState(null);
   console.log(formData);
-<<<<<<< HEAD
-  console.log(callLogs);
-=======
   
   // Function to get current status ID from lead - compute on every render to ensure it's always up-to-date
   const getCurrentStatusId = () => {
@@ -81,7 +78,6 @@ const LeadInfo = ({
   // });
   
   console.log(callHistory);
->>>>>>> f267850e7de52f0169e15cf7deb4e210fc59e2b5
 
   // const getStatusName = (statusId) => {
   //   if (!statusId) return "";
