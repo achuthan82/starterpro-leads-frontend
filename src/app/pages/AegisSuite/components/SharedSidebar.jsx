@@ -162,6 +162,12 @@ const SharedSidebar = ({ currentPath = "" }) => {
       icon: EnvelopeIcon,
       href: "/workflow",
     },
+    {
+      id: "suppression",
+      label: "Suppression",
+      icon: EnvelopeIcon,
+      href: "/suppression",
+    },
     // {
     //   id: "admin-promo-codes",
     //   label: "Manage Promo Code",

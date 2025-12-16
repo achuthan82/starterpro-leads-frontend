@@ -65,6 +65,13 @@ const protectedRoutes = {
           }),
         },
         {
+          path: "suppression",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/suppression/Suppression"))
+              .default,
+          }),
+        },
+        {
           path: "subscriptions",
           lazy: async () => ({
             Component: (await import("app/pages/AegisSuite/Subscriptions"))
@@ -203,15 +210,17 @@ const protectedRoutes = {
         {
           path: "sms-conversation",
           lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/sms/SmsConversation"))
-              .default,
+            Component: (
+              await import("app/pages/AegisSuite/sms/SmsConversation")
+            ).default,
           }),
         },
         {
           path: "sms-conversation/:mortgage_id/:lead_member_id",
           lazy: async () => ({
-            Component: (await import("app/pages/AegisSuite/sms/SmsConversation"))
-              .default,
+            Component: (
+              await import("app/pages/AegisSuite/sms/SmsConversation")
+            ).default,
           }),
         },
         {
