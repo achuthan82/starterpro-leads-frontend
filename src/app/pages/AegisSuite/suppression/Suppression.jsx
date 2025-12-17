@@ -17,7 +17,7 @@ const Suppression = () => {
     );
   };
   const getLeads = (page, per_page) => {
-    setLoading(true)
+    setLoading(true);
     suppressionService
       .getPendingRequest(page, per_page)
       .then((response) => {
@@ -27,7 +27,8 @@ const Suppression = () => {
             setTotalLeads(response.data.pagination.total);
             var totalPagesCount = 1;
             totalPagesCount = Math.ceil(
-              response.data.pagination.total / response.data.pagination.per_page,
+              response.data.pagination.total /
+                response.data.pagination.per_page,
             );
           } else {
             totalPagesCount = response.totalPages || response.total_pages || 1;
@@ -169,221 +170,227 @@ const Suppression = () => {
                     </th>
                   </tr>
                 </thead>
-
-                <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-                  {loading ? (
-                    <div className="p-8 text-center">
-                      <div className="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-[#0a2463] dark:border-blue-400"></div>
-                      <p className="mt-2 text-gray-600 dark:text-gray-300">
-                        Loading leads...
-                      </p>
-                    </div>
-                  ) : leads.length === 0 ? (
-                    <tr>
-                      <td
-                        colSpan="8"
-                        className="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
-                      >
-                        No leads found.
-                      </td>
-                    </tr>
-                  ) : (
-                    leads.map((lead, index) => (
-                      <tr
-                        key={lead.assignee_id || index}
-                        className="hover:bg-gray-50 dark:hover:bg-gray-700"
-                      >
-                        {/* Select */}
-                        <td className="px-3 py-4 whitespace-nowrap">
-                          <input
-                            type="checkbox"
-                            checked={selectedLeads.includes(lead.assignee_id)}
-                            onChange={() =>
-                              handleLeadSelection(lead.assignee_id)
-                            }
-                            className="h-4 w-4 rounded border-gray-300 text-[#0a2463] focus:ring-[#0a2463] dark:text-blue-400"
-                          />
-                        </td>
-
-                        {/* Full Name */}
-                        <td className="px-3 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            {/* <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                          {lead.identifier || lead.mortgage_id || lead.assignee_id || ''}
-                                                        </div> */}
-                            {(() => {
-                              const avatarColors = [
-                                "#0a2463",
-                                "#5ab453",
-                                "#92c933",
-                                "#FF2ECF",
-                                "#E000AD",
-                                "#FFA71A",
-                                "#FF4F1A",
-                                "#384766",
-                                "#506877",
-                                "#3D4E70",
-                                "#4A4A4F",
-                                "#6D7EA1",
-                                "#70838F",
-                                "#B8008C",
-                                "#FF75DF",
-                              ];
-                              const color =
-                                avatarColors[
-                                  leads.indexOf(lead) % avatarColors.length
-                                ];
-                              return (
-                                <div
-                                  className="flex h-10 w-10 items-center justify-center rounded-full"
-                                  style={{ backgroundColor: color }}
-                                >
-                                  <span className="text-sm font-medium text-white">
-                                    {lead.full_name
-                                      ?.split(" ")
-                                      .map((n) => n[0])
-                                      .join("")
-                                      .toUpperCase() || "U"}
-                                  </span>
-                                </div>
-                              );
-                            })()}
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                {lead.full_name}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Campaign */}
-                        <td className="px-3 py-4 whitespace-nowrap">
-                          <div
-                            className="max-w-[180px] truncate text-sm font-medium text-gray-900 dark:text-white"
-                            title={lead.campaign_name}
-                          >
-                            {lead.campaign_name || "-"}
-                          </div>
-                        </td>
-
-                        {/* Registered Date */}
-                        <td className="px-3 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900 dark:text-white">
-                            {lead.call_in_date_time || "-"}
-                          </div>
-                        </td>
-
-                        {/* State */}
-                        <td className="px-3 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900 dark:text-white">
-                            {lead.state || "-"}
-                          </div>
-                        </td>
-
-                        {/* Zip */}
-                        <td className="px-3 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900 dark:text-white">
-                            {lead.zip || "-"}
-                          </div>
-                        </td>
-
-                        {/* Automation */}
-                        <td className="px-3 py-4 whitespace-nowrap">
-                          <DocumentIcon
-                            // onClick={() => {
-                            //   docOpen();
-                            //   setStatusLead(lead);
-                            // }}
-                            className="ml-2 size-5"
-                            title="View Uploaded File"
-                          />
+                {loading ? (
+                  <div className="w-300 p-8 text-center">
+                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-[#0a2463] dark:border-blue-400"></div>
+                    <p className="mt-2 text-gray-600 dark:text-gray-300">
+                      Loading leads...
+                    </p>
+                  </div>
+                ) : (
+                  <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
+                    {leads.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan="8"
+                          className="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
+                        >
+                          No leads found.
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-                {totalPages > 1 && (
-            <div className="border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="text-sm text-gray-700">
-                    Showing {(currentPage - 1) * 10 + 1} to{" "}
-                    {Math.min(currentPage * 10, totalLeads)} of {totalLeads}{" "}
-                    coupons
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    Page {currentPage} of {totalPages}
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setCurrentPage(1)}
-                    disabled={currentPage === 1}
-                    className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    First
-                  </button>
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    disabled={currentPage === 1}
-                    className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-
-                  {/* Page Numbers */}
-                  <div className="flex space-x-1">
-                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                      let pageNum;
-                      if (totalPages <= 5) {
-                        pageNum = i + 1;
-                      } else if (currentPage <= 3) {
-                        pageNum = i + 1;
-                      } else if (currentPage >= totalPages - 2) {
-                        pageNum = totalPages - 4 + i;
-                      } else {
-                        pageNum = currentPage - 2 + i;
-                      }
-
-                      return (
-                        <button
-                          key={pageNum}
-                          onClick={() => setCurrentPage(pageNum)}
-                          className={`rounded px-3 py-1 text-sm ${
-                            currentPage === pageNum
-                              ? "bg-[var(--color-atoll)] text-white"
-                              : "border border-gray-300 hover:bg-gray-50"
-                          }`}
+                    ) : (
+                      leads.map((lead, index) => (
+                        <tr
+                          key={lead.assignee_id || index}
+                          className="hover:bg-gray-50 dark:hover:bg-gray-700"
                         >
-                          {pageNum}
-                        </button>
-                      );
-                    })}
-                  </div>
+                          {/* Select */}
+                          <td className="px-3 py-4 whitespace-nowrap">
+                            <input
+                              type="checkbox"
+                              checked={selectedLeads.includes(lead.assignee_id)}
+                              onChange={() =>
+                                handleLeadSelection(lead.assignee_id)
+                              }
+                              className="h-4 w-4 rounded border-gray-300 text-[#0a2463] focus:ring-[#0a2463] dark:text-blue-400"
+                            />
+                          </td>
 
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                    className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage(totalPages)}
-                    disabled={currentPage === totalPages}
-                    className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Last
-                  </button>
+                          {/* Full Name */}
+                          <td className="px-3 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              {/* <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                          {lead.identifier || lead.mortgage_id || lead.assignee_id || ''}
+                                                        </div> */}
+                              {(() => {
+                                const avatarColors = [
+                                  "#0a2463",
+                                  "#5ab453",
+                                  "#92c933",
+                                  "#FF2ECF",
+                                  "#E000AD",
+                                  "#FFA71A",
+                                  "#FF4F1A",
+                                  "#384766",
+                                  "#506877",
+                                  "#3D4E70",
+                                  "#4A4A4F",
+                                  "#6D7EA1",
+                                  "#70838F",
+                                  "#B8008C",
+                                  "#FF75DF",
+                                ];
+                                const color =
+                                  avatarColors[
+                                    leads.indexOf(lead) % avatarColors.length
+                                  ];
+                                return (
+                                  <div
+                                    className="flex h-10 w-10 items-center justify-center rounded-full"
+                                    style={{ backgroundColor: color }}
+                                  >
+                                    <span className="text-sm font-medium text-white">
+                                      {lead.full_name
+                                        ?.split(" ")
+                                        .map((n) => n[0])
+                                        .join("")
+                                        .toUpperCase() || "U"}
+                                    </span>
+                                  </div>
+                                );
+                              })()}
+                              <div className="ml-4">
+                                <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                  {lead.full_name}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Campaign */}
+                          <td className="px-3 py-4 whitespace-nowrap">
+                            <div
+                              className="max-w-[180px] truncate text-sm font-medium text-gray-900 dark:text-white"
+                              title={lead.campaign_name}
+                            >
+                              {lead.campaign_name || "-"}
+                            </div>
+                          </td>
+
+                          {/* Registered Date */}
+                          <td className="px-3 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900 dark:text-white">
+                              {lead.call_in_date_time || "-"}
+                            </div>
+                          </td>
+
+                          {/* State */}
+                          <td className="px-3 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900 dark:text-white">
+                              {lead.state || "-"}
+                            </div>
+                          </td>
+
+                          {/* Zip */}
+                          <td className="px-3 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900 dark:text-white">
+                              {lead.zip || "-"}
+                            </div>
+                          </td>
+
+                          {/* Automation */}
+                          <td className="px-3 py-4 whitespace-nowrap">
+                            <DocumentIcon
+                              // onClick={() => {
+                              //   docOpen();
+                              //   setStatusLead(lead);
+                              // }}
+                              className="ml-2 size-5"
+                              title="View Uploaded File"
+                            />
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                )}
+              </table>
+              {totalPages > 1 && (
+                <div className="border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="text-sm text-gray-700">
+                        Showing {(currentPage - 1) * 10 + 1} to{" "}
+                        {Math.min(currentPage * 10, totalLeads)} of {totalLeads}{" "}
+                        coupons
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        Page {currentPage} of {totalPages}
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => setCurrentPage(1)}
+                        disabled={currentPage === 1}
+                        className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        First
+                      </button>
+                      <button
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(prev - 1, 1))
+                        }
+                        disabled={currentPage === 1}
+                        className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Previous
+                      </button>
+
+                      {/* Page Numbers */}
+                      <div className="flex space-x-1">
+                        {Array.from(
+                          { length: Math.min(5, totalPages) },
+                          (_, i) => {
+                            let pageNum;
+                            if (totalPages <= 5) {
+                              pageNum = i + 1;
+                            } else if (currentPage <= 3) {
+                              pageNum = i + 1;
+                            } else if (currentPage >= totalPages - 2) {
+                              pageNum = totalPages - 4 + i;
+                            } else {
+                              pageNum = currentPage - 2 + i;
+                            }
+
+                            return (
+                              <button
+                                key={pageNum}
+                                onClick={() => setCurrentPage(pageNum)}
+                                className={`rounded px-3 py-1 text-sm ${
+                                  currentPage === pageNum
+                                    ? "bg-[var(--color-atoll)] text-white"
+                                    : "border border-gray-300 hover:bg-gray-50"
+                                }`}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          },
+                        )}
+                      </div>
+
+                      <button
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(prev + 1, totalPages),
+                          )
+                        }
+                        disabled={currentPage === totalPages}
+                        className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Next
+                      </button>
+                      <button
+                        onClick={() => setCurrentPage(totalPages)}
+                        disabled={currentPage === totalPages}
+                        className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Last
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          )}
+              )}
             </div>
           </div>
         </main>
