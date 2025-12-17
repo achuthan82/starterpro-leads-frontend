@@ -18,7 +18,7 @@ export const COLORS = ['neutral', 'primary', 'secondary', 'info', 'success', 'wa
 export const LEAD_STATUS = {
     1: 'NEW', 2: 'FIRST CALL', 3: 'SECOND CALL', 4: 'THIRD CALL', 5: 'TEXT',
     6: 'APPOINTMENT', 7: 'SOLD', 8: 'NOT INTERESTED', 9: 'SIT / NO SALE',
-    10: 'NO SHOW', 11: 'DNC', 12: 'SUPPRESSED', 13: 'SUPPRESSION DENIED', 14: 'SHOW UP', 15: 'WRONG NUMBER', 16: 'INCOMPLETE NUMBER', 17: 'CALL BACK', 18: 'HANG UP', 19: 'SPANISH'
+    10: 'NO SHOW', 11: 'DNC', 12: 'SUPPRESSED', 13: 'SUPPRESSION DENIED', 14: 'SHOW UP', 15: 'WRONG NUMBER', 16: 'INCOMPLETE NUMBER', 17: 'CALL BACK', 18: 'HANG UP', 19: 'SPANISH', 20:'SUPPRESSION REQUESTED'
 }
 
 export const STATUS_NAME_TO_ID = {
@@ -27,7 +27,8 @@ export const STATUS_NAME_TO_ID = {
     'INCOMPLETE NUMBER': 16,
     'CALL BACK': 17,
     'HANG UP': 18,
-    'SPANISH': 19
+    'SPANISH': 19,
+    "SUPPRESSION REQUESTED":20
 }
 
 export const LEAD_STATUSES = [
@@ -49,7 +50,8 @@ export const LEAD_STATUSES = [
     { value: 16, label: 'Incomplete Number' },
     { value: 17, label: 'Call Back' },
     { value: 18, label: 'Hang Up' },
-    { value: 19, label: 'Spanish' }
+    { value: 19, label: 'Spanish' },
+    {value:20, label:'Suppression Requested'}
 ];
 
 export const SOURCE_MAPPING = {
@@ -72,12 +74,13 @@ export const STATUS_COLORS = {
     11: 'bg-[#7fa8eb]', // DNC
     12: 'bg-[#727592]', // SUPPRESSED
     13: 'bg-[#10151d]', // Suppression Denied
-    14: 'bg-[#eab308]',
-    15: 'bg-[#0d9488]',  // Teal (darker + greener, distinct from previous teal)
-    16: 'bg-[#9333ea]',  // Vivid Purple (brighter & more saturated)
-    17: 'bg-[#0369a1]',  // Deep Sky Blue (darker, more muted)
-    18: 'bg-[#e11d48]',  // Strong Crimson (deeper than rose)
-    19: 'bg-[#ca8a04]'   // Earthy Gold (darker & warmer than yellow)
+    14: 'bg-[#eab308]', // Show Up
+    15: 'bg-[#0d9488]',  // WRONG NUMBER
+    16: 'bg-[#9333ea]',  // INCOMPLETE NUMBER
+    17: 'bg-[#0369a1]',  // CALL BACK
+    18: 'bg-[#e11d48]',  // HANG UP
+    19: 'bg-[#ca8a04]',  // SPANISH
+    20:'bg-[#ca8a04]', // SUPPRESSION DENIED
 }
 // export const STATUS_COLORS = {
 //   1: 'bg-[#ff0000]', // Red
