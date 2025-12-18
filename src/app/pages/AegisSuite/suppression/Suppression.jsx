@@ -80,34 +80,24 @@ const Suppression = () => {
     getLeads(currentPage, 10);
   }, [currentPage]);
   return (
-    <div className="flex min-h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
-      <SharedSidebar currentPath="/suppression" />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="border-b border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
+      <SharedSidebar currentPath="/admin/users" />
+      
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[#0a2463] dark:text-blue-400">
-                Suppression Requests
-              </h1>
-              <p className="mt-1 text-gray-600 dark:text-gray-300">
-                Manage and track your leads across different categories
-              </p>
+              <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Suppression</h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your lead suppressions</p>
             </div>
-            <div className="flex items-center space-x-3">
-              {/* <button
-                onClick={() => alert('Add New Lead form would open here')}
-                className="bg-[#f4d03f] text-white px-4 py-2 rounded-lg hover:bg-[#e6c035] transition-colors flex items-center space-x-2"
-              >
-                <PlusIcon className="w-4 h-4" />
-                <span>Add Lead</span>
-              </button> */}
 
-              {/* Bulk Actions Button */}
-            </div>
           </div>
         </header>
-        <main className="flex min-h-0 flex-1 flex-col p-6">
-          <div className="flex min-w-0 flex-1 flex-col">
+
+        {/* Main Content */}
+        <main className="flex-1 overflow-auto p-6">
+         <div className="flex min-w-0 flex-1 flex-col">
             {/* Header */}
 
             <div className="mb-4 flex items-center justify-between">
@@ -429,6 +419,9 @@ const Suppression = () => {
           )}
         </main>
       </div>
+
+      {/* Confirmation Modal */}
+     
     </div>
   );
 };
