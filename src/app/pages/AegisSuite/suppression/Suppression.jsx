@@ -3,6 +3,9 @@ import SharedSidebar from "../components/SharedSidebar";
 import { DocumentIcon } from "@heroicons/react/24/outline";
 import { suppressionService } from "utils/apiService";
 import { toast } from "sonner";
+import { useDisclosure } from "hooks";
+import SuppressionModal from "./SuppressionModal";
+import LeadFileModal from "../LeadFileModal";
 const Suppression = () => {
   const [loading, setLoading] = useState(false);
   const [selectedLeads, setSelectedLeads] = useState([]);
@@ -10,11 +13,19 @@ const Suppression = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalLeads, setTotalLeads] = useState(0);
-
-  const handleLeadSelection = (id) => {
-    setSelectedLeads((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+  const [isOpen, setIsOpen] = useState(false);
+  const [type, setType] = useState("reject");
+  const [viewLead, setViewLead] = useState(null);
+  const [docModalOpen, { open: docOpen, close: docClose }] =
+    useDisclosure(false);
+  const handleLeadSelection = (event, lead) => {
+    if (event.target.checked) {
+      setSelectedLeads((prev) => [...prev, lead]);
+    } else {
+      setSelectedLeads((prev) =>
+        prev.filter((item) => item.mortgage_id !== lead.mortgage_id),
+      );
+    }
   };
   const getLeads = (page, per_page) => {
     setLoading(true);
@@ -52,16 +63,18 @@ const Suppression = () => {
     if (selectedLeads.length === leads.length) {
       setSelectedLeads([]);
     } else {
-      setSelectedLeads(leads.map((l) => l.assignee_id));
+      setSelectedLeads([...leads]);
     }
   };
 
   const handleApprove = () => {
-    console.log("Approved leads:", selectedLeads);
+    setType("approve");
+    setIsOpen(true);
   };
 
   const handleReject = () => {
-    console.log("Rejected leads:", selectedLeads);
+    setType("reject");
+    setIsOpen(true);
   };
   useEffect(() => {
     getLeads(currentPage, 10);
@@ -198,9 +211,11 @@ const Suppression = () => {
                           <td className="px-3 py-4 whitespace-nowrap">
                             <input
                               type="checkbox"
-                              checked={selectedLeads.includes(lead.assignee_id)}
-                              onChange={() =>
-                                handleLeadSelection(lead.assignee_id)
+                              checked={selectedLeads.some(
+                                (item) => item.mortgage_id === lead.mortgage_id,
+                              )}
+                              onChange={(event) =>
+                                handleLeadSelection(event, lead)
                               }
                               className="h-4 w-4 rounded border-gray-300 text-[#0a2463] focus:ring-[#0a2463] dark:text-blue-400"
                             />
@@ -291,11 +306,11 @@ const Suppression = () => {
                           {/* Automation */}
                           <td className="px-3 py-4 whitespace-nowrap">
                             <DocumentIcon
-                              // onClick={() => {
-                              //   docOpen();
-                              //   setStatusLead(lead);
-                              // }}
-                              className="ml-2 size-5"
+                              onClick={() => {
+                                docOpen();
+                                setViewLead(lead);
+                              }}
+                              className="ml-2 size-5 cursor-pointer"
                               title="View Uploaded File"
                             />
                           </td>
@@ -393,6 +408,25 @@ const Suppression = () => {
               )}
             </div>
           </div>
+          <LeadFileModal
+            isOpen={docModalOpen}
+            onClose={docClose}
+            statusLead={viewLead}
+            setStatusLead={setViewLead}
+          ></LeadFileModal>
+          {isOpen && (
+            <SuppressionModal
+              isOpen={isOpen}
+              type={type}
+              setIsOpen={setIsOpen}
+              setType={setType}
+              selectedLeads={selectedLeads}
+              setSelectedLeads={setSelectedLeads}
+              setCurrentPage={setCurrentPage}
+              getLeads={getLeads}
+              currentPage={currentPage}
+            />
+          )}
         </main>
       </div>
     </div>

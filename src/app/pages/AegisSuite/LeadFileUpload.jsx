@@ -11,10 +11,14 @@ export default function LeadFileUpload({
   isOpen,
   onClose,
   selectedLeads,
-  handleBulkStatusChange,
-  handleStatusChange,
   type,
   statusLead,
+  fetchLeads,
+  currentPage,
+  perPage,
+  purchased,
+  activeTab,
+  filters
 }) {
   const [files, { remove, append }] = useListState();
   const [uploadFiles, setUploadFiles] = useState([]);
@@ -46,7 +50,16 @@ export default function LeadFileUpload({
           console.log(item);
           remove(id);
         });
-        handleBulkStatusChange();
+        onClose()
+        fetchLeads(
+            activeTab,
+            filters,
+            currentPage,
+            perPage,
+            false,
+            purchased,
+          );
+        // handleBulkStatusChange();
       })
       .catch((error) => {
         toast.error(error?.message || "Failed to upload documents");
@@ -68,7 +81,15 @@ export default function LeadFileUpload({
           console.log(item);
           remove(id);
         });
-        handleStatusChange();
+        onClose()
+        fetchLeads(
+            activeTab,
+            filters,
+            currentPage,
+            perPage,
+            false,
+            purchased,
+          );
       })
       .catch((error) => {
         toast.error(error?.message || "Failed to upload documents");

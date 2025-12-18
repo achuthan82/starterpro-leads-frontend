@@ -1544,7 +1544,7 @@ const LeadManagement = () => {
                                       docOpen();
                                       setStatusLead(lead);
                                     }}
-                                    className="ml-2 size-5"
+                                    className="ml-2 size-5 cursor-pointer"
                                     title="View Uploaded File"
                                   />
                                 )}
@@ -1809,6 +1809,7 @@ const LeadManagement = () => {
         purchased={purchased}
         activeTab={activeTab}
         setSettingsLead={setSettingsLead}
+        filters={filters}
       />
 
       {/* Status Change Modal */}
@@ -2126,6 +2127,12 @@ const LeadManagement = () => {
         type={type}
         statusLead={statusLead}
         handleStatusChange={handleStatusChange}
+        fetchLeads={fetchLeads}
+        currentPage={currentPage}
+        perPage={perPage}
+        purchased={purchased}
+        activeTab={activeTab}
+        filters={filters}
       />
       <LeadFileModal
         isOpen={docModalOpen}
