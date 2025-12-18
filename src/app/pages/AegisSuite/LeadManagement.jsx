@@ -1,10 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 import { Card } from "components/ui";
 import SharedSidebar from "./components/SharedSidebar";
-import {
-  leadsService,
-  stateService,
-} from "utils/apiService";
+import { leadsService, stateService } from "utils/apiService";
 import { Switch } from "@headlessui/react";
 import {
   Dialog,
@@ -24,6 +21,7 @@ import {
   ChevronRightIcon,
   XCircleIcon,
   Cog6ToothIcon,
+  DocumentIcon,
 } from "@heroicons/react/24/outline";
 import { toast } from "sonner";
 import { LEAD_STATUS, LEAD_STATUSES } from "constants/app.constant";
@@ -32,11 +30,16 @@ import LeadDetailsModal from "./LeadDetailsModal";
 import { useAuthContext } from "app/contexts/auth/context";
 import { useDisclosure } from "hooks";
 import LeadAutomationSettings from "./LeadAutomationSettings";
+import LeadFileUpload from "./LeadFileUpload";
+import LeadFileModal from "./LeadFileModal";
 const LeadManagement = () => {
   const { user } = useAuthContext();
   const userRole = user?.role || localStorage.getItem("userRole") || "agent";
   const [isModalOpen, { open, close }] = useDisclosure(false);
-  
+  const [leadModalOpen, { open: leadOpen, close: leadClose }] =
+    useDisclosure(false);
+  const [docModalOpen, { open: docOpen, close: docClose }] =
+    useDisclosure(false);
   const [activeTab, setActiveTab] = useState("rich");
   const [selectedLead, setSelectedLead] = useState(null);
   const [selectedLeads, setSelectedLeads] = useState([]);
@@ -49,6 +52,7 @@ const LeadManagement = () => {
     campaign: "",
   });
   const [showToolTip, setShowToolTip] = useState(false);
+  const [type, setType] = useState("");
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
@@ -78,7 +82,7 @@ const LeadManagement = () => {
   const [showBulkStatusModal, setShowBulkStatusModal] = useState(false);
   const [bulkNewStatus, setBulkNewStatus] = useState("");
   const [statusHistory, setStatusHistory] = useState([]);
-  const [settingsLead, setSettingsLead] = useState('')
+  const [settingsLead, setSettingsLead] = useState("");
   // Available statuses as per requirements
   /*const LEAD_STATUSES = [
     { value: 1, label: 'First call' },
@@ -495,7 +499,7 @@ const LeadManagement = () => {
     setSelectedLeads([]);
     setSearchTerm("");
     setFilters({ lead_status: "", state: "", name: "", campaign: "" });
-    setPerPage(10)
+    setPerPage(10);
     setCurrentPage(1);
     setPrintLeads([]);
   };
@@ -518,56 +522,81 @@ const LeadManagement = () => {
   // Handle status change
   const [statusLoading, setStatusLoading] = useState(false);
   const handleStatusChange = async () => {
-    if (!statusLead || !newStatus) return;
-    setStatusLoading(true);
-    try {
-      // Prepare payload
-      const agentId = statusLead.agent_id || statusLead.agentId;
-      const assigneeId = statusLead.assignee_id || statusLead.assigneeId;
-      const mortgageId =
-        statusLead.mortgage_id ||
-        statusLead.identifier ||
-        statusLead.assignee_id;
-      if (!agentId || !mortgageId) {
-        toast.error("Missing agent or mortgage ID");
+    if (newStatus === "7") {
+      setShowStatusModal(false);
+      setType("single");
+      leadOpen();
+    } else {
+      if (!statusLead || !newStatus) return;
+      setStatusLoading(true);
+      try {
+        // Prepare payload
+        const agentId = statusLead.agent_id || statusLead.agentId;
+        const assigneeId = statusLead.assignee_id || statusLead.assigneeId;
+        const mortgageId =
+          statusLead.mortgage_id ||
+          statusLead.identifier ||
+          statusLead.assignee_id;
+        if (!agentId || !mortgageId) {
+          toast.error("Missing agent or mortgage ID");
+          setStatusLoading(false);
+          return;
+        }
+        const payload = {
+          agent_id: agentId,
+          lead_status: Number(newStatus),
+          mortgage_ids: [mortgageId],
+        };
+        // Call API (category=1)
+        const response = await fetch(`${JWT_HOST_API}/leads/status/1`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        if (response.ok && (data.success || data.status === 200)) {
+          toast.success(data.message || "Status updated successfully!");
+          leadClose();
+          setType("");
+          setShowStatusModal(false);
+          setStatusLead(null);
+          setNewStatus("");
+          fetchSummary();
+          fetchLeads(
+            activeTab,
+            filters,
+            currentPage,
+            perPage,
+            false,
+            purchased,
+          );
+          fetchStatusHistory(agentId, assigneeId);
+        } else {
+          toast.error(data.message || "Failed to update status");
+        }
+      } catch (err) {
+        toast.error(err.message || "Failed to update status");
+      } finally {
         setStatusLoading(false);
-        return;
       }
-      const payload = {
-        agent_id: agentId,
-        lead_status: Number(newStatus),
-        mortgage_ids: [mortgageId],
-      };
-      // Call API (category=1)
-      const response = await fetch(`${JWT_HOST_API}/leads/status/1`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json();
-      if (response.ok && (data.success || data.status === 200)) {
-        toast.success(data.message || "Status updated successfully!");
-        setShowStatusModal(false);
-        setStatusLead(null);
-        setNewStatus("");
-        fetchSummary();
-        fetchLeads(activeTab, filters, currentPage, perPage, false, purchased);
-        fetchStatusHistory(agentId, assigneeId);
-      } else {
-        toast.error(data.message || "Failed to update status");
-      }
-    } catch (err) {
-      toast.error(err.message || "Failed to update status");
-    } finally {
-      setStatusLoading(false);
     }
   };
 
   // Handle bulk status change
+  const bulkStatusCheck = () => {
+    console.log("bulkstatus", typeof bulkNewStatus);
+    if (bulkNewStatus === "7") {
+      setType("bulk");
+      setShowBulkStatusModal(false);
+      leadOpen();
+    } else {
+      handleBulkStatusChange();
+    }
+  };
   const handleBulkStatusChange = async () => {
     if (selectedLeads.length === 0 || !bulkNewStatus) return;
 
@@ -631,13 +660,13 @@ const LeadManagement = () => {
       );
 
       await Promise.all(updatePromises);
-
+      setType("");
       setShowBulkStatusModal(false);
       setBulkNewStatus("");
       setSelectedLeads([]);
       setPrintLeads([]);
       fetchSummary();
-
+      leadClose();
       fetchLeads(activeTab, filters, currentPage, perPage, false, purchased); // Refresh the list
       toast.success(
         `Status updated successfully for ${selectedLeadsData.length} leads!`,
@@ -731,9 +760,9 @@ const LeadManagement = () => {
     }
   };
   const handleExportConfirm = () => {
-    if (pendingExportType === 'selected') {
+    if (pendingExportType === "selected") {
       downloadCsv();
-    } else if (pendingExportType === 'all') {
+    } else if (pendingExportType === "all") {
       downloadAgentLeads();
     }
     setShowExportConfirmModal(false);
@@ -1233,7 +1262,7 @@ const LeadManagement = () => {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => {
-                      setPendingExportType('selected');
+                      setPendingExportType("selected");
                       setShowExportConfirmModal(true);
                     }}
                     disabled={selectedLeads.length === 0}
@@ -1250,7 +1279,7 @@ const LeadManagement = () => {
                   <button
                     disabled={totalRecords < 1}
                     onClick={() => {
-                      setPendingExportType('all');
+                      setPendingExportType("all");
                       setShowExportConfirmModal(true);
                     }}
                     // style={{ backgroundColor: 'var(--atoll)' }}
@@ -1386,7 +1415,7 @@ const LeadManagement = () => {
                           Zip
                         </th>
                         <th className="min-w-[80px] px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
-                         Automation Settings
+                          Automation Settings
                         </th>
                         {/* <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider min-w-[120px]">
                           Loan Amount
@@ -1509,6 +1538,16 @@ const LeadManagement = () => {
                                     </div>
                                   )}
                                 </div>
+                                {lead.lead_status === 7 && (
+                                  <DocumentIcon
+                                    onClick={() => {
+                                      docOpen();
+                                      setStatusLead(lead);
+                                    }}
+                                    className="ml-2 size-5"
+                                    title="View Uploaded File"
+                                  />
+                                )}
                               </div>
                             </td>
 
@@ -1640,7 +1679,14 @@ const LeadManagement = () => {
 
                             {/* SMS automation*/}
                             <td className="px-3 py-4 whitespace-nowrap">
-                              <Cog6ToothIcon className="size-5 cursor-pointer" title="View Settings" onClick={() => {setSettingsLead(lead); open()}}/>
+                              <Cog6ToothIcon
+                                className="size-5 cursor-pointer"
+                                title="View Settings"
+                                onClick={() => {
+                                  setSettingsLead(lead);
+                                  open();
+                                }}
+                              />
                             </td>
 
                             {/* Actions */}
@@ -1753,7 +1799,17 @@ const LeadManagement = () => {
           tabs={tabs}
         />
       )}
-      <LeadAutomationSettings isModalOpen={isModalOpen} close={close} lead={settingsLead} fetchLeads={fetchLeads} currentPage={currentPage} perPage={perPage} purchased={purchased} activeTab={activeTab} setSettingsLead={setSettingsLead}/>
+      <LeadAutomationSettings
+        isModalOpen={isModalOpen}
+        close={close}
+        lead={settingsLead}
+        fetchLeads={fetchLeads}
+        currentPage={currentPage}
+        perPage={perPage}
+        purchased={purchased}
+        activeTab={activeTab}
+        setSettingsLead={setSettingsLead}
+      />
 
       {/* Status Change Modal */}
       {showStatusModal && statusLead && (
@@ -1965,7 +2021,7 @@ const LeadManagement = () => {
                     Cancel
                   </button>
                   <button
-                    onClick={handleBulkStatusChange}
+                    onClick={bulkStatusCheck}
                     disabled={!bulkNewStatus}
                     className={`rounded-md px-4 py-2 text-sm ${
                       bulkNewStatus
@@ -1999,7 +2055,7 @@ const LeadManagement = () => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            <div className="bg-opacity-75 fixed inset-0 bg-gray-500 transition-opacity" />
           </TransitionChild>
 
           <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -2012,28 +2068,31 @@ const LeadManagement = () => {
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                  <div className="bg-white dark:bg-gray-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg dark:bg-gray-800">
+                  <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 dark:bg-gray-800">
                     <div className="sm:flex sm:items-start">
-                      <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-900/30 sm:mx-0 sm:h-10 sm:w-10">
+                      <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10 dark:bg-yellow-900/30">
                         <XCircleIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
                       </div>
-                      <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                      <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                         <DialogTitle
                           as="h3"
-                          className="text-base font-semibold leading-6 text-gray-900 dark:text-gray-100"
+                          className="text-base leading-6 font-semibold text-gray-900 dark:text-gray-100"
                         >
                           Confirm Export
                         </DialogTitle>
                         <div className="mt-2">
                           <p className="text-sm text-gray-500 dark:text-gray-400">
-                            All these leads belongs to StarterPro Leads. You don&apos;t have permission to export and use it anywhere else and it goes against our terms and conditions.
+                            All these leads belongs to StarterPro Leads. You
+                            don&apos;t have permission to export and use it
+                            anywhere else and it goes against our terms and
+                            conditions.
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-700/50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 dark:bg-gray-700/50">
                     <button
                       type="button"
                       className="inline-flex w-full justify-center rounded-md bg-[#0a2463] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#0a2463]/90 sm:ml-3 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700"
@@ -2043,7 +2102,7 @@ const LeadManagement = () => {
                     </button>
                     <button
                       type="button"
-                      className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto dark:bg-gray-800 dark:text-gray-100 dark:ring-gray-600 dark:hover:bg-gray-700"
+                      className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto dark:bg-gray-800 dark:text-gray-100 dark:ring-gray-600 dark:hover:bg-gray-700"
                       onClick={() => {
                         setShowExportConfirmModal(false);
                         setPendingExportType(null);
@@ -2058,6 +2117,22 @@ const LeadManagement = () => {
           </div>
         </Dialog>
       </Transition>
+      <LeadFileUpload
+        isOpen={leadModalOpen}
+        onClose={leadClose}
+        selectedLeads={printLeads}
+        setSelectedLeads={setSelectedLeads}
+        handleBulkStatusChange={handleBulkStatusChange}
+        type={type}
+        statusLead={statusLead}
+        handleStatusChange={handleStatusChange}
+      />
+      <LeadFileModal
+        isOpen={docModalOpen}
+        onClose={docClose}
+        statusLead={statusLead}
+        setStatusLead={setStatusLead}
+      ></LeadFileModal>
     </div>
   );
 };
