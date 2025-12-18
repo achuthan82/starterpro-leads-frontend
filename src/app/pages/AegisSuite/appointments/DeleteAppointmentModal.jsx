@@ -25,8 +25,8 @@ const DeleteAppointmentModal = ({ appointment, setDeleteModal, startDate,endDate
   };
   return (
     <div>
-      <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
-        <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6">
+      <div className="bg-opacity-50 fixed inset-0 z-[100] flex items-center justify-center bg-black">
+        <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 pointer-events-auto">
           <div className="mb-4 flex items-center">
             <ExclamationTriangleIcon className="mr-3 h-6 w-6 text-red-600" />
             <h3 className="text-lg font-semibold text-gray-900">
