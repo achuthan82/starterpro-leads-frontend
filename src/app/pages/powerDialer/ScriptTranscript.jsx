@@ -633,12 +633,12 @@ export default function ScriptTranscript({
                         <div className="flex items-center gap-2">
                           {/* INCOMING / OUTGOING ICON */}
                           {log?.is_outgoing ? (
-                            <PhoneArrowUpRightIcon
+                            <PhoneArrowDownLeftIcon
                               className="h-4 w-4 text-green-600 dark:text-green-400"
                               title="Outgoing Call"
                             />
                           ) : (
-                            <PhoneArrowDownLeftIcon
+                            <PhoneArrowUpRightIcon
                               className="h-4 w-4 text-blue-600 dark:text-blue-400"
                               title="Incoming Call"
                             />
