@@ -21,6 +21,7 @@ const LeadList = ({
   onSearchChange,
   onOpenSmsDrawer
 }) => {
+  console.log(searchTerm)
   // const navigate = useNavigate();
   const [selectedStatus, setSelectedStatus] = useState("All Statuses");
   const [leads, setLeads] = useState([]);
@@ -42,78 +43,77 @@ const LeadList = ({
   const lastFetchParamsRef = useRef({ searchTerm: "", selectedStatus: "" });
 
   // Fetch leads from API
-  const fetchLeads = useCallback(
-    async (
-      page = currentPage,
-      name = searchTerm,
-      lead_status = selectedStatus,
-      state = selectedState,
-      itemsPerPage = perPage,
-    ) => {
-      // Prevent duplicate calls
-      if (isFetchingRef.current) {
-        return;
-      }
+const fetchLeads = useCallback(
+  async (page, name, lead_status, state, itemsPerPage) => {
+    // Normalize search input
+    const searchName = name?.trim() || "";
 
-      // Check if parameters have actually changed
-      if (
-        lastFetchParamsRef.current.searchTerm === name &&
-        lastFetchParamsRef.current.selectedStatus === lead_status &&
-        lastFetchParamsRef.current.page === page &&
-        lastFetchParamsRef.current.perPage === itemsPerPage &&
-        lastFetchParamsRef.current.selectedState === state
-      ) {
-        return;
-      }
+    // Prevent duplicate overlapping requests
+    if (isFetchingRef.current) return;
 
-      isFetchingRef.current = true;
-      lastFetchParamsRef.current = {
-        searchTerm: name,
-        selectedStatus: lead_status,
+    // Last used request parameters
+    const last = lastFetchParamsRef.current;
+
+    // Compare only meaningful parameters (after trimming)
+    const hasNotChanged =
+      last.page === page &&
+      last.perPage === itemsPerPage &&
+      last.selectedStatus === lead_status &&
+      last.selectedState === state &&
+      last.searchTerm === searchName &&
+      searchName !== ""; // Always refetch empty search
+
+    if (hasNotChanged) return;
+
+    // Mark as fetching & store updated parameters for next comparison
+    isFetchingRef.current = true;
+    lastFetchParamsRef.current = {
+      page,
+      perPage: itemsPerPage,
+      selectedStatus: lead_status,
+      selectedState: state,
+      searchTerm: searchName,
+    };
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const params = {
         page,
-        perPage: itemsPerPage,
-        selectedState: state,
+        per_page: itemsPerPage,
       };
-      setLoading(true);
-      setError(null);
 
-      try {
-        const params = {
-          page,
-          per_page: itemsPerPage,
-        };
+      // Apply search filter
+      if (searchName !== "") params.name = searchName;
 
-        // Add optional filters
-        if (name && name.trim()) {
-          params.name = name.trim();
-        }
+      // Apply status filter
+      if (
+        lead_status &&
+        lead_status !== "All Statuses" &&
+        lead_status !== "all"
+      ) {
+        params.lead_status = STATUS_NAME_TO_ID[lead_status] || lead_status;
+      }
 
-        if (
-          lead_status &&
-          lead_status !== "All Statuses" &&
-          lead_status !== "all"
-        ) {
-          // Convert status name to ID if it's a status name
-          const statusId = STATUS_NAME_TO_ID[lead_status] || lead_status;
-          params.lead_status = statusId;
-        }
-        console.log("state", state);
-        if (state && state !== "all") {
-          params.state = state;
-        }
+      // Apply state filter
+      if (state && state !== "all") {
+        params.state = state;
+      }
 
-        const response = await dialerService.getPaginatedLeads(params);
+      // Fetch from API
+      const response = await dialerService.getPaginatedLeads(params);
 
-        // Handle different response formats
-        const leadsData = response.data || response.leads || [];
-        const pagination = response.pagination || {};
-        const total =
-          pagination.total || response.total || response.total_count || 0;
-        const perPageFromAPI = pagination.per_page || itemsPerPage;
-        const totalPagesCalc = Math.ceil(total / perPageFromAPI);
+      const leadsData = response.data || response.leads || [];
+      const pagination = response.pagination || {};
 
-        // Transform API data to match component structure
-        const transformedLeads = leadsData.map((lead) => ({
+      const total = pagination.total || response.total || 0;
+      const perFromAPI = pagination.per_page || itemsPerPage;
+      const totalPagesCalc = Math.ceil(total / perFromAPI);
+
+      // Transform + set leads
+      setLeads(
+        leadsData.map((lead) => ({
           id: lead.assignee_id || lead.id || lead.mortgage_id,
           name: lead.full_name || lead.name || "Unknown",
           phone:
@@ -123,11 +123,12 @@ const LeadList = ({
             lead.lead_phone_number ||
             "N/A",
           address:
-            `${lead.address || ""} ${lead.city || ""} ${lead.state || ""} ${lead.zip || lead.zipcode || ""}`.trim() ||
-            "N/A",
+            `${lead.address || ""} ${lead.city || ""} ${lead.state || ""} ${
+              lead.zip || lead.zipcode || ""
+            }`.trim() || "N/A",
           status:
             LEAD_STATUS[lead.lead_status] || lead.lead_status || "Unknown",
-          statusId: lead.lead_status, // Keep the original status ID for badge colors
+          statusId: lead.lead_status,
           lastContact: lead.call_in_date_time || lead.last_contact || "",
           age: lead.ivr_response?.age || lead.age || "",
           homeValue: lead.loan_amount || "",
@@ -139,35 +140,44 @@ const LeadList = ({
             .join("")
             .toUpperCase()
             .substring(0, 2),
-          // Keep original data for reference
           originalData: lead,
-        }));
+        }))
+      );
 
-        setLeads(transformedLeads);
-        setTotalRecords(total);
-        setTotalPages(totalPagesCalc);
-        setCurrentPage(page);
-      } catch (err) {
-        console.error("Error fetching leads:", err);
-        setError(err.message || "Failed to fetch leads");
-        toast.error(err.message || "Failed to load leads. Please try again.");
-        setLeads([]);
-        setTotalRecords(0);
-        setTotalPages(1);
-      } finally {
-        setLoading(false);
-        isFetchingRef.current = false;
-      }
-    },
-    [currentPage, searchTerm, selectedStatus, perPage, selectedState],
-  );
+      // Update pagination
+      setTotalRecords(total);
+      setTotalPages(totalPagesCalc);
+      setCurrentPage(page);
+    } catch (err) {
+      console.error("Error fetching leads:", err);
+      setError(err.message);
+      toast.error(err.message);
+      setLeads([]);
+      setTotalRecords(0);
+      setTotalPages(1);
+    } finally {
+      isFetchingRef.current = false;
+      setLoading(false);
+    }
+  },
+  [] // IMPORTANT: keep it stable, no stale closure problems
+);
 
   // Fetch leads on component mount and when filters change (not when call state changes)
+  // useEffect(() => {
+  //   fetchLeads(
+  //     1,
+  //     searchTerm,        
+  //     selectedStatus,   
+  //     selectedState,     
+  //     perPage            
+  //   );
+  // }, [searchTerm, selectedStatus, selectedState, perPage]);
+
   useEffect(() => {
-    // Only fetch if searchTerm or selectedStatus actually changed
-    fetchLeads(1, searchTerm, selectedStatus, selectedState);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, selectedStatus, selectedState]);
+  fetchLeads(1, searchTerm, selectedStatus, selectedState, perPage);
+}, []); // load default once
+
 
   // Update lead in list when selectedLead status changes
   useEffect(() => {
@@ -209,10 +219,12 @@ const LeadList = ({
   ]);
 
   // Handle status change
-  const handleStatusChange = (newStatus) => {
-    setSelectedStatus(newStatus);
-    setCurrentPage(1);
-  };
+const handleStatusChange = (newStatus) => {
+  setSelectedStatus(newStatus);
+  setCurrentPage(1);
+  fetchLeads(1, searchTerm, newStatus, selectedState, perPage);
+};
+
   const handleStateChange = (newState) => {
     setSelectedState(newState);
     setCurrentPage(1);
@@ -221,7 +233,13 @@ const LeadList = ({
   // Handle page change
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      fetchLeads(newPage, searchTerm, selectedStatus);
+    fetchLeads(
+      newPage,
+      searchTerm,
+      selectedStatus,
+      selectedState,
+      perPage
+    );
     }
   };
 
@@ -288,7 +306,11 @@ const LeadList = ({
           type="text"
           placeholder="Search leads..."
           value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
+         onChange={(e) => {
+            const value = e.target.value;
+            onSearchChange(value);
+            fetchLeads(1, value, selectedStatus, selectedState, perPage);
+          }}
           className="w-full rounded-lg border border-gray-300 bg-white py-2 pr-4 pl-10 text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
         />
       </div>

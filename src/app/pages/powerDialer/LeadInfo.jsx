@@ -19,6 +19,8 @@ const LeadInfo = ({
   callHistory,
   callLogs = [],
   callLogsLoading = false,
+  selectedCallLog,
+  setSelectedCallLog
 }) => {
   const { setSelectedLead } = useCallContext();
   const [currentStatus, setCurrentStatus] = useState(lead?.status || "");
@@ -35,6 +37,7 @@ const LeadInfo = ({
   // const [statusHistory, setStatusHistory] = useState([]);
   // const [selectedLead, setSelectedLead] = useState(null);
   console.log(formData);
+  console.log(selectedCallLog)
   
   // Function to get current status ID from lead - compute on every render to ensure it's always up-to-date
   const getCurrentStatusId = () => {
@@ -633,11 +636,11 @@ const LeadInfo = ({
                   return (
                     <div
                       key={log.id || index}
-                      className="flex items-center justify-between text-sm"
+                      className="flex items-center justify-between text-sm hover:bg-blue-100 px-3 py-1 rounded-lg cursor-pointer mb-1"
+                      title="Click here to hear the recording"
+                      onClick={() => setSelectedCallLog(log)}
                     >
                       <div className="flex items-center space-x-2">
-                   
-
                         {callStatusId && (
                           <span
                             className={`status-badge inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${getStatusBadgeClass(callStatusId)}`}
@@ -651,11 +654,11 @@ const LeadInfo = ({
                           ></div>
                         )}
                         {log.is_outgoing ? (
-                          <PhoneArrowUpRightIcon className="h-4 w-4 text-green-600 dark:text-green-400" title="Outgoing Call"/>
+                          <PhoneArrowDownLeftIcon className="h-4 w-4 text-green-600 dark:text-green-400" title="Outgoing Call"/>
                         ) : (
-                          <PhoneArrowDownLeftIcon className="h-4 w-4 text-blue-600 dark:text-blue-400" title="Incoming Call"/>
+                          <PhoneArrowUpRightIcon className="h-4 w-4 text-blue-600 dark:text-blue-400"/>
                         )}
-                        <span className="text-gray-600 dark:text-gray-400">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
                           {log.date} · {log.time}
                         </span>
                       </div>

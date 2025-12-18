@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   DocumentTextIcon,
   ChatBubbleLeftEllipsisIcon,
@@ -20,8 +20,13 @@ export default function ScriptTranscript({
   isCallActive = false,
   callLogs = [],
   callLogsLoading = false,
-  fetchCallLogs
+  fetchCallLogs,
+  selectedCallLog,
+  setSelectedCallLog
 }) {
+  const preselectedRef = useRef(null);
+  const recordingsScrollRef = useRef(null);
+
   console.log(lead)
   console.log("call-logs", callLogs);
   const tabs = { script: 1, objections: 2 };
@@ -38,6 +43,7 @@ export default function ScriptTranscript({
   console.log(callFilter)
   const [showAssessmentModal, setShowAssessmentModal] = useState(false);
   const [selectedAssessment, setSelectedAssessment] = useState(null);
+  const [preselectedLogId, setPreselectedLogId] = useState(null);
 
   const getScriptData = (type) => {
     setLoading(true);
@@ -252,12 +258,39 @@ export default function ScriptTranscript({
     }
   };
 
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-    if (onTabToggle) {
-      onTabToggle(tab);
-    }
-  };
+  const scrollToTop = () => {
+  if (recordingsScrollRef.current) {
+    recordingsScrollRef.current.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+};
+
+ useEffect(() => {
+  if (setSelectedCallLog) {
+    setSelectedCallLog(null);
+    setPreselectedLogId(null)
+  }
+
+  scrollToTop(); 
+}, [callFilter]);
+
+
+const handleTabClick = (tab) => {
+  setActiveTab(tab);
+
+  if (setSelectedCallLog) {
+    setSelectedCallLog(null);
+    setPreselectedLogId(null)
+  }
+
+  scrollToTop(); 
+
+  onTabToggle?.(tab);
+};
+
+
   const getValue = (obj, path) => {
     return path.split(".").reduce((acc, key) => {
       return acc?.[key];
@@ -273,7 +306,6 @@ export default function ScriptTranscript({
     });
   };
 
-
   useEffect(() => {
   if (activeTab === "transcript") {
     fetchCallLogs(lead, callFilter); 
@@ -283,6 +315,34 @@ export default function ScriptTranscript({
   useEffect(() => {
       setCallFilter('all')
  }, [lead]);
+
+  useEffect(() => {
+    if (selectedCallLog) {
+      setActiveTab("transcript");  
+    }
+  }, [selectedCallLog]);
+
+  useEffect(() => {
+    if (selectedCallLog) {
+      setPreselectedLogId(selectedCallLog.id);
+    }
+  }, [selectedCallLog]);
+
+  useEffect(() => {
+    if (preselectedRef.current) {
+      preselectedRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [callLogs, preselectedLogId]);
+
+  useEffect(() => {
+  if (!selectedCallLog) {
+    scrollToTop();
+  }
+}, [selectedCallLog]);
+
 
   return (
     <div className="h-[calc(100vh-12rem)] w-full rounded-xl border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800">
@@ -321,7 +381,7 @@ export default function ScriptTranscript({
           }`}
         >
           <ChatBubbleLeftEllipsisIcon className="h-3 w-3 flex-shrink-0" />
-          <span className="hidden sm:inline">Live Transcript</span>
+          <span className="hidden sm:inline">Recordings</span>
           {/* <span className="sm:hidden">Transcript</span> */}
         </button>
       </div>
@@ -618,17 +678,24 @@ export default function ScriptTranscript({
             <p>Loading recordings...</p>
           </div>
         ) : callLogs.length > 0 ? (
-
-              <div className="max-h-[55vh] space-y-4 overflow-y-auto">
+                <div
+                  ref={recordingsScrollRef}
+                  className="max-h-[55vh] space-y-4 overflow-y-auto"
+                >
                 {callLogs.map((log) => {
                   const audioUrl = log.record_url?.trim();
                   const transcriptionStatus = log.status;
 
                   return (
-                    <div
+                   <div
                       key={log.id}
-                      className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700"
+                      ref={preselectedLogId === log.id ? preselectedRef : null}
+                      className={`rounded-lg border p-4 
+                                  ${preselectedLogId === log.id 
+                                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30" 
+                                    : "border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-700"}`}
                     >
+
                       <div className="mb-2 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           {/* INCOMING / OUTGOING ICON */}
