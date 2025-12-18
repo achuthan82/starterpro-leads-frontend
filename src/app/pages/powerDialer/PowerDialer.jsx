@@ -41,7 +41,9 @@ const PowerDialer = () => {
     licenseDetails,
     licenseError,
     licenseLoading,
-    fetchCallLogs
+    fetchCallLogs,
+    selectedCallLog,
+    setSelectedCallLog
   } = useCallContext();
 
   // Local state for PowerDialer-specific UI
@@ -401,6 +403,8 @@ const PowerDialer = () => {
                 callHistory={callHistory}
                 callLogs={callLogs}
                 callLogsLoading={callLogsLoading}
+                selectedCallLog={selectedCallLog}
+                setSelectedCallLog={setSelectedCallLog}
               />
             </div>
 
@@ -417,6 +421,8 @@ const PowerDialer = () => {
                 callLogs={callLogs}
                 callLogsLoading={callLogsLoading}
                 fetchCallLogs={fetchCallLogs}
+                selectedCallLog={selectedCallLog}
+                setSelectedCallLog={setSelectedCallLog}
               />
             </div>
           </div>

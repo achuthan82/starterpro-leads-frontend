@@ -29,7 +29,8 @@ export function CallProvider({ children }) {
   const [licenseError, setLicenseError] = useState(null);
   const [licenseLoading, setLicenseLoading] = useState(false);
   const [currentCallLogId, setCurrentCallLogId] = useState(null); // UUID for current call
-  
+  const [selectedCallLog, setSelectedCallLog] = useState(null); 
+
   // Refs
   const deviceRef = useRef(null);
   const callRef = useRef(null);
@@ -720,6 +721,7 @@ const fetchCallLogs = useCallback(
     callLogsLoading,
     showScheduleModal,
     currentCallLogId,
+    selectedCallLog,
     
     // Actions
     setSelectedLead,
@@ -736,7 +738,8 @@ const fetchCallLogs = useCallback(
     licenseDetails,
     licenseError,
     licenseLoading,
-    checkLicense
+    checkLicense,
+    setSelectedCallLog
   };
 
   return (
