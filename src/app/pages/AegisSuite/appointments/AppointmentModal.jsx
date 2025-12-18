@@ -27,7 +27,8 @@ const AppointmentModal = ({
   setSelectedAppointment,
   loadAppointments,
   startDate,
-  endDate
+  endDate,
+  dailyClose
 }) => {
   const [showUpLoading, setShowUpLoading] = useState(false);
   const getStatusBadgeClass = (statusId) => {
@@ -247,6 +248,7 @@ const AppointmentModal = ({
 
                   <button
                     onClick={() => {
+                      dailyClose()
                       setDeleteModal(true);
                       close();
                     }}
@@ -257,7 +259,7 @@ const AppointmentModal = ({
                   </button>
 
                   <button
-                    onClick={close}
+                    onClick={() => {close()}}
                     className="rounded-lg bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600"
                   >
                     Close

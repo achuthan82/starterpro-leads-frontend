@@ -1,7 +1,7 @@
 import { useMemo, useState} from "react";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
 import moment from "moment/moment";
-import { useDisclosure } from "hooks";
+// import { useDisclosure } from "hooks";
 import DailyAppointmentModal from "./DailyAppointmentModal";
 
 const MonthlyCalendar = ({
@@ -12,9 +12,12 @@ const MonthlyCalendar = ({
   setEndDate,
   loadAppointments,
   setSelectedAppointment,
-  detailOpen
+  detailOpen,
+  isOpen,
+  open,
+  close
 }) => {
-  const [isOpen, { open, close }] = useDisclosure(false);
+  // const [isOpen, { open, close }] = useDisclosure(false);
   const [appointmentsOverflow, setAppointmentsOverflow] = useState([])
   const appointmentsByDate = useMemo(() => {
     const grouped = {};

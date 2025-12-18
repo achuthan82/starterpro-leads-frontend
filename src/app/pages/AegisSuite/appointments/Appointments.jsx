@@ -28,6 +28,8 @@ const Appointments = () => {
     useDisclosure(false);
   const [isDetailsOpen, { open: detailOpen, close: detailClose }] =
     useDisclosure(false);
+  const [isDailyOpen, { open: dailyOpen, close: dailyClose }] =
+    useDisclosure(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [endDate, setEndDate] = useState(
     moment().endOf("month").format("MM-DD-YYYY HH:mm:ss"),
@@ -360,6 +362,9 @@ const Appointments = () => {
                         setEndDate={setEndDate}
                         loadAppointments={loadAppointments}
                         setSelectedAppointment={setSelectedAppointment}
+                        isOpen={isDailyOpen}
+                        open={dailyOpen}
+                        close={dailyClose}
                       />
                     )}
                     {viewType === "week" && (
@@ -562,6 +567,7 @@ const Appointments = () => {
             endDate={endDate}
             setSelectedAppointment={setSelectedAppointment}
             setDeleteModal={setDeleteModal}
+            dailyClose={dailyClose}
           ></AppointmentModal>
           <InviteModal
             isInviteOpen={isInviteOpen}

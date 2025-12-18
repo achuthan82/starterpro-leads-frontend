@@ -43,15 +43,15 @@ export const LEAD_STATUSES = [
     { value: 9, label: 'Sit/No Sale' },
     { value: 10, label: 'No Show' },
     { value: 11, label: 'DNC' },
-    { value: 12, label: 'Suppressed' },
-    { value: 13, label: 'Suppression Denied' },
+    // { value: 12, label: 'Suppressed' },
+    // { value: 13, label: 'Suppression Denied' },
     { value: 14, label: 'Show Up' },
     { value: 15, label: 'Wrong Number' },
     { value: 16, label: 'Incomplete Number' },
     { value: 17, label: 'Call Back' },
     { value: 18, label: 'Hang Up' },
     { value: 19, label: 'Spanish' },
-    {value:20, label:'Suppression Requested'}
+    // {value:20, label:'Suppression Requested'}
 ];
 
 export const SOURCE_MAPPING = {
