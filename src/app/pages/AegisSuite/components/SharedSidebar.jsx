@@ -16,6 +16,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   EnvelopeIcon,
+  BanknotesIcon,
 } from "@heroicons/react/24/outline";
 import Logo from "assets/app-logo/logo-text.svg?.react";
 import logoIcon from "assets/app-logo/logo-new.png?.react";
@@ -155,6 +156,12 @@ const SharedSidebar = ({ currentPath = "" }) => {
       label: "Purchase History",
       icon: ClockIcon,
       href: "/admin/purchase-history",
+    },
+    {
+      id: "admin-expense-reports",
+      label: "Expense and Reports",
+      icon: BanknotesIcon,
+      href: "/admin/expense-reports",
     },
     {
       id: "workflow",

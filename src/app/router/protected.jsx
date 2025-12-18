@@ -286,6 +286,14 @@ const protectedRoutes = {
           }),
         },
         {
+          path: "admin/expense-reports",
+          lazy: async () => ({
+            Component: (
+              await import("app/pages/AegisSuite/admin/AdminExpenseAndReports")
+            ).default,
+          }),
+        },
+        {
           path: "admin/invite-user",
           lazy: async () => ({
             Component: (await import("app/pages/AegisSuite/InviteUser"))
