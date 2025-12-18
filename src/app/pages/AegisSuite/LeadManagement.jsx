@@ -1544,7 +1544,7 @@ const LeadManagement = () => {
                                       docOpen();
                                       setStatusLead(lead);
                                     }}
-                                    className="ml-2 size-5"
+                                    className="ml-2 size-5 cursor-pointer"
                                     title="View Uploaded File"
                                   />
                                 )}
