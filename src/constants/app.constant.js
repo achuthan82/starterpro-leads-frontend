@@ -80,7 +80,7 @@ export const STATUS_COLORS = {
     17: 'bg-[#0369a1]',  // CALL BACK
     18: 'bg-[#e11d48]',  // HANG UP
     19: 'bg-[#ca8a04]',  // SPANISH
-    20:'bg-[#ca8a04]', // SUPPRESSION DENIED
+    20:'bg-[#ca8a04]', // SUPPRESSION Requested
 }
 // export const STATUS_COLORS = {
 //   1: 'bg-[#ff0000]', // Red

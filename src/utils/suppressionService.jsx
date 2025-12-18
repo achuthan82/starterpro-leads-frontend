@@ -23,7 +23,12 @@ const suppressionService = {
     return axios.get(
       `${JWT_HOST_API}/leads/suppression-requests/1?page=${page}&per_page=${per_page}`,
     );
+  },
+  suppressionAction: (payload) => {
+    return axios.post(
+      `${JWT_HOST_API}/leads/status/decide/1`, payload
+    );
   }
 };
-
+///leads/status/decide/<int:category>
 export default suppressionService;

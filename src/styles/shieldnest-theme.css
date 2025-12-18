@@ -200,6 +200,8 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .shieldnest-badge-17 { background-color: #0369a1; color: white; }  /* Deep Sky Blue */
 .shieldnest-badge-18 { background-color: #e11d48; color: white; }  /* Strong Crimson */
 .shieldnest-badge-19 { background-color: #ca8a04; color: white; }  /* Earthy Gold */
+.shieldnest-badge-20 { background-color: #ca8a04; color: white; }  /* Strong Crimson */
+
 .status-badge {
   border-radius: 9999px;
   padding: 4px 12px;

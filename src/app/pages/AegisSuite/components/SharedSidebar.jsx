@@ -16,6 +16,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   EnvelopeIcon,
+  DocumentIcon,
 } from "@heroicons/react/24/outline";
 import Logo from "assets/app-logo/logo-text.svg?.react";
 import logoIcon from "assets/app-logo/logo-new.png?.react";
@@ -165,7 +166,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
     {
       id: "suppression",
       label: "Suppression",
-      icon: EnvelopeIcon,
+      icon: DocumentIcon,
       href: "/suppression",
     },
     // {
