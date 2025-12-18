@@ -81,7 +81,7 @@ const Suppression = () => {
   }, [currentPage]);
   return (
      <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
-      <SharedSidebar currentPath="/admin/users" />
+      <SharedSidebar currentPath="/suppression" />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
