@@ -12,7 +12,8 @@ import {
 
 const ExpenseAndReports = () => {
   const [walletBalance] = useState(124.50);
-//   const [autoRecharge, setAutoRecharge] = useState(true);
+  const [totalRecharge] = useState(500.00);
+  const [totalSpend] = useState(375.50);
   const [downloading, setDownloading] = useState(false);
   
   // Mock data - replace with actual API calls
@@ -56,6 +57,55 @@ const ExpenseAndReports = () => {
       status: 'Deduced'
     }
   ]);
+
+  // Agent-wise expense data
+  const [agentExpenses] = useState([
+    {
+      id: 1,
+      agentId: 'A001',
+      agentName: 'John Smith',
+      smsCost: 125.50,
+      voiceCost: 89.30,
+      inboundCost: 45.20,
+      totalCost: 260.00,
+      transactions: 45
+    },
+    {
+      id: 2,
+      agentId: 'A002',
+      agentName: 'Sarah Johnson',
+      smsCost: 98.75,
+      voiceCost: 112.40,
+      inboundCost: 32.10,
+      totalCost: 243.25,
+      transactions: 38
+    },
+    {
+      id: 3,
+      agentId: 'A003',
+      agentName: 'Michael Brown',
+      smsCost: 67.20,
+      voiceCost: 54.80,
+      inboundCost: 28.50,
+      totalCost: 150.50,
+      transactions: 22
+    },
+    {
+      id: 4,
+      agentId: 'A004',
+      agentName: 'Emily Davis',
+      smsCost: 145.30,
+      voiceCost: 78.90,
+      inboundCost: 41.60,
+      totalCost: 265.80,
+      transactions: 52
+    }
+  ]);
+
+  const randomColors = [
+    "#0a2463", "#5ab453", "#92c933", "#FF2ECF", "#E000AD", "#FFA71A", "#FF4F1A",
+    "#384766", "#506877", "#3D4E70", "#4A4A4F", "#6D7EA1", "#70838F", "#B8008C", "#FF75DF"
+  ];
 
   // Line chart configuration for Daily Spend
   const dailySpendChartOptions = {
@@ -218,17 +268,53 @@ const ExpenseAndReports = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto p-6">
-          {/* Wallet Overview Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Summary Cards Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            {/* Total Recharge Card */}
+            <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Recharge</h3>
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                  <ArrowTrendingUpIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                </div>
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                  {formatCurrency(totalRecharge)}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">All time recharge</p>
+              </div>
+            </Card>
+
+            {/* Total Spend Card */}
+            <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Spend</h3>
+                <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+                  <ArrowTrendingDownIcon className="w-6 h-6 text-red-600 dark:text-red-400" />
+                </div>
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-red-600 dark:text-red-400">
+                  {formatCurrency(totalSpend)}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">All time expenses</p>
+              </div>
+            </Card>
+
             {/* Balance Card */}
             <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">Your balance</h3>
+                <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                  <span className="text-green-600 dark:text-green-400 font-bold">$</span>
+                </div>
               </div>
               <div className="mb-4">
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">
                   {formatCurrency(walletBalance)}
                 </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Current available balance</p>
               </div>
               <button
                 onClick={handleAddFunds}
@@ -239,26 +325,13 @@ const ExpenseAndReports = () => {
               </button>
             </Card>
 
-            {/* Auto-Recharge Card */}
-            {/* <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">Auto-Recharge</h3>
-                <Switch
-                  checked={autoRecharge}
-                  onChange={(e) => setAutoRecharge(e.target.checked)}
-                />
-              </div>
-              <div className="mt-4">
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  When bal &lt; $10, add $50
-                </p>
-              </div>
-            </Card> */}
-
             {/* Monthly Volume Card */}
             <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">Monthly Volume</h3>
+                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
+                  <ArrowTrendingUpIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                </div>
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -306,6 +379,108 @@ const ExpenseAndReports = () => {
               />
             </Card>
           </div>
+
+          {/* Agent-wise Expense Table */}
+          <Card className="bg-white dark:bg-gray-800 shieldnest-shadow overflow-hidden mb-6">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Agent-wise Expense</h3>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Agent
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      SMS Cost
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Voice Cost
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Inbound Cost
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Total Cost
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Transactions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  {agentExpenses.map((agent, index) => {
+                    const color = randomColors[index % randomColors.length];
+                    return (
+                      <tr key={agent.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div
+                              className="w-10 h-10 rounded-full flex items-center justify-center"
+                              style={{ backgroundColor: color }}
+                            >
+                              <span className="text-white font-medium text-sm">
+                                {agent.agentName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'A'}
+                              </span>
+                            </div>
+                            <div className="ml-4">
+                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {agent.agentName}
+                              </div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                                ID: {agent.agentId}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          {formatCurrency(agent.smsCost)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          {formatCurrency(agent.voiceCost)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          {formatCurrency(agent.inboundCost)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-gray-100">
+                          {formatCurrency(agent.totalCost)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          {agent.transactions}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+                <tfoot className="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      Total
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      {formatCurrency(agentExpenses.reduce((sum, agent) => sum + agent.smsCost, 0))}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      {formatCurrency(agentExpenses.reduce((sum, agent) => sum + agent.voiceCost, 0))}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      {formatCurrency(agentExpenses.reduce((sum, agent) => sum + agent.inboundCost, 0))}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-gray-100">
+                      {formatCurrency(agentExpenses.reduce((sum, agent) => sum + agent.totalCost, 0))}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      {agentExpenses.reduce((sum, agent) => sum + agent.transactions, 0)}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </Card>
 
           {/* Transaction Ledger */}
           <Card className="bg-white dark:bg-gray-800 shieldnest-shadow overflow-hidden">

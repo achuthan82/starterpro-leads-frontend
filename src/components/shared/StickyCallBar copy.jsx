@@ -43,7 +43,7 @@ const StickyCallBar = () => {
     try {
       const response = await dialerService.getWalletBalance();
       // API response structure: { data: { wallet_amount: 104.0 }, message: "success", status: 200 }
-      const balance = response?.data?.wallet_amount || 0;
+      const balance = response?.data?.wallet_available_credits || 0; // changed from wallet_amount to wallet_available_credits
       setWalletBalance(balance);
     } catch (error) {
       console.error('Error fetching wallet balance:', error);

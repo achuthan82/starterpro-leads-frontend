@@ -180,7 +180,7 @@ const PowerDialer = () => {
       setWalletLoading(true);
       const response = await dialerService.getWalletBalance();
       // API response structure: { data: { wallet_amount: 104.0 }, message: "success", status: 200 }
-      const balance = response?.data?.wallet_amount || 0;
+      const balance = response?.data?.wallet_available_credits || 0; // changed from wallet_amount to wallet_available_credits
       setWalletBalance(balance);
       if (showToast) {
         toast.success('Wallet balance updated');
@@ -252,12 +252,12 @@ const PowerDialer = () => {
               <div className="flex items-center space-x-3 bg-gray-50 dark:bg-gray-700 rounded-lg px-4 py-2 border border-gray-200 dark:border-gray-600">
                 <WalletIcon className="w-5 h-5 text-[var(--color-atoll)] dark:text-blue-400" />
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Balance:</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Available Credits:</span>
                   {walletLoading ? (
                     <span className="text-sm text-gray-500 dark:text-gray-400">Loading...</span>
                   ) : (
                     <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                      ${walletBalance !== null ? parseFloat(walletBalance).toFixed(2) : '0.00'}
+                      {walletBalance !== null ? walletBalance : '0'}
                     </span>
                   )}
                   <div className="relative group">
