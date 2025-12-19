@@ -37,6 +37,41 @@ class DashboardService {
       throw error;
     }
   }
+
+  /**
+   * Get Twilio wallet balance
+   * @returns {Promise} Response with Twilio wallet balance
+   */
+  async getTwilioWalletBalance() {
+    try {
+      const response = await axiosInstance.get(`${JWT_HOST_API}/dashboard/twilio-wallet-balance`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching Twilio wallet balance:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get wallet recharge sum for date range
+   * @param {string} startDate - Start date in mm-dd-YYYY format
+   * @param {string} endDate - End date in mm-dd-YYYY format
+   * @returns {Promise} Response with total recharge amount
+   */
+  async getWalletRechargeSum(startDate, endDate) {
+    try {
+      const response = await axiosInstance.get(`${JWT_HOST_API}/dashboard/wallet-recharge-sum`, {
+        params: {
+          start_date: startDate,
+          end_date: endDate
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching wallet recharge sum:', error);
+      throw error;
+    }
+  }
 }
 
 // Export singleton instance
