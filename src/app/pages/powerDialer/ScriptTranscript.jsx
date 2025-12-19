@@ -807,7 +807,7 @@ const handleTabClick = (tab) => {
                                       onClick={() => handleDownload(pptUrls[0], 0)}
                                       className="flex items-center gap-1 rounded px-2 py-1 text-xs 
                                                 text-[var(--color-atoll)] transition-colors hover:bg-blue-50 
-                                                dark:text-blue-400 dark:hover:bg-blue-900/20"
+                                                dark:text-blue-400 dark:hover:bg-blue-900/20 mr-2"
                                       title="Download Presentation"
                                     >
                                       <ArrowDownTrayIcon className="h-4 w-4" />
