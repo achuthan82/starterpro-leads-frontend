@@ -222,7 +222,7 @@ const MortgageProtectionModal = ({ isOpen, close, onFormSubmit }) => {
     <>
       {/* Close Warning Dialog */}
       <Transition show={showCloseWarning} as={Fragment}>
-        <Dialog onClose={handleCancelClose} className="relative z-[110]">
+        <Dialog onClose={() => {}} className="relative z-[110]">
           <TransitionChild as={Fragment}>
             <div className="fixed inset-0 bg-black/50" />
           </TransitionChild>
@@ -240,7 +240,7 @@ const MortgageProtectionModal = ({ isOpen, close, onFormSubmit }) => {
                 </p>
 
                 <div className="flex justify-end gap-3">
-                  {/* <Button onClick={handleCancelClose}>Close</Button> */}
+                  <Button onClick={handleCancelClose}>Continue</Button>
                   <Button
                     className="bg-red-600 text-white hover:bg-red-400"
                     onClick={handleConfirmClose}
