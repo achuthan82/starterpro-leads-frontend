@@ -350,7 +350,7 @@ const handleTabClick = (tab) => {
       <div className="mb-4 flex gap-1 border-b border-gray-200 dark:border-gray-700">
         <button
           onClick={() => handleTabClick("script")}
-          className={`flex items-center gap-1 rounded-t-lg px-2 py-1 text-xs font-medium whitespace-nowrap transition-all ${
+          className={`w-1/3 justify-center flex items-center gap-1 rounded-t-lg px-2 py-1 text-xs font-medium whitespace-nowrap transition-all ${
             activeTab === "script"
               ? "-mb-[1px] border-b-2 border-blue-500 bg-blue-100 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-400"
               : "text-gray-600 hover:bg-gray-50 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-blue-400"
@@ -362,7 +362,7 @@ const handleTabClick = (tab) => {
 
         <button
           onClick={() => handleTabClick("objections")}
-          className={`flex items-center gap-1 rounded-t-lg px-2 py-1 text-xs font-medium whitespace-nowrap transition-all ${
+          className={`w-1/3 justify-center flex items-center gap-1 rounded-t-lg px-2 py-1 text-xs font-medium whitespace-nowrap transition-all ${
             activeTab === "objections"
               ? "-mb-[1px] border-b-2 border-blue-500 bg-blue-100 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-400"
               : "text-gray-600 hover:bg-gray-50 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-blue-400"
@@ -374,7 +374,7 @@ const handleTabClick = (tab) => {
 
         <button
           onClick={() => handleTabClick("transcript")}
-          className={`flex items-center gap-1 rounded-t-lg px-2 py-1 text-xs font-medium whitespace-nowrap transition-all ${
+          className={`w-1/3 justify-center flex items-center gap-1 rounded-t-lg px-2 py-1 text-xs font-medium whitespace-nowrap transition-all ${
             activeTab === "transcript"
               ? "-mb-[1px] border-b-2 border-blue-500 bg-blue-100 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-400"
               : "text-gray-600 hover:bg-gray-50 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-blue-400"
@@ -382,9 +382,9 @@ const handleTabClick = (tab) => {
         >
           <ChatBubbleLeftEllipsisIcon className="h-3 w-3 flex-shrink-0" />
           <span className="hidden sm:inline">Recordings</span>
-          {/* <span className="sm:hidden">Transcript</span> */}
         </button>
       </div>
+
       {loading && (
         <div className="flex items-center justify-center">
           <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900 dark:border-gray-100"></div>
