@@ -103,7 +103,7 @@ const fetchLeads = async (page, name, lead_status, state, itemsPerPage) => {
       // Fetch from API
       const response = await dialerService.getPaginatedLeads(params);
 
-      // const leadsData = response.data || response.leads || [];
+      const leadsData = response.data || response.leads || [];
       const pagination = response.pagination || {};
 
       const total = pagination.total || response.total || 0;
@@ -111,72 +111,37 @@ const fetchLeads = async (page, name, lead_status, state, itemsPerPage) => {
       const totalPagesCalc = Math.ceil(total / perFromAPI);
 
       // Transform + set leads
-      // setLeads(
-      //   leadsData.map((lead) => ({
-      //     id: lead.assignee_id || lead.id || lead.mortgage_id,
-      //     name: lead.full_name || lead.name || "Unknown",
-      //     phone:
-      //       lead.ivr_response?.number ||
-      //       lead.ivr_response?.ani ||
-      //       lead.phone ||
-      //       lead.lead_phone_number ||
-      //       "N/A",
-      //     address:
-      //       `${lead.address || ""} ${lead.city || ""} ${lead.state || ""} ${
-      //         lead.zip || lead.zipcode || ""
-      //       }`.trim() || "N/A",
-      //     status:
-      //       LEAD_STATUS[lead.lead_status] || lead.lead_status || "Unknown",
-      //     statusId: lead.lead_status,
-      //     lastContact: lead.call_in_date_time || lead.last_contact || "",
-      //     age: lead.ivr_response?.age || lead.age || "",
-      //     homeValue: lead.loan_amount || "",
-      //     mortgage: lead.mortgage_amount || "",
-      //     notes: lead.notes || "",
-      //     initials: (lead.full_name || lead.name || "U")
-      //       .split(" ")
-      //       .map((n) => n[0])
-      //       .join("")
-      //       .toUpperCase()
-      //       .substring(0, 2),
-      //     originalData: lead,
-      //   }))
-      // );
-
-      const newLead = { "address": "12546 Galyean Stables Rd", "agent_id": 1004, "call_in_date_time": null, "calls": 15, "campaign_name": "M12092025", "city": "Bentonville", "first_name": "Nash", "full_name": "Nash Antony", "ivr_logs": [ { "age": "33", "ani": "+18663301591", "coborrower": "0", "health": "0", "mortgage_id": "9994318", "number": "22222", "sid": "CAe6cc6102cb67bad4663d3fa744acdcd8", "status": "incomplete", "timestamp": "08-19-2025 15:01:31", "tobacco": "0" } ], "ivr_response": { "age": "33", "ani": "+18663301591", "coborrower": "0", "health": "0", "mortgage_id": "9994318", "number": "+919567614372", "sid": "CAe6cc6102cb67bad4663d3fa744acdcd8", "status": "incomplete", "timestamp": "08-19-2025 15:01:31", "tobacco": "0" }, "last_name": "Taliaferro", "lead_member_id": 5877, "lead_status": 2, "lender_name": "GRAND SAVINGS BANK AN OKLAHOM", "loan_amount": 200000, "loan_date": "06-11-2025", "mortgage_id": "9994318", "notes": "Test", "show_up": false, "state": "AR", "zip": "72712-8924" }
-
-      setLeads((prevLeads) => [
-        ...prevLeads,
-        {
-          id: newLead.assignee_id || newLead.id || newLead.mortgage_id,
-          name: newLead.full_name || newLead.name || "Unknown",
+      setLeads(
+        leadsData.map((lead) => ({
+          id: lead.assignee_id || lead.id || lead.mortgage_id,
+          name: lead.full_name || lead.name || "Unknown",
           phone:
-            newLead.ivr_response?.number ||
-            newLead.ivr_response?.ani ||
-            newLead.phone ||
-            newLead.lead_phone_number ||
+            lead.ivr_response?.number ||
+            lead.ivr_response?.ani ||
+            lead.phone ||
+            lead.lead_phone_number ||
             "N/A",
           address:
-            `${newLead.address || ""} ${newLead.city || ""} ${newLead.state || ""} ${
-              newLead.zip || newLead.zipcode || ""
+            `${lead.address || ""} ${lead.city || ""} ${lead.state || ""} ${
+              lead.zip || lead.zipcode || ""
             }`.trim() || "N/A",
           status:
-            LEAD_STATUS[newLead.lead_status] || newLead.lead_status || "Unknown",
-          statusId: newLead.lead_status,
-          lastContact: newLead.call_in_date_time || newLead.last_contact || "",
-          age: newLead.ivr_response?.age || newLead.age || "",
-          homeValue: newLead.loan_amount || "",
-          mortgage: newLead.mortgage_amount || "",
-          notes: newLead.notes || "",
-          initials: (newLead.full_name || newLead.name || "U")
+            LEAD_STATUS[lead.lead_status] || lead.lead_status || "Unknown",
+          statusId: lead.lead_status,
+          lastContact: lead.call_in_date_time || lead.last_contact || "",
+          age: lead.ivr_response?.age || lead.age || "",
+          homeValue: lead.loan_amount || "",
+          mortgage: lead.mortgage_amount || "",
+          notes: lead.notes || "",
+          initials: (lead.full_name || lead.name || "U")
             .split(" ")
             .map((n) => n[0])
             .join("")
             .toUpperCase()
             .substring(0, 2),
-          originalData: newLead,
-        },
-      ]);
+          originalData: lead,
+        }))
+      );
 
       // Update pagination
       setTotalRecords(total);
