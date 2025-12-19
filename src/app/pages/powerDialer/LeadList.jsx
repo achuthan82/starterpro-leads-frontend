@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   MagnifyingGlassIcon,
   PhoneIcon,
@@ -43,10 +43,9 @@ const LeadList = ({
   const lastFetchParamsRef = useRef({ searchTerm: "", selectedStatus: "" });
 
   // Fetch leads from API
-const fetchLeads = useCallback(
-  async (page, name, lead_status, state, itemsPerPage) => {
+const fetchLeads = async (page, name, lead_status, state, itemsPerPage) => {
     // Normalize search input
-    const searchName = name?.trim() || "";
+    // const searchName = name?.trim() || "";
 
     // Prevent duplicate overlapping requests
     if (isFetchingRef.current) return;
@@ -60,20 +59,20 @@ const fetchLeads = useCallback(
       last.perPage === itemsPerPage &&
       last.selectedStatus === lead_status &&
       last.selectedState === state &&
-      last.searchTerm === searchName &&
-      searchName !== ""; // Always refetch empty search
+      last.searchTerm === name &&
+      name !== ""; // Always refetch empty search
 
     if (hasNotChanged) return;
 
     // Mark as fetching & store updated parameters for next comparison
-    isFetchingRef.current = true;
-    lastFetchParamsRef.current = {
-      page,
-      perPage: itemsPerPage,
-      selectedStatus: lead_status,
-      selectedState: state,
-      searchTerm: searchName,
-    };
+    // isFetchingRef.current = true;
+    // lastFetchParamsRef.current = {
+    //   page,
+    //   perPage: itemsPerPage,
+    //   selectedStatus: lead_status,
+    //   selectedState: state,
+    //   searchTerm: name,
+    // };
 
     setLoading(true);
     setError(null);
@@ -85,7 +84,7 @@ const fetchLeads = useCallback(
       };
 
       // Apply search filter
-      if (searchName !== "") params.name = searchName;
+      if (name !== "") params.name = name;
 
       // Apply status filter
       if (
@@ -159,10 +158,7 @@ const fetchLeads = useCallback(
       isFetchingRef.current = false;
       setLoading(false);
     }
-  },
-  [] // IMPORTANT: keep it stable, no stale closure problems
-);
-
+  }
   // Fetch leads on component mount and when filters change (not when call state changes)
   // useEffect(() => {
   //   fetchLeads(
@@ -297,6 +293,11 @@ const handleStatusChange = (newStatus) => {
   useEffect(() => {
     getUsStates();
   }, []);
+
+    useEffect(() => {
+      fetchLeads(1, searchTerm, selectedStatus, selectedState, perPage);
+  }, [searchTerm]);
+
   return (
     <div className="h-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       {/* Search */}
@@ -306,10 +307,9 @@ const handleStatusChange = (newStatus) => {
           type="text"
           placeholder="Search leads..."
           value={searchTerm}
-         onChange={(e) => {
+          onChange={(e) => {
             const value = e.target.value;
             onSearchChange(value);
-            fetchLeads(1, value, selectedStatus, selectedState, perPage);
           }}
           className="w-full rounded-lg border border-gray-300 bg-white py-2 pr-4 pl-10 text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
         />
