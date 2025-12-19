@@ -718,6 +718,9 @@ const handleTabClick = (tab) => {
                             </div>
                           )}
 
+                          
+                        </div>
+                        <div className="flex items-center justify-between">
                           {/* PPT DOWNLOAD HANDLING */}
                           {log.ppt_uploaded &&
                             log.ppt_url &&
@@ -813,7 +816,6 @@ const handleTabClick = (tab) => {
                                 </div>
                               );
                             })()}
-                        </div>
                         {log.data_entry?.age &&
                         <div>
                           <EyeIcon
@@ -825,6 +827,7 @@ const handleTabClick = (tab) => {
                             title="View Mortgage Protection Assessment"
                           />
                         </div>}
+                        </div>
                       </div>
 
                       {/* AUDIO PLAYER */}
