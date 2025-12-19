@@ -18,7 +18,10 @@ export default function LeadFileUpload({
   perPage,
   purchased,
   activeTab,
-  filters
+  filters,
+  setPrintLeads,
+  setSelectedLeads,
+  setBulkNewStatus
 }) {
   const [files, { remove, append }] = useListState();
   const [uploadFiles, setUploadFiles] = useState([]);
@@ -46,19 +49,15 @@ export default function LeadFileUpload({
     });
     Promise.all(uploadPromise)
       .then(() => {
+        setPrintLeads([]);
+        setSelectedLeads([]);
+        setBulkNewStatus('')
         files.map((item, id) => {
           console.log(item);
           remove(id);
         });
-        onClose()
-        fetchLeads(
-            activeTab,
-            filters,
-            currentPage,
-            perPage,
-            false,
-            purchased,
-          );
+        onClose();
+        fetchLeads(activeTab, filters, currentPage, perPage, false, purchased);
         // handleBulkStatusChange();
       })
       .catch((error) => {
@@ -77,19 +76,14 @@ export default function LeadFileUpload({
     suppressionService
       .uploadDocs(statusLead.agent_id, statusLead.mortgage_id, formData)
       .then(() => {
+        setPrintLeads([]);
+        setSelectedLeads([]);
         files.map((item, id) => {
           console.log(item);
           remove(id);
         });
-        onClose()
-        fetchLeads(
-            activeTab,
-            filters,
-            currentPage,
-            perPage,
-            false,
-            purchased,
-          );
+        onClose();
+        fetchLeads(activeTab, filters, currentPage, perPage, false, purchased);
       })
       .catch((error) => {
         toast.error(error?.message || "Failed to upload documents");
