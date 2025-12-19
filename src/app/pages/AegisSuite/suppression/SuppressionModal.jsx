@@ -38,7 +38,7 @@ export default function SuppressionDecisionModal({
     };
     if (isReject) {
       if (!reason.trim()) return;
-      payload["lead_status"] = 20;
+      payload["lead_status"] = 13;
       payload["suppression_rejection_msg"] = reason;
     } else {
       payload["lead_status"] = 7;

@@ -22,6 +22,7 @@ import {
   XCircleIcon,
   Cog6ToothIcon,
   DocumentIcon,
+  ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { toast } from "sonner";
 import { LEAD_STATUS, LEAD_STATUSES } from "constants/app.constant";
@@ -1464,7 +1465,7 @@ const LeadManagement = () => {
                         leads.map((lead, index) => (
                           <tr
                             key={lead.assignee_id || index}
-                            className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                            className={`hover:bg-gray-50 dark:hover:bg-gray-700 ${lead.lead_status === 13 ? "bg-red-50 opacity-60 dark:bg-red-900/20" : ""} `}
                           >
                             {/* Select */}
                             <td className="px-3 py-4 whitespace-nowrap">
@@ -1538,6 +1539,16 @@ const LeadManagement = () => {
                                     </div>
                                   )}
                                 </div>
+                                {lead.lead_status === 13 &&
+                                  lead.suppression_rejection_msg && (
+                                    <div className="group relative ml-2">
+                                      <ExclamationCircleIcon className="size-5 cursor-pointer text-red-500" />
+
+                                      <div className="absolute top-full left-0 z-10 mt-1 hidden w-64 rounded bg-gray-900 p-2 text-xs text-white shadow-lg group-hover:block">
+                                        {lead.suppression_rejection_msg}
+                                      </div>
+                                    </div>
+                                  )}
                                 {lead.lead_status === 7 && (
                                   <DocumentIcon
                                     onClick={() => {
@@ -2133,6 +2144,8 @@ const LeadManagement = () => {
         purchased={purchased}
         activeTab={activeTab}
         filters={filters}
+        setPrintLeads={setPrintLeads}
+        setBulkNewStatus={setBulkNewStatus}
       />
       <LeadFileModal
         isOpen={docModalOpen}
