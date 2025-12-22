@@ -339,8 +339,8 @@ const Appointments = () => {
 
         <main className="mt-1 flex-1 overflow-auto p-6">
           <div className="min-h-screen w-full bg-transparent dark:bg-gray-900">
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-              <div className="lg:col-span-3">
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-4">
+              <div className="xl:col-span-3">
                 {loading ? (
                   <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
                     <div className="text-center">
@@ -395,7 +395,7 @@ const Appointments = () => {
                   </>
                 )}
               </div>
-              <div className="lg:col-span-1">
+              <div className="xl:col-span-1">
                 {/* Today's Appointments */}
                 <div className="mb-6 rounded-lg bg-white shadow-lg dark:bg-gray-800">
                   <div className="border-b border-gray-200 p-4 dark:border-gray-700">

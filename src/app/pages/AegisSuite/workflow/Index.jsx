@@ -141,7 +141,7 @@ const Index = () => {
                   onChange={() => handleLeadAutomation(!leadAutomation)}
                   className={`${
                     leadAutomation ? "bg-[#0a2463]" : "bg-gray-300"
-                  } relative inline-flex h-6 w-11 items-center rounded-full transition ${
+                  } relative inline-flex h-6 w-11 items-center rounded-full transition flex-shrink-0 ${
                     leadLoading && "cursor-not-allowed opacity-70"
                   }`}
                 >
@@ -174,7 +174,7 @@ const Index = () => {
                   }
                   className={`${
                     appointmentSmsAutomation ? "bg-[#0a2463]" : "bg-gray-300"
-                  } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+                  } relative inline-flex h-6 w-11 items-center rounded-full transition flex-shrink-0`}
                 >
                   <span
                     className={`${
@@ -206,7 +206,7 @@ const Index = () => {
                   }
                   className={`${
                     appointmentEmailAutomation ? "bg-[#0a2463]" : "bg-gray-300"
-                  } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+                  } relative inline-flex h-6 w-11 items-center rounded-full transition flex-shrink-0`}
                 >
                   <span
                     className={`${
