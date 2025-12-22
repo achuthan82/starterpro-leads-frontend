@@ -345,7 +345,7 @@ const handleTabClick = (tab) => {
 
 
   return (
-    <div className="h-[calc(100vh-12rem)] w-full rounded-xl border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800">
+    <div className="min-h-[400px] lg:h-[calc(100vh-12rem)] w-full rounded-xl border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800">
       {/* Tabs Header */}
       <div className="mb-4 flex gap-1 border-b border-gray-200 dark:border-gray-700">
         <button

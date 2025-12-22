@@ -342,12 +342,12 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
   };
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
-      <div className="flex-1 flex overflow-hidden">
+    <div className="flex flex-col lg:flex-row h-full min-h-[400px] bg-[var(--color-ecru-white)] dark:bg-gray-900">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {/* Left Sidebar - Lead List */}
-        <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="mb-4 flex items-center gap-3">
+        <div className="w-full lg:w-1/3 border-r-0 lg:border-r border-b lg:border-b-0 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col max-h-[40vh] lg:max-h-none">
+          <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+            <div className="mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
               {/* <button
                 onClick={() => navigate("/power-dialer")}
                 className="flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-[var(--color-atoll)] dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-blue-400"
@@ -355,13 +355,13 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
               >
                 <ChevronLeftIcon className="h-5 w-5" />
               </button> */}
-              <h2 className="text-xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
+              <h2 className="text-lg sm:text-xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
                 SMS Conversations
               </h2>
             </div>
 
             {/* Search Filter */}
-            <div className="mb-4">
+            <div className="mb-0 sm:mb-4">
               <input
                 type="text"
                 placeholder="Search by name or ID"
@@ -381,7 +381,7 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                     setCurrentPage(1);
                     fetchLeads(1, perPage, searchFilter);
                   }}
-                  className="flex-1 rounded-lg bg-[var(--color-atoll)] px-3 py-2 text-sm font-medium text-white hover:bg-[var(--color-atoll)]/90 dark:bg-blue-600 dark:hover:bg-blue-700"
+                  className="flex-1 rounded-lg bg-[var(--color-atoll)] px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white hover:bg-[var(--color-atoll)]/90 dark:bg-blue-600 dark:hover:bg-blue-700"
                 >
                   Search
                 </button>
@@ -391,7 +391,7 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                     setCurrentPage(1);
                     fetchLeads(1, perPage, "");
                   }}
-                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  className="rounded-lg border border-gray-300 bg-white px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                 >
                   Clear
                 </button>
@@ -400,7 +400,7 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
           </div>
 
           {/* Leads List */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-4">
             {leadsLoading ? (
               <div className="flex items-center justify-center py-8">
                 <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-[var(--color-atoll)]"></div>
@@ -489,24 +489,24 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
         </div>
 
         {/* Right Side - Conversation */}
-        <div className="flex-1 flex flex-col bg-white dark:bg-gray-800">
+        <div className="flex-1 flex flex-col bg-white dark:bg-gray-800 min-h-[60vh] lg:min-h-0">
           {selectedLead ? (
             <>
-              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
                       {selectedLead.full_name || selectedLead.name || "Unknown"}
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                       {selectedLead.phone || "N/A"}
                     </p>
                   </div>
                   
                   {/* SMS Automation Toggle */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                     <div className="flex flex-col items-end">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                         SMS Automation
                       </label>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -521,12 +521,12 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                         automationEnabled
                           ? "bg-[var(--color-atoll)]"
                           : "bg-gray-200 dark:bg-gray-600"
-                      } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-atoll)] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+                      } relative inline-flex h-5 w-9 sm:h-6 sm:w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-atoll)] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
                       <span
                         className={`${
-                          automationEnabled ? "translate-x-6" : "translate-x-1"
-                        } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                          automationEnabled ? "translate-x-5 sm:translate-x-6" : "translate-x-1"
+                        } inline-block h-3 w-3 sm:h-4 sm:w-4 transform rounded-full bg-white transition-transform`}
                       />
                     </Switch>
                     {automationLoading && (
@@ -538,7 +538,7 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
 
               <div
                 ref={conversationContainerRef}
-                className="flex-1 overflow-y-auto p-4 space-y-4"
+                className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4"
               >
                 {conversationLoadingMore && (
                   <div className="flex justify-center py-2">
@@ -563,13 +563,13 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                         className={`flex ${isOutbound ? "justify-end" : "justify-start"}`}
                       >
                         <div
-                          className={`max-w-[70%] rounded-lg p-3 ${
+                          className={`max-w-[85%] sm:max-w-[70%] rounded-lg p-2 sm:p-3 ${
                             isOutbound
                               ? "bg-[var(--color-atoll)] text-white"
                               : "bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
                           }`}
                         >
-                          <p className="text-sm whitespace-pre-wrap">{messageText}</p>
+                          <p className="text-xs sm:text-sm whitespace-pre-wrap break-words">{messageText}</p>
                           <p
                             className={`text-xs mt-1 ${
                               isOutbound
@@ -592,8 +592,8 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
               </div>
 
               {/* Reply Input */}
-              <div className="border-t border-gray-200 p-4 dark:border-gray-700">
-                <div className="flex gap-2">
+              <div className="border-t border-gray-200 p-3 sm:p-4 dark:border-gray-700 flex-shrink-0">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <textarea
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
@@ -604,8 +604,8 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                       }
                     }}
                     placeholder="Type your message..."
-                    rows={3}
-                    className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 resize-none"
+                    rows={2}
+                    className="flex-1 rounded-lg border border-gray-300 bg-white px-3 sm:px-4 py-2 text-sm text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 resize-none"
                     disabled={sendingReply}
                   />
                  <button
@@ -613,12 +613,13 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                   disabled={!replyText.trim() || sendingReply || !selectedLead}
                   className="
                     rounded-lg bg-[var(--color-atoll)]
-                    px-4 h-10 mt-4
+                    px-3 sm:px-4 h-10 sm:h-auto
                     text-sm font-medium text-white 
                     hover:bg-[var(--color-atoll)]/90 
                     disabled:opacity-50 disabled:cursor-not-allowed 
                     dark:bg-blue-600 dark:hover:bg-blue-700
                     flex items-center justify-center
+                    whitespace-nowrap
                   "
                 >
                   {sendingReply ? (
