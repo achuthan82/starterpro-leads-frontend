@@ -236,56 +236,58 @@ const PowerDialer = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
+    <div className="flex min-h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       <SharedSidebar currentPath="/power-dialer" />
       
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
-          <div className="flex items-center justify-between mb-4">
+      <div className="flex-1 flex flex-col overflow-x-hidden">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-4 lg:p-6 pt-16 sm:pt-20 lg:pt-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Power Dialer</h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">Advanced calling system with AI assistance</p>
+              <h1 className="text-xl lg:text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Power Dialer</h1>
+              <p className="text-sm lg:text-base text-gray-600 dark:text-gray-300 mt-1">Advanced calling system with AI assistance</p>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
               {/* Wallet Balance Section */}
-              <div className="flex items-center space-x-3 bg-gray-50 dark:bg-gray-700 rounded-lg px-4 py-2 border border-gray-200 dark:border-gray-600">
-                <WalletIcon className="w-5 h-5 text-[var(--color-atoll)] dark:text-blue-400" />
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Available Credits:</span>
+              <div className="flex items-center justify-between sm:justify-start space-x-3 bg-gray-50 dark:bg-gray-700 rounded-lg px-3 sm:px-4 py-2 border border-gray-200 dark:border-gray-600">
+                <WalletIcon className="w-5 h-5 text-[var(--color-atoll)] dark:text-blue-400 flex-shrink-0" />
+                <div className="flex items-center space-x-2 min-w-0">
+                  <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">Available Credits:</span>
                   {walletLoading ? (
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Loading...</span>
+                    <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Loading...</span>
                   ) : (
-                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                    <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
                       {walletBalance !== null ? walletBalance : '0'}
                     </span>
                   )}
                   <div className="relative group">
                     <InformationCircleIcon 
-                      className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 cursor-help transition-colors" 
+                      className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 cursor-help transition-colors flex-shrink-0" 
                       title="1000 credits equals $1.00. It may take 2 to 3 minutes to update the balance after recharge or call ends"
                     />
                     {/* Tooltip */}
-                    <div className="absolute w-80 h-auto top-12 whitespace-normal align-middle word-wrap:break-word left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 dark:bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                    <div className="absolute w-64 sm:w-80 h-auto top-12 whitespace-normal align-middle word-wrap:break-word left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 dark:bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
                       1000 credits equals $1.00. It may take 2 to 3 minutes to update the balance after recharge or call ends
                       <div className="absolute top-full left-1/2 transform-none translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
                     </div>
                   </div>
                 </div>
-                <button
-                  onClick={handleRefreshBalance}
-                  disabled={walletLoading}
-                  className="ml-2 p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Refresh balance"
-                >
-                  <ArrowPathIcon className={`w-4 h-4 text-gray-600 dark:text-gray-300 ${walletLoading ? 'animate-spin' : ''}`} />
-                </button>
-                <button
-                  onClick={handleRecharge}
-                  className="ml-2 px-3 py-1.5 text-xs font-medium bg-[var(--color-atoll)] text-white rounded-md hover:bg-[var(--color-atoll)]/90 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
-                >
-                  Recharge
-                </button>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={handleRefreshBalance}
+                    disabled={walletLoading}
+                    className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                    title="Refresh balance"
+                  >
+                    <ArrowPathIcon className={`w-4 h-4 text-gray-600 dark:text-gray-300 ${walletLoading ? 'animate-spin' : ''}`} />
+                  </button>
+                  <button
+                    onClick={handleRecharge}
+                    className="px-2 sm:px-3 py-1.5 text-xs font-medium bg-[var(--color-atoll)] text-white rounded-md hover:bg-[var(--color-atoll)]/90 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors whitespace-nowrap"
+                  >
+                    Recharge
+                  </button>
+                </div>
               </div>
 
               {/* <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Calling Mode:</span>
@@ -315,34 +317,34 @@ const PowerDialer = () => {
           </div>
           
           {/* Calling from Number Section */}
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Calling from:</span>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 min-w-0">
+              <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Calling from:</span>
               {selectedOutboundNumber ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-base font-semibold text-gray-900 dark:text-white">
+                <div className="flex flex-wrap items-center gap-2 min-w-0">
+                  <span className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
                     {formatPhoneNumber(selectedOutboundNumber.phone)}
                   </span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">→</span>
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                  <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:inline">→</span>
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 truncate">
                     {selectedOutboundNumber.friendly_name || 'Outbound Number'}
                   </span>
                 </div>
               ) : (
-                <span className="text-sm text-gray-400 dark:text-gray-500 italic">No number selected</span>
+                <span className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 italic">No number selected</span>
               )}
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowOutboundModal(true)}
-                className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
+                className="flex items-center gap-1 px-2 sm:px-3 py-1.5 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors whitespace-nowrap"
               >
                 Change Number
                 <ChevronDownIcon className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setShowPurchaseModal(true)}
-                className="flex items-center gap-1 px-3 py-1.5 text-sm bg-[var(--color-atoll)] dark:bg-blue-600 text-white rounded-md hover:bg-[var(--color-atoll)]/90 dark:hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-1 px-2 sm:px-3 py-1.5 text-xs sm:text-sm bg-[var(--color-atoll)] dark:bg-blue-600 text-white rounded-md hover:bg-[var(--color-atoll)]/90 dark:hover:bg-blue-700 transition-colors whitespace-nowrap"
               >
                 Purchase Number
               </button>
@@ -350,11 +352,10 @@ const PowerDialer = () => {
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto  p-6">
-          <div className="grid grid-cols-12 gap-6 h-full">
+        <main className="flex-1 overflow-auto p-4 lg:p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
             {/* Left Column - Leads List */}
-    
-            <div className="col-span-4">
+            <div className="col-span-1 lg:col-span-4 order-1 min-h-0">
               <LeadList
                 selectedLead={selectedLead}
                 onSelectLead={handleSelectLead}
@@ -372,7 +373,7 @@ const PowerDialer = () => {
             </div>
 
             {/* Middle Column - Call Controls and Lead Info */}
-            <div className="col-span-4 flex flex-col space-y-6">
+            <div className="col-span-1 lg:col-span-4 flex flex-col space-y-4 lg:space-y-6 order-2 min-h-0">
               {/* Call Controls */}
               <CallControls
                 isCallActive={isCallActive}
@@ -409,7 +410,7 @@ const PowerDialer = () => {
             </div>
 
             {/* Right Column - Script and Transcript */}
-            <div className="fixed right-10 top-48.5 w-1/4 h-screen  overflow-auto  h-[calc(100vh-12rem)]">
+            <div className="col-span-1 lg:col-span-4 order-3 min-h-0 lg:sticky lg:top-6 lg:self-start lg:max-h-[calc(100vh-8rem)] lg:overflow-auto">
               <ScriptTranscript
                 activeTabs={activeTabs}
                 onTabToggle={handleTabToggle}

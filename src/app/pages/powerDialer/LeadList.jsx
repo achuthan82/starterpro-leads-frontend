@@ -370,7 +370,7 @@ const handleStatusChange = (newStatus) => {
       )}
 
       {/* Leads List */}
-      <div className="max-h-[calc(100vh-300px)] space-y-3 overflow-y-auto">
+      <div className="max-h-[calc(100vh-20rem)] sm:max-h-[calc(100vh-300px)] space-y-3 overflow-y-auto">
         {!loading &&
           leads.map((lead) => (
             <div

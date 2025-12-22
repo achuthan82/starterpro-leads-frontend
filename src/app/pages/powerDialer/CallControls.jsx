@@ -592,8 +592,8 @@ const CallControls = ({
   const isCallInProgress = isCallActive || isDialing;
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 w-full max-w-sm text-center ${
-      isCallInProgress ? 'p-3' : 'p-6'
+    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 w-full text-center ${
+      isCallInProgress ? 'p-3' : 'p-4 sm:p-6'
     }`}>
       {!audioPermission && !isCallInProgress && (
         <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-lg p-2 mb-3 text-xs">
