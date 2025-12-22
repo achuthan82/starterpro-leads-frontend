@@ -72,7 +72,27 @@ class DashboardService {
       throw error;
     }
   }
+
+  async getWalletUsageBreakdown(startDate, endDate) {
+  try {
+    const response = await axiosInstance.get(
+      `${JWT_HOST_API}/dashboard/wallet-usage-sum-grouped-event`,
+      {
+        params: {
+          start_date: startDate,
+          end_date: endDate
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching wallet usage breakdown:", error);
+    throw error;
+  }
 }
+
+}
+
 
 // Export singleton instance
 const dashboardService = new DashboardService();

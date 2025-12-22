@@ -48,6 +48,9 @@ const ExpenseAndReports = () => {
   });
   const [dateError, setDateError] = useState('');
   const [agentSearchTerm, setAgentSearchTerm] = useState('');
+  const [usageData, setUsageData] = useState([]);
+  const [usageColors, setUsageColors] = useState([]);
+  const [usageLabels, setUsageLabels] = useState([]);
 
   // Format date from YYYY-MM-DD to MM-DD-YYYY for API
   const formatDateForAPI = (dateString) => {
@@ -116,11 +119,11 @@ const ExpenseAndReports = () => {
     { date: 'Oct 24', smsCost: 40, voiceCost: 33 }
   ]);
 
-  const [serviceBreakdown] = useState([
-    { name: 'SMS', value: 50, color: '#22c55e' },
-    { name: 'Voice', value: 30, color: '#3b82f6' },
-    { name: 'Inbound', value: 20, color: '#f97316' }
-  ]);
+  // const [serviceBreakdown] = useState([
+  //   { name: 'SMS', value: 50, color: '#22c55e' },
+  //   { name: 'Voice', value: 30, color: '#3b82f6' },
+  //   { name: 'Inbound', value: 20, color: '#f97316' }
+  // ]);
 
   /*const [transactions] = useState([
     {
@@ -318,44 +321,49 @@ const ExpenseAndReports = () => {
   ];
 
   // Donut chart configuration for Service Breakdown
-  const serviceBreakdownOptions = {
-    chart: {
-      type: 'donut',
-      height: 350
-    },
-    colors: serviceBreakdown.map(s => s.color),
-    labels: serviceBreakdown.map(s => s.name),
-    plotOptions: {
-      pie: {
-        donut: {
-          size: '70%',
-          labels: {
+const serviceBreakdownOptions = {
+  chart: { type: "donut", height: 350 },
+  labels: usageLabels,
+  colors: usageColors,
+  plotOptions: {
+    pie: {
+      donut: {
+        size: "70%",
+        labels: {
+          show: true,
+          total: {
             show: true,
-            total: {
-              show: true,
-              label: 'Total',
-              formatter: () => '100%'
-            }
+            label: "Total",
+            color: "#000",
+            formatter: () =>
+              usageData.reduce((acc, val) => acc + Number(val), 0).toFixed(2),
+          },
+          value: {
+            color: "#000"
           }
         }
       }
-    },
-    legend: {
-      position: 'bottom',
-      horizontalAlign: 'center'
-    },
-    dataLabels: {
-      enabled: true,
-      formatter: (val) => `${val}%`
-    },
-    tooltip: {
-      y: {
-        formatter: (val) => `${val}%`
-      }
     }
-  };
+  },
+  legend: { position: "bottom", horizontalAlign: "center" },
+  dataLabels: {
+    enabled: true,
+    style: {
+      fontSize: "14px",
+      fontWeight: "bold",
+      colors: ["#fff"]  // <-- FIX WHITE TEXT ISSUE
+    },
+    formatter: (val) => `${val.toFixed(1)}%`,
+  },
+  tooltip: {
+    y: {
+      formatter: (val) => val.toFixed(2)
+    }
+  }
+};
 
-  const serviceBreakdownSeries = serviceBreakdown.map(s => s.value);
+
+  // const serviceBreakdownSeries = serviceBreakdown.map(s => s.value);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
@@ -396,6 +404,48 @@ const ExpenseAndReports = () => {
       setDownloading(false);
     }
   };*/
+
+  const EVENT_MAP = {
+    1: { name: "Number Purchase", color: "#10b981" },   // green
+    2: { name: "Outbound Call", color: "#3b82f6" },     // blue
+    3: { name: "Outbound SMS", color: "#f59e0b" },      // amber
+    4: { name: "Inbound SMS", color: "#8b5cf6" },       // purple
+    5: { name: "Inbound Call", color: "#ef4444" },      // red
+    6: { name: "Number Renewal", color: "#14b8a6" }     // teal
+  };
+
+  useEffect(() => {
+    const fetchUsage = async () => {
+      try {
+        const start = formatDateForAPI(dateFilter.startDate);
+        const end = formatDateForAPI(dateFilter.endDate);
+
+        const res = await dashboardService.getWalletUsageBreakdown(start, end);
+        const apiData = res?.data || [];
+
+        // Build 6 fixed event outputs
+        const series = [];
+        const labels = [];
+        const colors = [];
+
+        Object.keys(EVENT_MAP).forEach((eventId) => {
+          const found = apiData.find((e) => Number(e.event) === Number(eventId));
+
+          series.push(found?.total_credits_used || 0);
+          labels.push(EVENT_MAP[eventId].name);
+          colors.push(EVENT_MAP[eventId].color);
+        });
+
+        setUsageData(series);
+        setUsageLabels(labels);
+        setUsageColors(colors);
+      } catch (error) {
+        console.log("Error loading breakdown", error);
+      }
+    };
+
+    fetchUsage();
+  }, [dateFilter]);
 
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
@@ -577,9 +627,9 @@ const ExpenseAndReports = () => {
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Service Breakdown
               </h2>
-              <Chart
+             <Chart
                 options={serviceBreakdownOptions}
-                series={serviceBreakdownSeries}
+                series={usageData}
                 type="donut"
                 height={350}
               />
