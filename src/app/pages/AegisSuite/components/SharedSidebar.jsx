@@ -18,6 +18,8 @@ import {
   EnvelopeIcon,
   BanknotesIcon,
   DocumentIcon,
+  Bars3Icon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Logo from "assets/app-logo/logo-text.svg?.react";
 import logoIcon from "assets/app-logo/logo-new.png?.react";
@@ -38,9 +40,24 @@ const SharedSidebar = ({ currentPath = "" }) => {
   // Force re-render when user data changes
   const [forceUpdate, setForceUpdate] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  // Close mobile menu when clicking on a menu item
+  const handleMenuItemClick = (href) => {
+    navigate(href);
+    closeMobileMenu();
   };
   useEffect(() => {
     setForceUpdate((prev) => prev + 1);
@@ -60,6 +77,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
 
   const handleLogout = async () => {
     try {
+      closeMobileMenu();
       await logout();
       navigate("/login");
     } catch (error) {
@@ -215,11 +233,62 @@ const SharedSidebar = ({ currentPath = "" }) => {
   ];
   const handleViewProfile = () => {
     navigate("/profile-page");
+    closeMobileMenu();
   };
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMobileMenuOpen && !event.target.closest('.mobile-sidebar-container')) {
+        closeMobileMenu();
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      // Prevent body scroll when mobile menu is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
   return (
-    <div
-      className={`sidebar-scroll-container flex ${isCollapsed ? "w-20" : "w-64"} flex-col border-r border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800 overflow-y-auto overflow-x-hidden`}
-    >
+    <>
+      {/* Mobile Menu Toggle Button - Only visible on mobile */}
+      <button
+        onClick={toggleMobileMenu}
+        className="fixed top-4 left-4 z-50 lg:hidden rounded-lg bg-white dark:bg-gray-800 p-2 shadow-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        aria-label="Toggle menu"
+      >
+        {isMobileMenuOpen ? (
+          <XMarkIcon className="h-6 w-6" />
+        ) : (
+          <Bars3Icon className="h-6 w-6" />
+        )}
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm lg:hidden"
+          onClick={closeMobileMenu}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`mobile-sidebar-container sidebar-scroll-container flex ${isCollapsed ? "w-20" : "w-64"} flex-col border-r border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800 overflow-y-auto overflow-x-hidden
+          fixed lg:static inset-y-0 left-0 z-40 lg:z-auto
+          transform transition-transform duration-300 ease-in-out
+          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}
+      >
       <div className="border-b border-gray-200 p-6 dark:border-gray-700 overflow-x-hidden">
         {isCollapsed ? (
           <>
@@ -231,11 +300,20 @@ const SharedSidebar = ({ currentPath = "" }) => {
               />
               <button
                 onClick={toggleSidebar}
-                className="dark:hover:bg-dark-700 dark:text-dark-200 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100"
+                className="dark:hover:bg-dark-700 dark:text-dark-200 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 lg:block hidden"
                 aria-label="Expand sidebar"
                 title="Expand sidebar"
               >
                 <ChevronRightIcon className="h-5 w-5" />
+              </button>
+              {/* Mobile close button */}
+              <button
+                onClick={closeMobileMenu}
+                className="dark:hover:bg-dark-700 dark:text-dark-200 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 lg:hidden"
+                aria-label="Close menu"
+                title="Close menu"
+              >
+                <XMarkIcon className="h-5 w-5" />
               </button>
             </div>
           </>
@@ -248,14 +326,26 @@ const SharedSidebar = ({ currentPath = "" }) => {
               className="h-25 w-auto max-w-full object-contain flex-shrink"
             />
             
-            <button
-              onClick={toggleSidebar}
-              className="dark:hover:bg-dark-700 dark:text-dark-200 flex-shrink-0 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100"
-              aria-label="Collapse sidebar"
-              title="Collapse sidebar"
-            >
-              <ChevronLeftIcon className="h-10 w-10" />
-            </button>
+            <div className="flex items-center space-x-2">
+              {/* Mobile close button */}
+              <button
+                onClick={closeMobileMenu}
+                className="dark:hover:bg-dark-700 dark:text-dark-200 flex-shrink-0 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 lg:hidden"
+                aria-label="Close menu"
+                title="Close menu"
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+              {/* Desktop collapse button */}
+              <button
+                onClick={toggleSidebar}
+                className="dark:hover:bg-dark-700 dark:text-dark-200 flex-shrink-0 rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hidden lg:block"
+                aria-label="Collapse sidebar"
+                title="Collapse sidebar"
+              >
+                <ChevronLeftIcon className="h-10 w-10" />
+              </button>
+            </div>
           </div>
           {user.agency?.name !== 'StarterPro' && (
             <h3 className="text-sm ml-[32px] mt-2 font-bold text-gray-900 dark:text-gray-100">{user.agency?.name}</h3>
@@ -269,7 +359,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
           {sidebarItems.map((item) => (
             <li key={item.id} className="w-full min-w-0">
               <button
-                onClick={() => navigate(item.href)}
+                onClick={() => handleMenuItemClick(item.href)}
                 className={`flex w-full items-center ${isCollapsed ? "justify-center" : "space-x-3"} rounded-lg p-3 text-left transition-all duration-200 min-w-0 ${
                   currentPath === item.href ||
                   window.location.pathname === item.href
@@ -301,7 +391,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
               {adminItems.map((item) => (
                 <li key={item.id} className={`${user.agency?.name !== 'StarterPro' && item.href === "/admin/subscriptions" ? "hidden" : "mb-2 w-full min-w-0"}`}>
                   <button
-                    onClick={() => navigate(item.href)}
+                    onClick={() => handleMenuItemClick(item.href)}
                     className={`flex w-full items-center ${isCollapsed ? "justify-center" : "space-x-3"} rounded-lg p-3 text-left transition-all duration-200 min-w-0 ${
                       currentPath === item.href ||
                       window.location.pathname === item.href
@@ -401,6 +491,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
