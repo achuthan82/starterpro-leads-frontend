@@ -91,6 +91,54 @@ class DashboardService {
   }
 }
 
+async getAgentWiseUsage(startDate, endDate, page = 1, perPage = 10, name = "") {
+  try {
+    const response = await axiosInstance.get(
+      `${JWT_HOST_API}/dashboard/wallet-user-wise-usage`,
+      {
+        params: {
+          start_date: startDate,
+          end_date: endDate,
+          page,
+          per_page: perPage,
+          name
+        }
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching agent-wise usage:", error);
+    throw error;
+  }
+}
+
+
+/**
+ * Get Daily Wallet Usage grouped by event (for line chart)
+ * @param {string} startDate - mm-dd-YYYY
+ * @param {string} endDate - mm-dd-YYYY
+ * @returns {Promise} Daily usage data
+ */
+async getDailySpend(startDate, endDate) {
+  try {
+    const response = await axiosInstance.get(
+      `${JWT_HOST_API}/dashboard/wallet-usage-daily`,
+      {
+        params: {
+          start_date: startDate,
+          end_date: endDate
+        }
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching daily wallet usage:", error);
+    throw error;
+  }
+}
+
 }
 
 

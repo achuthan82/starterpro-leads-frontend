@@ -4,6 +4,7 @@ import SharedSidebar from '../components/SharedSidebar';
 import Chart from 'react-apexcharts';
 import { DatePicker } from 'components/shared/form/Datepicker';
 import dashboardService from 'utils/dashboardService';
+import ReactPaginate from 'react-paginate';
 // import { Switch } from 'components/ui';
 import {
 //   ArrowDownTrayIcon,
@@ -41,16 +42,26 @@ const ExpenseAndReports = () => {
   const [totalRecharge, setTotalRecharge] = useState(0);
   const [totalRechargeLoading, setTotalRechargeLoading] = useState(false);
   const [totalRechargeError, setTotalRechargeError] = useState(null);
-  const [totalSpend] = useState(375.50);
   const [dateFilter, setDateFilter] = useState({
     startDate: initialDates.startDate,
     endDate: initialDates.endDate
   });
   const [dateError, setDateError] = useState('');
-  const [agentSearchTerm, setAgentSearchTerm] = useState('');
   const [usageData, setUsageData] = useState([]);
   const [usageColors, setUsageColors] = useState([]);
   const [usageLabels, setUsageLabels] = useState([]);
+  const [creditsTotal, setCreditsTotal] = useState([]);
+
+  const [agentExpenses, setAgentExpenses] = useState([]);
+  const [agentLoading, setAgentLoading] = useState(false);
+  const [agentError, setAgentError] = useState(null);
+  const [page, setPage] = useState(1);          
+  const [perPage] = useState(5);
+  const [total, setTotal] = useState(0);        
+  const [agentSearchTerm, setAgentSearchTerm] = useState("");
+
+  const [dailyChartData, setDailyChartData] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(1); // default event 1
 
   // Format date from YYYY-MM-DD to MM-DD-YYYY for API
   const formatDateForAPI = (dateString) => {
@@ -110,14 +121,6 @@ const ExpenseAndReports = () => {
     fetchTotalRecharge();
   }, [dateFilter.startDate, dateFilter.endDate]);
   
-  // Mock data - replace with actual API calls
-  const [dailySpendData] = useState([
-    { date: 'Oct 8', smsCost: 45, voiceCost: 32 },
-    { date: 'Oct 16', smsCost: 38, voiceCost: 28 },
-    { date: 'Oct 18', smsCost: 42, voiceCost: 35 },
-    { date: 'Oct 21', smsCost: 35, voiceCost: 30 },
-    { date: 'Oct 24', smsCost: 40, voiceCost: 33 }
-  ]);
 
   // const [serviceBreakdown] = useState([
   //   { name: 'SMS', value: 50, color: '#22c55e' },
@@ -153,48 +156,6 @@ const ExpenseAndReports = () => {
   ]); */
 
   // Agent-wise expense data
-  const [agentExpenses] = useState([
-    {
-      id: 1,
-      agentId: 'A001',
-      agentName: 'John Smith',
-      smsCost: 125.50,
-      voiceCost: 89.30,
-      inboundCost: 45.20,
-      totalCost: 260.00,
-      transactions: 45
-    },
-    {
-      id: 2,
-      agentId: 'A002',
-      agentName: 'Sarah Johnson',
-      smsCost: 98.75,
-      voiceCost: 112.40,
-      inboundCost: 32.10,
-      totalCost: 243.25,
-      transactions: 38
-    },
-    {
-      id: 3,
-      agentId: 'A003',
-      agentName: 'Michael Brown',
-      smsCost: 67.20,
-      voiceCost: 54.80,
-      inboundCost: 28.50,
-      totalCost: 150.50,
-      transactions: 22
-    },
-    {
-      id: 4,
-      agentId: 'A004',
-      agentName: 'Emily Davis',
-      smsCost: 145.30,
-      voiceCost: 78.90,
-      inboundCost: 41.60,
-      totalCost: 265.80,
-      transactions: 52
-    }
-  ]);
 
   const randomColors = [
     "#0a2463", "#5ab453", "#92c933", "#FF2ECF", "#E000AD", "#FFA71A", "#FF4F1A",
@@ -258,75 +219,26 @@ const ExpenseAndReports = () => {
     if (!agentSearchTerm) return true;
     const searchLower = agentSearchTerm.toLowerCase();
     return (
-      agent.agentName?.toLowerCase().includes(searchLower) ||
-      agent.agentId?.toLowerCase().includes(searchLower)
+      agent.agentName?.toLowerCase().includes(searchLower) 
     );
   });
-
-  // Line chart configuration for Daily Spend
-  const dailySpendChartOptions = {
-    chart: {
-      type: 'line',
-      toolbar: { show: false },
-      height: 350
-    },
-    colors: ['#22c55e', '#3b82f6'],
-    stroke: {
-      curve: 'smooth',
-      width: 3
-    },
-    dataLabels: {
-      enabled: false
-    },
-    xaxis: {
-      categories: dailySpendData.map(d => d.date),
-      labels: {
-        style: {
-          colors: '#6b7280'
-        }
-      }
-    },
-    yaxis: {
-      labels: {
-        formatter: (value) => `$${value}`,
-        style: {
-          colors: '#6b7280'
-        }
-      }
-    },
-    grid: {
-      borderColor: '#e5e7eb',
-      strokeDashArray: 3
-    },
-    legend: {
-      position: 'top',
-      horizontalAlign: 'right'
-    },
-    tooltip: {
-      y: {
-        formatter: (value) => `$${value.toFixed(2)}`
-      }
-    }
-  };
-
-  const dailySpendSeries = [
-    {
-      name: 'SMS Cost',
-      data: dailySpendData.map(d => d.smsCost)
-    },
-    {
-      name: 'Voice Cost (30 Days)',
-      data: dailySpendData.map(d => d.voiceCost)
-    }
-  ];
 
   // Donut chart configuration for Service Breakdown
 const serviceBreakdownOptions = {
   chart: { type: "donut", height: 350 },
   labels: usageLabels,
   colors: usageColors,
+
   plotOptions: {
     pie: {
+      dataLabels: {
+        offset: -10,
+        style: {
+          colors: ["#fff"],        // <-- WHITE % LABELS NOW WORK
+          fontWeight: "bold"
+        },
+        formatter: (val) => `${val.toFixed(1)}%`
+      },
       donut: {
         size: "70%",
         labels: {
@@ -334,9 +246,7 @@ const serviceBreakdownOptions = {
           total: {
             show: true,
             label: "Total",
-            color: "#000",
-            formatter: () =>
-              usageData.reduce((acc, val) => acc + Number(val), 0).toFixed(2),
+            color: "#000"
           },
           value: {
             color: "#000"
@@ -345,22 +255,13 @@ const serviceBreakdownOptions = {
       }
     }
   },
-  legend: { position: "bottom", horizontalAlign: "center" },
-  dataLabels: {
-    enabled: true,
-    style: {
-      fontSize: "14px",
-      fontWeight: "bold",
-      colors: ["#fff"]  // <-- FIX WHITE TEXT ISSUE
-    },
-    formatter: (val) => `${val.toFixed(1)}%`,
-  },
-  tooltip: {
-    y: {
-      formatter: (val) => val.toFixed(2)
-    }
+
+  legend: {
+    position: "bottom",
+    horizontalAlign: "center",
   }
 };
+
 
 
   // const serviceBreakdownSeries = serviceBreakdown.map(s => s.value);
@@ -414,38 +315,182 @@ const serviceBreakdownOptions = {
     6: { name: "Number Renewal", color: "#14b8a6" }     // teal
   };
 
+useEffect(() => {
+  const fetchUsage = async () => {
+    try {
+      const start = formatDateForAPI(dateFilter.startDate);
+      const end = formatDateForAPI(dateFilter.endDate);
+
+      const res = await dashboardService.getWalletUsageBreakdown(start, end);
+      const apiData = res?.data || [];
+
+      const series = [];
+      const labels = [];
+      const colors = [];
+
+      let totalInThousands = 0; // <-- final result
+
+      Object.keys(EVENT_MAP).forEach((eventId) => {
+        const found = apiData.find((e) => Number(e.event) === Number(eventId));
+
+        const value = found?.total_credits_used || 0;
+
+        series.push(value);
+        labels.push(EVENT_MAP[eventId].name);
+        colors.push(EVENT_MAP[eventId].color);
+
+        totalInThousands += value / 1000;   // <-- divide and accumulate
+      });
+
+      setUsageData(series);
+      setUsageLabels(labels);
+      setUsageColors(colors);
+
+      // 🚀 Store total (already divided by 1000)
+      setCreditsTotal(totalInThousands);
+
+    } catch (error) {
+      console.log("Error loading breakdown:", error);
+    }
+  };
+
+  fetchUsage();
+}, [dateFilter]);
+
+
   useEffect(() => {
-    const fetchUsage = async () => {
+    const fetchAgentWiseUsage = async () => {
       try {
+        setAgentExpenses([])
+        setAgentLoading(true);
+        setAgentError(null);
+
         const start = formatDateForAPI(dateFilter.startDate);
         const end = formatDateForAPI(dateFilter.endDate);
 
-        const res = await dashboardService.getWalletUsageBreakdown(start, end);
+        const res = await dashboardService.getAgentWiseUsage(
+          start,
+          end,
+          page,
+          perPage,
+          agentSearchTerm
+        );
+
         const apiData = res?.data || [];
 
-        // Build 6 fixed event outputs
-        const series = [];
-        const labels = [];
-        const colors = [];
-
-        Object.keys(EVENT_MAP).forEach((eventId) => {
-          const found = apiData.find((e) => Number(e.event) === Number(eventId));
-
-          series.push(found?.total_credits_used || 0);
-          labels.push(EVENT_MAP[eventId].name);
-          colors.push(EVENT_MAP[eventId].color);
+        const mapped = apiData.map((item) => {
+          return {
+            id: item.id,
+            agentName: item.name,
+            agentEmail: item.email,
+            agentPhone: item.phone,
+            inboundCallTotalCredits: item.inbound_call_total_credits,
+            outboundCallTotalCredits: item.outbound_call_total_credits,
+            inboundSmsTotalCredits: item.inbound_sms_total_credits,
+            outboundSmsTotalCredits: item.outbound_sms_total_credits,
+            numberPurchaseTotalCredits: item.number_purchase_total_credits,
+            numberRenewalTotalCredits: item.number_renewal_total_credits,
+            rechargedAmount: item.recharged_amount
+          };
         });
 
-        setUsageData(series);
-        setUsageLabels(labels);
-        setUsageColors(colors);
+        setAgentExpenses(mapped);
+        setTotal(res?.pagination?.total || 0);
       } catch (error) {
-        console.log("Error loading breakdown", error);
+        setAgentError("Failed to load agent-wise usage", error);
+        setAgentExpenses([]);
+      } finally {
+        setAgentLoading(false);
       }
     };
 
-    fetchUsage();
-  }, [dateFilter]);
+    fetchAgentWiseUsage();
+  }, [dateFilter, agentSearchTerm, page]);
+
+  const CustomPagination = () => {
+  const pageCount = Math.ceil(total / perPage);
+  if (pageCount <= 1) return null;
+
+  return (
+    <ReactPaginate
+      previousLabel="«"
+      nextLabel="»"
+      forcePage={page - 1}   // convert API page → ReactPaginate page
+      onPageChange={handlePagination}
+      pageCount={pageCount}
+      breakLabel="..."
+      containerClassName="flex space-x-2 mt-4 justify-end"
+      pageLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+      previousLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+      nextLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+      breakLinkClassName="px-4 py-2 border border-gray-300 rounded-full"
+      activeLinkClassName="bg-[#0a2463] text-white" // Dark blue like your screenshot
+    />
+  );
+};
+
+const handlePagination = (selected) => {
+  const selectedPage = selected.selected + 1; // convert 0-based → 1-based
+  setPage(selectedPage);
+};
+
+
+useEffect(() => {
+  const fetchDailySpend = async () => {
+    try {
+      const start = formatDateForAPI(dateFilter.startDate);
+      const end = formatDateForAPI(dateFilter.endDate);
+
+      const res = await dashboardService.getDailySpend(start, end);
+      const apiData = res?.data || [];
+
+      // Filter by selected event
+      const filtered = apiData.filter(
+        (item) => Number(item.event) === Number(selectedEvent)
+      );
+
+      // Convert API mm-dd-yyyy → readable date label
+      const formatted = filtered.map((item) => {
+  const [mm, dd] = item.date.split("-"); // API format: "12-22-2025"
+        return {
+          date: `${dd}/${mm}`,  // FINAL FORMAT: dd/mm
+    value: (item.total_credits || 0) / 1000
+        };
+      });
+
+      setDailyChartData(formatted);
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
+
+  fetchDailySpend();
+}, [dateFilter, selectedEvent]);
+
+const dailySpendChartOptions = {
+  chart: {
+    type: "line",
+    toolbar: { show: false }
+  },
+  colors: [EVENT_MAP[selectedEvent].color],
+  stroke: { width: 3, curve: "smooth" },
+  xaxis: {
+    categories: dailyChartData.map((i) => i.date)
+  },
+  yaxis: {
+    labels: {
+      formatter: (val) => `$${val.toFixed(2)}`
+    }
+  },
+  legend: { show: false }
+};
+
+const dailySpendSeries = [
+  {
+    name: EVENT_MAP[selectedEvent].name,
+    data: dailyChartData.map((i) => i.value)
+  }
+];
 
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
@@ -536,9 +581,9 @@ const serviceBreakdownOptions = {
               </div>
               <div>
                 <p className="text-3xl font-bold text-red-600 dark:text-red-400">
-                  {formatCurrency(totalSpend)}
+                  {formatCurrency(creditsTotal)}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">All time expenses</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Spend for selected date range</p>
               </div>
             </Card>
 
@@ -610,10 +655,25 @@ const serviceBreakdownOptions = {
           {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {/* Daily Spend Chart */}
-            <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                Daily Spend (Last 30 Days)
-              </h2>
+           <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">Daily Spend</h2>
+
+                {/* Event Filter */}
+                <select
+                  value={selectedEvent}
+                  onChange={(e) => setSelectedEvent(Number(e.target.value))}
+                  className="border border-gray-300 rounded-lg px-3 py-1 text-sm"
+                  style={{ color: EVENT_MAP[selectedEvent].color, fontWeight: "bold" }}
+                >
+                  {Object.keys(EVENT_MAP).map((id) => (
+                    <option key={id} value={id}>
+                      {EVENT_MAP[id].name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <Chart
                 options={dailySpendChartOptions}
                 series={dailySpendSeries}
@@ -622,17 +682,23 @@ const serviceBreakdownOptions = {
               />
             </Card>
 
+
             {/* Service Breakdown Chart */}
             <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Service Breakdown
               </h2>
-             <Chart
+              {usageData.length == 0 ? (
+                <div className='text-center'>
+                <p className="text-md text-gray-600 p-4">Loading data...</p>
+                </div>
+              ) : (
+              <Chart
                 options={serviceBreakdownOptions}
                 series={usageData}
                 type="donut"
                 height={350}
-              />
+              />)}
             </Card>
           </div>
 
@@ -648,10 +714,14 @@ const serviceBreakdownOptions = {
                     <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
                     <input
                       type="text"
-                      placeholder="Search by agent name or ID..."
+                      placeholder="Search by agent name"
                       value={agentSearchTerm}
-                      onChange={(e) => setAgentSearchTerm(e.target.value)}
-                      className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 w-64"
+                      onChange={(e) => {
+                        setAgentSearchTerm(e.target.value);
+                        setPage(1); // reset to first page when searching
+                      }}
+                      className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                                bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 w-64"
                     />
                   </div>
                   {agentSearchTerm && (
@@ -677,24 +747,33 @@ const serviceBreakdownOptions = {
                       Agent
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      SMS Cost
+                      Phone
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Voice Cost
+                      Inbound Call Total Credits
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Inbound Cost
+                      Outbound Call Total Credits
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Total Cost
+                      Inbound SMS Total Credits
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Transactions
+                      Outbound SMS Total Credits
+                    </th>
+                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Number Purchase Total Credits: 
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Number Renewal Total Credits
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Recharged Amount
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredAgentExpenses.length === 0 ? (
+                  {filteredAgentExpenses.length === 0 && !agentLoading  ? (
                     <tr>
                       <td colSpan="6" className="px-6 py-12 text-center">
                         <div className="text-gray-500 dark:text-gray-400">
@@ -728,31 +807,40 @@ const serviceBreakdownOptions = {
                                 {agent.agentName}
                               </div>
                               <div className="text-sm text-gray-500 dark:text-gray-400">
-                                ID: {agent.agentId}
+                                {agent.agentEmail}
                               </div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {formatCurrency(agent.smsCost)}
+                          {agent.agentPhone}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {formatCurrency(agent.voiceCost)}
+                          $ {agent.inboundCallTotalCredits || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {formatCurrency(agent.inboundCost)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          {formatCurrency(agent.totalCost)}
+                          $ {agent.outboundCallTotalCredits || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {agent.transactions}
+                          $ {agent.inboundSmsTotalCredits || 0}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          $ {agent.outboundSmsTotalCredits || 0}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          $ {agent.numberPurchaseTotalCredits || 0}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          $ {agent.numberRenewalTotalCredits || 0}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          $ {agent.rechargedAmount || 0}
                         </td>
                       </tr>
                     );
                   }))}
                 </tbody>
-                {filteredAgentExpenses.length > 0 && (
+                {/* {filteredAgentExpenses.length > 0 && (
                   <tfoot className="bg-gray-50 dark:bg-gray-700">
                     <tr>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-gray-100">
@@ -775,9 +863,23 @@ const serviceBreakdownOptions = {
                       </td>
                     </tr>
                   </tfoot>
-                )}
+                )} */}
               </table>
+              <div className='text-center'>
+              {agentLoading && (
+                <p className="text-md text-gray-600 p-4">Loading agent data...</p>
+              )}
+
+              {agentError && (
+                <p className="text-md text-red-600 p-4">{agentError}</p>
+              )}
+              </div>
             </div>
+            <div className="p-4">
+              <CustomPagination />
+            </div>
+
+
           </Card>
 
           {/* Transaction Ledger */}
