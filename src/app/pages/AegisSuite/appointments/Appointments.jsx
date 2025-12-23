@@ -249,7 +249,7 @@ const Appointments = () => {
       <SharedSidebar currentPath="/appointments" />
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className=" border-b border-gray-200 bg-white p-6 xs:px-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <div className="flex items-center justify-between flex-wrap">
+          <div className="mt-10 xl:mt-0 flex items-center justify-between flex-wrap">
             <div>
               <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
                 Calendar
