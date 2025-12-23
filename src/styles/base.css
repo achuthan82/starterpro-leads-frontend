@@ -237,3 +237,11 @@ input.hide-number-arrow::-webkit-inner-spin-button {
 input[type="number"].hide-number-arrow {
   -moz-appearance: textfield;
 }
+
+
+.apexcharts-datalabel-label,
+.apexcharts-datalabel-value,
+.apexcharts-pie-label {
+  fill: #141414 !important;      /* text color (SVG) */
+  color: #fff !important;     /* fallback */
+}
