@@ -248,8 +248,8 @@ const Appointments = () => {
       {/* Sidebar */}
       <SharedSidebar currentPath="/appointments" />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="border-b border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <div className="flex items-center justify-between">
+        <header className=" border-b border-gray-200 bg-white p-6 xs:px-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+          <div className="flex items-center justify-between flex-wrap">
             <div>
               <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
                 Calendar
@@ -258,7 +258,7 @@ const Appointments = () => {
                 Manage your Appointments
               </p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
               <div className="flex rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
                 <button
                   className={`rounded-l-lg border-r border-gray-200 px-4 py-2 text-sm font-medium transition-colors dark:border-gray-700 ${
