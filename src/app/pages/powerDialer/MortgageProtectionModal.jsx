@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import Step1VerifyingInfo from "./Step1VerifyingInfo";
 import Step2FinancialRisk from "./Step2FinancialRisk";
 
-const MortgageProtectionModal = ({ isOpen, close, onFormSubmit }) => {
+const MortgageProtectionModal = ({ isOpen, close, onFormSubmit, fetchCallLogs }) => {
   const { licenseDetails, currentCallLogId } = useCallContext();
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -92,7 +92,10 @@ const MortgageProtectionModal = ({ isOpen, close, onFormSubmit }) => {
     close();
   };
 
-  const handleConfirmClose = () => closeModal(true);
+  const handleConfirmClose = () => { 
+    fetchCallLogs(currentCallLogId, "all");
+    closeModal(true); 
+  }
   const handleCancelClose = () => setShowCloseWarning(false);
 
   const onStepSubmit = async (data) => {

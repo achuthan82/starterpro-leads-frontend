@@ -397,6 +397,7 @@ const PowerDialer = () => {
               <LeadInfo
                 lead={selectedLead}
                 onUpdateStatus={updateLeadStatus}
+                fetchCallLogs={fetchCallLogs}
                 callStatus={callStatus}
                 isDialing={isDialing}
                 isCallActive={isCallActive}

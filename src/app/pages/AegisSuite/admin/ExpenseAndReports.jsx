@@ -246,14 +246,15 @@ const serviceBreakdownOptions = {
           total: {
             show: true,
             label: "Total",
-            color: "#000"
+            color: "#000",
           },
           value: {
-            color: "#000"
-          }
-        }
+            color: "#000",
+          },
+        },
       }
-    }
+    },
+    formatter: (val) => `$${val.toFixed(1)}`
   },
 
   legend: {
@@ -333,7 +334,7 @@ useEffect(() => {
       Object.keys(EVENT_MAP).forEach((eventId) => {
         const found = apiData.find((e) => Number(e.event) === Number(eventId));
 
-        const value = found?.total_credits_used || 0;
+        const value = found?.total_credits_used/1000 || 0;
 
         series.push(value);
         labels.push(EVENT_MAP[eventId].name);
@@ -536,7 +537,7 @@ const dailySpendSeries = [
         {/* Main Content */}
         <main className="flex-1 overflow-auto p-6">
           {/* Summary Cards Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
             {/* Total Recharge Card */}
             <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
               <div className="flex items-center justify-between mb-4">
@@ -627,7 +628,7 @@ const dailySpendSeries = [
             </Card>
 
             {/* Monthly Volume Card */}
-            <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
+            {/* <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">Monthly Volume</h3>
                 <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
@@ -649,7 +650,7 @@ const dailySpendSeries = [
                   </div>
                 </div>
               </div>
-            </Card>
+            </Card> */}
           </div>
 
           {/* Charts Section */}
@@ -746,9 +747,9 @@ const dailySpendSeries = [
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Agent
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Phone
-                    </th>
+                    </th> */}
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Inbound Call Total Credits
                     </th>
@@ -809,12 +810,15 @@ const dailySpendSeries = [
                               <div className="text-sm text-gray-500 dark:text-gray-400">
                                 {agent.agentEmail}
                               </div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                                {agent.agentPhone}
+                              </div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                        {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                           {agent.agentPhone}
-                        </td>
+                        </td> */}
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                           $ {agent.inboundCallTotalCredits || 0}
                         </td>

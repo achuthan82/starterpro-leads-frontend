@@ -20,7 +20,8 @@ const LeadInfo = ({
   callLogs = [],
   callLogsLoading = false,
   selectedCallLog,
-  setSelectedCallLog
+  setSelectedCallLog,
+  fetchCallLogs
 }) => {
   const { setSelectedLead } = useCallContext();
   const [currentStatus, setCurrentStatus] = useState(lead?.status || "");
@@ -738,6 +739,7 @@ const LeadInfo = ({
         isOpen={isMortgageModalOpen}
         close={() => setIsMortgageModalOpen(false)}
         onFormSubmit={handleFormSubmit}
+        fetchCallLogs={fetchCallLogs}
       />
     </div>
   );

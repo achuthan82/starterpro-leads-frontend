@@ -659,9 +659,9 @@ const CallControls = ({
         {!isCallInProgress && (
           <div className={`${isCallInProgress ? 'w-8 h-8' : 'w-10 h-10'} rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0`}>
             <span className={`text-blue-600 dark:text-blue-400 font-bold ${isCallInProgress ? 'text-xs' : 'text-sm'}`}>
-              {getInitials(selectedLead.name)}
-            </span>
-          </div>
+            {getInitials(selectedLead.name)}
+          </span>
+        </div>
         )}
         <div className="flex flex-col items-center">
           <h3 className={`font-semibold text-gray-900 dark:text-gray-100 ${isCallInProgress ? 'text-sm' : 'text-base'}`}>

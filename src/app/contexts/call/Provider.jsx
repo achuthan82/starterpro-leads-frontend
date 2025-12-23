@@ -392,13 +392,10 @@ const fetchCallLogs = useCallback(
   []
 );
 
-  // Generate UUID and check license when lead is selected
+  // Check license when lead is selected (UUID will be generated per call)
   useEffect(() => {
     if (selectedLead) {
-      // Generate new UUID for this lead
-      const newCallLogId = uuidv4();
-      setCurrentCallLogId(newCallLogId);
-      
+      setCurrentCallLogId(null);
       checkLicense(selectedLead);
       fetchCallLogs(selectedLead, "all");
     } else {
@@ -441,12 +438,10 @@ const fetchCallLogs = useCallback(
       return;
     }
 
-    // Use the UUID that was generated when lead was selected
-    const callUuid = currentCallLogId;
-    if (!callUuid) {
-      setCallStatus('Call log ID not found. Please select the lead again.');
-      return;
-    }
+    // Generate a new UUID for each call
+    const callUuid = uuidv4();
+    setCurrentCallLogId(callUuid);
+    console.log('Generated new call log ID for this call:', callUuid);
     
     // Format phone number for API (E.164 format with + prefix)
     const formatPhoneForAPI = (phone) => {
@@ -660,7 +655,7 @@ const fetchCallLogs = useCallback(
       callRef.current = null;
       window.currentTwilioCall = null;
     }
-  }, [selectedLead, selectedOutboundNumber, licenseDetails, getLeadState, initializeTwilio, startCallTimer, stopCallTimer, formatCallDuration, currentCallLogId, fetchCallLogs]);
+  }, [selectedLead, selectedOutboundNumber, licenseDetails, getLeadState, initializeTwilio, startCallTimer, stopCallTimer, formatCallDuration, selectedPhoneNumber, fetchCallLogs]);
 
   const hangupCall = useCallback(() => {
     if (callRef.current) {

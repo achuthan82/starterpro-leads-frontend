@@ -1,10 +1,17 @@
 import { Controller } from "react-hook-form";
 import { Button, Input } from "components/ui";
+import { useCallContext } from "app/contexts/call/context";
 
 const Step1VerifyingInfo = ({ control, errors, handleSubmit, onStepSubmit, closeModal }) => {
+  const { currentCallLogId } = useCallContext();
   return (
     <form onSubmit={handleSubmit(onStepSubmit)}>
       <div className="space-y-6 max-h-[60vh] overflow-y-auto text-left">
+        {!currentCallLogId && (
+          <div className="bg-red-500 p-4 rounded-lg mb-3">
+            <p className="text-white">Please make a call first to start verifying information</p>
+          </div>
+        )}
         <h4 className="text-lg font-semibold border-b pb-2">Step 1: Verifying Information</h4>
 
         {/* HEALTH SECTION */}
@@ -150,6 +157,7 @@ const Step1VerifyingInfo = ({ control, errors, handleSubmit, onStepSubmit, close
             </Button>
             <Button
             type="submit"
+            disabled={!currentCallLogId}
             className="rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
             style={{ backgroundColor: '#155dfc'}}
             >
