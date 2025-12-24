@@ -355,11 +355,13 @@ useEffect(() => {
 
         const value = found?.total_credits_used/1000 || 0;
 
+        console.log(value,'value');
+
         series.push(value);
         labels.push(EVENT_MAP[eventId].name);
         colors.push(EVENT_MAP[eventId].color);
 
-        totalInThousands += value / 1000;   // <-- divide and accumulate
+        totalInThousands += value;   // <-- divide and accumulate
       });
 
       setUsageData(series);
@@ -881,7 +883,7 @@ const dailySpendSeries = [
                             {formatCurrency(agent.totalCredits)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {formatCurrency(agent.rechargedAmount/1000 || 0)}
+                          {formatCurrency(agent.rechargedAmount || 0)}
                         </td>
                       </tr>
                     );
