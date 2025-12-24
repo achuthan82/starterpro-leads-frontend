@@ -224,46 +224,65 @@ const ExpenseAndReports = () => {
   });
 
   // Donut chart configuration for Service Breakdown
-const serviceBreakdownOptions = {
-  chart: { type: "donut", height: 350 },
-  labels: usageLabels,
-  colors: usageColors,
+  const serviceBreakdownOptions = {
+    chart: { type: "donut", height: 350 },
+    labels: usageLabels,
+    colors: usageColors,
 
-  plotOptions: {
-    pie: {
-      dataLabels: {
-        offset: -10,
-        style: {
-          colors: ["#fff"],        // <-- WHITE % LABELS NOW WORK
-          fontWeight: "bold"
+    plotOptions: {
+      pie: {
+        dataLabels: {
+          offset: -10,
+          style: {
+            colors: ["#fff"], // Label color white
+            fontWeight: "bold"
+          },
+          formatter: (val, opts) => {
+            const seriesIndex = opts.seriesIndex;
+            const value = opts.w.config.series[seriesIndex];
+
+            return `$${value.toFixed(2)}`;  // <-- $ + 2 decimals
+          }
         },
-        formatter: (val) => `${val.toFixed(1)}%`
-      },
-      donut: {
-        size: "70%",
-        labels: {
-          show: true,
-          total: {
+        donut: {
+          size: "70%",
+          labels: {
             show: true,
-            label: "Total",
-            color: "#000",
-          },
-          value: {
-            color: "#000",
-          },
-        },
+            name: {
+              color: "#000"
+            },
+            value: {
+              color: "#000",
+              formatter: (val) => `$${Number(val).toFixed(2)}`  // <-- center value
+            },
+            total: {
+              show: true,
+              label: "Total",
+              formatter: (w) => {
+                const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                return `$${total.toFixed(2)}`; // <-- Total in dollars
+              }
+            }
+          }
+        }
       }
     },
-    formatter: (val) => `$${val.toFixed(1)}`
-  },
 
-  legend: {
-    position: "bottom",
-    horizontalAlign: "center",
-  }
-};
+    legend: {
+      position: "bottom",
+      horizontalAlign: "center",
+      formatter: (label, opts) => {
+        const value = opts.w.globals.series[opts.seriesIndex];
+        return `${label}: $${value.toFixed(2)}`;  // <-- Add $ + 2 digits in legend
+      }
+    },
 
-
+    tooltip: {
+      y: {
+        formatter: (val) => `$${val.toFixed(2)}`  // <-- Tooltip formatting
+      }
+    }
+  };
 
   // const serviceBreakdownSeries = serviceBreakdown.map(s => s.value);
 
@@ -379,19 +398,37 @@ useEffect(() => {
 
         const apiData = res?.data || [];
 
-        const mapped = apiData.map((item) => {
-          return {
-            id: item.id,
-            agentName: item.name,
-            agentEmail: item.email,
-            agentPhone: item.phone,
-            inboundCallTotalCredits: item.inbound_call_total_credits,
-            outboundCallTotalCredits: item.outbound_call_total_credits,
-            inboundSmsTotalCredits: item.inbound_sms_total_credits,
-            outboundSmsTotalCredits: item.outbound_sms_total_credits,
-            numberPurchaseTotalCredits: item.number_purchase_total_credits,
-            numberRenewalTotalCredits: item.number_renewal_total_credits,
-            rechargedAmount: item.recharged_amount
+     const mapped = apiData.map((item) => {
+      const inboundCall = Number(item.inbound_call_total_credits) || 0;
+      const outboundCall = Number(item.outbound_call_total_credits) || 0;
+      const inboundSms = Number(item.inbound_sms_total_credits) || 0;
+      const outboundSms = Number(item.outbound_sms_total_credits) || 0;
+      const numberPurchase = Number(item.number_purchase_total_credits) || 0;
+      const numberRenewal = Number(item.number_renewal_total_credits) || 0;
+
+      const totalCredits =
+        (inboundCall +
+          outboundCall +
+          inboundSms +
+          outboundSms +
+          numberPurchase +
+          numberRenewal) / 1000; 
+
+      return {
+        id: item.id,
+        agentName: item.name,
+        agentEmail: item.email,
+        agentPhone: item.phone,
+
+        inboundCallTotalCredits: inboundCall,
+        outboundCallTotalCredits: outboundCall,
+        inboundSmsTotalCredits: inboundSms,
+        outboundSmsTotalCredits: outboundSms,
+        numberPurchaseTotalCredits: numberPurchase,
+        numberRenewalTotalCredits: numberRenewal,
+
+        totalCredits,
+        rechargedAmount: Number(item.recharged_amount) || 0
           };
         });
 
@@ -763,10 +800,13 @@ const dailySpendSeries = [
                       Outbound SMS Total Credits
                     </th>
                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Number Purchase Total Credits: 
+                      Number Purchase Total Credits
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Number Renewal Total Credits
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Total Credits
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Recharged Amount
@@ -807,10 +847,10 @@ const dailySpendSeries = [
                               <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                 {agent.agentName}
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
                                 {agent.agentEmail}
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
                                 {agent.agentPhone}
                               </div>
                             </div>
@@ -820,25 +860,28 @@ const dailySpendSeries = [
                           {agent.agentPhone}
                         </td> */}
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.inboundCallTotalCredits || 0}
+                          {agent.inboundCallTotalCredits || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.outboundCallTotalCredits || 0}
+                          {agent.outboundCallTotalCredits || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.inboundSmsTotalCredits || 0}
+                          {agent.inboundSmsTotalCredits || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.outboundSmsTotalCredits || 0}
+                          {agent.outboundSmsTotalCredits || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.numberPurchaseTotalCredits || 0}
+                          {agent.numberPurchaseTotalCredits || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.numberRenewalTotalCredits || 0}
+                          {agent.numberRenewalTotalCredits || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.rechargedAmount || 0}
+                            {formatCurrency(agent.totalCredits)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          {formatCurrency(agent.rechargedAmount/1000 || 0)}
                         </td>
                       </tr>
                     );
