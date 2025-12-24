@@ -954,7 +954,7 @@ const LeadManagement = () => {
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Header */}
         <header className="border-b border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <div className="flex items-center justify-between">
+          <div className="mt-10 xl:mt-0 flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-[#0a2463] dark:text-blue-400">
                 Lead Management

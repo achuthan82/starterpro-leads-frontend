@@ -55,7 +55,7 @@ const SideLeadBank = () => {
             {/* Header */}
             <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
               <div className="px-0">
-                <div className="flex justify-between items-center flex-wrap gap-4">
+                <div className="mt-10 xl:mt-0 flex justify-between items-center flex-wrap gap-4">
                   <div>
                     <h1 className="text-2xl font-bold text-[#0a2463] dark:text-blue-400">Starterpro Side Bank</h1>
                     <p className="text-gray-600 dark:text-gray-300 mt-1">Premium Insurance Leads at Your Fingertips</p>

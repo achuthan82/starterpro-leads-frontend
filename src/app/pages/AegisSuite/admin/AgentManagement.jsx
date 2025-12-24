@@ -188,7 +188,7 @@ const AgentManagement = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
-          <div className="flex items-center justify-between">
+          <div className="mt-10 xl:mt-0 flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Agent Management</h1>
               <p className="text-gray-600 dark:text-gray-300 mt-1">Manage insurance agents and their performance</p>
