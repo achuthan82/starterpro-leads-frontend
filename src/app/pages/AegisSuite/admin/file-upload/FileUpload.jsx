@@ -398,7 +398,7 @@ const FileUpload = () => {
           <SharedSidebar currentPath="admin/file-upload" />
           <div className="flex flex-1 flex-col overflow-hidden">
             <header className="border-b border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-              <div className="flex items-center justify-between">
+              <div className="mt-10 xl:mt-0 flex items-center justify-between">
                 <div>
                   <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">
                     Upload Leads
@@ -417,12 +417,13 @@ const FileUpload = () => {
                     Upload Lead Data With Mortgage
                   </h4>
                 </div>
-                <div className="mt-4 flex items-center space-x-2">
+                <div className="mt-4 flex items-center space-x-2 flex-wrap">
                   <Input
-                    className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
+                    className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 mt-3"
                     placeholder="Enter Campaign Id"
                     onChange={(event) => setCampaign(event.target.value)}
                   />
+                  <div className="mt-3">
                   <Select
                     id="country"
                     placeholder="Choose Type"
@@ -435,6 +436,7 @@ const FileUpload = () => {
                     options={types}
                     onChange={handleType}
                   />
+                  </div>
                 </div>
                 <div className="mt-4" style={{ position: "relative" }}>
                   {(!campaign || !type) && (

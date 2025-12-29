@@ -460,8 +460,8 @@ const SubscriptionPlans = () => {
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Header */}
         <header className="border-b border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="mt-10 xl:mt-0 flex items-center justify-between flex-wrap">
+            <div className="mt-3">
               <h1 className="text-2xl font-bold text-[#0a2463] dark:text-[#4d9fff]">
                 Subscription Plans
               </h1>
@@ -469,7 +469,7 @@ const SubscriptionPlans = () => {
                 Manage subscription plans and pricing
               </p>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 mt-3">
               <button
                 onClick={() => setShowCreateModal(true)}
                 className="flex items-center space-x-2 rounded-lg bg-[#f4d03f] px-4 py-2 text-white transition-colors hover:bg-[#e6c035]"

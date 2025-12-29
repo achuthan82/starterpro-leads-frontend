@@ -416,12 +416,12 @@ useEffect(() => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="mt-10 xl:mt-0 flex items-center justify-between flex-wrap">
+            <div className='mt-3'>
               <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">User Management</h1>
               <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your team members and their access permissions</p>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 mt-3">
               <button
                 onClick={open}
                 className="bg-[#f4d03f] text-white px-4 py-2 rounded-lg hover:bg-[#e6c035] transition-colors flex items-center space-x-2"
