@@ -224,46 +224,65 @@ const ExpenseAndReports = () => {
   });
 
   // Donut chart configuration for Service Breakdown
-const serviceBreakdownOptions = {
-  chart: { type: "donut", height: 350 },
-  labels: usageLabels,
-  colors: usageColors,
+  const serviceBreakdownOptions = {
+    chart: { type: "donut", height: 350 },
+    labels: usageLabels,
+    colors: usageColors,
 
-  plotOptions: {
-    pie: {
-      dataLabels: {
-        offset: -10,
-        style: {
-          colors: ["#fff"],        // <-- WHITE % LABELS NOW WORK
-          fontWeight: "bold"
+    plotOptions: {
+      pie: {
+        dataLabels: {
+          offset: -10,
+          style: {
+            colors: ["#fff"], // Label color white
+            fontWeight: "bold"
+          },
+          formatter: (val, opts) => {
+            const seriesIndex = opts.seriesIndex;
+            const value = opts.w.config.series[seriesIndex];
+
+            return `$${value.toFixed(2)}`;  // <-- $ + 2 decimals
+          }
         },
-        formatter: (val) => `${val.toFixed(1)}%`
-      },
-      donut: {
-        size: "70%",
-        labels: {
-          show: true,
-          total: {
+        donut: {
+          size: "70%",
+          labels: {
             show: true,
-            label: "Total",
-            color: "#000",
-          },
-          value: {
-            color: "#000",
-          },
-        },
+            name: {
+              color: "#000"
+            },
+            value: {
+              color: "#000",
+              formatter: (val) => `$${Number(val).toFixed(2)}`  // <-- center value
+            },
+            total: {
+              show: true,
+              label: "Total",
+              formatter: (w) => {
+                const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                return `${formatCurrency(total)}`; // <-- Total in dollars
+              }
+            }
+          }
+        }
       }
     },
-    formatter: (val) => `$${val.toFixed(1)}`
-  },
 
-  legend: {
-    position: "bottom",
-    horizontalAlign: "center",
-  }
-};
+    legend: {
+      position: "bottom",
+      horizontalAlign: "center",
+      formatter: (label, opts) => {
+        const value = opts.w.globals.series[opts.seriesIndex];
+        return `${label}: $${value.toFixed(2)}`;  // <-- Add $ + 2 digits in legend
+      }
+    },
 
-
+    tooltip: {
+      y: {
+        formatter: (val) => `$${val.toFixed(2)}`  // <-- Tooltip formatting
+      }
+    }
+  };
 
   // const serviceBreakdownSeries = serviceBreakdown.map(s => s.value);
 
@@ -336,11 +355,13 @@ useEffect(() => {
 
         const value = found?.total_credits_used/1000 || 0;
 
+        console.log(value,'value');
+
         series.push(value);
         labels.push(EVENT_MAP[eventId].name);
         colors.push(EVENT_MAP[eventId].color);
 
-        totalInThousands += value / 1000;   // <-- divide and accumulate
+        totalInThousands += value;   // <-- divide and accumulate
       });
 
       setUsageData(series);
@@ -379,19 +400,37 @@ useEffect(() => {
 
         const apiData = res?.data || [];
 
-        const mapped = apiData.map((item) => {
-          return {
-            id: item.id,
-            agentName: item.name,
-            agentEmail: item.email,
-            agentPhone: item.phone,
-            inboundCallTotalCredits: item.inbound_call_total_credits,
-            outboundCallTotalCredits: item.outbound_call_total_credits,
-            inboundSmsTotalCredits: item.inbound_sms_total_credits,
-            outboundSmsTotalCredits: item.outbound_sms_total_credits,
-            numberPurchaseTotalCredits: item.number_purchase_total_credits,
-            numberRenewalTotalCredits: item.number_renewal_total_credits,
-            rechargedAmount: item.recharged_amount
+     const mapped = apiData.map((item) => {
+      const inboundCall = Number(item.inbound_call_total_credits) || 0;
+      const outboundCall = Number(item.outbound_call_total_credits) || 0;
+      const inboundSms = Number(item.inbound_sms_total_credits) || 0;
+      const outboundSms = Number(item.outbound_sms_total_credits) || 0;
+      const numberPurchase = Number(item.number_purchase_total_credits) || 0;
+      const numberRenewal = Number(item.number_renewal_total_credits) || 0;
+
+      const totalCredits =
+        (inboundCall +
+          outboundCall +
+          inboundSms +
+          outboundSms +
+          numberPurchase +
+          numberRenewal) / 1000; 
+
+      return {
+        id: item.id,
+        agentName: item.name,
+        agentEmail: item.email,
+        agentPhone: item.phone,
+
+        inboundCallTotalCredits: inboundCall,
+        outboundCallTotalCredits: outboundCall,
+        inboundSmsTotalCredits: inboundSms,
+        outboundSmsTotalCredits: outboundSms,
+        numberPurchaseTotalCredits: numberPurchase,
+        numberRenewalTotalCredits: numberRenewal,
+
+        totalCredits,
+        rechargedAmount: Number(item.recharged_amount) || 0
           };
         });
 
@@ -409,89 +448,90 @@ useEffect(() => {
   }, [dateFilter, agentSearchTerm, page]);
 
   const CustomPagination = () => {
-  const pageCount = Math.ceil(total / perPage);
-  if (pageCount <= 1) return null;
+    const pageCount = Math.ceil(total / perPage);
+    if (pageCount <= 1) return null;
 
-  return (
-    <ReactPaginate
-      previousLabel="«"
-      nextLabel="»"
-      forcePage={page - 1}   // convert API page → ReactPaginate page
-      onPageChange={handlePagination}
-      pageCount={pageCount}
-      breakLabel="..."
-      containerClassName="flex space-x-2 mt-4 justify-end"
-      pageLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
-      previousLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
-      nextLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
-      breakLinkClassName="px-4 py-2 border border-gray-300 rounded-full"
-      activeLinkClassName="bg-[#0a2463] text-white" // Dark blue like your screenshot
-    />
-  );
-};
-
-const handlePagination = (selected) => {
-  const selectedPage = selected.selected + 1; // convert 0-based → 1-based
-  setPage(selectedPage);
-};
-
-
-useEffect(() => {
-  const fetchDailySpend = async () => {
-    try {
-      const start = formatDateForAPI(dateFilter.startDate);
-      const end = formatDateForAPI(dateFilter.endDate);
-
-      const res = await dashboardService.getDailySpend(start, end);
-      const apiData = res?.data || [];
-
-      // Filter by selected event
-      const filtered = apiData.filter(
-        (item) => Number(item.event) === Number(selectedEvent)
-      );
-
-      // Convert API mm-dd-yyyy → readable date label
-      const formatted = filtered.map((item) => {
-  const [mm, dd] = item.date.split("-"); // API format: "12-22-2025"
-        return {
-          date: `${dd}/${mm}`,  // FINAL FORMAT: dd/mm
-    value: (item.total_credits || 0) / 1000
-        };
-      });
-
-      setDailyChartData(formatted);
-    } catch (error) {
-      console.log("Error:", error);
-    }
+    return (
+      <ReactPaginate
+        previousLabel="«"
+        nextLabel="»"
+        forcePage={page - 1}   // convert API page → ReactPaginate page
+        onPageChange={handlePagination}
+        pageCount={pageCount}
+        breakLabel="..."
+        containerClassName="flex space-x-2 mt-4 justify-end"
+        pageLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+        previousLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+        nextLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+        breakLinkClassName="px-4 py-2 border border-gray-300 rounded-full"
+        activeLinkClassName="bg-[#0a2463] text-white" // Dark blue like your screenshot
+      />
+    );
   };
 
-  fetchDailySpend();
-}, [dateFilter, selectedEvent]);
+  const handlePagination = (selected) => {
+    const selectedPage = selected.selected + 1; // convert 0-based → 1-based
+    setPage(selectedPage);
+  };
 
-const dailySpendChartOptions = {
-  chart: {
-    type: "line",
-    toolbar: { show: false }
-  },
-  colors: [EVENT_MAP[selectedEvent].color],
-  stroke: { width: 3, curve: "smooth" },
-  xaxis: {
-    categories: dailyChartData.map((i) => i.date)
-  },
-  yaxis: {
-    labels: {
-      formatter: (val) => `$${val.toFixed(2)}`
+
+  useEffect(() => {
+    const fetchDailySpend = async () => {
+      try {
+        const start = formatDateForAPI(dateFilter.startDate);
+        const end = formatDateForAPI(dateFilter.endDate);
+
+        const res = await dashboardService.getDailySpend(start, end);
+        const apiData = res?.data || [];
+
+        // Filter by selected event
+        const filtered = apiData.filter(
+          (item) => Number(item.event) === Number(selectedEvent)
+        );
+
+        // Convert API mm-dd-yyyy → readable date label
+        const formatted = filtered.map((item) => {
+          const [mm, dd] = item.date.split("-"); // API format: "12-22-2025"
+          const value = (item.total_credits || 0) / 1000;
+            return {
+              date: `${dd}/${mm}`,  // FINAL FORMAT: dd/mm
+              value: value
+            };
+        });
+
+        setDailyChartData(formatted);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchDailySpend();
+  }, [dateFilter, selectedEvent]);
+
+  const dailySpendChartOptions = {
+    chart: {
+      type: "line",
+      toolbar: { show: false }
+    },
+    colors: [EVENT_MAP[selectedEvent].color],
+    stroke: { width: 3, curve: "smooth" },
+    xaxis: {
+      categories: dailyChartData.map((i) => i.date)
+    },
+    yaxis: {
+      labels: {
+        formatter: (val) => `$${val.toFixed(2)}`
+      }
+    },
+    legend: { show: false }
+  };
+
+  const dailySpendSeries = [
+    {
+      name: EVENT_MAP[selectedEvent].name,
+      data: dailyChartData.map((i) => i.value)
     }
-  },
-  legend: { show: false }
-};
-
-const dailySpendSeries = [
-  {
-    name: EVENT_MAP[selectedEvent].name,
-    data: dailyChartData.map((i) => i.value)
-  }
-];
+  ];
 
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
@@ -763,10 +803,13 @@ const dailySpendSeries = [
                       Outbound SMS Total Credits
                     </th>
                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Number Purchase Total Credits: 
+                      Number Purchase Total Credits
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Number Renewal Total Credits
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Total Credits
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Recharged Amount
@@ -807,10 +850,10 @@ const dailySpendSeries = [
                               <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                 {agent.agentName}
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
                                 {agent.agentEmail}
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
                                 {agent.agentPhone}
                               </div>
                             </div>
@@ -820,25 +863,28 @@ const dailySpendSeries = [
                           {agent.agentPhone}
                         </td> */}
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.inboundCallTotalCredits || 0}
+                          {agent?.inboundCallTotalCredits.toFixed(2) || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.outboundCallTotalCredits || 0}
+                          {agent?.outboundCallTotalCredits.toFixed(2) || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.inboundSmsTotalCredits || 0}
+                          {agent?.inboundSmsTotalCredits.toFixed(2) || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.outboundSmsTotalCredits || 0}
+                          {agent?.outboundSmsTotalCredits.toFixed(2) || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.numberPurchaseTotalCredits || 0}
+                          {agent?.numberPurchaseTotalCredits.toFixed(2) || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.numberRenewalTotalCredits || 0}
+                          {agent?.numberRenewalTotalCredits.toFixed(2) || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          $ {agent.rechargedAmount || 0}
+                            {formatCurrency(agent.totalCredits)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          {formatCurrency(agent.rechargedAmount || 0)}
                         </td>
                       </tr>
                     );
