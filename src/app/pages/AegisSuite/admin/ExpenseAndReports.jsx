@@ -260,7 +260,7 @@ const ExpenseAndReports = () => {
               label: "Total",
               formatter: (w) => {
                 const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                return `$${total.toFixed(2)}`; // <-- Total in dollars
+                return `${formatCurrency(total)}`; // <-- Total in dollars
               }
             }
           }
@@ -448,89 +448,90 @@ useEffect(() => {
   }, [dateFilter, agentSearchTerm, page]);
 
   const CustomPagination = () => {
-  const pageCount = Math.ceil(total / perPage);
-  if (pageCount <= 1) return null;
+    const pageCount = Math.ceil(total / perPage);
+    if (pageCount <= 1) return null;
 
-  return (
-    <ReactPaginate
-      previousLabel="«"
-      nextLabel="»"
-      forcePage={page - 1}   // convert API page → ReactPaginate page
-      onPageChange={handlePagination}
-      pageCount={pageCount}
-      breakLabel="..."
-      containerClassName="flex space-x-2 mt-4 justify-end"
-      pageLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
-      previousLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
-      nextLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
-      breakLinkClassName="px-4 py-2 border border-gray-300 rounded-full"
-      activeLinkClassName="bg-[#0a2463] text-white" // Dark blue like your screenshot
-    />
-  );
-};
-
-const handlePagination = (selected) => {
-  const selectedPage = selected.selected + 1; // convert 0-based → 1-based
-  setPage(selectedPage);
-};
-
-
-useEffect(() => {
-  const fetchDailySpend = async () => {
-    try {
-      const start = formatDateForAPI(dateFilter.startDate);
-      const end = formatDateForAPI(dateFilter.endDate);
-
-      const res = await dashboardService.getDailySpend(start, end);
-      const apiData = res?.data || [];
-
-      // Filter by selected event
-      const filtered = apiData.filter(
-        (item) => Number(item.event) === Number(selectedEvent)
-      );
-
-      // Convert API mm-dd-yyyy → readable date label
-      const formatted = filtered.map((item) => {
-  const [mm, dd] = item.date.split("-"); // API format: "12-22-2025"
-        return {
-          date: `${dd}/${mm}`,  // FINAL FORMAT: dd/mm
-    value: (item.total_credits || 0) / 1000
-        };
-      });
-
-      setDailyChartData(formatted);
-    } catch (error) {
-      console.log("Error:", error);
-    }
+    return (
+      <ReactPaginate
+        previousLabel="«"
+        nextLabel="»"
+        forcePage={page - 1}   // convert API page → ReactPaginate page
+        onPageChange={handlePagination}
+        pageCount={pageCount}
+        breakLabel="..."
+        containerClassName="flex space-x-2 mt-4 justify-end"
+        pageLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+        previousLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+        nextLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+        breakLinkClassName="px-4 py-2 border border-gray-300 rounded-full"
+        activeLinkClassName="bg-[#0a2463] text-white" // Dark blue like your screenshot
+      />
+    );
   };
 
-  fetchDailySpend();
-}, [dateFilter, selectedEvent]);
+  const handlePagination = (selected) => {
+    const selectedPage = selected.selected + 1; // convert 0-based → 1-based
+    setPage(selectedPage);
+  };
 
-const dailySpendChartOptions = {
-  chart: {
-    type: "line",
-    toolbar: { show: false }
-  },
-  colors: [EVENT_MAP[selectedEvent].color],
-  stroke: { width: 3, curve: "smooth" },
-  xaxis: {
-    categories: dailyChartData.map((i) => i.date)
-  },
-  yaxis: {
-    labels: {
-      formatter: (val) => `$${val.toFixed(2)}`
+
+  useEffect(() => {
+    const fetchDailySpend = async () => {
+      try {
+        const start = formatDateForAPI(dateFilter.startDate);
+        const end = formatDateForAPI(dateFilter.endDate);
+
+        const res = await dashboardService.getDailySpend(start, end);
+        const apiData = res?.data || [];
+
+        // Filter by selected event
+        const filtered = apiData.filter(
+          (item) => Number(item.event) === Number(selectedEvent)
+        );
+
+        // Convert API mm-dd-yyyy → readable date label
+        const formatted = filtered.map((item) => {
+          const [mm, dd] = item.date.split("-"); // API format: "12-22-2025"
+          const value = (item.total_credits || 0) / 1000;
+            return {
+              date: `${dd}/${mm}`,  // FINAL FORMAT: dd/mm
+              value: value
+            };
+        });
+
+        setDailyChartData(formatted);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchDailySpend();
+  }, [dateFilter, selectedEvent]);
+
+  const dailySpendChartOptions = {
+    chart: {
+      type: "line",
+      toolbar: { show: false }
+    },
+    colors: [EVENT_MAP[selectedEvent].color],
+    stroke: { width: 3, curve: "smooth" },
+    xaxis: {
+      categories: dailyChartData.map((i) => i.date)
+    },
+    yaxis: {
+      labels: {
+        formatter: (val) => `$${val.toFixed(2)}`
+      }
+    },
+    legend: { show: false }
+  };
+
+  const dailySpendSeries = [
+    {
+      name: EVENT_MAP[selectedEvent].name,
+      data: dailyChartData.map((i) => i.value)
     }
-  },
-  legend: { show: false }
-};
-
-const dailySpendSeries = [
-  {
-    name: EVENT_MAP[selectedEvent].name,
-    data: dailyChartData.map((i) => i.value)
-  }
-];
+  ];
 
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
@@ -862,22 +863,22 @@ const dailySpendSeries = [
                           {agent.agentPhone}
                         </td> */}
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {agent.inboundCallTotalCredits || 0}
+                          {agent?.inboundCallTotalCredits.toFixed(2) || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {agent.outboundCallTotalCredits || 0}
+                          {agent?.outboundCallTotalCredits.toFixed(2) || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {agent.inboundSmsTotalCredits || 0}
+                          {agent?.inboundSmsTotalCredits.toFixed(2) || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {agent.outboundSmsTotalCredits || 0}
+                          {agent?.outboundSmsTotalCredits.toFixed(2) || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {agent.numberPurchaseTotalCredits || 0}
+                          {agent?.numberPurchaseTotalCredits.toFixed(2) || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {agent.numberRenewalTotalCredits || 0}
+                          {agent?.numberRenewalTotalCredits.toFixed(2) || 0}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                             {formatCurrency(agent.totalCredits)}
