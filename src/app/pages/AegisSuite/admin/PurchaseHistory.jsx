@@ -307,6 +307,7 @@ const PurchaseHistory = () => {
               <h1 className="text-2xl font-bold text-[#0a2463] dark:text-[#4d9fff]">Purchase History</h1>
               <p className="text-gray-600 dark:text-gray-300 mt-1">View all purchase transactions</p>
             </div>
+            
             {/* <div className="flex items-center space-x-3">
               <button className="bg-[#f4d03f] text-white px-4 py-2 rounded-lg hover:bg-[#e6c035] transition-colors flex items-center space-x-2">
                 <ArrowDownTrayIcon className="w-4 h-4" />

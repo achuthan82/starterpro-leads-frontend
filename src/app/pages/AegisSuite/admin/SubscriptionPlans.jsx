@@ -459,8 +459,9 @@ const SubscriptionPlans = () => {
       {/* Main Content */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Header */}
+
         <header className="border-b border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <div className="mt-10 xl:mt-0 flex items-center justify-between flex-wrap">
+          <div className="mt-10 flex flex-wrap items-center justify-between xl:mt-0">
             <div className="mt-3">
               <h1 className="text-2xl font-bold text-[#0a2463] dark:text-[#4d9fff]">
                 Subscription Plans
@@ -469,7 +470,7 @@ const SubscriptionPlans = () => {
                 Manage subscription plans and pricing
               </p>
             </div>
-            <div className="flex items-center space-x-3 mt-3">
+            <div className="mt-3 flex items-center space-x-3">
               <button
                 onClick={() => setShowCreateModal(true)}
                 className="flex items-center space-x-2 rounded-lg bg-[#f4d03f] px-4 py-2 text-white transition-colors hover:bg-[#e6c035]"
@@ -868,7 +869,7 @@ const SubscriptionPlans = () => {
                     name="category"
                     value={createForm.category}
                     onChange={handleCreateInputChange}
-                    className="w-full rounded-lg border border-[#75150b] px-3 py-2 dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white"
+                    className="dark:border-dark-600 dark:bg-dark-700 w-full rounded-lg border border-[#75150b] bg-white px-3 py-2 text-gray-900 dark:text-white"
                   >
                     <option value="">Select Category</option>
                     {categoryOptions.map((opt) => (
@@ -891,7 +892,7 @@ const SubscriptionPlans = () => {
                     name="source"
                     value={createForm.source}
                     onChange={handleCreateInputChange}
-                    className="w-full rounded-lg border border-[#75150b] dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white px-3 py-2"
+                    className="dark:border-dark-600 dark:bg-dark-700 w-full rounded-lg border border-[#75150b] bg-white px-3 py-2 text-gray-900 dark:text-white"
                   >
                     <option value="">Select Source</option>
                     {sourceOptions.map((opt) => (
@@ -936,7 +937,7 @@ const SubscriptionPlans = () => {
                   <button
                     type="submit"
                     disabled={createLoading}
-                    className={`flex items-center dark:text-white dark:bg-blue-600 justify-center rounded-md bg-[#0a2463] px-4 py-2 text-sm text-white hover:bg-[#0a1a4a] ${createLoading ? "cursor-not-allowed opacity-60" : ""}`}
+                    className={`flex items-center justify-center rounded-md bg-[#0a2463] px-4 py-2 text-sm text-white hover:bg-[#0a1a4a] dark:bg-blue-600 dark:text-white ${createLoading ? "cursor-not-allowed opacity-60" : ""}`}
                   >
                     {createLoading ? (
                       <span className="flex items-center">
@@ -1101,7 +1102,7 @@ const SubscriptionPlans = () => {
                     name="category"
                     value={editForm.category}
                     onChange={handleEditInputChange}
-                    className="w-full rounded-lg border border-[#75150b] dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white px-3 py-2 focus:border-[#75150b] focus:outline-none"
+                    className="dark:border-dark-600 dark:bg-dark-700 w-full rounded-lg border border-[#75150b] bg-white px-3 py-2 text-gray-900 focus:border-[#75150b] focus:outline-none dark:text-white"
                   >
                     <option value="">Select Category</option>
                     {categoryOptions.map((opt) => (
@@ -1124,7 +1125,7 @@ const SubscriptionPlans = () => {
                     name="source"
                     value={editForm.source}
                     onChange={handleEditInputChange}
-                    className="w-full rounded-lg border border-[#75150b] dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white px-3 py-2 focus:border-[#75150b] focus:outline-none"
+                    className="dark:border-dark-600 dark:bg-dark-700 w-full rounded-lg border border-[#75150b] bg-white px-3 py-2 text-gray-900 focus:border-[#75150b] focus:outline-none dark:text-white"
                   >
                     <option value="">Select Source</option>
                     {sourceOptions.map((opt) => (
@@ -1150,7 +1151,7 @@ const SubscriptionPlans = () => {
                   <button
                     type="submit"
                     disabled={editLoading}
-                    className={`flex items-center dark:text-white dark:bg-blue-600 justify-center rounded-md bg-[#0a2463] px-4 py-2 text-sm text-white hover:bg-[#0a1a4a] ${editLoading ? "cursor-not-allowed opacity-60" : ""}`}
+                    className={`flex items-center justify-center rounded-md bg-[#0a2463] px-4 py-2 text-sm text-white hover:bg-[#0a1a4a] dark:bg-blue-600 dark:text-white ${editLoading ? "cursor-not-allowed opacity-60" : ""}`}
                   >
                     {editLoading ? (
                       <span className="flex items-center">

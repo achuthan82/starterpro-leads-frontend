@@ -185,7 +185,7 @@ const DailyCalendar = ({
                                 {apt.title}
                               </h4>
                               <span
-                                className={`rounded-full px-2 py-1 text-xs font-medium status-badge ${getStatusBadgeClass(apt.status)}`}
+                                className={`status-badge rounded-full px-2 py-1 text-xs font-medium ${getStatusBadgeClass(apt.status)}`}
                               >
                                 {LEAD_STATUS[apt.status]
                                   ? LEAD_STATUS[apt.status]
