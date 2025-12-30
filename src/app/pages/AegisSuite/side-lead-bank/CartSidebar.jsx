@@ -40,7 +40,7 @@ const CartSidebar = ({
     );
   }, [cartData]);
   const commission = useMemo(() => {
-    return toFloatWithoutRounding((grandTotal * 0.03 * 100) / 100, 2);
+    return toFloatWithoutRounding((grandTotal * 0.04 * 100) / 100, 2);
   });
   const roundedTotalWithCommission = useMemo(() => {
     return toFloatWithoutRounding(grandTotal + commission, 2);
@@ -216,7 +216,7 @@ const CartSidebar = ({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-base font-semibold text-gray-900 dark:text-gray-100">
-                Processing Fee (3%):
+                Processing Fee (4%):
               </span>
               <span className="text-base font-bold text-gray-700 dark:text-gray-200">
                 ${commission}

@@ -10,7 +10,10 @@ import {
   ExclamationTriangleIcon,
   EnvelopeIcon,
   EyeIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
+  TrashIcon,
+  ArrowDownTrayIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline';
 import SharedSidebar from '../components/SharedSidebar';
 import { Card } from 'components/ui';
@@ -40,8 +43,11 @@ const UserManagement = () => {
   const [currentPage, setCurrentPage] = useState(0); 
   const [inviteLoadingId, setInviteLoadingId] = useState(null)
   const [statusLoadingId, setStatusLoadingId] = useState(null)
+  const [deleteLoadingId, setDeleteLoadingId] = useState(null)
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [confirmationData, setConfirmationData] = useState(null)
+  const [exportLoading, setExportLoading] = useState(false)
+  const [showExportMenu, setShowExportMenu] = useState(false)
   const rowsPerPage = 10; 
 
   const [userCounts, setUserCounts] = useState({
@@ -205,9 +211,59 @@ const handleStatusChange = (user, newStatus) => {
   setShowConfirmation(true);
 };
 
+const handleDelete = (user) => {
+  setConfirmationData({
+    user,
+    action: 'delete',
+    message: `Are you sure you want to delete ${user.name}? This action cannot be undone.`
+  });
+  setShowConfirmation(true);
+};
+
 const confirmStatusChange = async () => {
   if (!confirmationData) return;
   
+  // Handle delete action
+  if (confirmationData.action === 'delete') {
+    const { user } = confirmationData;
+    setDeleteLoadingId(user.id);
+    
+    try {
+      const response = await adminService.deleteUnregisteredUser(user.id);
+      console.log('Delete response:', response);
+      
+      if (response.status === 200 || response.success) {
+        toast.success('User deleted successfully');
+        // Refresh the users list
+        fetchUsers(currentPage + 1);
+        // Refresh user counts
+        fetchUserCounts();
+      } else {
+        toast.error('Failed to delete user. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      
+      // Handle specific error cases
+      if (error.response?.status === 401) {
+        toast.error('Session expired. Please login again.');
+        navigate('/login');
+      } else if (error.response?.status === 403) {
+        toast.error('You do not have permission to perform this action.');
+      } else if (error.response?.status === 404) {
+        toast.error('User not found.');
+      } else {
+        toast.error(error.response?.data?.message || error.message || 'Failed to delete user. Please try again.');
+      }
+    } finally {
+      setDeleteLoadingId(null);
+      setShowConfirmation(false);
+      setConfirmationData(null);
+    }
+    return;
+  }
+  
+  // Handle status change action
   const { user, isActive } = confirmationData;
   setStatusLoadingId(user.id);
   
@@ -248,6 +304,126 @@ const confirmStatusChange = async () => {
 const cancelStatusChange = () => {
   setShowConfirmation(false);
   setConfirmationData(null);
+};
+
+// Helper function to escape CSV values
+const escapeCSVValue = (value) => {
+  if (value == null || value === undefined) return "";
+  let stringVal = String(value);
+
+  // Escape double quotes by doubling them
+  stringVal = stringVal.replace(/"/g, '""');
+
+  // Wrap in double quotes if value contains comma, quote, or newline
+  if (stringVal.search(/("|,|\n)/g) >= 0) {
+    stringVal = `"${stringVal}"`;
+  }
+
+  return stringVal;
+};
+
+// Helper function to convert JSON array to CSV
+const convertJsonToCSV = (jsonData) => {
+  if (!Array.isArray(jsonData) || jsonData.length === 0) {
+    return '';
+  }
+
+  // Get all unique keys from all objects to create headers
+  const allKeys = new Set();
+  jsonData.forEach(obj => {
+    Object.keys(obj).forEach(key => allKeys.add(key));
+  });
+
+  // Convert Set to Array and sort for consistent column order
+  const headers = Array.from(allKeys).sort();
+
+  // Create CSV header row
+  let csvContent = headers.map(header => escapeCSVValue(header)).join(',') + '\n';
+
+  // Create CSV data rows
+  jsonData.forEach(obj => {
+    const row = headers.map(header => {
+      const value = obj[header];
+      if (value === null || value === undefined) {
+        return escapeCSVValue('');
+      }
+      return escapeCSVValue(String(value));
+    });
+    csvContent += row.join(',') + '\n';
+  });
+
+  return csvContent;
+};
+
+const handleExportUsers = async (isActive = null) => {
+  setExportLoading(true);
+  setShowExportMenu(false);
+  
+  try {
+    const blob = await adminService.exportUsers(isActive);
+    
+    // Convert blob to text to get JSON data
+    const text = await blob.text();
+    let jsonResponse;
+    
+    try {
+      jsonResponse = JSON.parse(text);
+    } catch (parseError) {
+      console.error('Error parsing JSON response:', parseError);
+      throw new Error('Invalid response format from server');
+    }
+
+    // Extract data array from response
+    const usersData = jsonResponse.data || [];
+    
+    if (usersData.length === 0) {
+      toast.error('No users found to export');
+      return;
+    }
+
+    // Convert JSON data to CSV format
+    const csvContent = convertJsonToCSV(usersData);
+
+    // Create blob from CSV content with BOM for Excel compatibility
+    const BOM = '\uFEFF';
+    const csvBlob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(csvBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    
+    // Generate filename based on export type
+    let filename = 'users';
+    if (isActive === 1) {
+      filename = 'active-users';
+    } else if (isActive === 0) {
+      filename = 'inactive-users';
+    } else {
+      filename = 'all-users';
+    }
+    filename += `-${new Date().toISOString().split('T')[0]}.csv`;
+    
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(link);
+    
+    toast.success('Users exported successfully');
+  } catch (error) {
+    console.error('Error exporting users:', error);
+    
+    // Handle specific error cases
+    if (error.response?.status === 401) {
+      toast.error('Session expired. Please login again.');
+      navigate('/login');
+    } else if (error.response?.status === 403) {
+      toast.error('You do not have permission to perform this action.');
+    } else {
+      toast.error(error.response?.data?.message || error.message || 'Failed to export users. Please try again.');
+    }
+  } finally {
+    setExportLoading(false);
+  }
 };
 
 // Handle escape key to close modal
@@ -422,6 +598,55 @@ useEffect(() => {
               <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your team members and their access permissions</p>
             </div>
             <div className="flex items-center space-x-3 mt-3">
+              <div className="relative">
+                <button
+                  onClick={() => setShowExportMenu(!showExportMenu)}
+                  disabled={exportLoading}
+                  className="bg-[var(--color-atoll)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-atoll)]/90 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {exportLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span>Exporting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ArrowDownTrayIcon className="w-4 h-4" />
+                      <span>Export Users</span>
+                      <ChevronDownIcon className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+                
+                {showExportMenu && !exportLoading && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-10" 
+                      onClick={() => setShowExportMenu(false)}
+                    ></div>
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
+                      <button
+                        onClick={() => handleExportUsers(null)}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg"
+                      >
+                        Export All Users
+                      </button>
+                      <button
+                        onClick={() => handleExportUsers(1)}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        Export Active Users
+                      </button>
+                      <button
+                        onClick={() => handleExportUsers(0)}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-b-lg"
+                      >
+                        Export Inactive Users
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
               <button
                 onClick={open}
                 className="bg-[#f4d03f] text-white px-4 py-2 rounded-lg hover:bg-[#e6c035] transition-colors flex items-center space-x-2"
@@ -648,16 +873,33 @@ useEffect(() => {
                               <span>Edit</span>
                             </button>
                             {
-                              !user.registered && <button
-                              onClick={() => handleInvite(user)}
-                              className="text-[var(--color-atoll)] dark:text-blue-400 hover:text-[var(--color-atoll)] dark:text-blue-400/80 text-xs flex items-center space-x-1"
-                            > 
-                            {
-                              inviteLoadingId !== user.id ? <><EnvelopeIcon className="w-3 h-3" />
-                              <span>Invite Again</span></> : <Spinner/>
-                            }
-                              
-                            </button>
+                              !user.registered && (
+                                <>
+                                  <button
+                                    onClick={() => handleInvite(user)}
+                                    className="text-[var(--color-atoll)] dark:text-blue-400 hover:text-[var(--color-atoll)] dark:text-blue-400/80 text-xs flex items-center space-x-1"
+                                  > 
+                                    {
+                                      inviteLoadingId !== user.id ? <><EnvelopeIcon className="w-3 h-3" />
+                                      <span>Invite Again</span></> : <Spinner/>
+                                    }
+                                  </button>
+                                  <button
+                                    onClick={() => handleDelete(user)}
+                                    disabled={deleteLoadingId === user.id}
+                                    className="text-red-600 hover:text-red-800 text-xs flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    {deleteLoadingId === user.id ? (
+                                      <Spinner />
+                                    ) : (
+                                      <>
+                                        <TrashIcon className="w-3 h-3" />
+                                        <span>Delete</span>
+                                      </>
+                                    )}
+                                  </button>
+                                </>
+                              )
                             }
                             
                             {/* Active/Inactive buttons - only show for registered users */}
@@ -800,11 +1042,19 @@ useEffect(() => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
-                <ExclamationTriangleIcon className="w-6 h-6 text-yellow-600" />
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
+                confirmationData.action === 'delete' 
+                  ? 'bg-red-100 dark:bg-red-900/20' 
+                  : 'bg-yellow-100 dark:bg-yellow-900/20'
+              }`}>
+                <ExclamationTriangleIcon className={`w-6 h-6 ${
+                  confirmationData.action === 'delete' 
+                    ? 'text-red-600 dark:text-red-400' 
+                    : 'text-yellow-600 dark:text-yellow-400'
+                }`} />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Confirm {confirmationData.action}
+                Confirm {confirmationData.action.charAt(0).toUpperCase() + confirmationData.action.slice(1)}
               </h3>
             </div>
             
@@ -821,17 +1071,23 @@ useEffect(() => {
               </button>
               <button
                 onClick={confirmStatusChange}
-                disabled={statusLoadingId === confirmationData.user.id}
+                disabled={
+                  (confirmationData.action === 'delete' && deleteLoadingId === confirmationData.user.id) ||
+                  (confirmationData.action !== 'delete' && statusLoadingId === confirmationData.user.id)
+                }
                 className={`px-4 py-2 rounded-lg transition-colors ${
-                  confirmationData.isActive 
-                    ? 'bg-green-600 text-white hover:bg-green-700' 
-                    : 'bg-red-600 text-white hover:bg-red-700'
+                  confirmationData.action === 'delete'
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : confirmationData.isActive 
+                      ? 'bg-green-600 text-white hover:bg-green-700' 
+                      : 'bg-red-600 text-white hover:bg-red-700'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
-                {statusLoadingId === confirmationData.user.id ? (
+                {(confirmationData.action === 'delete' && deleteLoadingId === confirmationData.user.id) ||
+                 (confirmationData.action !== 'delete' && statusLoadingId === confirmationData.user.id) ? (
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Updating...
+                    {confirmationData.action === 'delete' ? 'Deleting...' : 'Updating...'}
                   </div>
                 ) : (
                   confirmationData.action.charAt(0).toUpperCase() + confirmationData.action.slice(1)
