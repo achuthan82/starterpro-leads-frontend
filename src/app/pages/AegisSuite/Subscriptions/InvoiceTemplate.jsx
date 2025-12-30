@@ -372,7 +372,7 @@ const InvoiceTemplate = () => {
                 </tr>
                 <tr>
                   <td className="bg-gray-50 p-3 text-sm font-medium text-gray-700">
-                    Tax ({paymentData?.invoice_data?.commission}%):
+                    Processing Fee ({paymentData?.invoice_data?.commission}%):
                   </td>
                   <td className="p-3 text-right text-sm font-medium">
                     $

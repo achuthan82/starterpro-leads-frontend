@@ -93,7 +93,7 @@ const CartSidebar = ({ open, onClose }) => {
   // console.log("rounding", toFloatWithoutRounding(1.00, 2))
   // const tst = 0.115
   // console.log("rounding 22", tst.toFixed(2))
-  const commission = toFloatWithoutRounding((grandTotal * 0.03 * 100 / 100), 2); // Math.round(grandTotal * 0.03 * 100) / 100;
+  const commission = toFloatWithoutRounding((grandTotal * 0.04 * 100 / 100), 2); // Math.round(grandTotal * 0.03 * 100) / 100;
   // const totalWithCommission = Math.round((grandTotal + commission) * 100) / 100;
   const roundedTotalWithCommission = toFloatWithoutRounding(grandTotal + commission, 2); // Math.round(grandTotal + commission);
   // const roundedTotalWithCommission = (grandTotal + commission).toFixed(2);
@@ -142,7 +142,7 @@ const CartSidebar = ({ open, onClose }) => {
         });
       }
       const grandTotal = cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
-      const commission = toFloatWithoutRounding((grandTotal * 0.03 * 100 / 100), 3); // Math.round(grandTotal * 0.03 * 100) / 100;
+      const commission = toFloatWithoutRounding((grandTotal * 0.04 * 100 / 100), 3); // Math.round(grandTotal * 0.03 * 100) / 100;
       const roundedTotalWithCommission = toFloatWithoutRounding(grandTotal + commission, 2); // Math.round(grandTotal + commission)
       // const roundedGrandTotal = Math.round(grandTotal);
       const stripePayload = {
@@ -249,7 +249,7 @@ const CartSidebar = ({ open, onClose }) => {
               <span className="text-base font-bold text-gray-700 dark:text-gray-200">${roundedGrandTotal}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="font-semibold text-base text-gray-900 dark:text-gray-100">Processing Fee (3%):</span>
+              <span className="font-semibold text-base text-gray-900 dark:text-gray-100">Processing Fee (4%):</span>
               <span className="text-base font-bold text-gray-700 dark:text-gray-200">${commission}</span>
             </div>
             <div className="flex justify-between items-center mt-1">

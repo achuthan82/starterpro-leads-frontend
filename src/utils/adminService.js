@@ -136,6 +136,33 @@ class AdminService {
   }
 
   /**
+   * Delete Unregistered User
+   * @param {string} userId - User ID
+   * @returns {Promise} Response confirming unregistered user deletion
+   */
+  async deleteUnregisteredUser(userId) {
+    const response = await axiosInstance.delete(`/user/delete-unregistered-user/${userId}`);
+    return response.data;
+  }
+
+  /**
+   * Export Users
+   * @param {number|null} isActive - 1 for active users, 0 for inactive users, null for all users
+   * @returns {Promise} Response with file blob for download
+   */
+  async exportUsers(isActive = null) {
+    const params = {};
+    if (isActive !== null) {
+      params.is_active = isActive;
+    }
+    const response = await axiosInstance.get('/user/download', {
+      params,
+      responseType: 'blob'
+    });
+    return response.data;
+  }
+
+  /**
    * Get All Agents (Admin View)
    * @param {Object} params - Query parameters (page, limit, search, status, etc.)
    * @returns {Promise} Response with paginated agents list
