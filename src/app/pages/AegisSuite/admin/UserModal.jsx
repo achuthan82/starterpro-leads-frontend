@@ -108,7 +108,7 @@ const UserModal = ({
     console.log(values);
     setInputFields(values);
   };
- 
+
   const submitData = (data) => {
     setLoading(true);
     const human = [];
@@ -198,23 +198,23 @@ const UserModal = ({
         editPayload["phone"] = data.phone;
       }
       if (parseInt(data.user_role.value) !== editData.role_id) {
-        editPayload['role_id'] = data.user_role.value
+        editPayload["role_id"] = data.user_role.value;
       }
       if (data?.agency_id.value !== editData.agency.id) {
         editPayload["agency_id"] = data?.agency_id?.value;
       }
-      console.log(data?.npn_number, editData?.npn)
+      console.log(data?.npn_number, editData?.npn);
       if (data?.npn_number && data.npn_number != editData?.npn) {
         editPayload["npn"] = data?.npn_number;
       }
       if (edit_agents.length > 0) {
-          editPayload["edit_agents"] = edit_agents;
+        editPayload["edit_agents"] = edit_agents;
       }
       if (remove_agents.length > 0) {
         editPayload["remove_agents"] = remove_agents;
       }
     }
-    console.log('editPayload', editPayload, editData)
+    console.log("editPayload", editPayload, editData);
     let val = false;
     for (const element of inputFields) {
       if (element.id === "") {
