@@ -848,6 +848,38 @@ class LeadsService {
   }
 
   /**
+   * Get total available leads for sale in marketplace
+   * @returns {Promise} Response with total available leads count
+   */
+  async getTotalAvailableLeads() {
+    try {
+      const response = await axiosInstance.get(`${JWT_HOST_API}/marketplace/total-available-for-sale`, {
+        headers: getAuthHeaders(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching total available leads:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get total available leads count for side bank
+   * @returns {Promise} Response with total available leads count
+   */
+  async getSideBankTotalLeads() {
+    try {
+      const response = await axiosInstance.get(`${JWT_HOST_API}/starter-data/total-available-leads-count`, {
+        headers: getAuthHeaders(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching side bank total leads:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get Agent Leads Count
    * @param {number} agentId - Agent ID
    * @param {number} category - Category ID (default: 1)
