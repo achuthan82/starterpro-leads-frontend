@@ -164,53 +164,100 @@ const ExpenseAndReports = () => {
 
   // Handle date range change (single input with range mode) - auto apply on change
   const handleDateRangeChange = (selectedDates) => {
-    if (selectedDates.length === 2) {
+    const formatDate = (date) => {
+      if (!date) return null;
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    if (selectedDates && selectedDates.length === 2) {
       // Both dates selected - apply filter automatically
+      // Flatpickr in range mode always sends dates in order [start, end]
       const startDate = selectedDates[0];
       const endDate = selectedDates[1];
       
-      const formatDate = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
+      // Ensure dates are in correct order (start <= end)
+      const sortedDates = [startDate, endDate].sort((a, b) => a - b);
       
       const newDateFilter = {
-        startDate: formatDate(startDate),
-        endDate: formatDate(endDate)
+        startDate: formatDate(sortedDates[0]),
+        endDate: formatDate(sortedDates[1])
       };
       
       setDateFilter(newDateFilter);
       setDateError('');
       
       // Auto-apply filter when both dates are selected
-      // TODO: Fetch data with new date range
       console.log('Filtering with dates:', newDateFilter);
-    } else if (selectedDates.length === 1) {
-      // Only start date selected, wait for end date
-      const formatDate = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
+    } else if (selectedDates && selectedDates.length === 1) {
+      // Only one date selected - this happens when:
+      // 1. User is selecting the first date (start date)
+      // 2. User clicked to change a date after both were selected (Flatpickr resets)
+      const selectedDate = selectedDates[0];
+      const selectedDateObj = new Date(selectedDate);
+      selectedDateObj.setHours(0, 0, 0, 0);
       
-      setDateFilter(prev => ({
-        ...prev,
-        startDate: formatDate(selectedDates[0])
-      }));
+      const currentStartDate = dateFilter.startDate ? new Date(dateFilter.startDate + 'T00:00:00') : null;
+      const currentEndDate = dateFilter.endDate ? new Date(dateFilter.endDate + 'T00:00:00') : null;
+      
+      // If we already have both dates, determine which date is being changed
+      if (currentStartDate && currentEndDate) {
+        currentStartDate.setHours(0, 0, 0, 0);
+        currentEndDate.setHours(0, 0, 0, 0);
+        
+        // Check if selected date is before current start date (definitely changing start)
+        if (selectedDateObj < currentStartDate) {
+          // Selected date is before start - changing start date, keep end date
+          setDateFilter(prev => ({
+            startDate: formatDate(selectedDate),
+            endDate: prev.endDate
+          }));
+        } 
+        // Check if selected date is after current end date (definitely changing end)
+        else if (selectedDateObj > currentEndDate) {
+          // Selected date is after end - changing end date, keep start date
+          setDateFilter(prev => ({
+            startDate: prev.startDate,
+            endDate: formatDate(selectedDate)
+          }));
+        } 
+        // Selected date is between start and end - determine which is closer
+        else {
+          const startDiff = Math.abs(selectedDateObj.getTime() - currentStartDate.getTime());
+          const endDiff = Math.abs(selectedDateObj.getTime() - currentEndDate.getTime());
+          
+          if (startDiff <= endDiff) {
+            // Closer to or equal distance to start - changing start date
+            setDateFilter(prev => ({
+              startDate: formatDate(selectedDate),
+              endDate: prev.endDate
+            }));
+          } else {
+            // Closer to end - changing end date
+            setDateFilter(prev => ({
+              startDate: prev.startDate,
+              endDate: formatDate(selectedDate)
+            }));
+          }
+        }
+      } else if (currentStartDate) {
+        // We have start date, this is the end date
+        setDateFilter(prev => ({
+          ...prev,
+          endDate: formatDate(selectedDate)
+        }));
+      } else {
+        // No start date yet, this is the start date
+        setDateFilter(prev => ({
+          ...prev,
+          startDate: formatDate(selectedDate)
+        }));
+      }
     } else {
-      // No dates selected - reset to current month
-      const currentMonth = getCurrentMonthDates();
-      setDateFilter({
-        startDate: currentMonth.startDate,
-        endDate: currentMonth.endDate
-      });
-      setDateError('');
-      
-      // TODO: Fetch data with reset dates
-      console.log('Resetting to current month:', currentMonth);
+      // No dates selected - keep current dates, don't reset
+      // Only reset if explicitly cleared
     }
   };
 
@@ -556,12 +603,18 @@ useEffect(() => {
               </div>
               <div className="min-w-[250px] max-w-[350px]">
                 <DatePicker
-                  value={dateFilter.startDate && dateFilter.endDate ? [dateFilter.startDate, dateFilter.endDate] : undefined}
+                  value={dateFilter.startDate && dateFilter.endDate ? [
+                    new Date(dateFilter.startDate + 'T00:00:00'),
+                    new Date(dateFilter.endDate + 'T00:00:00')
+                  ] : undefined}
                   onChange={handleDateRangeChange}
                   options={{
                     mode: 'range',
                     dateFormat: 'Y-m-d',
-                    defaultDate: [dateFilter.startDate, dateFilter.endDate],
+                    defaultDate: dateFilter.startDate && dateFilter.endDate ? [
+                      new Date(dateFilter.startDate + 'T00:00:00'),
+                      new Date(dateFilter.endDate + 'T00:00:00')
+                    ] : undefined,
                   }}
                   placeholder="Select date range"
                   className="w-full text-sm"
