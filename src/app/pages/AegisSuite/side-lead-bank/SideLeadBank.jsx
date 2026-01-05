@@ -27,6 +27,9 @@ const SideLeadBank = () => {
     const [options, setOptions] = useState([]);
     const  [cartData, setCartData] = useState(cartItems)
     const [selectedAgency, setSelectedAgency] = useState({value:user?.agency?.id, label:user?.agency?.name})
+    const [totalLeads, setTotalLeads] = useState(null);
+    const [totalLeadsLoading, setTotalLeadsLoading] = useState(true);
+    
     useEffect(() => {
       const fetchPricing = async () => {
         setPricingLoading(true);
@@ -42,6 +45,22 @@ const SideLeadBank = () => {
         }
       };
       fetchPricing();
+    }, []);
+
+    useEffect(() => {
+      const fetchTotalLeads = async () => {
+        setTotalLeadsLoading(true);
+        try {
+          const response = await leadsService.getSideBankTotalLeads();
+          setTotalLeads(response?.data?.total_available_leads || response?.total_available_leads || 0);
+        } catch (error) {
+          console.error('Error fetching total available leads:', error);
+          setTotalLeads(0);
+        } finally {
+          setTotalLeadsLoading(false);
+        }
+      };
+      fetchTotalLeads();
     }, []);
   
     return (
@@ -96,6 +115,15 @@ const SideLeadBank = () => {
             </main>
           </div>
           <MarketplaceLeadDetailsModal open={modalState.open} state={modalState.state} onClose={() => setModalState({ open: false, state: null })} pricingData={pricingData} cartData={cartData} setCartData={setCartData} selectedAgency={selectedAgency} />
+          {/* Total Leads Display */}
+          <div className="fixed top-4 right-30 z-50 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-lg flex items-center justify-center gap-2 border border-gray-200 dark:border-gray-700 w-25 h-16">
+            <div className="flex flex-col items-center">
+              <span className="text-xs font-medium leading-tight">Total Leads:</span>
+              <span className="text-xs font-bold text-[#0a2463] dark:text-blue-400 leading-tight">
+                {totalLeadsLoading ? '...' : totalLeads?.toLocaleString() || '0'}
+              </span>
+            </div>
+          </div>
           <CartButton onClick={() => setCartOpen(true)} cartData={cartData}/>
           <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} cartData={cartData} setCartData={setCartData} selectedAgency={selectedAgency}/>
         </div>
