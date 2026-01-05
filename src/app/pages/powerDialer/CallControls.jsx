@@ -640,7 +640,7 @@ const CallControls = ({
         <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg p-2 mb-3 text-xs">
           <p className="font-medium text-xs">⚠️ Insufficient Wallet Balance</p>
           <p className="mt-0.5 text-xs">
-            Your wallet balance is ${typeof walletBalance === 'number' && !isNaN(walletBalance) ? parseFloat(walletBalance).toFixed(2) : '0.00'}. 
+            Your wallet balance is {typeof walletBalance === 'number' && !isNaN(walletBalance) ? parseFloat(walletBalance).toFixed(2) : '0.00'} credits. 
             Please recharge your wallet to make calls.
           </p>
         </div>
@@ -769,7 +769,7 @@ const CallControls = ({
             isCallActive || isDialing 
               ? 'Hang up call' 
               : !hasSufficientBalance
-              ? 'Insufficient wallet balance. Please recharge to make calls.'
+              ? 'Insufficient wallet balance. Please recharge to make calls. 1000 credits equals $1.00.'
               : !hasValidOutboundNumber 
               ? 'Please select a valid outbound number first' 
               : !licenseDetails

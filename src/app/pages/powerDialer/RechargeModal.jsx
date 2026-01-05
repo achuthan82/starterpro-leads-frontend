@@ -23,7 +23,7 @@ const RechargeModal = ({ isOpen, onClose }) => {
   };
 
   const calculateCommission = (amount) => {
-    return toFloatWithoutRounding((amount * 0.03 * 100) / 100, 2);
+    return toFloatWithoutRounding((amount * 0.04 * 100) / 100, 2);
   };
 
   const calculateTotal = (amount) => {
@@ -195,7 +195,7 @@ const RechargeModal = ({ isOpen, onClose }) => {
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Processing Fee (3%):</span>
+              <span className="text-gray-600 dark:text-gray-400">Processing Fee (4%):</span>
               <span className="font-semibold text-gray-900 dark:text-gray-100">
                 ${commission.toFixed(2)}
               </span>
