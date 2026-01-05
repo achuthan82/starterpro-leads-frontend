@@ -56,7 +56,7 @@ const CartSidebar = ({
   const fetchAgents = async (name) => {
     setLoading(true);
     const query = { page: 1, per_page: 50 };
-    if (!name) {
+    if (name) {
       query["name"] = name;
     }
     try {

@@ -4,7 +4,7 @@ import { Card, Spinner } from "components/ui";
 import { subscriptionService, apiUtils } from "utils/apiService";
 import { getReactSelectDarkModeStyles } from "utils/reactSelectDarkMode";
 
-const LeadStateFilter = ({ selected, onChange, setOptions, options}) => {
+const LeadStateFilter = ({ selected, onChange, setOptions, options }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
