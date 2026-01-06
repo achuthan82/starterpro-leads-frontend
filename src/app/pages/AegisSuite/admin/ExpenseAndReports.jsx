@@ -7,12 +7,14 @@ import dashboardService from 'utils/dashboardService';
 import ReactPaginate from 'react-paginate';
 // import { Switch } from 'components/ui';
 import {
-//   ArrowDownTrayIcon,
+  ArrowDownTrayIcon,
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
   MagnifyingGlassIcon,
   FunnelIcon
 } from '@heroicons/react/24/outline';
+import { toast } from 'sonner';
+import { Button } from 'components/ui';
 
 const ExpenseAndReports = () => {
   // Get current month's start and end dates
@@ -59,6 +61,7 @@ const ExpenseAndReports = () => {
   const [perPage] = useState(5);
   const [total, setTotal] = useState(0);        
   const [agentSearchTerm, setAgentSearchTerm] = useState("");
+  const [exportLoading, setExportLoading] = useState(false);
 
   const [dailyChartData, setDailyChartData] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(1); // default event 1
@@ -258,6 +261,199 @@ const ExpenseAndReports = () => {
     } else {
       // No dates selected - keep current dates, don't reset
       // Only reset if explicitly cleared
+    }
+  };
+
+  // CSV helper functions
+  const escapeCSVValue = (value) => {
+    if (value == null || value === undefined) return "";
+    let stringVal = String(value);
+
+    // Escape double quotes by doubling them
+    stringVal = stringVal.replace(/"/g, '""');
+
+    // Wrap in double quotes if value contains comma, quote, or newline
+    if (stringVal.search(/("|,|\n)/g) >= 0) {
+      stringVal = `"${stringVal}"`;
+    }
+
+    return stringVal;
+  };
+
+  // Convert snake_case to Title Case (e.g., "paid_to_twilio" -> "Paid To Twilio")
+  // If key already has spaces (like "Net Income"), return as is with proper capitalization
+  const formatHeader = (key) => {
+    // If key already contains spaces, just capitalize each word
+    if (key.includes(' ')) {
+      return key
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    }
+    // Otherwise, convert snake_case to Title Case
+    return key
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
+  // Format value: add $ for amounts except total_credits_used, show null as 0
+  const formatValue = (key, value) => {
+    // Show null/undefined as 0
+    if (value === null || value === undefined) {
+      return '0';
+    }
+
+    // Don't add $ to total_credits_used
+    if (key === 'total_credits_used') {
+      return String(value);
+    }
+
+    // Add $ to all other numeric values
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue)) {
+      return `$${numValue.toFixed(2)}`;
+    }
+
+    return String(value);
+  };
+
+  // Helper function to convert JSON array or object to CSV
+  const convertJsonToCSV = (jsonData) => {
+    // Handle single object (not array)
+    if (!Array.isArray(jsonData) && typeof jsonData === 'object' && jsonData !== null) {
+      // Calculate Net Income
+      const incomeThroughPlatformSubscription = parseFloat(jsonData.income_through_platform_subscription || 0) || 0;
+      const marketplaceTotalAmount = parseFloat(jsonData.marketplace_total_amount || 0) || 0;
+      const totalCreditsUsed = parseFloat(jsonData.total_credits_used || 0) || 0;
+      const netIncome = incomeThroughPlatformSubscription + marketplaceTotalAmount + (totalCreditsUsed / 1000);
+
+      // Add Net Income to the data object
+      const dataWithNetIncome = {
+        ...jsonData,
+        'Net Income': netIncome
+      };
+
+      const keys = Object.keys(dataWithNetIncome);
+      if (keys.length === 0) {
+        return '';
+      }
+
+      // Sort keys but put Net Income at the end
+      const sortedKeys = keys.sort((a, b) => {
+        if (a === 'Net Income') return 1;
+        if (b === 'Net Income') return -1;
+        return a.localeCompare(b);
+      });
+
+      // Create CSV header row with formatted headers
+      let csvContent = sortedKeys.map(header => escapeCSVValue(formatHeader(header))).join(',') + '\n';
+
+      // Create CSV data row with formatted values
+      const row = sortedKeys.map(header => {
+        const value = dataWithNetIncome[header];
+        // For Net Income, format with $, for others use formatValue
+        if (header === 'Net Income') {
+          return escapeCSVValue(`$${netIncome.toFixed(2)}`);
+        }
+        return escapeCSVValue(formatValue(header, value));
+      });
+      csvContent += row.join(',') + '\n';
+
+      return csvContent;
+    }
+
+    // Handle array of objects
+    if (!Array.isArray(jsonData) || jsonData.length === 0) {
+      return '';
+    }
+
+    // Get all unique keys from all objects to create headers
+    const allKeys = new Set();
+    jsonData.forEach(obj => {
+      Object.keys(obj).forEach(key => allKeys.add(key));
+    });
+
+    // Convert Set to Array and sort for consistent column order
+    const headers = Array.from(allKeys).sort();
+
+    // Create CSV header row with formatted headers
+    let csvContent = headers.map(header => escapeCSVValue(formatHeader(header))).join(',') + '\n';
+
+    // Create CSV data rows with formatted values
+    jsonData.forEach(obj => {
+      const row = headers.map(header => {
+        const value = obj[header];
+        return escapeCSVValue(formatValue(header, value));
+      });
+      csvContent += row.join(',') + '\n';
+    });
+
+    return csvContent;
+  };
+
+  // Handle export expense report
+  const handleExportExpenseReport = async () => {
+    if (!dateFilter.startDate || !dateFilter.endDate) {
+      toast.error('Please select a date range to export');
+      return;
+    }
+
+    setExportLoading(true);
+    
+    try {
+      const formattedStartDate = formatDateForAPI(dateFilter.startDate);
+      const formattedEndDate = formatDateForAPI(dateFilter.endDate);
+      
+      const blob = await dashboardService.downloadCostChargeSum(formattedStartDate, formattedEndDate);
+      
+      // Convert blob to text to get JSON data
+      const text = await blob.text();
+      let jsonResponse;
+      
+      try {
+        jsonResponse = JSON.parse(text);
+      } catch (parseError) {
+        console.error('Error parsing JSON response:', parseError);
+        throw new Error('Invalid response format from server');
+      }
+
+      // Extract data from response (can be object or array)
+      const expenseData = jsonResponse.data;
+      
+      if (!expenseData || (Array.isArray(expenseData) && expenseData.length === 0)) {
+        toast.error('No expense data found to export');
+        return;
+      }
+
+      // Convert JSON data to CSV format
+      const csvContent = convertJsonToCSV(expenseData);
+
+      // Create blob from CSV content with BOM for Excel compatibility
+      const BOM = '\uFEFF';
+      const csvBlob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+
+      // Generate filename with date range
+      const startDateFormatted = dateFilter.startDate.replace(/-/g, '_');
+      const endDateFormatted = dateFilter.endDate.replace(/-/g, '_');
+      const filename = `expense_report_${startDateFormatted}_to_${endDateFormatted}.csv`;
+
+      // Create download link and trigger download
+      const url = URL.createObjectURL(csvBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success('Expense report exported successfully');
+    } catch (error) {
+      console.error('Error exporting expense report:', error);
+      toast.error(error?.response?.data?.message || error?.message || 'Failed to export expense report');
+    } finally {
+      setExportLoading(false);
     }
   };
 
@@ -595,34 +791,45 @@ useEffect(() => {
               <p className="text-gray-600 dark:text-gray-300 mt-1">Track your wallet balance and usage analytics</p>
             </div>
             
-            {/* Date Range Picker - Right side of heading */}
-            <div className="flex items-center gap-3">
-              <div className="flex items-center space-x-2">
-                <FunnelIcon className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Date Range:</span>
-              </div>
-              <div className="min-w-[250px] max-w-[350px]">
-                <DatePicker
-                  value={dateFilter.startDate && dateFilter.endDate ? [
-                    new Date(dateFilter.startDate + 'T00:00:00'),
-                    new Date(dateFilter.endDate + 'T00:00:00')
-                  ] : undefined}
-                  onChange={handleDateRangeChange}
-                  options={{
-                    mode: 'range',
-                    dateFormat: 'Y-m-d',
-                    defaultDate: dateFilter.startDate && dateFilter.endDate ? [
+            {/* Date Range Picker and Export Button - Right side of heading */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center space-x-2">
+                  <FunnelIcon className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Date Range:</span>
+                </div>
+                <div className="min-w-[250px] max-w-[350px]">
+                  <DatePicker
+                    value={dateFilter.startDate && dateFilter.endDate ? [
                       new Date(dateFilter.startDate + 'T00:00:00'),
                       new Date(dateFilter.endDate + 'T00:00:00')
-                    ] : undefined,
-                  }}
-                  placeholder="Select date range"
-                  className="w-full text-sm"
-                />
-                {dateError && (
-                  <p className="mt-1 text-xs text-red-600 dark:text-red-400">{dateError}</p>
-                )}
+                    ] : undefined}
+                    onChange={handleDateRangeChange}
+                    options={{
+                      mode: 'range',
+                      dateFormat: 'Y-m-d',
+                      defaultDate: dateFilter.startDate && dateFilter.endDate ? [
+                        new Date(dateFilter.startDate + 'T00:00:00'),
+                        new Date(dateFilter.endDate + 'T00:00:00')
+                      ] : undefined,
+                    }}
+                    placeholder="Select date range"
+                    className="w-full text-sm"
+                  />
+                  {dateError && (
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">{dateError}</p>
+                  )}
+                </div>
               </div>
+              <Button
+                onClick={handleExportExpenseReport}
+                disabled={exportLoading || !dateFilter.startDate || !dateFilter.endDate}
+                color="primary"
+                className="flex items-center gap-2 text-white dark:bg-[#0a2463] dark:hover:bg-[#0a2463]/90 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ArrowDownTrayIcon className="w-4 h-4" />
+                {exportLoading ? 'Exporting...' : 'Export'}
+              </Button>
             </div>
           </div>
         </header>
@@ -862,7 +1069,7 @@ useEffect(() => {
                       Number Renewal Total Credits
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Total Credits
+                      Total Credits in Amount
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Recharged Amount

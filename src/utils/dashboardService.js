@@ -139,6 +139,31 @@ async getDailySpend(startDate, endDate) {
   }
 }
 
+/**
+ * Download cost charge sum data for date range
+ * @param {string} startDate - Start date in mm-dd-YYYY format
+ * @param {string} endDate - End date in mm-dd-YYYY format
+ * @returns {Promise} Response with cost charge data
+ */
+async downloadCostChargeSum(startDate, endDate) {
+  try {
+    const response = await axiosInstance.get(
+      `${JWT_HOST_API}/dashboard/download-cost-charge-sum`,
+      {
+        params: {
+          start_date: startDate,
+          end_date: endDate
+        },
+        responseType: 'blob' // Important for downloading files
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error downloading cost charge sum:", error);
+    throw error;
+  }
+}
+
 }
 
 
