@@ -69,6 +69,23 @@ class DialerService {
   }
 
   /**
+   * Check spam status for selected phone numbers
+   * @param {Object} params - Parameters for spam check
+   * @param {Array<string>} params.ids - Array of phone number IDs to check
+   * @returns {Promise} Response with spam status for each number
+   */
+  async checkSpamStatus(params) {
+    try {
+      const { ids } = params;
+      const response = await axiosInstance.post('/dialer/check-spam-status', { ids });
+      return response.data;
+    } catch (error) {
+      console.error('Error checking spam status:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Initialize Twilio by getting access token
    * @param {Object} params - Parameters for Twilio initialization
    * @param {string} params.from_number - Phone number to call from
