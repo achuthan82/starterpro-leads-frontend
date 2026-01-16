@@ -413,8 +413,8 @@ const ScheduleAppointmentModal = ({
           ? selectedClient.mortgage_id
           : selectedLead?.originalData?.mortgage_id,
         lead_member_id: selectedClient
-          ? selectedClient?.ivr_response?.lead_member_id
-          : selectedLead?.originalData.lead_member_id,
+          ? selectedClient?.lead_member_id
+          : selectedLead?.originalData?.lead_member_id,
       };
 
       let response;
