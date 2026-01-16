@@ -1,14 +1,17 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Card, Button, Spinner } from 'components/ui';
+import { 
+  Card, 
+  // Button, 
+  Spinner } from 'components/ui';
 import SharedSidebar from '../components/SharedSidebar';
-import Chart from 'react-apexcharts';
+// import Chart from 'react-apexcharts';
 import { DatePicker } from 'components/shared/form/Datepicker';
 import dashboardService from 'utils/dashboardService';
 import ReactPaginate from 'react-paginate';
 import {
-  ArrowDownTrayIcon,
-  ArrowTrendingUpIcon,
-  ArrowTrendingDownIcon,
+  // ArrowDownTrayIcon,
+  // ArrowTrendingUpIcon,
+  // ArrowTrendingDownIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
   XMarkIcon,
@@ -84,30 +87,30 @@ const TwilioExpenseAndReports = () => {
   // const [walletBalance, setWalletBalance] = useState(null);
   // const [walletBalanceLoading, setWalletBalanceLoading] = useState(true);
   // const [walletBalanceError, setWalletBalanceError] = useState(null);
-  const [totalRecharge, setTotalRecharge] = useState(0);
-  const [totalRechargeLoading, setTotalRechargeLoading] = useState(false);
-  const [totalRechargeError, setTotalRechargeError] = useState(null);
+  // const [totalRecharge, setTotalRecharge] = useState(0);
+  // const [totalRechargeLoading, setTotalRechargeLoading] = useState(false);
+  // const [totalRechargeError, setTotalRechargeError] = useState(null);
   const [dateFilter, setDateFilter] = useState({
     startDate: initialDates.startDate,
     endDate: initialDates.endDate
   });
   const [dateError, setDateError] = useState('');
-  const [usageData, setUsageData] = useState([]);
-  const [usageColors, setUsageColors] = useState([]);
-  const [usageLabels, setUsageLabels] = useState([]);
-  const [creditsTotal, setCreditsTotal] = useState(0);
+  // const [usageData, setUsageData] = useState([]);
+  // const [usageColors, setUsageColors] = useState([]);
+  // const [usageLabels, setUsageLabels] = useState([]);
+  // const [creditsTotal, setCreditsTotal] = useState(0);
 
-  const [agentExpenses, setAgentExpenses] = useState([]);
-  const [agentLoading, setAgentLoading] = useState(false);
-  const [agentError, setAgentError] = useState(null);
-  const [page, setPage] = useState(1);          
-  const [perPage] = useState(5);
-  const [total, setTotal] = useState(0);        
-  const [agentSearchTerm, setAgentSearchTerm] = useState("");
-  const [exportLoading, setExportLoading] = useState(false);
+  // const [agentExpenses, setAgentExpenses] = useState([]);
+  // const [agentLoading, setAgentLoading] = useState(false);
+  // const [agentError, setAgentError] = useState(null);
+  // const [page, setPage] = useState(1);          
+  // const [perPage] = useState(5);
+  // const [total, setTotal] = useState(0);        
+  // const [agentSearchTerm, setAgentSearchTerm] = useState("");
+  // const [exportLoading, setExportLoading] = useState(false);
 
-  const [dailyChartData, setDailyChartData] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState("1");
+  // const [dailyChartData, setDailyChartData] = useState([]);
+  // const [selectedEvent, setSelectedEvent] = useState("1");
 
   // New states for Deduction History
   const [deductionHistory, setDeductionHistory] = useState([]);
@@ -118,10 +121,10 @@ const TwilioExpenseAndReports = () => {
   const [deductionSearchTerm, setDeductionSearchTerm] = useState("");
   const [selectedDeductionEvent, setSelectedDeductionEvent] = useState(1);
 
-  const randomColors = [
-    "#0a2463", "#5ab453", "#92c933", "#FF2ECF", "#E000AD", "#FFA71A", "#FF4F1A",
-    "#384766", "#506877", "#3D4E70", "#4A4A4F", "#6D7EA1", "#70838F", "#B8008C", "#FF75DF"
-  ];
+  // const randomColors = [
+  //   "#0a2463", "#5ab453", "#92c933", "#FF2ECF", "#E000AD", "#FFA71A", "#FF4F1A",
+  //   "#384766", "#506877", "#3D4E70", "#4A4A4F", "#6D7EA1", "#70838F", "#B8008C", "#FF75DF"
+  // ];
 
   // Format date from YYYY-MM-DD to MM-DD-YYYY for API
   const formatDateForAPI = useCallback((dateString) => {
@@ -152,32 +155,32 @@ const TwilioExpenseAndReports = () => {
   // }, []);
 
   // Fetch total recharge when date range changes
-  useEffect(() => {
-    const fetchTotalRecharge = async () => {
-      if (!dateFilter.startDate || !dateFilter.endDate) {
-        return;
-      }
+  // useEffect(() => {
+  //   const fetchTotalRecharge = async () => {
+  //     if (!dateFilter.startDate || !dateFilter.endDate) {
+  //       return;
+  //     }
 
-      try {
-        setTotalRechargeLoading(true);
-        setTotalRechargeError(null);
-        const formattedStartDate = formatDateForAPI(dateFilter.startDate);
-        const formattedEndDate = formatDateForAPI(dateFilter.endDate);
+  //     try {
+  //       setTotalRechargeLoading(true);
+  //       setTotalRechargeError(null);
+  //       const formattedStartDate = formatDateForAPI(dateFilter.startDate);
+  //       const formattedEndDate = formatDateForAPI(dateFilter.endDate);
         
-        const response = await dashboardService.getWalletRechargeSum(formattedStartDate, formattedEndDate);
-        const total = response?.data?.total || 0;
-        setTotalRecharge(parseFloat(total) || 0);
-      } catch (err) {
-        console.error('Error fetching total recharge:', err);
-        setTotalRechargeError('Failed to load total recharge');
-        setTotalRecharge(0);
-      } finally {
-        setTotalRechargeLoading(false);
-      }
-    };
+  //       const response = await dashboardService.getWalletRechargeSum(formattedStartDate, formattedEndDate);
+  //       const total = response?.data?.total || 0;
+  //       setTotalRecharge(parseFloat(total) || 0);
+  //     } catch (err) {
+  //       console.error('Error fetching total recharge:', err);
+  //       setTotalRechargeError('Failed to load total recharge');
+  //       setTotalRecharge(0);
+  //     } finally {
+  //       setTotalRechargeLoading(false);
+  //     }
+  //   };
 
-    fetchTotalRecharge();
-  }, [dateFilter.startDate, dateFilter.endDate, formatDateForAPI]);
+  //   fetchTotalRecharge();
+  // }, [dateFilter.startDate, dateFilter.endDate, formatDateForAPI]);
 
   // Handle date range change
   const handleDateRangeChange = (selectedDates) => {
@@ -255,170 +258,170 @@ const TwilioExpenseAndReports = () => {
   };
 
   // CSV helper functions
-  const escapeCSVValue = (value) => {
-    if (value == null || value === undefined) return "";
-    let stringVal = String(value);
-    stringVal = stringVal.replace(/"/g, '""');
-    if (stringVal.search(/("|,|\n)/g) >= 0) {
-      stringVal = `"${stringVal}"`;
-    }
-    return stringVal;
-  };
+  // const escapeCSVValue = (value) => {
+  //   if (value == null || value === undefined) return "";
+  //   let stringVal = String(value);
+  //   stringVal = stringVal.replace(/"/g, '""');
+  //   if (stringVal.search(/("|,|\n)/g) >= 0) {
+  //     stringVal = `"${stringVal}"`;
+  //   }
+  //   return stringVal;
+  // };
 
-  const formatHeader = (key) => {
-    if (key.includes(' ')) {
-      return key
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
-    }
-    return key
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
-  };
+  // const formatHeader = (key) => {
+  //   if (key.includes(' ')) {
+  //     return key
+  //       .split(' ')
+  //       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+  //       .join(' ');
+  //   }
+  //   return key
+  //     .split('_')
+  //     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+  //     .join(' ');
+  // };
 
-  const formatValue = (key, value) => {
-    if (value === null || value === undefined) {
-      return '0';
-    }
-    if (key === 'total_credits_used') {
-      return String(value);
-    }
-    const numValue = parseFloat(value);
-    if (!isNaN(numValue)) {
-      return `$${numValue.toFixed(2)}`;
-    }
-    return String(value);
-  };
+  // const formatValue = (key, value) => {
+  //   if (value === null || value === undefined) {
+  //     return '0';
+  //   }
+  //   if (key === 'total_credits_used') {
+  //     return String(value);
+  //   }
+  //   const numValue = parseFloat(value);
+  //   if (!isNaN(numValue)) {
+  //     return `$${numValue.toFixed(2)}`;
+  //   }
+  //   return String(value);
+  // };
 
-  const convertJsonToCSV = (jsonData) => {
-    // Handle single object (not array)
-    if (!Array.isArray(jsonData) && typeof jsonData === 'object' && jsonData !== null) {
-      const incomeThroughPlatformSubscription = parseFloat(jsonData.income_through_platform_subscription || 0) || 0;
-      const marketplaceTotalAmount = parseFloat(jsonData.marketplace_total_amount || 0) || 0;
-      const totalCreditsUsed = parseFloat(jsonData.total_credits_used || 0) || 0;
-      const netIncome = incomeThroughPlatformSubscription + marketplaceTotalAmount + (totalCreditsUsed / 1000);
+  // const convertJsonToCSV = (jsonData) => {
+  //   // Handle single object (not array)
+  //   if (!Array.isArray(jsonData) && typeof jsonData === 'object' && jsonData !== null) {
+  //     const incomeThroughPlatformSubscription = parseFloat(jsonData.income_through_platform_subscription || 0) || 0;
+  //     const marketplaceTotalAmount = parseFloat(jsonData.marketplace_total_amount || 0) || 0;
+  //     const totalCreditsUsed = parseFloat(jsonData.total_credits_used || 0) || 0;
+  //     const netIncome = incomeThroughPlatformSubscription + marketplaceTotalAmount + (totalCreditsUsed / 1000);
 
-      const dataWithNetIncome = {
-        ...jsonData,
-        'Net Income': netIncome
-      };
+  //     const dataWithNetIncome = {
+  //       ...jsonData,
+  //       'Net Income': netIncome
+  //     };
 
-      const keys = Object.keys(dataWithNetIncome);
-      if (keys.length === 0) {
-        return '';
-      }
+  //     const keys = Object.keys(dataWithNetIncome);
+  //     if (keys.length === 0) {
+  //       return '';
+  //     }
 
-      const sortedKeys = keys.sort((a, b) => {
-        if (a === 'Net Income') return 1;
-        if (b === 'Net Income') return -1;
-        return a.localeCompare(b);
-      });
+  //     const sortedKeys = keys.sort((a, b) => {
+  //       if (a === 'Net Income') return 1;
+  //       if (b === 'Net Income') return -1;
+  //       return a.localeCompare(b);
+  //     });
 
-      let csvContent = sortedKeys.map(header => escapeCSVValue(formatHeader(header))).join(',') + '\n';
-      const row = sortedKeys.map(header => {
-        const value = dataWithNetIncome[header];
-        if (header === 'Net Income') {
-          return escapeCSVValue(`$${netIncome.toFixed(2)}`);
-        }
-        return escapeCSVValue(formatValue(header, value));
-      });
-      csvContent += row.join(',') + '\n';
+  //     let csvContent = sortedKeys.map(header => escapeCSVValue(formatHeader(header))).join(',') + '\n';
+  //     const row = sortedKeys.map(header => {
+  //       const value = dataWithNetIncome[header];
+  //       if (header === 'Net Income') {
+  //         return escapeCSVValue(`$${netIncome.toFixed(2)}`);
+  //       }
+  //       return escapeCSVValue(formatValue(header, value));
+  //     });
+  //     csvContent += row.join(',') + '\n';
 
-      return csvContent;
-    }
+  //     return csvContent;
+  //   }
 
-    // Handle array of objects
-    if (!Array.isArray(jsonData) || jsonData.length === 0) {
-      return '';
-    }
+  //   // Handle array of objects
+  //   if (!Array.isArray(jsonData) || jsonData.length === 0) {
+  //     return '';
+  //   }
 
-    const allKeys = new Set();
-    jsonData.forEach(obj => {
-      Object.keys(obj).forEach(key => allKeys.add(key));
-    });
+  //   const allKeys = new Set();
+  //   jsonData.forEach(obj => {
+  //     Object.keys(obj).forEach(key => allKeys.add(key));
+  //   });
 
-    const headers = Array.from(allKeys).sort();
-    let csvContent = headers.map(header => escapeCSVValue(formatHeader(header))).join(',') + '\n';
+  //   const headers = Array.from(allKeys).sort();
+  //   let csvContent = headers.map(header => escapeCSVValue(formatHeader(header))).join(',') + '\n';
 
-    jsonData.forEach(obj => {
-      const row = headers.map(header => {
-        const value = obj[header];
-        return escapeCSVValue(formatValue(header, value));
-      });
-      csvContent += row.join(',') + '\n';
-    });
+  //   jsonData.forEach(obj => {
+  //     const row = headers.map(header => {
+  //       const value = obj[header];
+  //       return escapeCSVValue(formatValue(header, value));
+  //     });
+  //     csvContent += row.join(',') + '\n';
+  //   });
 
-    return csvContent;
-  };
+  //   return csvContent;
+  // };
 
   // Handle export expense report
-  const handleExportExpenseReport = async () => {
-    if (!dateFilter.startDate || !dateFilter.endDate) {
-      toast.error('Please select a date range to export');
-      return;
-    }
+  // const handleExportExpenseReport = async () => {
+  //   if (!dateFilter.startDate || !dateFilter.endDate) {
+  //     toast.error('Please select a date range to export');
+  //     return;
+  //   }
 
-    setExportLoading(true);
+  //   setExportLoading(true);
     
-    try {
-      const formattedStartDate = formatDateForAPI(dateFilter.startDate);
-      const formattedEndDate = formatDateForAPI(dateFilter.endDate);
+  //   try {
+  //     const formattedStartDate = formatDateForAPI(dateFilter.startDate);
+  //     const formattedEndDate = formatDateForAPI(dateFilter.endDate);
       
-      const blob = await dashboardService.downloadCostChargeSum(formattedStartDate, formattedEndDate);
+  //     const blob = await dashboardService.downloadCostChargeSum(formattedStartDate, formattedEndDate);
       
-      const text = await blob.text();
-      let jsonResponse;
+  //     const text = await blob.text();
+  //     let jsonResponse;
       
-      try {
-        jsonResponse = JSON.parse(text);
-      } catch (parseError) {
-        console.error('Error parsing JSON response:', parseError);
-        throw new Error('Invalid response format from server');
-      }
+  //     try {
+  //       jsonResponse = JSON.parse(text);
+  //     } catch (parseError) {
+  //       console.error('Error parsing JSON response:', parseError);
+  //       throw new Error('Invalid response format from server');
+  //     }
 
-      const expenseData = jsonResponse.data;
+  //     const expenseData = jsonResponse.data;
       
-      if (!expenseData || (Array.isArray(expenseData) && expenseData.length === 0)) {
-        toast.error('No expense data found to export');
-        return;
-      }
+  //     if (!expenseData || (Array.isArray(expenseData) && expenseData.length === 0)) {
+  //       toast.error('No expense data found to export');
+  //       return;
+  //     }
 
-      const csvContent = convertJsonToCSV(expenseData);
-      const BOM = '\uFEFF';
-      const csvBlob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+  //     const csvContent = convertJsonToCSV(expenseData);
+  //     const BOM = '\uFEFF';
+  //     const csvBlob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
 
-      const startDateFormatted = dateFilter.startDate.replace(/-/g, '_');
-      const endDateFormatted = dateFilter.endDate.replace(/-/g, '_');
-      const filename = `expense_report_${startDateFormatted}_to_${endDateFormatted}.csv`;
+  //     const startDateFormatted = dateFilter.startDate.replace(/-/g, '_');
+  //     const endDateFormatted = dateFilter.endDate.replace(/-/g, '_');
+  //     const filename = `expense_report_${startDateFormatted}_to_${endDateFormatted}.csv`;
 
-      const url = URL.createObjectURL(csvBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+  //     const url = URL.createObjectURL(csvBlob);
+  //     const link = document.createElement('a');
+  //     link.href = url;
+  //     link.download = filename;
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //     URL.revokeObjectURL(url);
 
-      toast.success('Expense report exported successfully');
-    } catch (err) {
-      console.error('Error exporting expense report:', err);
-      toast.error(err?.response?.data?.message || err?.message || 'Failed to export expense report');
-    } finally {
-      setExportLoading(false);
-    }
-  };
+  //     toast.success('Expense report exported successfully');
+  //   } catch (err) {
+  //     console.error('Error exporting expense report:', err);
+  //     toast.error(err?.response?.data?.message || err?.message || 'Failed to export expense report');
+  //   } finally {
+  //     setExportLoading(false);
+  //   }
+  // };
 
   // Filter agent expenses based on search term
-  const filteredAgentExpenses = agentExpenses.filter(agent => {
-    if (!agentSearchTerm) return true;
-    const searchLower = agentSearchTerm.toLowerCase();
-    return (
-      agent.agentName?.toLowerCase().includes(searchLower) 
-    );
-  });
+  // const filteredAgentExpenses = agentExpenses.filter(agent => {
+  //   if (!agentSearchTerm) return true;
+  //   const searchLower = agentSearchTerm.toLowerCase();
+  //   return (
+  //     agent.agentName?.toLowerCase().includes(searchLower) 
+  //   );
+  // });
 
   // Format phone number for display
   const formatPhoneNumber = (phone) => {
@@ -822,12 +825,12 @@ const TwilioExpenseAndReports = () => {
   };
 
   // Format currency
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  };
+  // const formatCurrency = (amount) => {
+  //   return new Intl.NumberFormat('en-US', {
+  //     style: 'currency',
+  //     currency: 'USD'
+  //   }).format(amount);
+  // };
 
   // Format date and time for display
   const formatDisplayDateTime = (dateTimeString) => {
@@ -844,252 +847,252 @@ const TwilioExpenseAndReports = () => {
   };
 
   // Donut chart configuration for Service Breakdown
-  const serviceBreakdownOptions = useMemo(() => ({
-    chart: { type: "donut", height: 350 },
-    labels: usageLabels,
-    colors: usageColors,
-    plotOptions: {
-      pie: {
-        dataLabels: {
-          offset: -10,
-          style: {
-            colors: ["#fff"],
-            fontWeight: "bold"
-          },
-          formatter: (val, opts) => {
-            const seriesIndex = opts.seriesIndex;
-            const value = opts.w.config.series[seriesIndex];
-            return `$${value.toFixed(2)}`;
-          }
-        },
-        donut: {
-          size: "70%",
-          labels: {
-            show: true,
-            name: {
-              color: "#000"
-            },
-            value: {
-              color: "#000",
-              formatter: (val) => `$${Number(val).toFixed(2)}`
-            },
-            total: {
-              show: true,
-              label: "Total",
-              formatter: (w) => {
-                const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                return `${formatCurrency(total)}`;
-              }
-            }
-          }
-        }
-      }
-    },
-    legend: {
-      position: "bottom",
-      horizontalAlign: "center",
-      formatter: (label, opts) => {
-        const value = opts.w.globals.series[opts.seriesIndex];
-        return `${label}: $${value.toFixed(2)}`;
-      }
-    },
-    tooltip: {
-      y: {
-        formatter: (val) => `$${val.toFixed(2)}`
-      }
-    }
-  }), [usageLabels, usageColors, formatCurrency]);
+  // const serviceBreakdownOptions = useMemo(() => ({
+  //   chart: { type: "donut", height: 350 },
+  //   labels: usageLabels,
+  //   colors: usageColors,
+  //   plotOptions: {
+  //     pie: {
+  //       dataLabels: {
+  //         offset: -10,
+  //         style: {
+  //           colors: ["#fff"],
+  //           fontWeight: "bold"
+  //         },
+  //         formatter: (val, opts) => {
+  //           const seriesIndex = opts.seriesIndex;
+  //           const value = opts.w.config.series[seriesIndex];
+  //           return `$${value.toFixed(2)}`;
+  //         }
+  //       },
+  //       donut: {
+  //         size: "70%",
+  //         labels: {
+  //           show: true,
+  //           name: {
+  //             color: "#000"
+  //           },
+  //           value: {
+  //             color: "#000",
+  //             formatter: (val) => `$${Number(val).toFixed(2)}`
+  //           },
+  //           total: {
+  //             show: true,
+  //             label: "Total",
+  //             formatter: (w) => {
+  //               const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+  //               return `${formatCurrency(total)}`;
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   },
+  //   legend: {
+  //     position: "bottom",
+  //     horizontalAlign: "center",
+  //     formatter: (label, opts) => {
+  //       const value = opts.w.globals.series[opts.seriesIndex];
+  //       return `${label}: $${value.toFixed(2)}`;
+  //     }
+  //   },
+  //   tooltip: {
+  //     y: {
+  //       formatter: (val) => `$${val.toFixed(2)}`
+  //     }
+  //   }
+  // }), [usageLabels, usageColors, formatCurrency]);
 
   // Fetch usage breakdown
-  useEffect(() => {
-    const fetchUsage = async () => {
-      try {
-        const start = formatDateForAPI(dateFilter.startDate);
-        const end = formatDateForAPI(dateFilter.endDate);
+  // useEffect(() => {
+  //   const fetchUsage = async () => {
+  //     try {
+  //       const start = formatDateForAPI(dateFilter.startDate);
+  //       const end = formatDateForAPI(dateFilter.endDate);
 
-        const res = await dashboardService.getWalletUsageBreakdown(start, end);
-        const apiData = res?.data || [];
+  //       const res = await dashboardService.getWalletUsageBreakdown(start, end);
+  //       const apiData = res?.data || [];
 
-        const series = [];
-        const labels = [];
-        const colors = [];
+  //       const series = [];
+  //       const labels = [];
+  //       const colors = [];
 
-        let totalInThousands = 0;
+  //       let totalInThousands = 0;
 
-        Object.keys(EVENT_MAP).forEach((eventId) => {
-          const found = apiData.find((e) => Number(e.event) === Number(eventId));
-          const value = found?.total_credits_used/1000 || 0;
+  //       Object.keys(EVENT_MAP).forEach((eventId) => {
+  //         const found = apiData.find((e) => Number(e.event) === Number(eventId));
+  //         const value = found?.total_credits_used/1000 || 0;
 
-          series.push(value);
-          labels.push(EVENT_MAP[eventId].name);
-          colors.push(EVENT_MAP[eventId].color);
+  //         series.push(value);
+  //         labels.push(EVENT_MAP[eventId].name);
+  //         colors.push(EVENT_MAP[eventId].color);
 
-          totalInThousands += value;
-        });
+  //         totalInThousands += value;
+  //       });
 
-        setUsageData(series);
-        setUsageLabels(labels);
-        setUsageColors(colors);
-        setCreditsTotal(totalInThousands);
+  //       setUsageData(series);
+  //       setUsageLabels(labels);
+  //       setUsageColors(colors);
+  //       setCreditsTotal(totalInThousands);
 
-      } catch (err) {
-        console.log("Error loading breakdown:", err);
-      }
-    };
+  //     } catch (err) {
+  //       console.log("Error loading breakdown:", err);
+  //     }
+  //   };
 
-    fetchUsage();
-  }, [dateFilter.startDate, dateFilter.endDate, formatDateForAPI, EVENT_MAP]);
+  //   fetchUsage();
+  // }, [dateFilter.startDate, dateFilter.endDate, formatDateForAPI, EVENT_MAP]);
 
   // Fetch agent-wise usage
-  const fetchAgentWiseUsage = useCallback(async () => {
-    try {
-      setAgentExpenses([]);
-      setAgentLoading(true);
-      setAgentError(null);
+  // const fetchAgentWiseUsage = useCallback(async () => {
+  //   try {
+  //     setAgentExpenses([]);
+  //     setAgentLoading(true);
+  //     setAgentError(null);
 
-      const start = formatDateForAPI(dateFilter.startDate);
-      const end = formatDateForAPI(dateFilter.endDate);
+  //     const start = formatDateForAPI(dateFilter.startDate);
+  //     const end = formatDateForAPI(dateFilter.endDate);
 
-      const res = await dashboardService.getAgentWiseUsage(
-        start,
-        end,
-        page,
-        perPage,
-        agentSearchTerm
-      );
+  //     const res = await dashboardService.getAgentWiseUsage(
+  //       start,
+  //       end,
+  //       page,
+  //       perPage,
+  //       agentSearchTerm
+  //     );
 
-      const apiData = res?.data || [];
+  //     const apiData = res?.data || [];
 
-      const mapped = apiData.map((item) => {
-        const inboundCall = Number(item.inbound_call_total_credits) || 0;
-        const outboundCall = Number(item.outbound_call_total_credits) || 0;
-        const inboundSms = Number(item.inbound_sms_total_credits) || 0;
-        const outboundSms = Number(item.outbound_sms_total_credits) || 0;
-        const numberPurchase = Number(item.number_purchase_total_credits) || 0;
-        const numberRenewal = Number(item.number_renewal_total_credits) || 0;
+  //     const mapped = apiData.map((item) => {
+  //       const inboundCall = Number(item.inbound_call_total_credits) || 0;
+  //       const outboundCall = Number(item.outbound_call_total_credits) || 0;
+  //       const inboundSms = Number(item.inbound_sms_total_credits) || 0;
+  //       const outboundSms = Number(item.outbound_sms_total_credits) || 0;
+  //       const numberPurchase = Number(item.number_purchase_total_credits) || 0;
+  //       const numberRenewal = Number(item.number_renewal_total_credits) || 0;
 
-        const totalCredits =
-          (inboundCall +
-            outboundCall +
-            inboundSms +
-            outboundSms +
-            numberPurchase +
-            numberRenewal) / 1000; 
+  //       const totalCredits =
+  //         (inboundCall +
+  //           outboundCall +
+  //           inboundSms +
+  //           outboundSms +
+  //           numberPurchase +
+  //           numberRenewal) / 1000; 
 
-        return {
-          id: item.id,
-          agentName: item.name,
-          agentEmail: item.email,
-          agentPhone: item.phone,
-          inboundCallTotalCredits: inboundCall,
-          outboundCallTotalCredits: outboundCall,
-          inboundSmsTotalCredits: inboundSms,
-          outboundSmsTotalCredits: outboundSms,
-          numberPurchaseTotalCredits: numberPurchase,
-          numberRenewalTotalCredits: numberRenewal,
-          totalCredits,
-          rechargedAmount: Number(item.recharged_amount) || 0
-        };
-      });
+  //       return {
+  //         id: item.id,
+  //         agentName: item.name,
+  //         agentEmail: item.email,
+  //         agentPhone: item.phone,
+  //         inboundCallTotalCredits: inboundCall,
+  //         outboundCallTotalCredits: outboundCall,
+  //         inboundSmsTotalCredits: inboundSms,
+  //         outboundSmsTotalCredits: outboundSms,
+  //         numberPurchaseTotalCredits: numberPurchase,
+  //         numberRenewalTotalCredits: numberRenewal,
+  //         totalCredits,
+  //         rechargedAmount: Number(item.recharged_amount) || 0
+  //       };
+  //     });
 
-      setAgentExpenses(mapped);
-      setTotal(res?.pagination?.total || 0);
-    } catch (err) {
-      setAgentError("Failed to load agent-wise usage: " + err.message);
-      setAgentExpenses([]);
-    } finally {
-      setAgentLoading(false);
-    }
-  }, [dateFilter.startDate, dateFilter.endDate, agentSearchTerm, page, perPage, formatDateForAPI]);
+  //     setAgentExpenses(mapped);
+  //     setTotal(res?.pagination?.total || 0);
+  //   } catch (err) {
+  //     setAgentError("Failed to load agent-wise usage: " + err.message);
+  //     setAgentExpenses([]);
+  //   } finally {
+  //     setAgentLoading(false);
+  //   }
+  // }, [dateFilter.startDate, dateFilter.endDate, agentSearchTerm, page, perPage, formatDateForAPI]);
 
-  useEffect(() => {
-    fetchAgentWiseUsage();
-  }, [fetchAgentWiseUsage]);
+  // useEffect(() => {
+  //   fetchAgentWiseUsage();
+  // }, [fetchAgentWiseUsage]);
 
   // Agent pagination component
-  const CustomPagination = () => {
-    const pageCount = Math.ceil(total / perPage);
-    if (pageCount <= 1) return null;
+  // const CustomPagination = () => {
+  //   const pageCount = Math.ceil(total / perPage);
+  //   if (pageCount <= 1) return null;
 
-    return (
-      <ReactPaginate
-        previousLabel="«"
-        nextLabel="»"
-        forcePage={page - 1}
-        onPageChange={handlePagination}
-        pageCount={pageCount}
-        breakLabel="..."
-        containerClassName="flex space-x-2 mt-4 justify-end"
-        pageLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
-        previousLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
-        nextLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
-        breakLinkClassName="px-4 py-2 border border-gray-300 rounded-full"
-        activeLinkClassName="bg-[#0a2463] text-white"
-      />
-    );
-  };
+  //   return (
+  //     <ReactPaginate
+  //       previousLabel="«"
+  //       nextLabel="»"
+  //       forcePage={page - 1}
+  //       onPageChange={handlePagination}
+  //       pageCount={pageCount}
+  //       breakLabel="..."
+  //       containerClassName="flex space-x-2 mt-4 justify-end"
+  //       pageLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+  //       previousLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+  //       nextLinkClassName="px-4 py-2 border border-gray-300 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+  //       breakLinkClassName="px-4 py-2 border border-gray-300 rounded-full"
+  //       activeLinkClassName="bg-[#0a2463] text-white"
+  //     />
+  //   );
+  // };
 
-  const handlePagination = (selected) => {
-    const selectedPage = selected.selected + 1;
-    setPage(selectedPage);
-  };
+  // const handlePagination = (selected) => {
+  //   const selectedPage = selected.selected + 1;
+  //   setPage(selectedPage);
+  // };
 
   // Fetch daily spend
-  useEffect(() => {
-    const fetchDailySpend = async () => {
-      try {
-        const start = formatDateForAPI(dateFilter.startDate);
-        const end = formatDateForAPI(dateFilter.endDate);
+  // useEffect(() => {
+  //   const fetchDailySpend = async () => {
+  //     try {
+  //       const start = formatDateForAPI(dateFilter.startDate);
+  //       const end = formatDateForAPI(dateFilter.endDate);
 
-        const res = await dashboardService.getDailySpend(start, end);
-        const apiData = res?.data || [];
+  //       const res = await dashboardService.getDailySpend(start, end);
+  //       const apiData = res?.data || [];
 
-        const filtered = apiData.filter(
-          (item) => Number(item.event) === Number(selectedEvent)
-        );
+  //       const filtered = apiData.filter(
+  //         (item) => Number(item.event) === Number(selectedEvent)
+  //       );
 
-        const formatted = filtered.map((item) => {
-          const [mm, dd] = item.date.split("-");
-          const value = (item.total_credits || 0) / 1000;
-          return {
-            date: `${dd}/${mm}`,
-            value: value
-          };
-        });
+  //       const formatted = filtered.map((item) => {
+  //         const [mm, dd] = item.date.split("-");
+  //         const value = (item.total_credits || 0) / 1000;
+  //         return {
+  //           date: `${dd}/${mm}`,
+  //           value: value
+  //         };
+  //       });
 
-        setDailyChartData(formatted);
-      } catch (err) {
-        console.log("Error fetching daily spend:", err);
-      }
-    };
+  //       setDailyChartData(formatted);
+  //     } catch (err) {
+  //       console.log("Error fetching daily spend:", err);
+  //     }
+  //   };
 
-    fetchDailySpend();
-  }, [dateFilter.startDate, dateFilter.endDate, selectedEvent, formatDateForAPI]);
+  //   fetchDailySpend();
+  // }, [dateFilter.startDate, dateFilter.endDate, selectedEvent, formatDateForAPI]);
 
-  const dailySpendChartOptions = useMemo(() => ({
-    chart: {
-      type: "line",
-      toolbar: { show: false }
-    },
-    colors: [EVENT_MAP[selectedEvent]?.color || "#3b82f6"],
-    stroke: { width: 3, curve: "smooth" },
-    xaxis: {
-      categories: dailyChartData.map((i) => i.date)
-    },
-    yaxis: {
-      labels: {
-        formatter: (val) => `$${val.toFixed(2)}`
-      }
-    },
-    legend: { show: false }
-  }), [selectedEvent, EVENT_MAP, dailyChartData]);
+  // const dailySpendChartOptions = useMemo(() => ({
+  //   chart: {
+  //     type: "line",
+  //     toolbar: { show: false }
+  //   },
+  //   colors: [EVENT_MAP[selectedEvent]?.color || "#3b82f6"],
+  //   stroke: { width: 3, curve: "smooth" },
+  //   xaxis: {
+  //     categories: dailyChartData.map((i) => i.date)
+  //   },
+  //   yaxis: {
+  //     labels: {
+  //       formatter: (val) => `$${val.toFixed(2)}`
+  //     }
+  //   },
+  //   legend: { show: false }
+  // }), [selectedEvent, EVENT_MAP, dailyChartData]);
 
-  const dailySpendSeries = useMemo(() => [
-    {
-      name: EVENT_MAP[selectedEvent]?.name || "Event",
-      data: dailyChartData.map((i) => i.value)
-    }
-  ], [selectedEvent, EVENT_MAP, dailyChartData]);
+  // const dailySpendSeries = useMemo(() => [
+  //   {
+  //     name: EVENT_MAP[selectedEvent]?.name || "Event",
+  //     data: dailyChartData.map((i) => i.value)
+  //   }
+  // ], [selectedEvent, EVENT_MAP, dailyChartData]);
 
   // Get table columns for current event
   const tableColumns = getTableColumns();
@@ -1139,7 +1142,7 @@ const TwilioExpenseAndReports = () => {
                   )}
                 </div>
               </div>
-              <Button
+              {/* <Button
                 onClick={handleExportExpenseReport}
                 disabled={exportLoading || !dateFilter.startDate || !dateFilter.endDate}
                 color="primary"
@@ -1147,7 +1150,7 @@ const TwilioExpenseAndReports = () => {
               >
                 <ArrowDownTrayIcon className="w-4 h-4" />
                 {exportLoading ? 'Exporting...' : 'Export'}
-              </Button>
+              </Button> */}
             </div>
           </div>
         </header>
@@ -1155,9 +1158,9 @@ const TwilioExpenseAndReports = () => {
         {/* Main Content */}
         <main className="flex-1 overflow-auto p-6">
           {/* Summary Cards Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-6">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-6"> */}
             {/* Total Recharge Card */}
-            <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
+            {/* <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Recharge</h3>
                 <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
@@ -1188,10 +1191,10 @@ const TwilioExpenseAndReports = () => {
                   </>
                 )}
               </div>
-            </Card>
+            </Card> */}
 
             {/* Total Spend Card */}
-            <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
+            {/* <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Spend</h3>
                 <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
@@ -1204,7 +1207,7 @@ const TwilioExpenseAndReports = () => {
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Spend for selected date range</p>
               </div>
-            </Card>
+            </Card> */}
 
             {/* Balance Card */}
             {/* <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
@@ -1237,12 +1240,12 @@ const TwilioExpenseAndReports = () => {
                 )}
               </div>
             </Card> */}
-          </div>
+          {/* </div> */}
 
           {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6"> */}
             {/* Daily Spend Chart */}
-            <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
+            {/* <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">Daily Spend</h2>
                 <select
@@ -1273,10 +1276,10 @@ const TwilioExpenseAndReports = () => {
                   height={350}
                 />
               )}
-            </Card>
+            </Card> */}
 
             {/* Service Breakdown Chart */}
-            <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
+            {/* <Card className="bg-white dark:bg-gray-800 shieldnest-shadow p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Service Breakdown
               </h2>
@@ -1292,17 +1295,17 @@ const TwilioExpenseAndReports = () => {
                   height={350}
                 />
               )}
-            </Card>
-          </div>
+            </Card> */}
+          {/* </div> */}
 
           {/* Agent-wise Expense Table */}
-          <Card className="bg-white dark:bg-gray-800 shieldnest-shadow overflow-hidden mb-6">
+          {/* <Card className="bg-white dark:bg-gray-800 shieldnest-shadow overflow-hidden mb-6">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Agent-wise Expense</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Agent-wise Expense</h3> */}
                 
                 {/* Search Filter */}
-                <div className="flex items-center space-x-2">
+                {/* <div className="flex items-center space-x-2">
                   <div className="relative">
                     <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
                     <input
@@ -1328,9 +1331,9 @@ const TwilioExpenseAndReports = () => {
                   )}
                 </div>
               </div>
-            </div>
+            </div> */}
 
-            <div className="overflow-x-auto">
+            {/* <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
@@ -1454,12 +1457,12 @@ const TwilioExpenseAndReports = () => {
             <div className="p-4">
               <CustomPagination />
             </div>
-          </Card>
+          </Card> */}
 
           {/* Deduction History Table */}
           <Card className="bg-white dark:bg-gray-800 shieldnest-shadow overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Deduction History</h3>
                 
                 <div className="flex items-center space-x-3">
