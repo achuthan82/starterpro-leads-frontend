@@ -20,6 +20,7 @@ import {
   DocumentIcon,
   Bars3Icon,
   XMarkIcon,
+  CurrencyDollarIcon
 } from "@heroicons/react/24/outline";
 import Logo from "assets/app-logo/logo-text.svg?.react";
 import logoIcon from "assets/app-logo/logo-new.png?.react";
@@ -141,6 +142,12 @@ const SharedSidebar = ({ currentPath = "" }) => {
       href: "/subscriptions",
       icon: CreditCardIcon,
       iconColor: "text-red-600",
+    },
+    {
+      id: "twilio-expense-reports",
+      label: "Twilio Expense and Reports",
+      icon: CurrencyDollarIcon,
+      href: "/twilio/expense-reports",
     },
   ];
 
