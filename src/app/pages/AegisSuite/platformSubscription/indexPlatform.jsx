@@ -8,15 +8,15 @@ import { subscriptionService } from 'utils/apiService';
 import { apiUtils } from 'utils/apiService';
 import { Spinner } from 'components/ui';
 
-import CurrentSubscription from './CurrentSubscription';
-import AvailablePlans from './AvailablePlans';
-import InvoiceHistory from './InvoiceHistory';
-import PreviousSubscriptions from './PreviousSubscriptions';
+import CurrentSubscription from './PlatformCurrentSubscription';
+import AvailablePlans from './PlatformAvailablePlans';
+import InvoiceHistory from '../Subscriptions/InvoiceHistory';
+import PreviousSubscriptions from '../Subscriptions/PreviousSubscriptions';
 import { useNavigate } from 'react-router';
 
 // ----------------------------------------------------------------------
 
-const Subscriptions = () => {
+const PlatformSubscriptions = () => {
   const navigate = useNavigate()
   const { user, logout } = useAuthContext();
   const [loading, setLoading] = useState(true);
@@ -56,15 +56,15 @@ const Subscriptions = () => {
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
-      <SharedSidebar currentPath="/subscriptions" />
+      <SharedSidebar currentPath="/platform-subscriptions" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className='mt-10 xl:mt-0'>
-            <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Mail Subscriptions</h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your mail subscriptions</p>
+            <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Platform Subscriptions</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your platform subscriptions</p>
           </div>
         </header>
 
@@ -122,4 +122,4 @@ const Subscriptions = () => {
   );
 };
 
-export default Subscriptions; 
+export default PlatformSubscriptions; 

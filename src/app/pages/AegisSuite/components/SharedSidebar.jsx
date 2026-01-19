@@ -136,12 +136,19 @@ const SharedSidebar = ({ currentPath = "" }) => {
       href: "/appointments",
     },
     {
-      id: "subscriptions",
-      label: "Subscriptions",
-      description: "Manage your subscriptions",
+      id: "mail-subscriptions",
+      label: "Mail Subscriptions",
+      description: "Manage your mail subscriptions",
       href: "/subscriptions",
       icon: CreditCardIcon,
       iconColor: "text-red-600",
+    },
+        {
+      id: "platform-subscriptions",
+      label: "Platform Subscriptions",
+      description: "Manage your platform subscriptions",
+      href: "/platform-subscriptions",
+      icon: BanknotesIcon,
     },
     {
       id: "twilio-expense-reports",

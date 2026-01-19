@@ -78,6 +78,13 @@ const protectedRoutes = {
               .default,
           }),
         },
+         {
+          path: "platform-subscriptions",
+          lazy: async () => ({
+            Component: (await import("app/pages/AegisSuite/platformSubscription/indexPlatform"))
+              .default,
+          }),
+        },
         {
           path: "subscriptions/success",
           lazy: async () => ({
