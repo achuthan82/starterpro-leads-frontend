@@ -69,22 +69,38 @@ class DialerService {
   }
 
   /**
+   * Check spam status for selected phone numbers
+   * @param {Object} params - Parameters for spam check
+   * @param {Array<string>} params.ids - Array of phone number IDs to check
+   * @returns {Promise} Response with spam status for each number
+   */
+  async checkSpamStatus(params) {
+    try {
+      const { ids } = params;
+      const response = await axiosInstance.post('/dialer/check-spam-status', { ids });
+      return response.data;
+    } catch (error) {
+      console.error('Error checking spam status:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Initialize Twilio by getting access token
    * @param {Object} params - Parameters for Twilio initialization
-   * @param {string} params.to_number - Phone number of the lead being called
-   * @param {string|number} params.mortgage_id - Mortgage ID of the selected lead
-   * @param {string} params.uuid - UUID4 generated on frontend
+   * @param {string} params.from_number - Phone number to call from
    * @returns {Promise} Response with Twilio token
    */
-  async initializeTwilio() { //params
+  async initializeTwilio(params = {}) {
     try {
-      // const { to_number, mortgage_id, uuid, mailing_assignee_id } = params;
-      const response = await axiosInstance.post(API_ENDPOINTS.DIALER.TOKEN/*, {
-        to_number,
-        mortgage_id,
-        uuid,
-        mailing_assignee_id
-      }*/);
+      const { from_number } = params;
+      const requestBody = {};
+      
+      if (from_number) {
+        requestBody.from_number = from_number;
+      }
+      
+      const response = await axiosInstance.post(API_ENDPOINTS.DIALER.TOKEN, requestBody);
       return response.data;
     } catch (error) {
       console.error('Error initializing Twilio:', error);

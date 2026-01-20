@@ -74,7 +74,7 @@ export function CallProvider({ children }) {
   }, []);
 
   // Initialize Twilio Device (called only when making a call)
-  const initializeTwilio = useCallback(async (toNumber, mortgageId, uuid, lead_member_id) => {
+  const initializeTwilio = useCallback(async (fromNumber) => {
     try {
       setCallStatus('Initializing calling system...');
       
@@ -84,12 +84,7 @@ export function CallProvider({ children }) {
       }
 
       // Call API with required parameters
-      const data = await dialerService.initializeTwilio({
-        to_number: toNumber,
-        mortgage_id: mortgageId,
-        uuid: uuid,
-        mailing_assignee_id: lead_member_id
-      });
+      const data = await dialerService.initializeTwilio({ from_number: fromNumber });
       
       if (!data?.data?.token) {
         throw new Error('No token in response');
@@ -504,7 +499,9 @@ const fetchCallLogs = useCallback(
       setIsCallEnded(false);
       
       // Initialize Twilio with call parameters (this will call the API)
-      await initializeTwilio(toNumber, mortgageId, callUuid, lead_member_id);
+      // Format the from number for the API
+      const fromNumber = formatPhoneForAPI(selectedOutboundNumber.phone);
+      await initializeTwilio(fromNumber);
       
       // Wait a bit for device to be ready
       if (!deviceRef.current) {
@@ -534,7 +531,10 @@ const fetchCallLogs = useCallback(
         return `+${digits}`;
       };
 
-     callRef.current = await deviceRef.current.connect({
+      const currentUser = localStorage.getItem('currentUser');
+      const userId = JSON.parse(currentUser)?.id;
+
+      callRef.current = await deviceRef.current.connect({
         params: {
           To: formatPhoneForTwilio(leadPhoneNumber),
           From: formatPhoneForTwilio(selectedOutboundNumber.phone),
@@ -542,9 +542,10 @@ const fetchCallLogs = useCallback(
           MortgageId: mortgageId,
           CallLogUuid: callUuid,
           LeadMemberId: lead_member_id,
-          leadId: selectedLead.id
+          leadId: selectedLead.id,
+          UserID: userId
         }
-     });
+      });
 
       console.log(formatPhoneForTwilio(leadPhoneNumber), formatPhoneForTwilio(selectedOutboundNumber.phone))
       console.log(callRef.current)

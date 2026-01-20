@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, useCallback, Fragment } from 'react';
 import {
   Dialog,
   DialogPanel,
@@ -6,7 +6,7 @@ import {
   TransitionChild,
   DialogTitle
 } from "@headlessui/react";
-import { XMarkIcon, CheckCircleIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, CheckCircleIcon, PencilIcon, TrashIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import { dialerService } from 'utils/apiService';
 import dialerServiceDirect from 'utils/dialerService';
 import { toast } from 'sonner';
@@ -22,6 +22,8 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [selectedForSpamCheck, setSelectedForSpamCheck] = useState(new Set());
+  const [checkingSpam, setCheckingSpam] = useState(false);
 
   // Extract state from lead (could be from state field or territory)
   const getLeadState = () => {
@@ -87,14 +89,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
     return null;
   };
 
-  // Fetch outbound numbers
-  useEffect(() => {
-    if (isOpen) {
-      fetchOutboundNumbers();
-    }
-  }, [isOpen]);
-
-  const fetchOutboundNumbers = async () => {
+  const fetchOutboundNumbers = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -127,7 +122,14 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  // Fetch outbound numbers
+  useEffect(() => {
+    if (isOpen) {
+      fetchOutboundNumbers();
+    }
+  }, [isOpen, fetchOutboundNumbers]);
 
   const handleSelect = (number) => {
     setSelectedNumber(number);
@@ -213,6 +215,75 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
   const handleCancelDelete = () => {
     setShowDeleteConfirm(false);
     setDeletingId(null);
+  };
+
+  // Handle spam check checkbox toggle
+  const handleSpamCheckToggle = (numberId, e) => {
+    e.stopPropagation();
+    setSelectedForSpamCheck(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(numberId)) {
+        newSet.delete(numberId);
+      } else {
+        newSet.add(numberId);
+      }
+      return newSet;
+    });
+  };
+
+  // Handle spam check submission
+  const handleCheckSpam = async () => {
+    if (selectedForSpamCheck.size === 0) {
+      toast.error('Please select at least one number to check spam status');
+      return;
+    }
+
+    setCheckingSpam(true);
+    try {
+      const ids = Array.from(selectedForSpamCheck);
+      const response = await dialerServiceDirect.checkSpamStatus({ ids });
+      
+      // Update the spam status in the outbound numbers list
+      // Handle different possible response structures
+      let updatedNumbers = null;
+      
+      if (response?.data) {
+        if (Array.isArray(response.data)) {
+          // Response is an array of updated numbers
+          updatedNumbers = response.data;
+        } else if (typeof response.data === 'object') {
+          // Response is an object with number IDs as keys
+          updatedNumbers = Object.entries(response.data).map(([id, data]) => ({
+            id,
+            ...(typeof data === 'object' ? data : { is_spam: data })
+          }));
+        }
+      }
+      
+      if (updatedNumbers && updatedNumbers.length > 0) {
+        setOutboundNumbers(prevNumbers => {
+          return prevNumbers.map(number => {
+            const updatedNumber = updatedNumbers.find(updated => updated.id === number.id);
+            if (updatedNumber) {
+              return { ...number, is_spam: updatedNumber.is_spam };
+            }
+            return number;
+          });
+        });
+        toast.success('Spam status checked successfully');
+      } else {
+        // If we can't parse the response, refresh the list
+        await fetchOutboundNumbers();
+        toast.success('Spam status checked successfully');
+      }
+      
+      setSelectedForSpamCheck(new Set());
+    } catch (err) {
+      console.error('Error checking spam status:', err);
+      toast.error(err?.response?.data?.message || err?.message || 'Failed to check spam status');
+    } finally {
+      setCheckingSpam(false);
+    }
   };
 
   const formatPhoneNumber = (phone) => {
@@ -303,6 +374,30 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
               </div>
             )}
 
+            {/* Spam Check Section */}
+            {!loading && !error && outboundNumbers.length > 0 && (
+              <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheckIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Check Spam Status</span>
+                  </div>
+                  {selectedForSpamCheck.size > 0 && (
+                    <button
+                      onClick={handleCheckSpam}
+                      disabled={checkingSpam}
+                      className="px-3 py-1.5 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {checkingSpam ? 'Checking...' : `Check Spam (${selectedForSpamCheck.size})`}
+                    </button>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Select numbers and click &quot;Check Spam&quot; to verify spam status
+                </p>
+              </div>
+            )}
+
             {/* Outbound Numbers List */}
             {!loading && !error && outboundNumbers.length > 0 && (
               <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -310,6 +405,8 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                   const isRecommended = recommendedNumber && number.id === recommendedNumber.id;
                   const isSelected = selectedNumber && number.id === selectedNumber.id;
                   const isEditing = editingId === number.id;
+                  const isSpamChecked = selectedForSpamCheck.has(number.id);
+                  const isSpam = number.is_spam === true;
                   
                   return (
                     <div
@@ -324,18 +421,37 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                              {formatPhoneNumber(number.phone)}
-                            </span>
-                            {isRecommended && (
-                              <span className="px-2 py-0.5 text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-full flex items-center gap-1">
-                                <CheckCircleIcon className="w-3 h-3" />
-                                Recommended
+                        <div className="flex items-center gap-3 flex-1">
+                          {/* Spam Check Checkbox */}
+                          <input
+                            type="checkbox"
+                            checked={isSpamChecked}
+                            onChange={(e) => handleSpamCheckToggle(number.id, e)}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                                {formatPhoneNumber(number.phone)}
                               </span>
-                            )}
-                          </div>
+                              {isRecommended && (
+                                <span className="px-2 py-0.5 text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-full flex items-center gap-1">
+                                  <CheckCircleIcon className="w-3 h-3" />
+                                  Recommended
+                                </span>
+                              )}
+                              {number.is_spam !== undefined && (
+                                <span className={`px-2 py-0.5 text-xs font-medium rounded-full flex items-center gap-1 ${
+                                  isSpam
+                                    ? 'bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300'
+                                    : 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300'
+                                }`}>
+                                  <ShieldCheckIcon className="w-3 h-3" />
+                                  {isSpam ? 'Spam' : 'Not Spam'}
+                                </span>
+                              )}
+                            </div>
                           {isEditing ? (
                             <div className="flex items-center gap-2 mt-2">
                               <input
@@ -384,6 +500,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                               )}
                             </>
                           )}
+                          </div>
                         </div>
                         {!isEditing && (
                           <div className="flex items-center gap-2">

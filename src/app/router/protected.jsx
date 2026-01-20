@@ -243,6 +243,14 @@ const protectedRoutes = {
             Component: (await import("app/pages/AegisSuite/Settings")).default,
           }),
         },
+         {
+          path: "/twilio/expense-reports",
+          lazy: async () => ({
+            Component: (
+              await import("app/pages/AegisSuite/admin/TwilioExpenseAndReports")
+            ).default,
+          }),
+        },
 
         // Admin routes
         {
