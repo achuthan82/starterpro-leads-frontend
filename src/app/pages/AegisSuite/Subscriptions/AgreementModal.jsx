@@ -6,6 +6,7 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
+import Logo from "assets/app-logo/logo-text.svg";
 import { Button, GhostSpinner } from "components/ui";
 import SignatureCanvas from "react-signature-canvas";
 import { v4 as uuidv4 } from "uuid";
@@ -15,6 +16,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import html2canvas from "html2canvas-pro";
 import { useParams } from "react-router";
+// import { jsPDF } from "jspdf";
 
 export default function CommitmentAgreementModal({
   isOpen,
@@ -37,34 +39,92 @@ export default function CommitmentAgreementModal({
   const [loading, setLoading] = useState(false);
   const generateAndSendPDF = async () => {
     try {
-      const element = document.getElementById("content-id");
-      console.log("element", element);
-      element
-        .querySelectorAll(
-          "div, p, h1, h2, h3, h4, h5, h6, span, a, button, input, textarea, select, option, label, table, th, td, tr, tbody, thead, tfoot, form, fieldset, legend, output, progress, meter, details, summary, dialog, iframe, video, audio, canvas, svg, path, rect, circle, ellipse, line, polyline, polygon, text, tspan, g, use, image, foreignObject, symbol, defs, clipPath, mask, pattern, symbol, defs, clipPath, mask, pattern",
-        )
-        .forEach((el) => {
-          el.style.color = "#222222";
-        });
+      const original = document.getElementById("content-id");
+      if (!original) {
+        toast.error("Could not find content to capture.");
+        return false;
+      }
+
+      const element = original.cloneNode(true);
+      document.body.appendChild(element);
+
+      // Insert at very top of the agreement
+      element.style.position = "absolute";
+      element.style.left = "-9999px";
+      element.style.top = "0";
+      element.style.width = "820px";
+      element.style.padding = "24px";
+      element.style.background = "#ffffff";
+      element.style.boxSizing = "border-box";
+
+      const logoWrapper = document.createElement("div");
+      logoWrapper.style.textAlign = "center";
+      logoWrapper.style.marginBottom = "20px";
+
+      const logoImg = document.createElement("img");
+      logoImg.src = Logo;
+      logoImg.style.width = "160px";
+      logoImg.style.height = "auto";
+      logoImg.style.margin = "0 auto";
+
+      logoWrapper.appendChild(logoImg);
+
+      // Insert at very top
+      element.prepend(logoWrapper);
+      const scrollArea = element.querySelector(".overflow-y-auto");
+      if (scrollArea) {
+        scrollArea.style.overflow = "visible";
+        scrollArea.style.maxHeight = "none";
+        scrollArea.style.height = "auto"; // important
+        scrollArea.style.paddingRight = "0px";
+
+        scrollArea.style.minHeight = scrollArea.scrollHeight + "px";
+      }
+
+      element.querySelectorAll("button").forEach((btn) => btn.remove());
+
+      const sigImage = sigCanvas.current.toDataURL();
+
+      const signatureBox = element.querySelector(".sigCanvas")?.parentElement;
+      if (signatureBox) {
+        signatureBox.innerHTML = "<strong>Signature:</strong>";
+
+        const img = document.createElement("img");
+        img.src = sigImage;
+        img.style.width = "100%";
+        img.style.marginTop = "8px";
+        img.style.border = "1px solid #ccc";
+
+        signatureBox.appendChild(img);
+      }
+
+      await new Promise((r) => setTimeout(r, 150));
+
       const canvas = await html2canvas(element, {
-        scale: 1.4,
+        scale: 2,
         useCORS: true,
-        logging: false,
         backgroundColor: "#ffffff",
-        color: "#222222",
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight, // <-- key line
       });
 
       const imgData = canvas.toDataURL("image/png");
-      const config = {
-        method: "post",
-        url: `${JWT_HOST_API}/files/upload/platform/purchase_agreement/${uuid4}`,
-        headers: {
-          Authorization: `Bearer ${params?.token}`,
+      const link = document.createElement("a");
+      link.href = imgData;
+      link.download = "purchase_agreement_preview.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(element);
+      const response = await axios.post(
+        `${JWT_HOST_API}/files/upload/platform/purchase_agreement/${uuid4}`,
+        { img: imgData },
+        {
+          headers: {
+            Authorization: `Bearer ${params?.token}`,
+          },
         },
-        data: { img: imgData },
-      };
+      );
 
-      const response = await axios(config);
       if (response.data.status === 200) {
         return true;
       } else {
@@ -77,6 +137,49 @@ export default function CommitmentAgreementModal({
       return false;
     }
   };
+
+  // const generateAndSendPDF = async () => {
+  //   try {
+  //     const element = document.getElementById("content-id");
+  //     console.log("element", element);
+  //     element
+  //       .querySelectorAll(
+  //         "div, p, h1, h2, h3, h4, h5, h6, span, a, button, input, textarea, select, option, label, table, th, td, tr, tbody, thead, tfoot, form, fieldset, legend, output, progress, meter, details, summary, dialog, iframe, video, audio, canvas, svg, path, rect, circle, ellipse, line, polyline, polygon, text, tspan, g, use, image, foreignObject, symbol, defs, clipPath, mask, pattern, symbol, defs, clipPath, mask, pattern",
+  //       )
+  //       .forEach((el) => {
+  //         el.style.color = "#222222";
+  //       });
+  //     const canvas = await html2canvas(element, {
+  //       scale: 1.4,
+  //       useCORS: true,
+  //       logging: false,
+  //       backgroundColor: "#ffffff",
+  //       color: "#222222",
+  //     });
+
+  //     const imgData = canvas.toDataURL("image/png");
+  //     const config = {
+  //       method: "post",
+  //       url: `${JWT_HOST_API}/files/upload/platform/purchase_agreement/${uuid4}`,
+  //       headers: {
+  //         Authorization: `Bearer ${params?.token}`,
+  //       },
+  //       data: { img: imgData },
+  //     };
+
+  //     const response = await axios(config);
+  //     if (response.data.status === 200) {
+  //       return true;
+  //     } else {
+  //       toast.error("Failed to send acknowledgement");
+  //       return false;
+  //     }
+  //   } catch (error) {
+  //     console.error("Error uploading acknowledgement:", error);
+  //     toast.error("Error uploading acknowledgement");
+  //     return false;
+  //   }
+  // };
   const handleStripeCheckout = async () => {
     setLoading(true);
     try {
