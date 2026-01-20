@@ -4,19 +4,19 @@ import clsx from 'clsx';
 import SharedSidebar from '../components/SharedSidebar';
 
 import { useAuthContext } from 'app/contexts/auth/context';
-import { subscriptionService } from 'utils/apiService';
+import { platformSubscriptionService } from 'utils/apiService';
 import { apiUtils } from 'utils/apiService';
 import { Spinner } from 'components/ui';
 
-import CurrentSubscription from './CurrentSubscription';
-import AvailablePlans from './AvailablePlans';
-import InvoiceHistory from './InvoiceHistory';
-import PreviousSubscriptions from './PreviousSubscriptions';
+import PlatformCurrentSubscription from './PlatformCurrentSubscription';
+import PlatformAvailablePlans from './PlatformAvailablePlans';
+import PlatformInvoiceHistory from './PlatformInvoiceHistory';
+import PlatformPreviousSubscriptions from './PlatformPreviousSubscriptions';
 import { useNavigate } from 'react-router';
 
 // ----------------------------------------------------------------------
 
-const Subscriptions = () => {
+const PlatformSubscriptions = () => {
   const navigate = useNavigate()
   const { user, logout } = useAuthContext();
   const [loading, setLoading] = useState(true);
@@ -25,7 +25,7 @@ const Subscriptions = () => {
   const fetchSubscription = async () => {
         try {
           setLoading(true);
-          const response = await subscriptionService.getCurrentSubscription(user.id);
+          const response = await platformSubscriptionService.getCurrentSubscription(user.id);
           setSubscription(response?.data?.data);
         } catch (err) {
           if (apiUtils.isAuthError(err)) {
@@ -56,15 +56,15 @@ const Subscriptions = () => {
   return (
     <div className="flex h-screen bg-[var(--color-ecru-white)] dark:bg-gray-900">
       {/* Sidebar */}
-      <SharedSidebar currentPath="/subscriptions" />
+      <SharedSidebar currentPath="/platform-subscriptions" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-6">
           <div className='mt-10 xl:mt-0'>
-            <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Mail Subscriptions</h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your mail subscriptions</p>
+            <h1 className="text-2xl font-bold text-[var(--color-atoll)] dark:text-blue-400">Platform Subscriptions</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your platform subscriptions</p>
           </div>
         </header>
 
@@ -100,10 +100,10 @@ const Subscriptions = () => {
             </TabList>
             <TabPanels className="mt-4">
               <TabPanel>
-                <CurrentSubscription subscription={subscription} fetchSubscription={fetchSubscription} />
+                <PlatformCurrentSubscription subscription={subscription} fetchSubscription={fetchSubscription} />
               </TabPanel>
               <TabPanel>
-                <PreviousSubscriptions/>
+                <PlatformPreviousSubscriptions/>
                 {/* <p className='mb-0 text-gray-500'>No Previous Subscriptions Found</p> */}
               </TabPanel>
             </TabPanels>
@@ -111,10 +111,10 @@ const Subscriptions = () => {
         )}
 
         <div className="mt-12">
-          <AvailablePlans subscription={subscription}  />
+          <PlatformAvailablePlans subscription={subscription}  />
         </div>
         <div className="mt-12">
-          <InvoiceHistory navigate={navigate} />
+          <PlatformInvoiceHistory navigate={navigate} />
         </div>
         </main>
       </div>  
@@ -122,4 +122,4 @@ const Subscriptions = () => {
   );
 };
 
-export default Subscriptions; 
+export default PlatformSubscriptions; 

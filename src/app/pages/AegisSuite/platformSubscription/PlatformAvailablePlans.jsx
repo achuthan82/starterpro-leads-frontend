@@ -6,14 +6,14 @@ import {
   TransitionChild,
   DialogTitle
 } from "@headlessui/react";
-import { subscriptionService, apiUtils } from 'utils/apiService';
+import { platformSubscriptionService, apiUtils } from 'utils/apiService';
 import { Button, Card, Spinner,Pagination, PaginationItems, PaginationNext, PaginationPrevious } from 'components/ui';
 import { useDisclosure } from "hooks";
-import PurchaseLeads from './PurchaseLeads';
+import PurchaseLeads from '../Subscriptions/PurchaseLeads';
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { XCircleIcon } from '@heroicons/react/24/outline';
 
-const AvailablePlans = ({ subscription }) => {
+const PlatformAvailablePlans = ({ subscription }) => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -35,7 +35,7 @@ const AvailablePlans = ({ subscription }) => {
   const fetchPlans = async (page, per_page) => {
     try {
       setLoading(true);
-      const response = await subscriptionService.getAvailablePlans(page, per_page);
+      const response = await platformSubscriptionService.getAvailablePlans(page, per_page);
       console.log(response)
       setPlans(response?.data?.data);
       setPagination(response?.data?.pagination)
@@ -67,31 +67,53 @@ const AvailablePlans = ({ subscription }) => {
 
       {error && <div className="text-red-500 bg-red-100 p-4 rounded-md">{error}</div>}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         {!loading && plans && plans.length > 0 && plans.map((plan) => (
-          <Card key={plan.id} className="flex flex-col bg-white dark:bg-gray-800 overflow-hidden">
-            <div className="p-6 flex-grow">
-              <h3 className="text-xl font-semibold text-[#031746] dark:text-[#4d7cff]" >{plan.title}</h3>
-              <div className="mt-4">
-                <span className="text-4xl font-bold">${plan.unit_price}</span>
-                <span className="text-gray-500">/{plan.quantity}</span>
-              </div>
-            </div>
-            <div className="p-3 bg-gray-50 dark:bg-dark-800" style={{ backgroundColor: '#0a2463', color: '#fff' }}>
-              <Button variant="solid" color="primary" className="w-full" onClick={() => selectPlan(plan)}>
-                Subscribe
-              </Button>
-            </div>
-          </Card>
-        ))}
+            <Card
+              key={plan.id}
+              className={`
+                relative flex flex-col overflow-hidden rounded-2xl
+                bg-white dark:bg-gray-900
+                border border-gray-200 dark:border-gray-700
+                shadow-sm hover:shadow-xl
+                transition-all duration-300 hover:-translate-y-1
+              `}
+            >
+              <div className="p-6 pb-4">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  {plan.title}
+                </h3>
 
-        {!loading && plans && plans.length === 0 && (
-          <div className="col-span-full text-center py-20">
-            <p className="text-lg font-medium text-gray-600 dark:text-gray-400">
-              No plans found
-            </p>
-          </div>
-        )}
+                <div className="mt-5 flex items-end gap-1">
+                  <span className="text-4xl font-extrabold text-gray-900 dark:text-white">
+                    ${plan.unit_price}
+                  </span>
+                  <span className="text-sm text-gray-500 mb-1">
+                    /{plan.quantity}
+                  </span>
+                </div>
+              </div>
+
+              <div className="h-px bg-gray-200 dark:bg-gray-700 mx-6" />
+
+              <div className="p-6 mt-auto">
+                <Button
+                  onClick={() => selectPlan(plan)}
+                  variant="solid" color="primary" className="w-full py-3 text-sm font-semibold rounded-xl bg-[#0a2463] hover:bg-[#071a47] text-white"
+                >
+                  Subscribe
+                </Button>
+              </div>
+            </Card>
+         ))}
+
+          {!loading && plans && plans.length === 0 && (
+            <div className="col-span-full text-center py-20">
+              <p className="text-lg font-medium text-gray-600 dark:text-gray-400">
+                No plans found
+              </p>
+            </div>
+          )}
       </div>
 
       <div className="flex justify-center items-center mt-6">
@@ -199,4 +221,4 @@ const AvailablePlans = ({ subscription }) => {
   );
 };
 
-export default AvailablePlans; 
+export default PlatformAvailablePlans; 

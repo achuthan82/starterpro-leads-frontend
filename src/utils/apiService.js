@@ -21,6 +21,7 @@ import notificationsService from './notificationsService';
 import adminService from './adminService';
 import ordersService from './ordersService';
 import subscriptionService from './subscriptionService';
+import platformSubscriptionService from './platformSubscriptionService'
 import invoiceService from './invoiceService';
 import stateService from './stateService';
 import leadUploadService from './leadUploadService';
@@ -49,6 +50,7 @@ export { notificationsService };
 export { adminService };
 export { ordersService };
 export { subscriptionService };
+export { platformSubscriptionService };
 export {invoiceService};
 export {stateService}
 export {leadUploadService}
@@ -76,6 +78,7 @@ const apiService = {
   admin: adminService,
   orders: ordersService,
   subscriptions: subscriptionService,
+  platformSubscription: platformSubscriptionService,
   invoice:invoiceService,
   state: stateService,
   upload:leadUploadService,
