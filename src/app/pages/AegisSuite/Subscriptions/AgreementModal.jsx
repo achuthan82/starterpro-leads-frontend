@@ -109,11 +109,11 @@ export default function CommitmentAgreementModal({
       });
 
       const imgData = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.href = imgData;
-      link.download = "purchase_agreement_preview.png";
-      document.body.appendChild(link);
-      link.click();
+      // const link = document.createElement("a");
+      // link.href = imgData;
+      // link.download = "purchase_agreement_preview.png";
+      // document.body.appendChild(link);
+      // link.click();
       document.body.removeChild(element);
       const response = await axios.post(
         `${JWT_HOST_API}/files/upload/platform/purchase_agreement/${uuid4}`,
