@@ -14,6 +14,12 @@ const invoiceService = {
    getInvoiceDetails: (id, type) => {
     return axios.get(`${JWT_HOST_API}/invoice/${id}?is_marketplace=${type}`);
   },
+  getInvoicePlatformHistory: (page, per_page) => {
+    return axios.get(`${JWT_HOST_API}/platform-susbcription/order-summary?page=${page}&per_page=${per_page}`);
+  },
+  getInvoicePlatformDetails: (id, type) => {
+    return axios.get(`${JWT_HOST_API}/invoice/${id}?is_marketplace=${type}`);
+  },
 };
 
 export default invoiceService; 

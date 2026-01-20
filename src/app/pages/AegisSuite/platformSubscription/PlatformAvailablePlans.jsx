@@ -6,7 +6,7 @@ import {
   TransitionChild,
   DialogTitle
 } from "@headlessui/react";
-import { subscriptionService, apiUtils } from 'utils/apiService';
+import { platformSubscriptionService, apiUtils } from 'utils/apiService';
 import { Button, Card, Spinner,Pagination, PaginationItems, PaginationNext, PaginationPrevious } from 'components/ui';
 import { useDisclosure } from "hooks";
 import PurchaseLeads from '../Subscriptions/PurchaseLeads';
@@ -35,7 +35,7 @@ const PlatformAvailablePlans = ({ subscription }) => {
   const fetchPlans = async (page, per_page) => {
     try {
       setLoading(true);
-      const response = await subscriptionService.getAvailablePlans(page, per_page);
+      const response = await platformSubscriptionService.getAvailablePlans(page, per_page);
       console.log(response)
       setPlans(response?.data?.data);
       setPagination(response?.data?.pagination)

@@ -3,7 +3,7 @@
 
 import { Button, Card, Tag } from 'components/ui';
 // import ChangeStatesModal from './ChangeStatesModal';
-import CancelSubscription from '../Subscriptions/CancelSubscription';
+import CancelSubscription from './PlatformCancelSubscription';
 import { useDisclosure } from "hooks";
 // import { useNavigate } from 'react-router';
 

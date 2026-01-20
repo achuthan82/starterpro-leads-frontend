@@ -4,14 +4,14 @@ import clsx from 'clsx';
 import SharedSidebar from '../components/SharedSidebar';
 
 import { useAuthContext } from 'app/contexts/auth/context';
-import { subscriptionService } from 'utils/apiService';
+import { platformSubscriptionService } from 'utils/apiService';
 import { apiUtils } from 'utils/apiService';
 import { Spinner } from 'components/ui';
 
-import CurrentSubscription from './PlatformCurrentSubscription';
-import AvailablePlans from './PlatformAvailablePlans';
-import InvoiceHistory from '../Subscriptions/InvoiceHistory';
-import PreviousSubscriptions from '../Subscriptions/PreviousSubscriptions';
+import PlatformCurrentSubscription from './PlatformCurrentSubscription';
+import PlatformAvailablePlans from './PlatformAvailablePlans';
+import PlatformInvoiceHistory from './PlatformInvoiceHistory';
+import PlatformPreviousSubscriptions from './PlatformPreviousSubscriptions';
 import { useNavigate } from 'react-router';
 
 // ----------------------------------------------------------------------
@@ -25,7 +25,7 @@ const PlatformSubscriptions = () => {
   const fetchSubscription = async () => {
         try {
           setLoading(true);
-          const response = await subscriptionService.getCurrentSubscription(user.id);
+          const response = await platformSubscriptionService.getCurrentSubscription(user.id);
           setSubscription(response?.data?.data);
         } catch (err) {
           if (apiUtils.isAuthError(err)) {
@@ -100,10 +100,10 @@ const PlatformSubscriptions = () => {
             </TabList>
             <TabPanels className="mt-4">
               <TabPanel>
-                <CurrentSubscription subscription={subscription} fetchSubscription={fetchSubscription} />
+                <PlatformCurrentSubscription subscription={subscription} fetchSubscription={fetchSubscription} />
               </TabPanel>
               <TabPanel>
-                <PreviousSubscriptions/>
+                <PlatformPreviousSubscriptions/>
                 {/* <p className='mb-0 text-gray-500'>No Previous Subscriptions Found</p> */}
               </TabPanel>
             </TabPanels>
@@ -111,10 +111,10 @@ const PlatformSubscriptions = () => {
         )}
 
         <div className="mt-12">
-          <AvailablePlans subscription={subscription}  />
+          <PlatformAvailablePlans subscription={subscription}  />
         </div>
         <div className="mt-12">
-          <InvoiceHistory navigate={navigate} />
+          <PlatformInvoiceHistory navigate={navigate} />
         </div>
         </main>
       </div>  
