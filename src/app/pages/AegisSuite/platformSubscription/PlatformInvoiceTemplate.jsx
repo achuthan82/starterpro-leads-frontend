@@ -14,7 +14,7 @@ const InvoiceTemplate = () => {
   const searchParams = new URLSearchParams(location.search);
   const type = searchParams.get("from");
   const [paymentData, setPaymentData] = useState(null);
-  console.log(paymentData, setPaymentData);
+  // console.log(paymentData);
 
   useEffect(() => {
     const today = new Date();
@@ -39,7 +39,7 @@ const InvoiceTemplate = () => {
 
   const getDetails = () => {
     invoiceService
-      .getInvoiceDetails(params.id, type)
+      .getInvoicePlatformDetails(params.id, type)
       .then((response) => {
         if (response.data.status === 200) {
           setPaymentData(response.data.data);
@@ -348,7 +348,7 @@ const InvoiceTemplate = () => {
                     </td>
                     {/* <td className="p-3 text-right text-sm">${paymentData?.invoice_data?.unit_price}</td> */}
                     <td className="p-3 text-right text-sm font-medium">
-                      ${paymentData?.subtotal}
+                      ${paymentData?.subtotal ||  paymentData?.amount_received}
                     </td>
                   </tr>
                 )}
@@ -367,10 +367,10 @@ const InvoiceTemplate = () => {
                   <td className="p-3 text-right text-sm font-medium">
                     $
                     {paymentData?.subtotal ||
-                      paymentData?.invoice_data?.subtotal}
+                      paymentData?.invoice_data?.subtotal ||  paymentData?.amount_received}
                   </td>
                 </tr>
-                <tr>
+                {/* <tr>
                   <td className="bg-gray-50 p-3 text-sm font-medium text-gray-700">
                     Processing Fee ({paymentData?.invoice_data?.commission}%):
                   </td>
@@ -379,7 +379,7 @@ const InvoiceTemplate = () => {
                     {paymentData?.invoice_data?.total_amount ||
                       paymentData?.amount_received}
                   </td>
-                </tr>
+                </tr> */}
                 {paymentData?.discounted_price && (
                   <tr>
                     <td className="bg-gray-50 p-3 text-sm font-medium text-gray-700">

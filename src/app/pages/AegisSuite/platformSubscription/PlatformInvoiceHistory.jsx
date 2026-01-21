@@ -38,47 +38,47 @@ const InvoiceHistory = ({navigate}) => {
         setCurrentPage(val)
         fetchInvoiceList(val, 10)
     }
-    const download = () => {
-        setLoading(true)
-        invoiceService.getInvoicePlatformHistory(1, pagination.total).then((response) => {
-            if (response.data.status === 200) {
-                const invoices = response.data.data
-                const filteredData = invoices.map(obj => {
-                    const cleaned = Object.fromEntries(
-                        Object.entries(obj).filter(([key]) => key !== 'descriptions')
-                    );
+  const download = () => {
+  setLoading(true);
 
-                    // Convert states_chosen array to comma-separated string
-                    if (Array.isArray(cleaned.states_chosen)) {
-                        cleaned.states_chosen = cleaned.states_chosen.join(', ');
-                    }
+  invoiceService.getInvoicePlatformHistory(1, pagination.total)
+    .then((response) => {
+      if (response.data.status === 200) {
+        const invoices = response.data.data;
 
-                    return cleaned;
-                })
-                const headers = Object.keys(filteredData[0]);
+        // Keep only required fields
+        const filteredData = invoices.map(item => ({
+          id: item.id,
+          date: new Date(item.created_at).toLocaleDateString('en-US'),
+          amount: item.amount_received
+        }));
 
-                // Convert to CSV string
-                const rows = filteredData.map(row =>
-                    headers.map(field => JSON.stringify(row[field])).join(',')
-                );
+        const headers = ['invoice', 'date', 'amount'];
 
-                const csvContent = [headers.join(','), ...rows].join('\n');
+        // Convert to CSV
+        const rows = filteredData.map(row =>
+          headers.map(field => JSON.stringify(row[field])).join(',')
+        );
 
-                // Create a blob and download link
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
+        const csvContent = [headers.join(','), ...rows].join('\n');
 
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', 'invoices.csv');
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }).finally(() => {
-            setLoading(false)
-        })
-    }
+        // Download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'invoices.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+};
+
     useEffect(() => {
         fetchInvoiceList(1, 10)
     }, [])
@@ -96,9 +96,9 @@ const InvoiceHistory = ({navigate}) => {
                 </div>
 
                 <Table className="w-full text-left">
-                    <THead>
+                    <THead className='border-b-1'>
                         <Tr>
-                            <Th>Invoice</Th>
+                            <Th>Invoice ID</Th>
                             <Th>Date</Th>
                             <Th>Amount</Th>
                             {/* <Th>Status</Th> */}
@@ -118,7 +118,7 @@ const InvoiceHistory = ({navigate}) => {
                                 </Td> */}
                                 <Td className='flex justify-center'>
                                     <div className="flex items-center gap-1 text-blue-600">
-                                        <Button variant="link" size="sm" onClick={() => {navigate(`/subscriptions/invoice/${invoice.id}?from=0`)}}>View</Button>
+                                        <Button variant="link" size="sm" onClick={() => {navigate(`/platform-subscriptions/invoice/${invoice.id}?from=0`)}}>View</Button>
                                     </div>
                                 </Td>
                             </Tr>

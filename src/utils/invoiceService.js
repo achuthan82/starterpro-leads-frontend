@@ -18,7 +18,7 @@ const invoiceService = {
     return axios.get(`${JWT_HOST_API}/platform-susbcription/order-summary?page=${page}&per_page=${per_page}`);
   },
   getInvoicePlatformDetails: (id, type) => {
-    return axios.get(`${JWT_HOST_API}/invoice/${id}?is_marketplace=${type}`);
+    return axios.get(`${JWT_HOST_API}/invoice/platform-subscription/${id}?is_marketplace=${type}`);
   },
 };
 

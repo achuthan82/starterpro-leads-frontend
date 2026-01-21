@@ -114,6 +114,14 @@ const protectedRoutes = {
           }),
         },
         {
+          path: "platform-subscriptions/invoice/:id",
+          lazy: async () => ({
+            Component: (
+              await import("app/pages/AegisSuite/platformSubscription/PlatformInvoiceTemplate")
+            ).default,
+          }),
+        },
+        {
           path: "subscriptions/purchase/:id",
           lazy: async () => ({
             Component: (
