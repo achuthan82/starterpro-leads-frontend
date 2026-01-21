@@ -7,7 +7,7 @@ import CancelSubscription from './PlatformCancelSubscription';
 import { useDisclosure } from "hooks";
 // import { useNavigate } from 'react-router';
 
-const CurrentSubscription = ({ subscription, fetchSubscription }) => {
+const PlatformCurrentSubscription = ({ subscription, fetchSubscription, noData }) => {
     // const navigate = useNavigate()
     // const [isModalOpen, setIsModalOpen] = useState(false);
     const [isOpen, { open, close }] = useDisclosure(false);
@@ -21,7 +21,8 @@ const CurrentSubscription = ({ subscription, fetchSubscription }) => {
                 <div className="text-center p-8">
                     <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 dark:text-white">No Subscription Found</h3>
                     <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                        You do not have an active subscription. Please choose a plan from the available plans below.
+                        {noData}
+                        {/* You do not have an active subscription. Please choose a plan from the available plans below. */}
                     </p>
                 </div>
             </Card>
@@ -30,17 +31,17 @@ const CurrentSubscription = ({ subscription, fetchSubscription }) => {
 
     //   const { plan, status, states } = subscription;
 
-    const getNextWednesday = () => {
-        const date = new Date();
-        const day = date.getDay();
-        const diff = day <= 3 ? 3 - day : 10 - day;
-        date.setDate(date.getDate() + diff);
-        return date.toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-        });
-    };
+    // const getNextWednesday = () => {
+    //     const date = new Date();
+    //     const day = date.getDay();
+    //     const diff = day <= 3 ? 3 - day : 10 - day;
+    //     date.setDate(date.getDate() + diff);
+    //     return date.toLocaleDateString('en-US', {
+    //         month: 'long',
+    //         day: 'numeric',
+    //         year: 'numeric',
+    //     });
+    // };
 
     //   const isWeekly = plan?.interval?.toLowerCase() === 'week';
 
@@ -98,12 +99,15 @@ const CurrentSubscription = ({ subscription, fetchSubscription }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Plan */}
                 <div>
-                    <p className="text-sm text-gray-500">Plan</p>
-                    <p className="text-xl font-semibold text-gray-900 dark:text-white">
+                    {/* <p className="text-sm text-gray-500">Plan</p> */}
+                    <p className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                     {subscription?.title}
                     </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                     Monthly mailer subscription
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                        Start date: <span className="font-semibold">{subscription?.started_at}</span>
                     </p>
                 </div>
 
@@ -115,11 +119,11 @@ const CurrentSubscription = ({ subscription, fetchSubscription }) => {
                     <span className="text-sm text-gray-500"> / month</span>
                     </p>
 
-                    {subscription?.status === 'active' && (
+                    {/* {subscription?.status === 'active' && (
                     <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                         Next billing date: <span className="font-medium">{getNextWednesday()}</span>
                     </p>
-                    )}
+                    )} */}
                 </div>
                 </div>
 
@@ -153,7 +157,7 @@ const CurrentSubscription = ({ subscription, fetchSubscription }) => {
 
                 {/* Actions */}
                 {subscription?.status === 'active' && (
-                <div className="flex justify-end pt-2">
+                <div className="flex justify-end">
                     <Button
                     variant="outline"
                     onClick={open}
@@ -172,4 +176,4 @@ const CurrentSubscription = ({ subscription, fetchSubscription }) => {
     );
 };
 
-export default CurrentSubscription; 
+export default PlatformCurrentSubscription; 

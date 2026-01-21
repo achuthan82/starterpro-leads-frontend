@@ -57,7 +57,7 @@ const PreviousSubscriptions = () => {
                             <>
                             {previousList && previousList.length > 0 ? (
                             <Table className="w-full text-left dark:border-gray-700 dark:bg-gray-800">
-                                <THead>
+                                <THead className='border-b-1'>
                                     <Tr>
                                         <Th>Subscription Name</Th>
                                         <Th>Status</Th>

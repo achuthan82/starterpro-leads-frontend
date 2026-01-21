@@ -21,11 +21,15 @@ const PlatformSubscriptions = () => {
   const { user, logout } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [subscription, setSubscription] = useState(null);
+  const [noData, setNoData] = useState('');
   const [error, setError] = useState(null);
   const fetchSubscription = async () => {
         try {
           setLoading(true);
           const response = await platformSubscriptionService.getCurrentSubscription(user.id);
+          if (response.data.status === 204) {
+           setNoData(response.data.message)
+          }
           setSubscription(response?.data?.data);
         } catch (err) {
           if (apiUtils.isAuthError(err)) {
@@ -100,7 +104,7 @@ const PlatformSubscriptions = () => {
             </TabList>
             <TabPanels className="mt-4">
               <TabPanel>
-                <PlatformCurrentSubscription subscription={subscription} fetchSubscription={fetchSubscription} />
+                <PlatformCurrentSubscription subscription={subscription} fetchSubscription={fetchSubscription} noData={noData}/>
               </TabPanel>
               <TabPanel>
                 <PlatformPreviousSubscriptions/>
