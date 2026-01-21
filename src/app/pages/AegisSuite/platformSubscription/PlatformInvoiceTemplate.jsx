@@ -14,7 +14,7 @@ const InvoiceTemplate = () => {
   const searchParams = new URLSearchParams(location.search);
   const type = searchParams.get("from");
   const [paymentData, setPaymentData] = useState(null);
-  // console.log(paymentData);
+  console.log(paymentData, setPaymentData);
 
   useEffect(() => {
     const today = new Date();
@@ -333,7 +333,7 @@ const InvoiceTemplate = () => {
                         ${data.unit_price}
                       </td>
                       <td className="p-3 text-right text-sm font-medium">
-                        ${data.subtotal}
+                        ${data.amount}
                       </td>
                     </tr>
                   );
@@ -348,7 +348,7 @@ const InvoiceTemplate = () => {
                     </td>
                     {/* <td className="p-3 text-right text-sm">${paymentData?.invoice_data?.unit_price}</td> */}
                     <td className="p-3 text-right text-sm font-medium">
-                      ${paymentData?.subtotal ||  paymentData?.amount_received}
+                      ${paymentData?.invoice_data?.amount}
                     </td>
                   </tr>
                 )}
@@ -366,20 +366,20 @@ const InvoiceTemplate = () => {
                   </td>
                   <td className="p-3 text-right text-sm font-medium">
                     $
-                    {paymentData?.subtotal ||
-                      paymentData?.invoice_data?.subtotal ||  paymentData?.amount_received}
+                    {paymentData?.amount_received ||
+                      paymentData?.invoice_data?.amount_received}
                   </td>
                 </tr>
-                {/* <tr>
+                <tr>
                   <td className="bg-gray-50 p-3 text-sm font-medium text-gray-700">
                     Processing Fee ({paymentData?.invoice_data?.commission}%):
                   </td>
                   <td className="p-3 text-right text-sm font-medium">
                     $
-                    {paymentData?.invoice_data?.total_amount ||
+                    {paymentData?.invoice_data?.amount_received ||
                       paymentData?.amount_received}
                   </td>
-                </tr> */}
+                </tr>
                 {paymentData?.discounted_price && (
                   <tr>
                     <td className="bg-gray-50 p-3 text-sm font-medium text-gray-700">
@@ -396,7 +396,7 @@ const InvoiceTemplate = () => {
                     Total Amount:
                   </td>
                   <td className="text-atoll p-4 text-right text-xl font-bold">
-                    ${paymentData?.total_amount || paymentData?.amount_received}
+                    ${paymentData?.amount_received || paymentData?.amount_received}
                   </td>
                 </tr>
               </tbody>
