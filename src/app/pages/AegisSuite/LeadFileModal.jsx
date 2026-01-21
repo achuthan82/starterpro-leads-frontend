@@ -58,6 +58,7 @@ export default function LeadFileModal({
           <button
             onClick={close}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            data-testid="close-uploaded-files"
           >
             <XMarkIcon className="h-6 w-6" />
           </button>
@@ -110,6 +111,7 @@ export default function LeadFileModal({
         <div className="mt-6 flex justify-end gap-3 border-t border-gray-200 pt-4 dark:border-gray-700">
           <button
             onClick={close}
+            data-testid="btn-close-uploaded-files"
             className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             Close

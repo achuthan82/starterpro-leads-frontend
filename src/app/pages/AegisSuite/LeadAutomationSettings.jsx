@@ -165,6 +165,7 @@ const LeadAutomationSettings = ({
                       "sms",
                     )
                   }
+                  data-testid="appointment-sms-automation"
                   className={`${
                     lead.appointment_notification_sms_enabled ? "bg-[#0a2463]" : "bg-gray-300"
                   } relative inline-flex h-6 w-11 items-center rounded-full transition`}
@@ -195,6 +196,7 @@ const LeadAutomationSettings = ({
                   onChange={() =>
                     handleLeadAutomation(!lead?.sms_automation_enabled)
                   }
+                  data-testid="lead-sms-automation"
                   className={`${
                     lead?.sms_automation_enabled
                       ? "bg-[#0a2463]"
@@ -230,6 +232,7 @@ const LeadAutomationSettings = ({
                       "email",
                     )
                   }
+                    data-testid="tappointment-email-automation"
                   className={`${
                     lead.appointment_notification_mail_enabled ? "bg-[#0a2463]" : "bg-gray-300"
                   } relative inline-flex h-6 w-11 items-center rounded-full transition`}
@@ -251,6 +254,7 @@ const LeadAutomationSettings = ({
                   style={{ backgroundColor: "var(--atoll)" }}
                   type="button"
                   onClick={closeModal}
+                  data-testid="close-automation-settings"
                   className="mr-4 rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
                 >
                   Close
