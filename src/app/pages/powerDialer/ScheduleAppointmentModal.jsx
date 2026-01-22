@@ -510,6 +510,7 @@ const ScheduleAppointmentModal = ({
         as="div"
         className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
         onClose={onClose}
+        data-testid="schedule-appointment-modal"
       >
         {/* Overlay */}
         <TransitionChild
@@ -540,6 +541,7 @@ const ScheduleAppointmentModal = ({
               <button
                 onClick={onClose}
                 className="text-gray-400 transition-colors hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                data-testid="btn-x-close-schedule-appointment-modal"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -592,6 +594,7 @@ const ScheduleAppointmentModal = ({
                     max={maxDateStr}
                     value={selectedDate || ""}
                     onChange={(e) => handleDateSelect(e.target.value)}
+                    data-testid="input-select-date"
                     className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                   />
                 </div>
@@ -643,6 +646,7 @@ const ScheduleAppointmentModal = ({
                             type="text"
                             value={clientName}
                             onChange={(e) => setClientName(e.target.value)}
+                            data-testid="input-client-name"
                             className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                             placeholder="Enter client name"
                             required
@@ -663,6 +667,7 @@ const ScheduleAppointmentModal = ({
                           onChange={handleClient}
                           placeholder="Select Client"
                           classNamePrefix="react-select"
+                          data-testid="select-client"
                         />
                       </div>
                     ) : (
@@ -687,6 +692,7 @@ const ScheduleAppointmentModal = ({
                         type="text"
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
+                        data-testid="input-phone-number"
                         className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                         placeholder="Enter phone number"
                         required
@@ -701,6 +707,7 @@ const ScheduleAppointmentModal = ({
                         type="text"
                         value={getMeetingDateTime()}
                         readOnly
+                        data-testid="input-meeting-date-time"
                         className="w-full cursor-not-allowed rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
                       />
                     </div>
@@ -714,6 +721,7 @@ const ScheduleAppointmentModal = ({
                         type="text"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
+                        data-testid="input-title"
                         className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                         placeholder="Enter appointment title"
                         required
@@ -731,6 +739,7 @@ const ScheduleAppointmentModal = ({
                         <div className="mb-2">
                           <select
                             value={selectedDetailOption}
+                            data-testid="select-client-details"
                             onChange={(e) => {
                               const option = e.target.value;
                               setSelectedDetailOption(option);
@@ -823,6 +832,7 @@ const ScheduleAppointmentModal = ({
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         rows={3}
+                        data-testid="teatarea-notes"
                         className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                         placeholder="Add any notes about this appointment..."
                       />
@@ -839,6 +849,7 @@ const ScheduleAppointmentModal = ({
                           setClientName("");
                           setPhoneNumber("");
                         }}
+                        data-testid="btn-cancel-schedule-appointment-modal"
                         className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                       >
                         Cancel
@@ -865,6 +876,7 @@ const ScheduleAppointmentModal = ({
                             ? "bg-[#0a2463] text-white hover:bg-[#0a2463]/90 dark:bg-blue-500 dark:hover:bg-blue-600"
                             : "cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400"
                         }`}
+                        data-testid="btn-schedule-appointment"
                       >
                         {loading ? "Scheduling..." : "Schedule Appointment"}
                       </button>
@@ -877,6 +889,7 @@ const ScheduleAppointmentModal = ({
                   <div className="mt-6 flex items-center justify-end space-x-3 border-t border-gray-200 pt-6 dark:border-gray-700">
                     <button
                       onClick={onClose}
+                      data-testid="btn-cancel-show-form"
                       className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                     >
                       Cancel

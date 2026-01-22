@@ -62,6 +62,7 @@ const LeadStateList = ({
         <div className="flex items-center gap-2">
           <span>Per page:</span>
           <select
+            data-testid="select-per-page"
             className="rounded border px-2 py-1"
             value={perPage}
             onChange={(e) => {
@@ -140,6 +141,7 @@ const LeadStateList = ({
           variant="outline"
           disabled={page === 1}
           onClick={() => setPage((p) => Math.max(1, p - 1))}
+          data-testid="btn-prev-page"
         >
           Previous
         </Button>
@@ -150,6 +152,7 @@ const LeadStateList = ({
           variant="outline"
           disabled={page === totalPages || totalPages === 0}
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          data-testid="btn-back-page"
         >
           Next
         </Button>

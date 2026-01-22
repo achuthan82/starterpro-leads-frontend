@@ -56,6 +56,7 @@ const LeadStateCard = ({
         </span>
         <Button
           style={{ backgroundColor: "#0a2463" }}
+          data-testid="btn-view-leads"
           className="px-6 text-white transition-colors hover:bg-[#0a1a4a]"
           onClick={onViewLeads}
         >

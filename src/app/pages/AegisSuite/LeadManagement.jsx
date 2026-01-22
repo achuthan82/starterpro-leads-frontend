@@ -1075,6 +1075,7 @@ const LeadManagement = () => {
                   <button
                     key={tab.id}
                     onClick={() => handleTabChange(tab.id)}
+                    data-testid={`lead-tab-${tab.id}`}
                     className={`border-b-2 px-1 py-2 text-sm font-medium ${
                       activeTab === tab.id
                         ? "border-[#0a2463] text-[#0a2463] dark:border-blue-400 dark:text-blue-400"
@@ -1750,7 +1751,7 @@ const LeadManagement = () => {
                         <button
                           onClick={() => handlePageChange(currentPage - 1)}
                           disabled={currentPage <= 1}
-                          data-testid='btn-page-previous'
+                          data-testid='btn-prev-page'
                           className={`rounded border px-3 py-1 ${
                             currentPage <= 1
                               ? "cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-500"
@@ -1795,7 +1796,7 @@ const LeadManagement = () => {
                         <button
                           onClick={() => handlePageChange(currentPage + 1)}
                           disabled={currentPage >= totalPages}
-                          data-testid='btn-page-forward'
+                          data-testid='btn-back-page'
                           className={`rounded border px-3 py-1 ${
                             currentPage >= totalPages
                               ? "cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-500"

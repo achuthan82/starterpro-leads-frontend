@@ -115,6 +115,7 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
     <Transition appear show={open} as={Fragment}>
       <Dialog
         as="div"
+        data-testid='modal-close-lead-age-variants'
         className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden px-4 py-6 sm:px-5"
         onClose={onClose}
       >
@@ -226,6 +227,7 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
                             </span>
                             <Button
                               size="xs"
+                              data-testid={`btn-dec-completed-${ageId}`}
                               onClick={() =>
                                 handleQtyChange(
                                   ageId,
@@ -242,6 +244,7 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
                               min={0}
                               max={group.gold}
                               value={qty.completed || 0}
+                              data-testid={`input-completed-${ageId}`}
                               onChange={(e) =>
                                 handleQtyChange(
                                   ageId,
@@ -254,6 +257,7 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
                             />
                             <Button
                               size="xs"
+                              data-testid={`btn-inc-completed-${ageId}`}
                               onClick={() =>
                                 handleQtyChange(
                                   ageId,
@@ -280,6 +284,7 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
                             </span>
                             <Button
                               size="xs"
+                              data-testid={`btn-dec-incomplete-${ageId}`}
                               onClick={() =>
                                 handleQtyChange(
                                   ageId,
@@ -305,6 +310,7 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
                                 )
                               }
                               className="w-10 rounded border text-center"
+                              data-testid={`input-incomplete-${ageId}`}
                             />
                             <Button
                               size="xs"
@@ -316,6 +322,7 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
                                   group.incomplete,
                                 )
                               }
+                              data-testid={`btn-inc-incomplete-${ageId}`}
                             >
                               +
                             </Button>
@@ -342,6 +349,7 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
                             monthPricingSilver,
                           )
                         }
+                        data-testid={`btn-add-to-cart-${ageId}`}
                       >
                         {cartLoading ? "Adding..." : "Add to Cart"}
                       </Button>
@@ -350,7 +358,7 @@ const MarketplaceLeadDetailsModal = ({ open, state, onClose, pricingData }) => {
                 })}
               </div>
             )}
-            <Button variant="outline" className="mt-6" onClick={onClose}>
+            <Button variant="outline" className="mt-6" onClick={onClose} data-testid='btn-close-lead-age-variants'>
               Close
             </Button>
           </DialogPanel>

@@ -220,6 +220,7 @@ const CartSidebar = ({ open, onClose }) => {
           </h2>
           <button
             onClick={onClose}
+            data-testid="btn-x-close-territory-modal"
             className="text-2xl text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
           >
             &times;
@@ -259,6 +260,7 @@ const CartSidebar = ({ open, onClose }) => {
                       className="text-lg text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                       onClick={() => removeFromCart(item.id)}
                       title="Remove"
+                      data-testid="btn-x-remove-from-cart"
                     >
                       &times;
                     </button>
@@ -279,6 +281,7 @@ const CartSidebar = ({ open, onClose }) => {
                       }
                       className="w-16 rounded border border-gray-300 bg-white px-2 py-1 text-center text-gray-900 dark:border-gray-600 dark:bg-gray-600 dark:text-gray-100"
                       disabled={loading}
+                      data-testid="btn-quality"
                     />
                     <button
                       className={`ml-2 rounded bg-[#0a2463] px-3 py-1 text-xs font-semibold text-white dark:bg-blue-600 ${pendingQuantities[item.id] === item.quantity || !pendingQuantities[item.id] || isNaN(pendingQuantities[item.id]) || Number(pendingQuantities[item.id]) < 1 ? "cursor-not-allowed opacity-50" : "hover:bg-[#0a1a4a] dark:hover:bg-blue-700"}`}
@@ -290,6 +293,7 @@ const CartSidebar = ({ open, onClose }) => {
                         loading
                       }
                       onClick={() => handleUpdate(item.id)}
+                      data-testid="btn-update-quality"
                     >
                       Update
                     </button>
@@ -357,6 +361,7 @@ const CartSidebar = ({ open, onClose }) => {
             className="w-full rounded-lg bg-[#0a2463] py-3 text-lg font-bold text-white transition-colors hover:bg-[#0a1a4a] disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700"
             disabled={cart.length === 0 || loading || checkoutLoading}
             onClick={handleCheckout}
+            data-testid="btn-cart-checkout"
           >
             {checkoutLoading ? "Processing..." : "Checkout"}
           </button>

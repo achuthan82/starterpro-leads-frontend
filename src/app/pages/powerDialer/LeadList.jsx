@@ -311,6 +311,7 @@ const handleStatusChange = (newStatus) => {
             const value = e.target.value;
             onSearchChange(value);
           }}
+          data-testid="input-search-leads"
           className="w-full rounded-lg border border-gray-300 bg-white py-2 pr-4 pl-10 text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
         />
       </div>
@@ -321,6 +322,7 @@ const handleStatusChange = (newStatus) => {
           <select
             value={selectedStatus}
             onChange={(e) => handleStatusChange(e.target.value)}
+            data-testid="select-status-change"
             className="w-full rounded-lg border border-gray-300 bg-white px-2 py-2 text-gray-900
                       focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)]
                       focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
@@ -337,6 +339,7 @@ const handleStatusChange = (newStatus) => {
           <select
             value={selectedState}
             onChange={(e) => handleStateChange(e.target.value)}
+            data-testid="select-states"
             className="w-full rounded-lg border border-gray-300 bg-white px-2 py-2 text-gray-900
                       focus:border-[#0a2463] focus:outline-none dark:border-gray-600
                       dark:bg-gray-700 dark:text-white dark:focus:border-blue-400"
@@ -376,6 +379,7 @@ const handleStatusChange = (newStatus) => {
             <div
               key={lead.id}
               onClick={() => onSelectLead(lead)}
+              data-testid="lead-select"
               className={`cursor-pointer rounded-lg border-l-4 p-4 transition-all ${
                 selectedLead?.id === lead.id
                   ? "border border-blue-200 border-l-[var(--color-atoll)] bg-blue-50 dark:border-blue-700 dark:bg-blue-900/20"
@@ -409,6 +413,7 @@ const handleStatusChange = (newStatus) => {
                     }}
                     className="p-1 text-gray-400 transition-colors hover:text-green-600 dark:hover:text-green-400"
                     title="View SMS Conversation"
+                    data-testid="btn-view-sms-conversation"
                   >
                     <ChatBubbleLeftRightIcon className="h-5 w-5" />
                   </button>
@@ -496,6 +501,7 @@ const handleStatusChange = (newStatus) => {
                 <select
                   value={perPage}
                   onChange={(e) => handlePerPageChange(Number(e.target.value))}
+                   data-testid="select-per-page"
                   className="min-w-[60px] rounded border border-gray-300 bg-white px-2 py-1.5 text-xs text-gray-900 focus:ring-1 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                 >
                   <option value={10}>10</option>
@@ -518,6 +524,7 @@ const handleStatusChange = (newStatus) => {
                       : "border-gray-300 bg-white text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                   }`}
                   title="Previous page"
+                  data-testid="btn-prev-page"
                 >
                   <ChevronLeftIcon className="h-4 w-4" />
                 </button>
@@ -533,6 +540,7 @@ const handleStatusChange = (newStatus) => {
                       : "border-gray-300 bg-white text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                   }`}
                   title="Next page"
+                  data-testid="btn-next-page"
                 >
                   <ChevronRightIcon className="h-4 w-4" />
                 </button>

@@ -605,6 +605,7 @@ const CallControls = ({
               await checkAudioPermissions();
             }}
             className="mt-1.5 px-2 py-0.5 bg-yellow-500 text-white rounded text-xs hover:bg-yellow-600 transition-colors"
+            data-testid="btn-grant-permission"
           >
             Grant Permission
           </button>
@@ -672,6 +673,7 @@ const CallControls = ({
               <select
                 value={selectedPhoneNumber}
                 onChange={(e) => handlePhoneNumberChange(e.target.value)}
+                data-testid="select-phone-number"
                 className="w-full rounded-lg border border-gray-300 bg-white px-2 py-1 text-xs text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
               >
                 {availablePhoneNumbers.map((phone, index) => (
@@ -736,6 +738,7 @@ const CallControls = ({
               : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 shadow-sm'
           } ${(!isCallActive && !isDialing) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           title={isMuted ? 'Unmute microphone' : 'Mute microphone'}
+          data-testid="btn-microphone"
         >
           {isMuted ? <NoSymbolIcon className={isCallInProgress ? "w-4 h-4" : "w-5 h-5"} /> : <MicrophoneIcon className={isCallInProgress ? "w-4 h-4" : "w-5 h-5"} />}
         </button>
@@ -750,6 +753,7 @@ const CallControls = ({
               : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500 opacity-50 cursor-not-allowed'
           }`}
           title={selectedLead ? 'Schedule appointment' : 'Select a lead to schedule appointment'}
+          data-testid="btn-schedule-appointment"
         >
           <CalendarIcon className={isCallInProgress ? "w-4 h-4" : "w-5 h-5"} />
         </button>
@@ -776,6 +780,7 @@ const CallControls = ({
               ? 'License required for this state. Please upload license in Profile.'
               : 'Make call'
           }
+          data-testid="btn-call"
         >
           <PhoneXMarkIcon className={isCallInProgress ? "w-5 h-5" : "w-7 h-7"} />
         </button>
@@ -790,6 +795,7 @@ const CallControls = ({
               : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 shadow-sm'
           } ${(!isCallActive && !isDialing) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           title={isSpeakerOn ? 'Switch to receiver' : 'Switch to speaker'}
+          data-testid="btn-speaker"
         >
           {isSpeakerOn ? <SpeakerWaveIcon className={isCallInProgress ? "w-4 h-4" : "w-5 h-5"} /> : <SpeakerXMarkIcon className={isCallInProgress ? "w-4 h-4" : "w-5 h-5"} />}
         </button>

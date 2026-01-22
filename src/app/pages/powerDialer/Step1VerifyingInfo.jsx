@@ -26,7 +26,7 @@ const Step1VerifyingInfo = ({ control, errors, handleSubmit, onStepSubmit, close
                 name="age"
                 control={control}
                 rules={{ required: "Age is required" }}
-                render={({ field }) => <Input {...field} type="number" />}
+                render={({ field }) => <Input {...field} type="number" data-testid="input-age"/>}
               />
               {errors.age && <p className="text-red-500 text-sm">{errors.age.message}</p>}
             </div>
@@ -36,7 +36,7 @@ const Step1VerifyingInfo = ({ control, errors, handleSubmit, onStepSubmit, close
               <Controller
                 name="height"
                 control={control}
-                render={({ field }) => <Input {...field} type="number" />}
+                render={({ field }) => <Input {...field} type="number" data-testid="input-height"/>}
               />
             </div>
 
@@ -45,7 +45,7 @@ const Step1VerifyingInfo = ({ control, errors, handleSubmit, onStepSubmit, close
               <Controller
                 name="weight"
                 control={control}
-                render={({ field }) => <Input {...field} type="number" />}
+                render={({ field }) => <Input {...field} type="number" data-testid="input-weight"/>}
               />
             </div>
           </div>
@@ -72,6 +72,7 @@ const Step1VerifyingInfo = ({ control, errors, handleSubmit, onStepSubmit, close
                 <Controller
                   name={q.name}
                   control={control}
+                  data-testid={`select-${q.name}`}
                   render={({ field }) => (
                     <select {...field} className="w-full border rounded p-2">
                       <option value="">Select</option>
@@ -91,7 +92,7 @@ const Step1VerifyingInfo = ({ control, errors, handleSubmit, onStepSubmit, close
               name="prescriptionMeds"
               control={control}
               render={({ field }) => (
-                <textarea {...field} rows={3} className="w-full border rounded p-2" />
+                <textarea {...field} rows={3} className="w-full border rounded p-2" data-testid="textarea-prescriptionMeds"/>
               )}
             />
           </div>
@@ -112,6 +113,7 @@ const Step1VerifyingInfo = ({ control, errors, handleSubmit, onStepSubmit, close
                 <label className="mb-1 block text-sm">{q.text}</label>
                 <Controller
                   name={q.name}
+                  data-testid={`select-${q.name}`}
                   control={control}
                   render={({ field }) => (
                     <select {...field} className="w-full border rounded p-2">
@@ -137,7 +139,7 @@ const Step1VerifyingInfo = ({ control, errors, handleSubmit, onStepSubmit, close
                   name="occupation"
                   control={control}
                   render={({ field }) => (
-                    <input type="radio" value={v} checked={field.value === v} onChange={field.onChange} />
+                    <input type="radio" value={v} checked={field.value === v} onChange={field.onChange} data-testid={`input-${v}`}/>
                   )}
                 />
                 {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -152,6 +154,7 @@ const Step1VerifyingInfo = ({ control, errors, handleSubmit, onStepSubmit, close
             type="button"
             className="rounded border border-gray-400 px-6 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
             onClick={closeModal}
+            data-testid="btn-cancel-mortgage-protection-assessment-modal"
             >
             Cancel
             </Button>
@@ -160,6 +163,7 @@ const Step1VerifyingInfo = ({ control, errors, handleSubmit, onStepSubmit, close
             disabled={!currentCallLogId}
             className="rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
             style={{ backgroundColor: '#155dfc'}}
+            data-testid="btn-next-step"
             >
             Next: Financial Risk
             </Button>

@@ -16,6 +16,7 @@ export default function AssessmentModal({ isOpen, onClose, data }) {
     <div
       className="fixed inset-0 bg-black/40 flex justify-center items-center z-50"
       onClick={onClose}  // close on outside click
+      data-testid="btn--close-mortgageprotection-assessment-modal"
     >
       <div
         className="bg-white dark:bg-gray-800 rounded-xl w-[650px] max-h-[85vh] shadow-xl flex flex-col"
@@ -31,6 +32,7 @@ export default function AssessmentModal({ isOpen, onClose, data }) {
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full transition-colors"
+            data-testid="btn-x-close-mortgageprotection-assessment-modal"
           >
             <XMarkIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
           </button>

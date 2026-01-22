@@ -17,7 +17,7 @@ const Step2FinancialRisk = ({ control, handleSubmit, onStepSubmit, closeModal, g
               <Controller
                 name="payoff"
                 control={control}
-                render={({ field }) => <Input {...field} type="number" />}
+                render={({ field }) => <Input {...field} type="number" data-testid="input-payoff"/>}
               />
             </div>
 
@@ -26,7 +26,7 @@ const Step2FinancialRisk = ({ control, handleSubmit, onStepSubmit, closeModal, g
               <Controller
                 name="equity"
                 control={control}
-                render={({ field }) => <Input {...field} type="number" />}
+                render={({ field }) => <Input {...field} type="number" data-testid="input-equity"/>}
               />
             </div>
           </div>
@@ -49,7 +49,7 @@ const Step2FinancialRisk = ({ control, handleSubmit, onStepSubmit, closeModal, g
                 <Controller
                   name={name}
                   control={control}
-                  render={({ field }) => <Input {...field} type="number" />}
+                  render={({ field }) => <Input {...field} type="number" data-testid={`input-${name}`}/>}
                 />
               </div>
             ))}
@@ -78,7 +78,7 @@ const Step2FinancialRisk = ({ control, handleSubmit, onStepSubmit, closeModal, g
                 <Controller
                   name={name}
                   control={control}
-                  render={({ field }) => <Input {...field} type="number" />}
+                  render={({ field }) => <Input {...field} type="number" data-testid={`input-${name}`} />}
                 />
               </div>
             ))}
@@ -90,8 +90,8 @@ const Step2FinancialRisk = ({ control, handleSubmit, onStepSubmit, closeModal, g
           <Button type="button" onClick={() => goToStep(1)}>Back</Button>
 
           <div className="flex gap-3">
-            <Button type="button" onClick={closeModal}>Cancel</Button>
-            <Button type="submit" className="bg-green-600 text-white hover:bg-green-500 text-white">Complete Assessment</Button>
+            <Button type="button" onClick={closeModal} data-testid="btn-cancel-mortgage-protection-assessment-modal">Cancel</Button>
+            <Button type="submit" className="bg-green-600 text-white hover:bg-green-500 text-white" data-testid="btn-complete-mortgage-protection-assessment-modal">Complete Assessment</Button>
           </div>
         </div>
       </div>
