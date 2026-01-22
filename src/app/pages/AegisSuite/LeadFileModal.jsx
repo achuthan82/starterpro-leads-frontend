@@ -58,7 +58,7 @@ export default function LeadFileModal({
           <button
             onClick={close}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-            data-testid="close-uploaded-files"
+            data-testid="btn-close-uploaded-files"
           >
             <XMarkIcon className="h-6 w-6" />
           </button>
@@ -98,6 +98,7 @@ export default function LeadFileModal({
                   href={file.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-testid={`uploaded-file-view-${index}`}
                   className="text-xs text-[var(--color-atoll)] hover:underline"
                 >
                   View

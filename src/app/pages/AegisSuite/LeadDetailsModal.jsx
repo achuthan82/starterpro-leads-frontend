@@ -159,13 +159,13 @@ const LeadDetailsModal = ({
                     </div>
                   </div>
                   {/* <div>
-                            <p className="text-sm text-gray-500">Zip Code</p>
-                            <p className="font-medium"></p>
-                            </div> 
-                            <div>
-                            <p className="text-sm text-gray-500">Agent Identifier</p>
-                            <p className="font-medium">{selectedLead.agent_identifier || ''}</p>
-                            </div> */}
+                  <p className="text-sm text-gray-500">Zip Code</p>
+                  <p className="font-medium"></p>
+                  </div> 
+                  <div>
+                  <p className="text-sm text-gray-500">Agent Identifier</p>
+                  <p className="font-medium">{selectedLead.agent_identifier || ''}</p>
+                  </div> */}
                 </div>
               </div>
 
@@ -334,7 +334,7 @@ const LeadDetailsModal = ({
                           );
                           setShowStatusModal(true);
                         }}
-                        data-testid="change-status"
+                        data-testid="btn-change-status"
                         className="rounded-md bg-[var(--color-atoll)] px-4 py-2 text-xs text-white hover:bg-[var(--color-atoll)]/90 dark:bg-blue-500 dark:hover:bg-blue-600"
                       >
                         Change Status
@@ -394,7 +394,7 @@ const LeadDetailsModal = ({
                   {!selectedLead?.notes && !restricted && (
                     <button
                       onClick={() => setAddNote(true)}
-                      data-testid="add-note"
+                      data-testid="btn-add-note"
                       className="rounded-md bg-[var(--color-atoll)] px-4 py-2 text-xs text-white hover:bg-[var(--color-atoll)]/90 dark:bg-blue-500 dark:hover:bg-blue-600"
                     >
                       Add Note
@@ -408,7 +408,7 @@ const LeadDetailsModal = ({
                     </p>
                     <PencilIcon
                       onClick={() => setAddNote(true)}
-                      data-testid="edit-note"
+                      data-testid="btn-edit-note"
                       className="h-4 w-4 cursor-pointer text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                     />
                   </div>
@@ -427,7 +427,7 @@ const LeadDetailsModal = ({
                       <div className="mt-1 flex justify-end">
                         <button
                           onClick={() => setAddNote(false)}
-                          data-testid="cancel-note"
+                          data-testid="btn-cancel-note"
                           className="mr-2 rounded-md border border-gray-500 px-4 py-1 text-xs text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600"
                         >
                           Cancel
@@ -442,7 +442,7 @@ const LeadDetailsModal = ({
                             );
                             setAddNote(false);
                           }}
-                          data-testid="save-note"
+                          data-testid="btn-save-note"
                           className="ml-2 rounded-md bg-[var(--color-atoll)] px-4 py-1 text-xs text-white hover:bg-[var(--color-atoll)]/90 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-600"
                         >
                           Save
@@ -683,7 +683,7 @@ const LeadDetailsModal = ({
           <div className="flex space-x-3">
             <button
               onClick={() => setSelectedLead(null)}
-                data-testid="btn-close-lead-modal-footer"
+                data-testid="btn-close-lead-modal"
               className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               Close
