@@ -246,6 +246,7 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
         as="div"
         className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
         onClose={onClose}
+        data-testid="btn-close-purchase-phone-number-modal"
       >
         {/* Overlay */}
         <TransitionChild
@@ -276,6 +277,7 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
               <button
                 onClick={onClose}
                 disabled={purchasing}
+                data-testid="btn-x-close-purchase-phone-number-modal"
                 className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors disabled:opacity-50"
               >
                 <XMarkIcon className="h-6 w-6" />
@@ -312,6 +314,7 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
                     setFriendlyName(''); // Reset friendly name
                   }}
                   disabled={loading || purchasing}
+                  data-testid="select-number-type"
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[var(--color-atoll)] dark:focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
                 >
                   <option value="local">Local</option>
@@ -461,6 +464,7 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
                       onClose();
                       onRecharge();
                     }}
+                    data-testid="btn-recharge-wallet"
                     className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
                   >
                     Recharge Wallet
@@ -531,6 +535,7 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
                   onChange={(e) => setFriendlyName(e.target.value)}
                   disabled={purchasing}
                   placeholder="e.g., My Business Line"
+                  data-testid="input-friendly-name"
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[var(--color-atoll)] dark:focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
                 />
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -545,6 +550,7 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
                 <button
                   onClick={onClose}
                   disabled={purchasing}
+                  data-testid="btn-close-purchase-phone-number-modal"
                   className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors disabled:opacity-50"
                 >
                   Cancel
@@ -558,6 +564,7 @@ const PurchaseNumberModal = ({ isOpen, onClose, onPurchaseSuccess, walletBalance
                       : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                   }`}
                   title={!hasSufficientBalance ? 'Insufficient wallet balance. Please recharge to purchase.' : ''}
+                  data-testid="btn-purchase-phone-number-modal"
                 >
                   {purchasing ? 'Purchasing...' : 'Purchase Number'}
                 </button>

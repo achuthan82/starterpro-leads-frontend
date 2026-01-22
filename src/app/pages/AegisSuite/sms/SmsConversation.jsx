@@ -373,6 +373,7 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                     fetchLeads(1, perPage, e.target.value);
                   }
                 }}
+                data-testid="input-search-by-name"
                 className="w-full rounded-lg border border-gray-300 bg-white py-2 px-3 text-sm text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
               />
               <div className="mt-2 flex gap-2">
@@ -381,6 +382,7 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                     setCurrentPage(1);
                     fetchLeads(1, perPage, searchFilter);
                   }}
+                  data-testid="btn-search-by-name"
                   className="flex-1 rounded-lg bg-[var(--color-atoll)] px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white hover:bg-[var(--color-atoll)]/90 dark:bg-blue-600 dark:hover:bg-blue-700"
                 >
                   Search
@@ -391,6 +393,7 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                     setCurrentPage(1);
                     fetchLeads(1, perPage, "");
                   }}
+                  data-testid="btn-clear-search-by-name"
                   className="rounded-lg border border-gray-300 bg-white px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                 >
                   Clear
@@ -452,6 +455,7 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                         <select
                           value={perPage}
                           onChange={(e) => handlePerPageChange(Number(e.target.value))}
+                           data-testid="select-per-page"
                           className="rounded border border-gray-300 bg-white px-2 py-1 text-xs text-gray-900 focus:ring-1 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                         >
                           <option value={10}>10</option>
@@ -463,6 +467,7 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                             <button
                               onClick={() => handlePageChange(currentPage - 1)}
                               disabled={currentPage <= 1}
+                              data-testid="btn-prev-page"
                               className="p-1 rounded border disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <ChevronLeftIcon className="h-4 w-4" />
@@ -473,6 +478,7 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                             <button
                               onClick={() => handlePageChange(currentPage + 1)}
                               disabled={currentPage >= totalPages}
+                              data-testid="btn-next-page"
                               className="p-1 rounded border disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <ChevronRightIcon className="h-4 w-4" />
@@ -517,6 +523,7 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                       checked={automationEnabled}
                       onChange={handleAutomationToggle}
                       disabled={automationLoading}
+                      data-testid="toggle-sms-automation"
                       className={`${
                         automationEnabled
                           ? "bg-[var(--color-atoll)]"
@@ -605,6 +612,7 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                     }}
                     placeholder="Type your message..."
                     rows={2}
+                    data-testid="textarea-message"
                     className="flex-1 rounded-lg border border-gray-300 bg-white px-3 sm:px-4 py-2 text-sm text-gray-900 focus:border-[var(--color-atoll)] focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 resize-none"
                     disabled={sendingReply}
                   />
@@ -619,8 +627,8 @@ const SmsConversation = ({mortgage_id, lead_member_id}) => {
                     disabled:opacity-50 disabled:cursor-not-allowed 
                     dark:bg-blue-600 dark:hover:bg-blue-700
                     flex items-center justify-center
-                    whitespace-nowrap
-                  "
+                    whitespace-nowrap"
+                  data-testid="btn-send"
                 >
                   {sendingReply ? (
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>

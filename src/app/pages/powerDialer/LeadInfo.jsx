@@ -435,6 +435,7 @@ const LeadInfo = ({
             {/* Mortgage Protection button */}
             <button
               onClick={() => setIsMortgageModalOpen(true)}
+              data-testid="btn-to-add-mortgage-protection"
               className="flex items-center gap-2 rounded-full bg-blue-600 px-3 py-1 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700"
               title="Click here to add Mortgage Protection"
             >
@@ -456,6 +457,7 @@ const LeadInfo = ({
                   <button
                   onClick={() => {setAddNote(true); setNote(lead?.notes || lead?.originalData?.notes || "")}}
                   className="cursor-pointer ml-2"
+                  data-testid="btn-add-notes"
                 >
                   <PencilIcon className="h-3 w-3 cursor-pointer" />
                 </button>
@@ -472,20 +474,21 @@ const LeadInfo = ({
                   <button
                   onClick={() => {setAddNote(true);}}
                   className="cursor-pointer"
+                  data-testid="btn-add-notes"
                 >
                   <PencilIcon className="h-4 w-4 cursor-pointer" />
                 </button>
                 )}
                 {addNote && (
                   <>
-                    <textarea value={note} onChange={(e) => setNote(e.target.value)} className="w-full rounded-md border border-gray-500 bg-white p-2 text-gray-900 placeholder:text-gray-400 focus:ring-1 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:ring-blue-500" rows="4" />
+                    <textarea value={note} onChange={(e) => setNote(e.target.value)} data-testid="textarea-notes" className="w-full rounded-md border border-gray-500 bg-white p-2 text-gray-900 placeholder:text-gray-400 focus:ring-1 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:ring-blue-500" rows="4" />
                     <button onClick={() => {
                       handleAddNote();
-                    }} className="rounded-md bg-[var(--color-atoll)] px-4 py-2 text-xs text-white hover:bg-[var(--color-atoll)]/90 dark:bg-blue-500 dark:hover:bg-blue-600">Add Note</button>
+                    }} className="rounded-md bg-[var(--color-atoll)] px-4 py-2 text-xs text-white hover:bg-[var(--color-atoll)]/90 dark:bg-blue-500 dark:hover:bg-blue-600" data-testid="btn-add-notes">Add Note</button>
                     <button onClick={() => {
                       setAddNote(false);
                       setNote(lead?.notes || lead?.originalData?.notes || "");
-                    }} className="rounded-md ml-2 bg-gray-500 px-4 py-2 text-xs text-white hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700">Cancel</button>
+                    }} data-testid="btn-cancel-notes" className="rounded-md ml-2 bg-gray-500 px-4 py-2 text-xs text-white hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700">Cancel</button>
                   </>
                 )}
               </p>
@@ -570,6 +573,7 @@ const LeadInfo = ({
               } ${showUpLoading ? "cursor-not-allowed opacity-50" : ""}`}
               role="switch"
               aria-checked={showUp}
+              data-testid="toggle-mark-lead"
             >
               <span
                 className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
@@ -598,6 +602,7 @@ const LeadInfo = ({
             className={`w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:ring-2 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400 ${
               statusLoading ? "cursor-not-allowed opacity-50" : ""
             }`}
+            data-testid="select-update-status"
           >
             <option value="">Select Status</option>
             {LEAD_STATUSES.map((status) => (
@@ -640,6 +645,7 @@ const LeadInfo = ({
                       className="flex items-center justify-between text-sm hover:bg-blue-100 px-3 py-1 rounded-lg cursor-pointer mb-1"
                       title="Click here to hear the recording"
                       onClick={() => setSelectedCallLog(log)}
+                      data-testid="btn-hear-recording"
                     >
                       <div className="flex items-center space-x-2">
                         {callStatusId && (

@@ -278,12 +278,14 @@ const PowerDialer = () => {
                     disabled={walletLoading}
                     className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                     title="Refresh balance"
+                    data-testid="btn-refresh-balance"
                   >
                     <ArrowPathIcon className={`w-4 h-4 text-gray-600 dark:text-gray-300 ${walletLoading ? 'animate-spin' : ''}`} />
                   </button>
                   <button
                     onClick={handleRecharge}
                     className="px-2 sm:px-3 py-1.5 text-xs font-medium bg-[var(--color-atoll)] text-white rounded-md hover:bg-[var(--color-atoll)]/90 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors whitespace-nowrap"
+                    data-testid="btn-recharge"
                   >
                     Recharge
                   </button>
@@ -337,6 +339,7 @@ const PowerDialer = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowOutboundModal(true)}
+                data-testid="btn-change-number"
                 className="flex items-center gap-1 px-2 sm:px-3 py-1.5 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors whitespace-nowrap"
               >
                 Change Number
@@ -344,6 +347,7 @@ const PowerDialer = () => {
               </button>
               <button
                 onClick={() => setShowPurchaseModal(true)}
+                data-testid="btn-purchase-number"
                 className="flex items-center gap-1 px-2 sm:px-3 py-1.5 text-xs sm:text-sm bg-[var(--color-atoll)] dark:bg-blue-600 text-white rounded-md hover:bg-[var(--color-atoll)]/90 dark:hover:bg-blue-700 transition-colors whitespace-nowrap"
               >
                 Purchase Number

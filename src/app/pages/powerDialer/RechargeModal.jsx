@@ -124,6 +124,7 @@ const RechargeModal = ({ isOpen, onClose }) => {
       <div
         className="absolute inset-0 bg-black/30 backdrop-blur-sm"
         onClick={handleClose}
+        data-testid="btn-close-recharge-wallet-modal"
       />
 
       {/* Modal */}
@@ -133,6 +134,7 @@ const RechargeModal = ({ isOpen, onClose }) => {
         <button
           onClick={handleClose}
           disabled={loading}
+          data-testid="btn-x-close-recharge-wallet-modal"
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-50"
         >
           <XMarkIcon className="w-6 h-6" />
@@ -156,6 +158,7 @@ const RechargeModal = ({ isOpen, onClose }) => {
                 key={amount}
                 onClick={() => handleAmountSelect(amount)}
                 disabled={loading}
+                data-testid="btn-select-amount"
                 className={`px-4 py-3 rounded-lg border-2 font-semibold transition-colors ${
                   selectedAmount === amount
                     ? 'border-[var(--color-atoll)] bg-[var(--color-atoll)]/10 text-[var(--color-atoll)] dark:border-blue-500 dark:bg-blue-500/10 dark:text-blue-400'
@@ -180,6 +183,7 @@ const RechargeModal = ({ isOpen, onClose }) => {
             value={customAmount}
             onChange={handleCustomAmountChange}
             disabled={loading}
+            data-testid="btn-custom-amount"
             placeholder="Enter amount"
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[var(--color-atoll)] dark:focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
           />
@@ -221,6 +225,7 @@ const RechargeModal = ({ isOpen, onClose }) => {
           <button
             onClick={handleClose}
             disabled={loading}
+            data-testid="btn-close-recharge-wallet-modal"
             className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium transition-colors disabled:opacity-50"
           >
             Cancel
@@ -228,6 +233,7 @@ const RechargeModal = ({ isOpen, onClose }) => {
           <button
             onClick={handleRecharge}
             disabled={loading || !rechargeAmount || rechargeAmount < 50}
+            data-testid="btn-proceed-recharge-wallet-modal"
             className="flex-1 px-4 py-2 bg-[var(--color-atoll)] dark:bg-blue-600 text-white rounded-lg hover:bg-[var(--color-atoll)]/90 dark:hover:bg-blue-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Processing...' : 'Proceed to Payment'}

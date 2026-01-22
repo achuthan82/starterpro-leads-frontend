@@ -355,6 +355,7 @@ const handleTabClick = (tab) => {
               ? "-mb-[1px] border-b-2 border-blue-500 bg-blue-100 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-400"
               : "text-gray-600 hover:bg-gray-50 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-blue-400"
           }`}
+          data-testid="btn-script-tab"
         >
           <DocumentTextIcon className="h-3 w-3 flex-shrink-0" />
           <span>Script</span>
@@ -367,6 +368,7 @@ const handleTabClick = (tab) => {
               ? "-mb-[1px] border-b-2 border-blue-500 bg-blue-100 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-400"
               : "text-gray-600 hover:bg-gray-50 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-blue-400"
           }`}
+          data-testid="btn-objections-tab"
         >
           <IoBulbOutline className="h-3 w-3 flex-shrink-0" />
           <span>Objections</span>
@@ -379,6 +381,7 @@ const handleTabClick = (tab) => {
               ? "-mb-[1px] border-b-2 border-blue-500 bg-blue-100 text-blue-700 dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-400"
               : "text-gray-600 hover:bg-gray-50 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-blue-400"
           }`}
+          data-testid="btn-recordings-tab"
         >
           <ChatBubbleLeftEllipsisIcon className="h-3 w-3 flex-shrink-0" />
           <span className="hidden sm:inline">Recordings</span>
@@ -412,6 +415,7 @@ const handleTabClick = (tab) => {
                     <button
                       key={tag.name}
                       onClick={() => handleBadgeClick(tag.name)}
+                      data-testid="btn-tags"
                       className={`cursor-pointer rounded-md px-2 py-1 text-xs font-medium transition-all ${
                         isSelected
                           ? "ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800"
@@ -488,6 +492,7 @@ const handleTabClick = (tab) => {
                       navigator.clipboard.writeText(rendered);
                       toast.success("Script copied!");
                     }}
+                    data-testid="btn-copy"
                     className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
                     <svg
@@ -539,6 +544,7 @@ const handleTabClick = (tab) => {
                     <button
                       key={obj.title}
                       onClick={() => setSelectedObjection(obj.title)}
+                      data-testid="sub-tab-objections"
                       className={`cursor-pointer rounded-md px-2 py-1 text-xs font-medium transition-all ${
                         isSelected
                           ? "ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800"
@@ -614,6 +620,7 @@ const handleTabClick = (tab) => {
                         navigator.clipboard.writeText(fullText);
                         toast.success("Objection handler copied!");
                       }}
+                       data-testid="btn-copy"
                       className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                     >
                       <svg
@@ -658,6 +665,7 @@ const handleTabClick = (tab) => {
             <select
               value={callFilter}
               onChange={(e) => setCallFilter(e.target.value)}
+              data-testid="select-filter-calls"
               className="w-30 rounded border border-gray-300 bg-white px-1 py-1 text-xs 
                         text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
             >
@@ -796,6 +804,7 @@ const handleTabClick = (tab) => {
                                                 text-[var(--color-atoll)] transition-colors hover:bg-blue-50 
                                                 dark:text-blue-400 dark:hover:bg-blue-900/20"
                                       title={`Download all ${pptUrls.length} files`}
+                                      data-testid="btn-download-all"
                                     >
                                       <ArrowDownTrayIcon className="h-4 w-4" />
                                       <span className="hidden sm:inline">
@@ -809,6 +818,7 @@ const handleTabClick = (tab) => {
                                                 text-[var(--color-atoll)] transition-colors hover:bg-blue-50 
                                                 dark:text-blue-400 dark:hover:bg-blue-900/20 mr-2"
                                       title="Download Presentation"
+                                      data-testid="btn-download-presentation"
                                     >
                                       <ArrowDownTrayIcon className="h-4 w-4" />
                                     </button>
@@ -825,6 +835,7 @@ const handleTabClick = (tab) => {
                             }}
                             className="h-4 w-4 text-blue-600 dark:text-blue-400 cursor-pointer"
                             title="View Mortgage Protection Assessment"
+                            data-testid="btn-view-mortgage-protection-assessment"
                           />
                         </div>}
                         </div>

@@ -43,6 +43,7 @@ const LeadStateFilter = ({ selected, onChange, setOptions, options }) => {
             value={selected}
             onChange={onChange}
             styles={getReactSelectDarkModeStyles()}
+            data-testid="select-preferred-leads"
             className="react-select-container"
             classNamePrefix="react-select"
             placeholder="Select states..."

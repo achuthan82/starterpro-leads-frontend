@@ -175,6 +175,7 @@ const MortgageProtectionModal = ({ isOpen, close, onFormSubmit, fetchCallLogs })
               type="button"
               disabled={isSaving}
               onClick={() => goToStep(step)}
+              data-testid="btn-progress-steps"
               className={`flex items-center justify-center w-8 h-8 rounded-full transition-all
               ${
                 currentStep === step
@@ -225,7 +226,7 @@ const MortgageProtectionModal = ({ isOpen, close, onFormSubmit, fetchCallLogs })
     <>
       {/* Close Warning Dialog */}
       <Transition show={showCloseWarning} as={Fragment}>
-        <Dialog onClose={() => {}} className="relative z-[110]">
+        <Dialog onClose={() => {}} className="relative z-[110]" data-testid="btn-close-modal"> 
           <TransitionChild as={Fragment}>
             <div className="fixed inset-0 bg-black/50" />
           </TransitionChild>
@@ -243,10 +244,11 @@ const MortgageProtectionModal = ({ isOpen, close, onFormSubmit, fetchCallLogs })
                 </p>
 
                 <div className="flex justify-end gap-3">
-                  <Button onClick={handleCancelClose}>Continue</Button>
+                  <Button onClick={handleCancelClose} data-testid="btn-continue-modal">Continue</Button>
                   <Button
                     className="bg-red-600 text-white hover:bg-red-400"
                     onClick={handleConfirmClose}
+                    data-testid="btn-save-modal"
                   >
                     {/* Close Without Saving */}
                     Close
@@ -306,6 +308,7 @@ const MortgageProtectionModal = ({ isOpen, close, onFormSubmit, fetchCallLogs })
                 <button
                   onClick={closeModal}
                   className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
+                  data-testid="btn-x-mortgage-protection-assessment-modal"
                 >
                   <XMarkIcon className="w-6 h-6 text-gray-600" />
                 </button>

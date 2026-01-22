@@ -56,6 +56,7 @@ const SmsDrawer = ({ isOpen, onClose, mortgageId, leadMemberId, children }) => {
           <button
             onClick={onClose}
             aria-label="Close SMS drawer"
+            data-testid="btn-x-close-panel"
             className="p-1.5 sm:p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition flex-shrink-0 ml-2"
           >
             <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100" />

@@ -318,6 +318,7 @@ const Territories = () => {
                 <p className="mb-4 text-gray-600 dark:text-gray-300">{error}</p>
                 <button
                   onClick={() => window.location.reload()}
+                  data-testid="btn-error-try-again"
                   className="rounded-lg bg-[var(--color-atoll)] px-4 py-2 text-white transition-colors hover:bg-[var(--color-atoll)]/90"
                 >
                   Try Again
@@ -415,6 +416,7 @@ const Territories = () => {
                       <p>{metricsError}</p>
                       <button
                         onClick={fetchMetricsData}
+                        data-testid="btn-metrics-try-again"
                         className="mt-2 text-sm text-blue-600 underline hover:text-blue-800"
                       >
                         Try again
@@ -492,6 +494,7 @@ const Territories = () => {
                     <div className="flex items-center gap-2">
                       <span>Per page:</span>
                       <select
+                        data-testid="select-per-page"
                         className="dark:border-dark-600 dark:bg-dark-700 rounded-lg border border-[#75150b] bg-white px-3 py-2 text-gray-900 focus:border-[#75150b] focus:outline-none dark:text-white"
                         // className="rounded border px-2 py-1"
                         value={perPage}
@@ -541,6 +544,7 @@ const Territories = () => {
                             </div>
                             <button
                               onClick={() => setSelectedTerritory(territory)}
+                              data-testid={`btn-territory-menu-${territory.code}`}
                               className="text-gray-400 hover:text-gray-600 dark:text-gray-300"
                             >
                               <svg
@@ -609,7 +613,7 @@ const Territories = () => {
 
                         <div className="bg-gray-50 px-6 py-3 dark:bg-gray-800 dark:border-gray-700">
                           <div className="flex items-center justify-end">
-                            <button onClick={() => setSelectedTerritory(territory)} className="text-sm font-medium text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80 dark:text-blue-400 dark:hover:text-blue-400/80">
+                            <button onClick={() => setSelectedTerritory(territory)} data-testid={`btn-view-territory-${territory.code}`} className="text-sm font-medium text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80 dark:text-blue-400 dark:hover:text-blue-400/80">
                               View Details
                             </button>
                             {/* <button className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400">
@@ -624,6 +628,7 @@ const Territories = () => {
                     <Button
                       variant="outline"
                       disabled={page === 1}
+                      data-testid="btn-prev-page"
                       onClick={() => {
                         const newPage = Math.max(1, page - 1);
                         setPage(newPage);
@@ -638,6 +643,7 @@ const Territories = () => {
                     <Button
                       variant="outline"
                       disabled={page === totalPages || totalPages === 0}
+                      data-testid="btn-next-page"
                       onClick={() => {
                         const newPage = Math.min(totalPages, page + 1);
                         setPage(newPage);
@@ -667,6 +673,7 @@ const Territories = () => {
               </h3>
               <button
                 onClick={() => setSelectedTerritory(null)}
+                data-testid="btn-x-close-territory-modal"
                 className="text-gray-400 hover:text-gray-600 dark:text-gray-300"
               >
                 <svg
@@ -776,6 +783,7 @@ const Territories = () => {
             <div className="flex justify-end space-x-3 border-t border-gray-200 pt-4 dark:border-gray-700">
               <button
                 onClick={() => setSelectedTerritory(null)}
+                data-testid="btn-close-territory-modal"
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
               >
                 Close

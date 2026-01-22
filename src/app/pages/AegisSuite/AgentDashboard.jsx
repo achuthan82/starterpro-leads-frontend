@@ -170,6 +170,7 @@ const AgentDashboard = () => {
                   <p>{metricsError}</p>
                   <button 
                     onClick={fetchMetricsData}
+                    data-testid="btn-metrics-try-again"
                     className="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
                   >
                     Try again
@@ -206,6 +207,7 @@ const AgentDashboard = () => {
                 <select
                   className="border rounded px-2 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
                   value={limit}
+                  data-testid="select-per-page"
                   onChange={e => setLimit(Number(e.target.value))}
                 >
                   {[3, 5, 10, 20].map(opt => (
@@ -330,7 +332,7 @@ const AgentDashboard = () => {
                   </div>
                 </div>
               </div>
-              <button onClick={closeLeadDetail} className="text-gray-400 hover:text-gray-600">
+              <button onClick={closeLeadDetail} className="text-gray-400 hover:text-gray-600" data-testid="btn-x-close-territory-modal">
                 <XMarkIcon className="w-6 h-6" />
               </button>
             </div>

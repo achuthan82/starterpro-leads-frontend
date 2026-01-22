@@ -310,6 +310,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
         as="div"
         className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
         onClose={onClose}
+        data-testid="btn-close-select-outbound-number-modal"
       >
         {/* Overlay */}
         <TransitionChild
@@ -340,6 +341,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
               <button
                 onClick={onClose}
                 className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                data-testid="btn-x-close-select-outbound-number-modal"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -386,6 +388,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                     <button
                       onClick={handleCheckSpam}
                       disabled={checkingSpam}
+                      data-testid="btn-check-spam-status"
                       className="px-3 py-1.5 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {checkingSpam ? 'Checking...' : `Check Spam (${selectedForSpamCheck.size})`}
@@ -428,6 +431,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                             checked={isSpamChecked}
                             onChange={(e) => handleSpamCheckToggle(number.id, e)}
                             onClick={(e) => e.stopPropagation()}
+                            data-testid="checkbox-spam-check"
                             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600"
                           />
                           <div className="flex-1">
@@ -469,6 +473,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                                     handleCancelEdit(e);
                                   }
                                 }}
+                                data-testid="input-name"
                                 className="flex-1 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#0a2463] dark:focus:ring-blue-500 focus:border-transparent"
                                 autoFocus
                                 disabled={updating}
@@ -476,6 +481,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                               <button
                                 onClick={(e) => handleSaveEdit(number.id, e)}
                                 disabled={updating || !editingName.trim()}
+                                data-testid="btn-save-edit"
                                 className="px-3 py-1.5 text-xs bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                               >
                                 {updating ? 'Saving...' : 'Save'}
@@ -483,6 +489,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                               <button
                                 onClick={handleCancelEdit}
                                 disabled={updating}
+                                data-testid="btn-cancel-edit"
                                 className="px-3 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 disabled:opacity-50 transition-colors"
                               >
                                 Cancel
@@ -508,6 +515,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                               onClick={(e) => handleEdit(number, e)}
                               className="p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                               title="Edit friendly name"
+                              data-testid="btn-friendly-name-edit"
                             >
                               <PencilIcon className="w-4 h-4" />
                             </button>
@@ -515,6 +523,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                               onClick={(e) => handleDeleteClick(number, e)}
                               className="p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                               title="Delete number"
+                              data-testid="btn-delete-number"
                             >
                               <TrashIcon className="w-4 h-4" />
                             </button>
@@ -546,6 +555,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                       onClose();
                       onPurchaseNumber();
                     }}
+                    data-testid="btn-purchase-number"
                     className="px-4 py-2 text-sm bg-[#0a2463] dark:bg-blue-500 text-white rounded-md hover:bg-[#0a2463]/90 dark:hover:bg-blue-600 transition-colors"
                   >
                     Purchase Number
@@ -559,6 +569,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
               <div className="flex items-center justify-end pt-6 mt-6 border-t border-gray-200 dark:border-gray-700 space-x-3">
                 <button
                   onClick={onClose}
+                  data-testid="btn-cancel-select-number"
                   className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors"
                 >
                   Cancel
@@ -566,6 +577,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                 <button
                   onClick={handleConfirm}
                   disabled={!selectedNumber}
+                  data-testid="btn-select-number"
                   className={`px-4 py-2 text-sm rounded-md transition-colors ${
                     selectedNumber
                       ? 'bg-[#0a2463] dark:bg-blue-500 text-white hover:bg-[#0a2463]/90 dark:hover:bg-blue-600'
@@ -580,7 +592,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
             {/* Delete Confirmation Dialog */}
             {showDeleteConfirm && (
               <div className="fixed inset-0 z-[110] flex items-center justify-center px-4">
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCancelDelete} />
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCancelDelete} data-testid="btn-cancel-delete-number-moadal"/>
                 <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     Delete Phone Number
@@ -592,6 +604,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                     <button
                       onClick={handleCancelDelete}
                       disabled={deleting}
+                      data-testid="btn-cancel-delete-number"
                       className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors disabled:opacity-50"
                     >
                       Cancel
@@ -599,6 +612,7 @@ const OutboundNumberModal = ({ isOpen, onClose, selectedLead, onSelectNumber, on
                     <button
                       onClick={handleConfirmDelete}
                       disabled={deleting}
+                      data-testid="btn-delete-number"
                       className="px-4 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 transition-colors"
                     >
                       {deleting ? 'Deleting...' : 'Delete'}
