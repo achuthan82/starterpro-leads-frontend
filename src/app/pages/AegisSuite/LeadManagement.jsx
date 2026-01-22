@@ -1103,7 +1103,7 @@ const LeadManagement = () => {
                   className={`${
                     purchased ? "bg-[#0a2463]" : "bg-gray-300 dark:bg-gray-600"
                   } relative inline-flex h-6 w-11 items-center rounded-full transition`}
-                  data-testid='view-lead-bank-leads'
+                    data-testid="toggle-view-lead-bank-leads"
                 >
                   <span
                     className={`${
@@ -1159,7 +1159,7 @@ const LeadManagement = () => {
                     <input
                       type="text"
                       placeholder="Search by Name..."
-                      data-testid="search-by-name"
+                      data-testid="input-search-by-name"
                       value={searchTerm}
                       onChange={(e) => {
                         setSearchTerm(e.target.value);
@@ -1178,7 +1178,7 @@ const LeadManagement = () => {
                 <div className="flex flex-wrap gap-3">
                   <select
                     value={filters.lead_status}
-                    data-testid="filter-lead-status"
+                    data-testid="select-filter-status"
                     onChange={(e) =>
                       handleFilterChange("lead_status", e.target.value)
                     }
@@ -1193,7 +1193,7 @@ const LeadManagement = () => {
                   </select>
                   <select
                     value={filters.state}
-                    data-testid="filter-state"
+                    data-testid="select-filter-state"
                     onChange={(e) =>
                       handleFilterChange("state", e.target.value)
                     }
@@ -1226,7 +1226,7 @@ const LeadManagement = () => {
                     type="text"
                     placeholder="Filter by Campaign"
                     value={filters.campaign}
-                    data-testid="filter-by-campaign"
+                    data-testid="input-filter-by-campaign"
                     onChange={(e) =>
                       handleFilterChange("campaign", e.target.value)
                     }
@@ -1257,6 +1257,7 @@ const LeadManagement = () => {
                     onChange={(e) =>
                       handlePerPageChange(parseInt(e.target.value))
                     }
+                    data-testid="select-per-page"
                     className="rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   >
                     <option value={10}>10 per page</option>
@@ -1273,7 +1274,7 @@ const LeadManagement = () => {
                       setShowExportConfirmModal(true);
                     }}
                     disabled={selectedLeads.length === 0}
-                    data-testid="export-selected"
+                    data-testid="btn-export-selected"
                     className={`flex items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                       selectedLeads.length === 0
                         ? "cursor-not-allowed border-gray-300 bg-gray-50 text-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-500"
@@ -1290,7 +1291,7 @@ const LeadManagement = () => {
                       setPendingExportType("all");
                       setShowExportConfirmModal(true);
                     }}
-                    data-testid="export-all"
+                    data-testid="btn-export-all"
                     // style={{ backgroundColor: 'var(--atoll)' }}
                     className={`flex items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                       totalRecords < 1
@@ -1304,7 +1305,7 @@ const LeadManagement = () => {
                   {selectedLeads.length > 0 && (
                     <button
                       onClick={() => setShowBulkStatusModal(true)}
-                      data-testid="update-status"
+                      data-testid="btn-update-status"
                       className="flex items-center space-x-2 rounded-lg bg-[#0a2463] px-4 py-2 text-white transition-colors hover:bg-[#0a2463]/90 dark:bg-gray-700"
                     >
                       <span>Update Status ({selectedLeads.length})</span>
@@ -1338,7 +1339,7 @@ const LeadManagement = () => {
                       selectedLeads.length === leads.length && leads.length > 0
                     }
                     onChange={handleSelectAll}
-                    data-testid="select-all"
+                    data-testid="checkbox-select-all"
                     className="h-4 w-4 rounded border-gray-300 text-[#0a2463] focus:ring-[#0a2463] dark:text-blue-400"
                   />
                   <span className="text-sm text-gray-600 dark:text-gray-300">
@@ -1370,6 +1371,7 @@ const LeadManagement = () => {
                           setSelectedLeads([]);
                           setPrintLeads([]);
                         }}
+                        data-testid="btn-clear-selection"
                         className="text-xs text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
                       >
                         Clear selection
@@ -1390,6 +1392,7 @@ const LeadManagement = () => {
                               leads.length > 0
                             }
                             onChange={handleSelectAll}
+                            data-testid="checkbox-select-all"
                             className="h-4 w-4 rounded border-gray-300 text-[#0a2463] focus:ring-[#0a2463] dark:text-blue-400"
                             title="Select All"
                           />
@@ -1488,6 +1491,7 @@ const LeadManagement = () => {
                                   handleLeadSelection(lead.assignee_id);
                                   handlePrintLead(event, lead);
                                 }}
+                                data-testid={`checkbox-select-lead-${lead.identifier || lead.mortgage_id || lead.assignee_id}`}
                                 className="h-4 w-4 rounded border-gray-300 text-[#0a2463] focus:ring-[#0a2463] dark:text-blue-400"
                               />
                             </td>
@@ -1565,6 +1569,7 @@ const LeadManagement = () => {
                                       docOpen();
                                       setStatusLead(lead);
                                     }}
+                                    data-testid={`btn-view-uploaded-file-${lead.identifier || lead.mortgage_id || lead.assignee_id}`}
                                     className="ml-2 size-5 cursor-pointer"
                                     title="View Uploaded File"
                                   />
@@ -1612,6 +1617,7 @@ const LeadManagement = () => {
                                   );
                                   setShowStatusModal(true);
                                 }}
+                                data-testid={`btn-change-status-${lead.identifier || lead.mortgage_id || lead.assignee_id}`}
                                 className={`inline-flex cursor-pointer rounded-full px-2 py-1 text-xs font-semibold transition-opacity hover:opacity-80 shieldnest-badge-${lead.lead_status || lead.status}`}
                                 title="Click to change status"
                               >
@@ -1703,6 +1709,7 @@ const LeadManagement = () => {
                               <Cog6ToothIcon
                                 className="size-5 cursor-pointer"
                                 title="View Settings"
+                                data-testid={`btn-view-settings-${lead.identifier || lead.mortgage_id || lead.assignee_id}`}
                                 onClick={() => {
                                   setSettingsLead(lead);
                                   open();
@@ -1716,6 +1723,7 @@ const LeadManagement = () => {
                                 onClick={() => setSelectedLead(lead)}
                                 className="text-[#0a2463] hover:text-[#0a2463]/80 dark:text-blue-400 dark:hover:text-blue-300"
                                 title="View Details"
+                                data-testid={`btn-view-details-${lead.identifier || lead.mortgage_id || lead.assignee_id}`}
                               >
                                 <EyeIcon className="h-4 w-4" />
                               </button>
@@ -1742,6 +1750,7 @@ const LeadManagement = () => {
                         <button
                           onClick={() => handlePageChange(currentPage - 1)}
                           disabled={currentPage <= 1}
+                          data-testid='btn-page-previous'
                           className={`rounded border px-3 py-1 ${
                             currentPage <= 1
                               ? "cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-500"
@@ -1770,6 +1779,7 @@ const LeadManagement = () => {
                               <button
                                 key={pageNum}
                                 onClick={() => handlePageChange(pageNum)}
+                                data-testid='btn-page-change'
                                 className={`rounded border px-3 py-1 ${
                                   currentPage === pageNum
                                     ? "border-[#0a2463] bg-[#0a2463] text-white dark:border-blue-400 dark:bg-blue-500"
@@ -1785,6 +1795,7 @@ const LeadManagement = () => {
                         <button
                           onClick={() => handlePageChange(currentPage + 1)}
                           disabled={currentPage >= totalPages}
+                          data-testid='btn-page-forward'
                           className={`rounded border px-3 py-1 ${
                             currentPage >= totalPages
                               ? "cursor-not-allowed border-gray-300 bg-gray-100 text-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-500"
@@ -1838,6 +1849,7 @@ const LeadManagement = () => {
         <Transition appear show={showStatusModal} as={Fragment}>
           <Dialog
             as="div"
+            data-testid='modal-close-change-lead-status'
             className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
             onClose={() => setShowStatusModal(false)}
           >
@@ -1869,6 +1881,7 @@ const LeadManagement = () => {
                 <div className="absolute top-4 right-4">
                   <XCircleIcon
                     onClick={() => setShowStatusModal(false)}
+                    data-testid='btn-x-close-change-lead-status'
                     className="text-dark h-7 w-7 cursor-pointer transition-transform hover:scale-105"
                   />
                 </div>
@@ -1898,7 +1911,7 @@ const LeadManagement = () => {
                     </label>
                     <select
                       value={newStatus}
-                      data-testid="new-status"
+                      data-testid="select-new-status"
                       onChange={(e) => setNewStatus(e.target.value)}
                       className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-400"
                     >
@@ -1915,13 +1928,14 @@ const LeadManagement = () => {
                 <div className="flex items-center justify-end space-x-3 border-t border-gray-200 pt-4 dark:border-gray-700">
                   <button
                     onClick={() => setShowStatusModal(false)}
+                    data-testid="btn-cancel-status-change"
                     className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleStatusChange}
-                    data-testid="btn-confirm-status-change"
+                    data-testid="btn-update-status-change"
                     disabled={!newStatus || statusLoading}
                     className={`rounded-md px-4 py-2 text-sm ${
                       newStatus && !statusLoading
@@ -1969,6 +1983,7 @@ const LeadManagement = () => {
         <Transition appear show={showBulkStatusModal} as={Fragment}>
           <Dialog
             as="div"
+            data-testid="modal-close-bulk-status-update"
             className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
             onClose={() => setShowBulkStatusModal(false)}
           >
@@ -2002,6 +2017,7 @@ const LeadManagement = () => {
                   </h3>
                   <button
                     onClick={() => setShowBulkStatusModal(false)}
+                    data-testid="btn-x-close-bulk-status-update"
                     className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                   >
                     <XMarkIcon className="h-5 w-5" />
@@ -2024,7 +2040,7 @@ const LeadManagement = () => {
                     </label>
                     <select
                       value={bulkNewStatus}
-                      data-testid="new-status"
+                      data-testid="select-new-status"
                       onChange={(e) => setBulkNewStatus(e.target.value)}
                       className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-400"
                     >
@@ -2041,7 +2057,7 @@ const LeadManagement = () => {
                 <div className="flex items-center justify-end space-x-3 border-t border-gray-200 pt-4 dark:border-gray-700">
                   <button
                     onClick={() => setShowBulkStatusModal(false)}
-                     data-testid="cancel-leads"
+                    data-testid="btn-cancel-bulk-status-update"
                     className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                   >
                     Cancel
@@ -2049,7 +2065,7 @@ const LeadManagement = () => {
                   <button
                     onClick={bulkStatusCheck}
                     disabled={!bulkNewStatus}
-                    data-testid="update-leads"
+                    data-testid="btn-update-bulk-status-update"
                     className={`rounded-md px-4 py-2 text-sm ${
                       bulkNewStatus
                         ? "bg-[#0a2463] text-white hover:bg-[#0a2463]/90 dark:bg-blue-500 dark:hover:bg-blue-600"
@@ -2073,6 +2089,7 @@ const LeadManagement = () => {
             setShowExportConfirmModal(false);
             setPendingExportType(null);
           }}
+          data-testid="modal-close-confirm-export"
         >
           <TransitionChild
             enter="ease-out duration-300"
@@ -2122,7 +2139,7 @@ const LeadManagement = () => {
                   <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 dark:bg-gray-700/50">
                     <button
                       type="button"
-                      data-testid="continue-export"
+                      data-testid="btn-continue-export"
                       className="inline-flex w-full justify-center rounded-md bg-[#0a2463] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#0a2463]/90 sm:ml-3 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700"
                       onClick={handleExportConfirm}
                     >
@@ -2130,7 +2147,7 @@ const LeadManagement = () => {
                     </button>
                     <button
                       type="button"
-                      data-testid="cancel-export"
+                      data-testid="btn-cancel-export"
                       className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto dark:bg-gray-800 dark:text-gray-100 dark:ring-gray-600 dark:hover:bg-gray-700"
                       onClick={() => {
                         setShowExportConfirmModal(false);
