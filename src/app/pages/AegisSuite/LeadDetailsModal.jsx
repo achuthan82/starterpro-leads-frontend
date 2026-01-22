@@ -95,6 +95,7 @@ const LeadDetailsModal = ({
           </div>
           <button
             onClick={() => setSelectedLead(null)}
+            data-testid="close-lead-modal"
             className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
           >
             <XMarkIcon className="h-6 w-6" />
@@ -333,6 +334,7 @@ const LeadDetailsModal = ({
                           );
                           setShowStatusModal(true);
                         }}
+                        data-testid="change-status"
                         className="rounded-md bg-[var(--color-atoll)] px-4 py-2 text-xs text-white hover:bg-[var(--color-atoll)]/90 dark:bg-blue-500 dark:hover:bg-blue-600"
                       >
                         Change Status
@@ -392,6 +394,7 @@ const LeadDetailsModal = ({
                   {!selectedLead?.notes && !restricted && (
                     <button
                       onClick={() => setAddNote(true)}
+                      data-testid="add-note"
                       className="rounded-md bg-[var(--color-atoll)] px-4 py-2 text-xs text-white hover:bg-[var(--color-atoll)]/90 dark:bg-blue-500 dark:hover:bg-blue-600"
                     >
                       Add Note
@@ -405,6 +408,7 @@ const LeadDetailsModal = ({
                     </p>
                     <PencilIcon
                       onClick={() => setAddNote(true)}
+                      data-testid="edit-note"
                       className="h-4 w-4 cursor-pointer text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                     />
                   </div>
@@ -418,10 +422,12 @@ const LeadDetailsModal = ({
                         onChange={(e) => setNote(e.target.value)}
                         className="w-full rounded-md border border-gray-500 bg-white p-2 text-gray-900 placeholder:text-gray-400 focus:ring-1 focus:ring-[var(--color-atoll)] focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:ring-blue-500"
                         rows="4"
+                        data-testid="textarea-note"
                       ></textarea>
                       <div className="mt-1 flex justify-end">
                         <button
                           onClick={() => setAddNote(false)}
+                          data-testid="cancel-note"
                           className="mr-2 rounded-md border border-gray-500 px-4 py-1 text-xs text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600"
                         >
                           Cancel
@@ -436,6 +442,7 @@ const LeadDetailsModal = ({
                             );
                             setAddNote(false);
                           }}
+                          data-testid="save-note"
                           className="ml-2 rounded-md bg-[var(--color-atoll)] px-4 py-1 text-xs text-white hover:bg-[var(--color-atoll)]/90 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-600"
                         >
                           Save
@@ -676,6 +683,7 @@ const LeadDetailsModal = ({
           <div className="flex space-x-3">
             <button
               onClick={() => setSelectedLead(null)}
+                data-testid="btn-close-lead-modal-footer"
               className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               Close

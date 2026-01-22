@@ -33,6 +33,7 @@ import { useDisclosure } from "hooks";
 import LeadAutomationSettings from "./LeadAutomationSettings";
 import LeadFileUpload from "./LeadFileUpload";
 import LeadFileModal from "./LeadFileModal";
+
 const LeadManagement = () => {
   const { user } = useAuthContext();
   const userRole = user?.role || localStorage.getItem("userRole") || "agent";
@@ -1102,6 +1103,7 @@ const LeadManagement = () => {
                   className={`${
                     purchased ? "bg-[#0a2463]" : "bg-gray-300 dark:bg-gray-600"
                   } relative inline-flex h-6 w-11 items-center rounded-full transition`}
+                  data-testid='view-lead-bank-leads'
                 >
                   <span
                     className={`${
@@ -1156,7 +1158,8 @@ const LeadManagement = () => {
                     />
                     <input
                       type="text"
-                      placeholder="Search by  Name..."
+                      placeholder="Search by Name..."
+                      data-testid="search-by-name"
                       value={searchTerm}
                       onChange={(e) => {
                         setSearchTerm(e.target.value);
@@ -1175,6 +1178,7 @@ const LeadManagement = () => {
                 <div className="flex flex-wrap gap-3">
                   <select
                     value={filters.lead_status}
+                    data-testid="filter-lead-status"
                     onChange={(e) =>
                       handleFilterChange("lead_status", e.target.value)
                     }
@@ -1189,6 +1193,7 @@ const LeadManagement = () => {
                   </select>
                   <select
                     value={filters.state}
+                    data-testid="filter-state"
                     onChange={(e) =>
                       handleFilterChange("state", e.target.value)
                     }
@@ -1221,6 +1226,7 @@ const LeadManagement = () => {
                     type="text"
                     placeholder="Filter by Campaign"
                     value={filters.campaign}
+                    data-testid="filter-by-campaign"
                     onChange={(e) =>
                       handleFilterChange("campaign", e.target.value)
                     }
@@ -1267,6 +1273,7 @@ const LeadManagement = () => {
                       setShowExportConfirmModal(true);
                     }}
                     disabled={selectedLeads.length === 0}
+                    data-testid="export-selected"
                     className={`flex items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                       selectedLeads.length === 0
                         ? "cursor-not-allowed border-gray-300 bg-gray-50 text-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-500"
@@ -1283,6 +1290,7 @@ const LeadManagement = () => {
                       setPendingExportType("all");
                       setShowExportConfirmModal(true);
                     }}
+                    data-testid="export-all"
                     // style={{ backgroundColor: 'var(--atoll)' }}
                     className={`flex items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                       totalRecords < 1
@@ -1296,6 +1304,7 @@ const LeadManagement = () => {
                   {selectedLeads.length > 0 && (
                     <button
                       onClick={() => setShowBulkStatusModal(true)}
+                      data-testid="update-status"
                       className="flex items-center space-x-2 rounded-lg bg-[#0a2463] px-4 py-2 text-white transition-colors hover:bg-[#0a2463]/90 dark:bg-gray-700"
                     >
                       <span>Update Status ({selectedLeads.length})</span>
@@ -1329,6 +1338,7 @@ const LeadManagement = () => {
                       selectedLeads.length === leads.length && leads.length > 0
                     }
                     onChange={handleSelectAll}
+                    data-testid="select-all"
                     className="h-4 w-4 rounded border-gray-300 text-[#0a2463] focus:ring-[#0a2463] dark:text-blue-400"
                   />
                   <span className="text-sm text-gray-600 dark:text-gray-300">
@@ -1888,6 +1898,7 @@ const LeadManagement = () => {
                     </label>
                     <select
                       value={newStatus}
+                      data-testid="new-status"
                       onChange={(e) => setNewStatus(e.target.value)}
                       className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-400"
                     >
@@ -1910,6 +1921,7 @@ const LeadManagement = () => {
                   </button>
                   <button
                     onClick={handleStatusChange}
+                    data-testid="btn-confirm-status-change"
                     disabled={!newStatus || statusLoading}
                     className={`rounded-md px-4 py-2 text-sm ${
                       newStatus && !statusLoading
@@ -2012,6 +2024,7 @@ const LeadManagement = () => {
                     </label>
                     <select
                       value={bulkNewStatus}
+                      data-testid="new-status"
                       onChange={(e) => setBulkNewStatus(e.target.value)}
                       className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-400"
                     >
@@ -2028,6 +2041,7 @@ const LeadManagement = () => {
                 <div className="flex items-center justify-end space-x-3 border-t border-gray-200 pt-4 dark:border-gray-700">
                   <button
                     onClick={() => setShowBulkStatusModal(false)}
+                     data-testid="cancel-leads"
                     className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                   >
                     Cancel
@@ -2035,6 +2049,7 @@ const LeadManagement = () => {
                   <button
                     onClick={bulkStatusCheck}
                     disabled={!bulkNewStatus}
+                    data-testid="update-leads"
                     className={`rounded-md px-4 py-2 text-sm ${
                       bulkNewStatus
                         ? "bg-[#0a2463] text-white hover:bg-[#0a2463]/90 dark:bg-blue-500 dark:hover:bg-blue-600"
@@ -2107,6 +2122,7 @@ const LeadManagement = () => {
                   <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 dark:bg-gray-700/50">
                     <button
                       type="button"
+                      data-testid="continue-export"
                       className="inline-flex w-full justify-center rounded-md bg-[#0a2463] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#0a2463]/90 sm:ml-3 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700"
                       onClick={handleExportConfirm}
                     >
@@ -2114,6 +2130,7 @@ const LeadManagement = () => {
                     </button>
                     <button
                       type="button"
+                      data-testid="cancel-export"
                       className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto dark:bg-gray-800 dark:text-gray-100 dark:ring-gray-600 dark:hover:bg-gray-700"
                       onClick={() => {
                         setShowExportConfirmModal(false);

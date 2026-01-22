@@ -122,6 +122,7 @@ export default function LeadFileUpload({
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            data-testid="close-file-upload"
           >
             <XMarkIcon className="h-6 w-6" />
           </button>
@@ -130,13 +131,14 @@ export default function LeadFileUpload({
         {/* Dropzone */}
         <div
           {...getRootProps()}
+          data-testid="file-dropzone"
           className={`mt-6 flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors ${
             isDragActive
               ? "border-[var(--color-atoll)] bg-[var(--color-atoll)]/10"
               : "border-gray-300 hover:border-[var(--color-atoll)] dark:border-gray-600"
           }`}
         >
-          <input {...getInputProps()} />
+          <input {...getInputProps()} data-testid="file-input"/>
           <ArrowUpTrayIcon className="mb-3 h-10 w-10 text-gray-400" />
           {isDragActive ? (
             <p className="text-sm font-medium text-[var(--color-atoll)]">
@@ -167,6 +169,7 @@ export default function LeadFileUpload({
         <div className="mt-6 flex justify-end gap-3 border-t border-gray-200 pt-4 dark:border-gray-700">
           <button
             onClick={onClose}
+            data-testid="cancel-file-upload"
             className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             Cancel
@@ -177,6 +180,7 @@ export default function LeadFileUpload({
             style={{ backgroundColor: "var(--atoll)" }}
             type="button"
             onClick={upload}
+            data-testid="upload-files"
             className="mr-4 rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
           >
             {loading && <GhostSpinner className="mr-4 size-4 border-2" />}{" "}
