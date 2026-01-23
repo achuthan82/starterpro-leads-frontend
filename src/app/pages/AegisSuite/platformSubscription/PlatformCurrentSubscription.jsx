@@ -148,6 +148,7 @@ const PlatformCurrentSubscription = ({ subscription, fetchSubscription, noData }
                     <Button
                     variant="outline"
                     onClick={open}
+                    data-testid="btn-cancel-subscription"
                     className="bg-red-500 hover:bg-red-600 text-white"
                     >
                     Cancel Subscription
@@ -161,6 +162,7 @@ const PlatformCurrentSubscription = ({ subscription, fetchSubscription, noData }
                     <Button
                     variant="outline"
                     onClick={open}
+                    data-testid="btn-cancel-subscription"
                     className="bg-red-500 hover:bg-red-600 text-white"
                     >
                     Cancel Subscription

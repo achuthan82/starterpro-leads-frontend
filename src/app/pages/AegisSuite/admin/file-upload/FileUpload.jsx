@@ -419,6 +419,7 @@ const FileUpload = () => {
                 </div>
                 <div className="mt-4 flex items-center space-x-2 flex-wrap">
                   <Input
+                    data-testid="input-campaign-id"
                     className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 mt-3"
                     placeholder="Enter Campaign Id"
                     onChange={(event) => setCampaign(event.target.value)}
@@ -429,6 +430,7 @@ const FileUpload = () => {
                     placeholder="Choose Type"
                     isClearable={false}
                     styles={getReactSelectDarkModeStyles()}
+                    data-testid="select-type"
                     //   className="react-select customised-select me-1"
                     classNamePrefix="select"
                     menuPlacement="top"
@@ -475,6 +477,7 @@ const FileUpload = () => {
             <Transition appear show={isOpen} as={Fragment}>
               <Dialog
                 as="div"
+                data-testid="close-upload-new-lead-modal"
                 className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden px-4 py-6 sm:px-5"
                 onClose={handleClose}
               >
@@ -500,7 +503,7 @@ const FileUpload = () => {
                 >
                   <DialogPanel className="scrollbar-sm max-w-xxl dark:bg-dark-700 relative flex w-full origin-top flex-col overflow-hidden overflow-y-auto rounded-lg bg-white transition-all duration-300 dark:bg-gray-800">
                     <div className="flex justify-end">
-                      <span onClick={close} className="cursor-pointer">
+                      <span onClick={close} className="cursor-pointer" data-testid="btn-x-close-upload-new-lead-modal">
                         <XMarkIcon className="size-7" />
                       </span>
                     </div>
@@ -525,6 +528,7 @@ const FileUpload = () => {
                             </div>
                             <div className="col-span-8">
                               <Select
+                                data-testid="select-templates"
                                 className="react-select w-full"
                                 classNamePrefix="select"
                                 name="template"
@@ -551,6 +555,7 @@ const FileUpload = () => {
                                 <Input
                                   id="name"
                                   name="name"
+                                  data-testid="input-name"
                                   placeholder="Template 1"
                                   onChange={(e) =>
                                     setTemplateName(e.target.value)
@@ -579,6 +584,7 @@ const FileUpload = () => {
                                 </div>
                                 <div className="col-span-8">
                                   <Select
+                                    data-testid={`select-headers-${idx}`}
                                     className="react-select w-full"
                                     classNamePrefix="select"
                                     name={element}
@@ -610,6 +616,7 @@ const FileUpload = () => {
 
                                   <div className="col-span-8">
                                     <Select
+                                      data-testid={`select-value-${idx}`}
                                       className="react-select"
                                       classNamePrefix="select"
                                       name={Object.keys(element)[0]}
@@ -637,6 +644,7 @@ const FileUpload = () => {
                       <div className="mt-4 flex justify-center gap-4">
                         <Button
                           type="submit"
+                          data-testid="btn-submit"
                           className="mr-1"
                           color="primary"
                           disabled={loading}
@@ -649,6 +657,7 @@ const FileUpload = () => {
                         <Button
                           type="reset"
                           color="secondary"
+                          data-testid="btn-discard-upload-new-lead-modal"
                           outline
                           onClick={() => {
                             close()

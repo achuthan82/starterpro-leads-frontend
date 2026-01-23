@@ -118,14 +118,14 @@ const CurrentSubscription = ({ subscription, fetchSubscription }) => {
                     {subscription?.status === null &&
                     <div className="mt-8 flex gap-2 flex-col text-yellow-500">
                         <p>Your subscription is pending. If you are successfully completed the payment, coming wednesday will be your first billing date after that you will be activated. If payment failed, please cancel this subscription and subscribe again.</p>
-                        <Button variant="outline" onClick={open} className="max-w-fit bg-red-500 hover:bg-red-600 text-white">Cancel Subscription</Button>
+                        <Button variant="outline" onClick={open} className="max-w-fit bg-red-500 hover:bg-red-600 text-white" data-testid="btn-cancel-subscription">Cancel Subscription</Button>
                     </div>
                     }
                     {subscription?.status === 'active' &&
                     <div className="mt-8 flex gap-2">
                         {/* <Button variant="solid" color="primary">Change Plan</Button> */}
                         {/* <Button variant="outline">Pause Subscription</Button> */}
-                        <Button variant="outline" onClick={open} className="bg-red-500 hover:bg-red-600 text-white">Cancel Subscription</Button>
+                        <Button variant="outline" onClick={open} className="bg-red-500 hover:bg-red-600 text-white" data-testid="btn-cancel-subscription">Cancel Subscription</Button>
                     </div>
                     }
                 </div>

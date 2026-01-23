@@ -78,7 +78,7 @@ const AvailablePlans = ({ subscription }) => {
               </div>
             </div>
             <div className="p-3 bg-gray-50 dark:bg-dark-800" style={{ backgroundColor: '#0a2463', color: '#fff' }}>
-              <Button variant="solid" color="primary" className="w-full" onClick={() => selectPlan(plan)}>
+              <Button variant="solid" color="primary" className="w-full" data-testid={`btn-subscribe-${plan.id}`} onClick={() => selectPlan(plan)}>
                 Subscribe
               </Button>
             </div>
@@ -110,6 +110,7 @@ const AvailablePlans = ({ subscription }) => {
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
+          data-testid="close-selected-plan-modal"
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden px-4 py-6 sm:px-5"
           onClose={close}
         >
@@ -135,7 +136,7 @@ const AvailablePlans = ({ subscription }) => {
           >
             <DialogPanel className=" scrollbar-sm relative flex w-full overflow-y-auto max-w-xxl origin-top flex-col overflow-hidden rounded-lg bg-[#000000] dark:bg-[#000000] transition-all duration-300 ">
               <div className="flex justify-end">
-                <span onClick={close} className='cursor-pointer'>
+                <span onClick={close} className='cursor-pointer' data-testid="btn-x-close-selected-plan-modal">
                   <XMarkIcon className="size-7" stroke='#fff'/>
                 </span>
               </div>
@@ -149,6 +150,7 @@ const AvailablePlans = ({ subscription }) => {
       <Transition appear show={isAlertOpen} as={Fragment}>
         <Dialog
           as="div"
+          data-testid="close-active-subscription-modal"
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden px-4 py-6 sm:px-5"
           onClose={alertClose}
         >
@@ -187,7 +189,7 @@ const AvailablePlans = ({ subscription }) => {
                 <p className="mt-2">
                   You currently have an active subscription. Please cancel your existing plan before proceeding with the purchase of a new one.
                 </p>
-                <Button onClick={alertClose} color="success" className="mt-6">
+                <Button onClick={alertClose} color="success" className="mt-6" data-testid="btn-close-active-subscription-modal">
                   Close
                 </Button>
               </div>

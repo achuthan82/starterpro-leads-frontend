@@ -350,6 +350,7 @@ const SubscriptionsTab = () => {
               <select
                 value={perPage}
                 onChange={(e) => handlePerPageChange(parseInt(e.target.value))}
+                data-testid="select-per-page"
                 className="rounded border border-gray-300 px-2 py-1 text-sm"
               >
                 <option value={10}>10 per page</option>
@@ -365,6 +366,7 @@ const SubscriptionsTab = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => handleStatusChange(e.target.value)}
+                data-testid="select-status-filter"
                 className="w-full dark:bg-gray-800 dark:border-gray-700 rounded-lg border border-gray-300 px-3 py-2 focus:border-[var(--color-atoll)] focus:outline-none"
               >
                 <option value="all">All Status</option>
@@ -379,6 +381,7 @@ const SubscriptionsTab = () => {
               <button
                 onClick={exportToCSV}
                 disabled={subscriptions.length === 0}
+                data-testid="btn-export-subscription"
                 className={`flex dark:text-white items-center space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                   subscriptions.length === 0
                     ? "cursor-not-allowed border-gray-300 text-gray-100"

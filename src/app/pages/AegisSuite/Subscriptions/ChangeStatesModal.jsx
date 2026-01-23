@@ -60,7 +60,7 @@ const ChangeStatesModal = ({ isOpen, onClose, subscription, fetchSubscription={f
 
     return (
         <Transition appear show={isOpen} as={Fragment}>
-            <Dialog as="div" className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5" onClose={onClose}>
+            <Dialog as="div" className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5" onClose={onClose} data-testid="close-change-subscription-states-modal">
                 <TransitionChild
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -99,6 +99,7 @@ const ChangeStatesModal = ({ isOpen, onClose, subscription, fetchSubscription={f
                                             value={selectedStates}
                                             // defaultValue={subscription?.states_chosen?.map(s => ({ value: s, label: states.find(st => st.value === s)?.label || s }))}
                                             onChange={setSelectedStates}
+                                            data-testid="select-states"
                                             className="react-select-container"
                                             classNamePrefix="react-select"
                                         />
@@ -115,7 +116,7 @@ const ChangeStatesModal = ({ isOpen, onClose, subscription, fetchSubscription={f
                                 )}
 
                                 <div className="mt-6 flex justify-end gap-2">
-                                    <Button variant="outline" onClick={onClose} disabled={submitting}>
+                                    <Button variant="outline" onClick={onClose} disabled={submitting} data-testid="btn-cancel-change-subscription-states-modal">
                                         Cancel
                                     </Button>
                                     <Button
@@ -124,6 +125,7 @@ const ChangeStatesModal = ({ isOpen, onClose, subscription, fetchSubscription={f
                                         onClick={handleSubmit}
                                         disabled={isSubmitDisabled}
                                         isLoading={submitting}
+                                        data-testid="btn-submit-change-subscription-states"
                                     >
                                         Submit
                                     </Button>

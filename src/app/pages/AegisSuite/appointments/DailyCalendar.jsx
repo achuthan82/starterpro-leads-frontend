@@ -104,12 +104,14 @@ const DailyCalendar = ({
         <div className="flex gap-2">
           <button
             onClick={handlePrevDay}
+            data-testid="btn-prev-day"
             className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <ChevronLeftIcon className="size-5 text-gray-600 dark:text-gray-300" />
           </button>
           <button
             onClick={handleNextDay}
+            data-testid="btn-back-day"
             className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <ChevronRightIcon className="size-5 text-gray-600 dark:text-gray-300" />
@@ -130,6 +132,7 @@ const DailyCalendar = ({
                 setSelectedAppointment(null);
                 open();
               }}
+              data-testid="btn-schedule-appointment"
               className="mt-4 rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
             >
               Schedule Appointment
@@ -172,6 +175,7 @@ const DailyCalendar = ({
                           setSelectedAppointment(apt);
                           detailOpen();
                         }}
+                        data-testid={`calendar-appointment-${apt.id}`}
                         className={`cursor-pointer rounded-lg border-l-4 p-4 transition-all hover:shadow-md dark:shadow-gray-900 dark:hover:shadow-lg ${apt.color}`}
                         // style={{
                         //   borderLeftColor: apt.color,

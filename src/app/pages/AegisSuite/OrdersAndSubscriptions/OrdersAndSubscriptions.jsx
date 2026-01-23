@@ -43,6 +43,7 @@ const OrdersAndSubscriptions = () => {
                   <button
                     key={tab.id}
                     onClick={() => handleTabChange(tab.id)}
+                     data-testid="tab-orders-subscriptions"
                     className={`py-2 px-1 border-b-2 font-medium text-sm ${
                       activeTab === tab.id
                         ? 'border-[var(--color-atoll)] dark:border-blue-400 text-[var(--color-atoll)] dark:text-blue-400'

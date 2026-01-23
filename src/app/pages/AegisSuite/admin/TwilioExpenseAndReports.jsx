@@ -1135,6 +1135,7 @@ const TwilioExpenseAndReports = () => {
                       ] : undefined,
                     }}
                     placeholder="Select date range"
+                    data-testid="input-date-range"
                     className="w-full text-sm"
                   />
                   {dateError && (
@@ -1473,6 +1474,7 @@ const TwilioExpenseAndReports = () => {
                       setSelectedDeductionEvent(Number(e.target.value));
                       setDeductionPage(1);
                     }}
+                    data-testid="select-event-filter"
                     className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm"
                   >
                     {Object.entries(EVENT_MAP).map(([id, event]) => (
@@ -1490,12 +1492,14 @@ const TwilioExpenseAndReports = () => {
                       placeholder="Search by lead name, phone number, mortgage ID..."
                       value={deductionSearchTerm}
                       onChange={(e) => setDeductionSearchTerm(e.target.value)}
+                      data-testid="input-search"
                       className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
                                 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 w-64"
                     />
                     {deductionSearchTerm && (
                       <button
                         onClick={() => setDeductionSearchTerm('')}
+                        data-testid="btn-search"
                         className="absolute right-3 top-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                       >
                         <XMarkIcon className="w-4 h-4" />

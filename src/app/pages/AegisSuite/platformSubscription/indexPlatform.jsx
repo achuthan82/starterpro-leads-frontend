@@ -88,6 +88,7 @@ const PlatformSubscriptions = () => {
               {TABS.map((tab) => (
                 <Tab
                   key={tab.id}
+                  data-testid="tab-platform-subscriptions"
                   className={({ selected }) =>
                     clsx(
                       'px-4 py-2 text-sm font-medium leading-5',
