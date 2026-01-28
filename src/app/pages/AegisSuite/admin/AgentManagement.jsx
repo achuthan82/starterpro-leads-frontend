@@ -274,6 +274,7 @@ const AgentManagement = () => {
                   placeholder="Search agents by name..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  data-testid="input-search"
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-[var(--color-atoll)] focus:outline-none"
                 />
               </div>
@@ -282,6 +283,7 @@ const AgentManagement = () => {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
+                  data-testid="select-status-filter"
                   className="border border-gray-300 dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 focus:border-[#75150b] focus:outline-none"
                 >
                   <option value="all">All Status</option>
@@ -309,6 +311,7 @@ const AgentManagement = () => {
                 </div>
                 <button
                   onClick={() => navigate('/login')}
+                  data-testid="btn-login-again"
                   className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
                 >
                   Login Again
@@ -416,6 +419,7 @@ const AgentManagement = () => {
                           <div className="flex flex-col space-y-1">
                             <button
                               onClick={() => handleViewLeads(agent.id, agent.user_id)}
+                              data-testid="btn-view-leads"
                               className="text-[var(--color-atoll)] dark:text-blue-400 hover:text-[var(--color-atoll)] dark:text-blue-400/80 text-xs flex items-center space-x-1"
                             >
                               <EyeIcon className="w-3 h-3" />
@@ -423,6 +427,7 @@ const AgentManagement = () => {
                             </button>
                             <button
                               onClick={() => handleViewOrders(agent)}
+                              data-testid="btn-view-orders"
                               className="text-[var(--color-fern)] hover:text-[var(--color-fern)]/80 text-xs flex items-center space-x-1"
                             >
                               <EyeIcon className="w-3 h-3" />
@@ -453,6 +458,7 @@ const AgentManagement = () => {
                     <button
                       onClick={() => setCurrentPage(1)}
                       disabled={currentPage === 1}
+                      data-testid="btn-first-page"
                       className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:bg-gray-700"
                     >
                       First
@@ -460,6 +466,7 @@ const AgentManagement = () => {
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                       disabled={currentPage === 1}
+                      data-testid="btn-prev-page"
                       className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:bg-gray-700"
                     >
                       Previous
@@ -497,6 +504,7 @@ const AgentManagement = () => {
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                       disabled={currentPage === totalPages}
+                      data-testid="btn-next-page"
                       className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:bg-gray-700"
                     >
                       Next
@@ -504,6 +512,7 @@ const AgentManagement = () => {
                     <button
                       onClick={() => setCurrentPage(totalPages)}
                       disabled={currentPage === totalPages}
+                      data-testid="btn-last-page"
                       className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:bg-gray-700"
                     >
                       Last
@@ -530,7 +539,7 @@ const AgentManagement = () => {
                   <p className="text-gray-600 dark:text-gray-300">{selectedAgent.role} • {selectedAgent.id}</p>
                 </div>
               </div>
-              <button onClick={() => setSelectedAgent(null)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300">
+              <button onClick={() => setSelectedAgent(null)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300" data-testid="btn-x-close-agent-detail-modal">
                 <XMarkIcon className="w-6 h-6" />
               </button>
             </div>
@@ -591,10 +600,11 @@ const AgentManagement = () => {
               <button
                 onClick={() => setSelectedAgent(null)}
                 className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700"
+                data-testid="btn-close-agent-detail-modal"
               >
                 Close
               </button>
-              <button className="px-4 py-2 text-sm bg-[var(--color-atoll)] text-white rounded-md hover:bg-[var(--color-atoll)]/90">
+              <button className="px-4 py-2 text-sm bg-[var(--color-atoll)] text-white rounded-md hover:bg-[var(--color-atoll)]/90" data-testid="btn-edit-agent-modal">
                 Edit Agent
               </button>
             </div>

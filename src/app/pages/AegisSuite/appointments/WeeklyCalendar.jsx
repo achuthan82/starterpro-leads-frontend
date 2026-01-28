@@ -112,12 +112,14 @@ const WeeklyCalendar = ({
         <div className="flex gap-2">
           <button
             onClick={handlePrevWeek}
+            data-testid="btn-prev-week"
             className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <ChevronLeftIcon className="size-5 text-gray-600 dark:text-gray-300" />
           </button>
           <button
             onClick={handleNextWeek}
+            data-testid="btn-back-week"
             className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <ChevronRightIcon className="size-5 text-gray-600 dark:text-gray-300" />
@@ -186,6 +188,7 @@ const WeeklyCalendar = ({
                             setSelectedAppointment(apt);
                             detailOpen();
                           }}
+                          data-testid={`calendar-appointment-${apt.id}`}
                           className={`cursor-pointer rounded p-2 text-xs text-white transition-opacity hover:opacity-90 ${apt.color}`}
                           // style={{ backgroundColor: apt.color }}
                         >

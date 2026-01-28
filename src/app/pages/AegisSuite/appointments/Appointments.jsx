@@ -261,6 +261,7 @@ const Appointments = () => {
             <div className="flex items-center gap-4 flex-wrap">
               <div className="flex rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
                 <button
+                  data-testid="btn-today"
                   className={`rounded-l-lg border-r border-gray-200 px-4 py-2 text-sm font-medium transition-colors dark:border-gray-700 ${
                     viewType === "today"
                       ? "bg-blue-600 text-white"
@@ -272,6 +273,7 @@ const Appointments = () => {
                 </button>
 
                 <button
+                  data-testid="btn-week"
                   className={`border-r border-gray-200 px-4 py-2 text-sm font-medium transition-colors dark:border-gray-700 ${
                     viewType === "week"
                       ? "bg-blue-600 text-white"
@@ -283,6 +285,7 @@ const Appointments = () => {
                 </button>
 
                 <button
+                  data-testid="btn-month"
                   className={`rounded-r-lg px-4 py-2 text-sm font-medium transition-colors ${
                     viewType === "month"
                       ? "bg-blue-600 text-white"
@@ -294,6 +297,7 @@ const Appointments = () => {
                 </button>
               </div>
               <button
+                data-testid="btn-invite-user"
                 className="flex items-center space-x-2 rounded-lg px-4 py-2 font-semibold text-white shadow-lg transition-all"
                 style={{ backgroundColor: "#0a2463" }}
                 onClick={() => {
@@ -314,6 +318,7 @@ const Appointments = () => {
               </button>
 
               <button
+                data-testid="btn-add-appointment"
                 className="flex items-center space-x-2 rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-gray-900 shadow-lg transition-all hover:bg-yellow-600 dark:bg-yellow-400 dark:text-gray-900 dark:hover:bg-yellow-500"
                 onClick={() => {
                   setSelectedAppointment(null);

@@ -42,6 +42,7 @@ const DeleteAppointmentModal = ({ appointment, setDeleteModal, startDate,endDate
           <div className="flex justify-end space-x-3">
             <button
               onClick={() => setDeleteModal(false)}
+              data-testid="btn-cancel-appointment"
               className="rounded-lg border border-gray-300 px-4 py-2 text-gray-600 transition-colors hover:bg-gray-50"
             >
               Cancel
@@ -49,6 +50,7 @@ const DeleteAppointmentModal = ({ appointment, setDeleteModal, startDate,endDate
             <button
               onClick={handleDelete}
               disabled={deleteLoading}
+              data-testid="btn-delete-appointment"
               className="rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {deleteLoading ? (

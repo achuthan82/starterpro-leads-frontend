@@ -21,6 +21,7 @@ const DailyAppointmentModal = ({
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
         as="div"
+        data-testid="close-appointments-modal"
         className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
         onClose={close}
       >
@@ -54,6 +55,7 @@ const DailyAppointmentModal = ({
 
               <button
                 onClick={close}
+                data-testid="btn-x-close-appointments-modal"
                 className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-dark-600"
               >
                 <XMarkIcon className="h-5 w-5" />
@@ -109,7 +111,8 @@ const DailyAppointmentModal = ({
                     {/* View Details Button */}
                     <div className="mt-4 flex justify-end">
                       <button
-                        onClick={() =>  { setSelectedAppointment(apt); detailOpen()}}
+                        onClick={() => { setSelectedAppointment(apt); detailOpen()}}
+                        data-testid="btn-view-details"
                         className="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                       >
                         View Details
@@ -123,6 +126,7 @@ const DailyAppointmentModal = ({
             <div className="mt-6 flex justify-end">
               <button
                 onClick={close}
+                data-testid="btn-close-appointments-modal"
                 className="rounded-lg bg-gray-600 px-4 py-2 text-white transition hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600"
               >
                 Close

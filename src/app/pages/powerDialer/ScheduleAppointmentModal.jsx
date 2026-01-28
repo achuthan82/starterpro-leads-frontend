@@ -488,6 +488,7 @@ const ScheduleAppointmentModal = ({
               key={index}
               onClick={() => handleTimeSelect(slot)}
               disabled={!slot.available || loadingSlots}
+              data-testid={`time-slot-${index}`}
               className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
                 selectedTime?.time === slot.time
                   ? "border-[#0a2463] bg-[#0a2463] text-white dark:border-blue-500 dark:bg-blue-500"
@@ -510,7 +511,7 @@ const ScheduleAppointmentModal = ({
         as="div"
         className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
         onClose={onClose}
-        data-testid="schedule-appointment-modal"
+        data-testid="close-schedule-appointment-modal"
       >
         {/* Overlay */}
         <TransitionChild
@@ -832,7 +833,7 @@ const ScheduleAppointmentModal = ({
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         rows={3}
-                        data-testid="teatarea-notes"
+                        data-testid="textarea-notes"
                         className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400"
                         placeholder="Add any notes about this appointment..."
                       />
@@ -889,7 +890,7 @@ const ScheduleAppointmentModal = ({
                   <div className="mt-6 flex items-center justify-end space-x-3 border-t border-gray-200 pt-6 dark:border-gray-700">
                     <button
                       onClick={onClose}
-                      data-testid="btn-cancel-show-form"
+                      data-testid="btn-cancel-schedule-appointment-modal"
                       className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                     >
                       Cancel

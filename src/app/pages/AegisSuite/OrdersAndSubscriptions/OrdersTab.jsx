@@ -365,6 +365,7 @@ const OrdersTab = () => {
               <select
                 value={perPage}
                 onChange={(e) => handlePerPageChange(parseInt(e.target.value))}
+                data-testid="select-per-page"
                 className="rounded border border-gray-300 px-2 py-1 text-sm"
               >
                 <option value={10}>10 per page</option>
@@ -379,6 +380,7 @@ const OrdersTab = () => {
               <select
                 value={paymentStatusFilter}
                 onChange={(e) => handlePaymentStatusChange(e.target.value)}
+                data-testid="select-payment-status-filter"
                 className="w-full dark:bg-gray-800 dark:border-gray-700 rounded-lg border border-gray-300 px-3 py-2 focus:border-[var(--color-atoll)] focus:outline-none"
               >
                 <option value="all">All Payment Status</option>
@@ -391,6 +393,7 @@ const OrdersTab = () => {
               <button
                 onClick={exportToCSV}
                 disabled={orders.length === 0}
+                data-testid="btn-export-orders"
                 className={`flex items-center dark:text-white space-x-2 rounded-lg border px-4 py-2 transition-colors ${
                   orders.length === 0
                     ? "cursor-not-allowed border-gray-300 text-gray-400"
@@ -481,6 +484,7 @@ const OrdersTab = () => {
                           {items.length > 0 && (
                             <button
                               onClick={() => toggleRowExpansion(order.id)}
+                               data-testid="btn-table-expand"
                               className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                               title={isExpanded ? "Collapse items" : "Expand items"}
                             >
@@ -517,6 +521,7 @@ const OrdersTab = () => {
                         </td>
                         <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
                           <button
+                            data-testid="btn-view-download-invoice"
                             className="flex dark:text-[#4d9fff] items-center space-x-1 text-[var(--color-atoll)] hover:text-[var(--color-atoll)]/80"
                             onClick={() =>
                               navigate(

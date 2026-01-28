@@ -93,12 +93,14 @@ const MonthlyCalendar = ({
         <div className="flex gap-2">
           <button
             onClick={handlePrevMonth}
+            data-testid="btn-prev-month"
             className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <ChevronLeftIcon className="size-5 text-gray-600 dark:text-gray-300" />
           </button>
           <button
             onClick={handleNextMonth}
+            data-testid="btn-next-month"
             className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <ChevronRightIcon className="size-5 text-gray-600 dark:text-gray-300" />
@@ -174,6 +176,7 @@ const MonthlyCalendar = ({
                       detailOpen()
                       // setShowDetailModal(true);
                     }}
+                    data-testid={`calendar-appointment-${apt.id}`}
                     className={`cursor-pointer truncate rounded px-2 py-1 text-xs text-white transition-opacity hover:opacity-90 ${apt.color}`}
                     // style={{ backgroundColor: apt.color }}
                     title={`${apt.time} - ${apt.title}`}

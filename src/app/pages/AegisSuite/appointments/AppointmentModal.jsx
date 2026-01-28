@@ -65,6 +65,7 @@ const AppointmentModal = ({
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
         as="div"
+        data-testid="close-appointment-modal"
         className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
         onClose={close}
       >
@@ -102,6 +103,7 @@ const AppointmentModal = ({
 
                   <button
                     onClick={close}
+                    data-testid="close-x-appointment-modal"
                     className="dark:hover:bg-dark-600 rounded-lg p-2 transition-colors hover:bg-gray-100"
                   >
                     <XMarkIcon className="h-5 w-5" />
@@ -132,6 +134,7 @@ const AppointmentModal = ({
                       type="button"
                       onClick={() => handleShowUpToggle(appointment)}
                       disabled={showUpLoading}
+                      data-testid="toggle-lead-show-up"
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-[var(--color-atoll)] focus:ring-offset-2 focus:outline-none ${
                         appointment.show_up
                           ? "bg-green-600 dark:bg-green-500"
@@ -240,6 +243,7 @@ const AppointmentModal = ({
                       open();
                       close();
                     }}
+                    data-testid="btn-edit-appointment"
                     className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                   >
                     <PencilSquareIcon className="h-4 w-4" />
@@ -252,6 +256,7 @@ const AppointmentModal = ({
                       setDeleteModal(true);
                       close();
                     }}
+                    data-testid="btn-delete-appointment"
                     className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
                   >
                     <TrashIcon className="h-4 w-4" />
@@ -262,6 +267,7 @@ const AppointmentModal = ({
                     onClick={() => {
                       close();
                     }}
+                    data-testid="btn-close-appointment-modal"
                     className="rounded-lg bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600"
                   >
                     Close

@@ -333,6 +333,7 @@ const MailRequestFormNew = ({ selectedPlan }) => {
               <button
                 type="button"
                 onClick={clearSignature}
+                data-testid="btn-clear"
                 className="font-medium text-red-600 hover:text-red-800"
               >
                 Clear
@@ -341,7 +342,7 @@ const MailRequestFormNew = ({ selectedPlan }) => {
           </div>
 
           <div className="flex justify-center pt-4">
-            <Button color="primary" size="lg" type="submit" disabled={loading}>
+            <Button color="primary" size="lg" type="submit" disabled={loading} data-testid="btn-continue">
               {loading ? (
                 <>
                   <GhostSpinner className="mr-1 size-4 border-2" />

@@ -90,7 +90,7 @@ const InvoiceHistory = ({navigate}) => {
                 <div className="flex justify-between items-center mb-4 px-5">
                     <h2 className="text-2xl font-bold dark:text-gray-100">Invoice History</h2>
                     <div className="flex items-center gap-2 text-blue-600 dark:text-gray-100">
-                        <Button variant="solid" onClick={download} disabled={!pagination || pagination?.total < 1 || loading}>{!loading ? 'Download All' : <Spinner/> }</Button>
+                        <Button variant="solid" data-testid="btn-download-all" onClick={download} disabled={!pagination || pagination?.total < 1 || loading}>{!loading ? 'Download All' : <Spinner/> }</Button>
                     </div>
                 </div>
 
@@ -118,7 +118,7 @@ const InvoiceHistory = ({navigate}) => {
                                 <Td>{invoice.states_chosen.join(', ')}</Td>
                                 <Td className='flex justify-center'>
                                     <div className="flex items-center gap-1 text-blue-600">
-                                        <Button variant="link" size="sm" onClick={() => {navigate(`/subscriptions/invoice/${invoice.id}?from=0`)}}>View</Button>
+                                        <Button variant="link" size="sm" data-testid="btn-view" onClick={() => {navigate(`/subscriptions/invoice/${invoice.id}?from=0`)}}>View</Button>
                                     </div>
                                 </Td>
                             </Tr>

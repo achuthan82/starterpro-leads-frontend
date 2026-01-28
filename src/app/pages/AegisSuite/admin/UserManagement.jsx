@@ -602,6 +602,7 @@ useEffect(() => {
                 <button
                   onClick={() => setShowExportMenu(!showExportMenu)}
                   disabled={exportLoading}
+                  data-testid="btn-export-users"
                   className="bg-[var(--color-atoll)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-atoll)]/90 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {exportLoading ? (
@@ -627,18 +628,21 @@ useEffect(() => {
                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
                       <button
                         onClick={() => handleExportUsers(null)}
+                        data-testid="btn-export-all-users"
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg"
                       >
                         Export All Users
                       </button>
                       <button
                         onClick={() => handleExportUsers(1)}
+                        data-testid="btn-export-active-users"
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         Export Active Users
                       </button>
                       <button
                         onClick={() => handleExportUsers(0)}
+                        data-testid="btn-export-inactive-users"
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-b-lg"
                       >
                         Export Inactive Users
@@ -649,6 +653,7 @@ useEffect(() => {
               </div>
               <button
                 onClick={open}
+                data-testid="btn-invite-users"
                 className="bg-[#f4d03f] text-white px-4 py-2 rounded-lg hover:bg-[#e6c035] transition-colors flex items-center space-x-2"
               >
                 <UserPlusIcon className="w-4 h-4" />
@@ -722,6 +727,7 @@ useEffect(() => {
                   placeholder="Search users by name"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  data-testid="input-search"
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-atoll)] focus:border-[var(--color-atoll)]"
                 />
               </div>
@@ -730,6 +736,7 @@ useEffect(() => {
                 <select
                   value={selectedRole}
                   onChange={(e) => {setSelectedRole(e.target.value); setCurrentPage(0)}}
+                  data-testid="select-roles"
                   className="w-full px-3 py-2 border border-gray-300 dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#75150b] focus:border-[#75150b]"
                 >
                   <option value="0">All Roles</option>
@@ -743,6 +750,7 @@ useEffect(() => {
                 <select
                   value={selectedStatus}
                   onChange={(e) => {setSelectedStatus(e.target.value); setCurrentPage(0)}}
+                  data-testid="select-status"
                   className="w-full px-3 py-2 border border-gray-300 dark:border-dark-600 bg-white dark:bg-dark-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#75150b] focus:border-[#75150b]"
                 >
                   <option value="all">All Status</option>
@@ -868,6 +876,7 @@ useEffect(() => {
                           <div className="flex flex-col space-y-1">
                             <button
                               onClick={() => handleEdit(user)}
+                              data-testid="btn-edit"
                               className="text-[var(--color-atoll)] dark:text-blue-400 hover:text-[var(--color-atoll)] dark:text-blue-400/80 text-xs flex items-center space-x-1"
                             >
                               <PencilIcon className="w-3 h-3" />
@@ -878,6 +887,7 @@ useEffect(() => {
                                 <>
                                   <button
                                     onClick={() => handleInvite(user)}
+                                    data-testid="btn-invite-again"
                                     className="text-[var(--color-atoll)] dark:text-blue-400 hover:text-[var(--color-atoll)] dark:text-blue-400/80 text-xs flex items-center space-x-1"
                                   > 
                                     {
@@ -888,6 +898,7 @@ useEffect(() => {
                                   <button
                                     onClick={() => handleDelete(user)}
                                     disabled={deleteLoadingId === user.id}
+                                    data-testid="btn-delete"
                                     className="text-red-600 hover:text-red-800 text-xs flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed"
                                   >
                                     {deleteLoadingId === user.id ? (
@@ -910,6 +921,7 @@ useEffect(() => {
                                   <button
                                     onClick={() => handleStatusChange(user, 'inactive')}
                                     disabled={statusLoadingId === user.id}
+                                    data-testid="btn-deactivate"
                                     className="text-red-600 hover:text-red-800 text-xs flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed"
                                   >
                                     {statusLoadingId === user.id ? (
@@ -925,6 +937,7 @@ useEffect(() => {
                                   <button
                                     onClick={() => handleStatusChange(user, 'active')}
                                     disabled={statusLoadingId === user.id}
+                                    data-testid="btn-activate"
                                     className="text-green-600 hover:text-green-800 text-xs flex items-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed"
                                   >
                                     {statusLoadingId === user.id ? (
@@ -1036,6 +1049,7 @@ useEffect(() => {
       {showConfirmation && confirmationData && (
         <div 
           className="fixed inset-0 bg-gray-600/65 bg-opacity-50 flex items-center justify-center z-50"
+          data-testid="close-confirmation-modal"
           onClick={cancelStatusChange}
         >
           <div 
@@ -1066,6 +1080,7 @@ useEffect(() => {
             <div className="flex justify-end space-x-3">
               <button
                 onClick={cancelStatusChange}
+                data-testid="btn-cancel-confirmation-modal"
                 className="px-4 py-2 text-gray-600 dark:text-gray-300 border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 transition-colors"
               >
                 Cancel
@@ -1076,6 +1091,7 @@ useEffect(() => {
                   (confirmationData.action === 'delete' && deleteLoadingId === confirmationData.user.id) ||
                   (confirmationData.action !== 'delete' && statusLoadingId === confirmationData.user.id)
                 }
+                data-testid="btn-delete"
                 className={`px-4 py-2 rounded-lg transition-colors ${
                   confirmationData.action === 'delete'
                     ? 'bg-red-600 text-white hover:bg-red-700'

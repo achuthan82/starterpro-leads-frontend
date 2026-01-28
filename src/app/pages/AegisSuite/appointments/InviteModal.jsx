@@ -138,6 +138,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
     <Transition appear show={isInviteOpen} as={Fragment}>
       <Dialog
         as="div"
+        data-testid="close-invite-user-modal"
         className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
         onClose={close}
       >
@@ -192,6 +193,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                           onInputChange={loadOptions}
                           inputValue={searchValue}
                           placeholder="Select Client"
+                          data-testid="select-client"
                           classNamePrefix="react-select"
                           onChange={(value) => { field.onChange(value); handleClient(value)}} // important!
                         />
@@ -222,6 +224,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                         type="text"
                         placeholder="Enter title"
                         invalid={errors.title}
+                        data-testid="input-title"
                       />
                     )}
                   />
@@ -247,6 +250,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                         <Radio
                           label="Email"
                           name="type"
+                          data-testid="radio-email"
                           checked={field.value === "email"}
                           onChange={() => {
                             field.onChange("email");
@@ -257,6 +261,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                         <Radio
                           label="SMS"
                           name="type"
+                          data-testid="radio-sms"
                           checked={field.value === "sms"}
                           onChange={() => {
                             field.onChange("sms");
@@ -267,6 +272,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                         <Radio
                           label="Both"
                           name="type"
+                          data-testid="radio-both"
                           checked={field.value === "both"}
                           onChange={() => {
                             field.onChange("both");
@@ -307,6 +313,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                           type="email"
                           placeholder="user@example.com"
                           invalid={errors.email}
+                          data-testid="input-email"
                         />
                       )}
                     />
@@ -342,6 +349,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                           type="text"
                           //   placeholder="+1 555 987 6543"
                           invalid={errors.phone}
+                          data-testid="input-phone-number"
                         />
                       )}
                     />
@@ -377,6 +385,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                           type="email"
                           placeholder="user@example.com"
                           invalid={errors.email}
+                          data-testid="input-email"
                         />
                       )}
                     />
@@ -408,6 +417,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                         type="text"
                         //   placeholder="+1 555 987 6543"
                         invalid={errors.phone}
+                        data-testid="input-phone-number"
                       />
                     )}
                   />
@@ -427,6 +437,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
                     color="primary"
                     style={{ backgroundColor: "var(--atoll)" }}
                     type="submit"
+                    data-testid="btn-invite-user-modal"
                     className="mr-4 rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
                     disabled={loading}
                   >
@@ -436,6 +447,7 @@ const InviteModal = ({ isInviteOpen, inviteClose }) => {
 
                   <Button
                     type="button"
+                    data-testid="btn-cancel-invite-user-modal"
                     className="rounded border border-gray-400 px-6 py-2 text-gray-700 hover:bg-gray-100"
                     onClick={close}
                     disabled={loading}

@@ -44,6 +44,7 @@ const CancelSubscription = ({ isOpen, close, subscriptionId, fetchSubscription }
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog
                     as="div"
+                    data-testid="close-reason-for-cancellation-modal"
                     className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
                     onClose={close}
                 >
@@ -75,6 +76,7 @@ const CancelSubscription = ({ isOpen, close, subscriptionId, fetchSubscription }
                             <div className="absolute right-4 top-4">
                                 <XCircleIcon
                                     onClick={close}
+                                    data-testid="btn-x-close-reason-for-cancellation-modal"
                                     className="h-7 w-7 text-error cursor-pointer hover:scale-105 transition-transform"
                                 />
                             </div>
@@ -109,6 +111,7 @@ const CancelSubscription = ({ isOpen, close, subscriptionId, fetchSubscription }
                                             {...field}
                                             placeholder="Enter your reason here..."
                                             rows={5}
+                                            data-testid="textarea-reason"
                                             className="mt-6 w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-dark-600 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-red-400 focus:outline-none transition"
                                         />
                                     )}
@@ -120,6 +123,7 @@ const CancelSubscription = ({ isOpen, close, subscriptionId, fetchSubscription }
                                     // onClick={close}
                                     color="error"
                                     type='submit'
+                                    data-testid="btn-cancel-subscription"
                                     className="mt-6 w-full rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 transition"
                                 >
                                     {!loading ? 'Cancel Subscription' : <Spinner />}

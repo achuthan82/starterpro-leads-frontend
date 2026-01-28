@@ -386,6 +386,7 @@ const UserModal = ({
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
         as="div"
+        data-testid="close-user-modal"
         className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 sm:px-5"
         onClose={() => {
           close();
@@ -443,6 +444,7 @@ const UserModal = ({
                         type="text"
                         id="name"
                         placeholder="Name"
+                        data-testid="input-name"
                         className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                         invalid={errors.name}
                         onChange={(event) => {
@@ -461,12 +463,12 @@ const UserModal = ({
                     className="mb-1 block text-left text-sm font-medium"
                     htmlFor="agency_id"
                   >
-                    Agency Name <span className="text-red-500">*</span>
+                    Agency<span className="text-red-500">*</span>
                   </label>
                   <Controller
                     control={control}
                     name="agency_id"
-                    rules={{ required: "Agency name is required" }}
+                    rules={{ required: "Agency is required" }}
                     render={({ field }) => (
                       <Select
                         options={agencyOptions}
@@ -474,6 +476,7 @@ const UserModal = ({
                         {...field}
                         innerRef={field.ref}
                         autoFocus
+                        data-testid="select-agency"
                         styles={getReactSelectDarkModeStyles()}
                         invalid={errors.agency_id}
                         onChange={(event) => {
@@ -508,6 +511,7 @@ const UserModal = ({
                           id="npn_number"
                           placeholder="NPN Number"
                           invalid={errors.npn_number}
+                          data-testid="input-npn-number"
                           className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                           onChange={(event) => {
                             field.onChange(event);
@@ -546,6 +550,7 @@ const UserModal = ({
                         autoFocus
                         innerRef={field.ref}
                         type="email"
+                        data-testid="input-email"
                         className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                         placeholder="john@example.com"
                         invalid={errors.email && true}
@@ -578,6 +583,7 @@ const UserModal = ({
                         type="number"
                         id="phone"
                         placeholder="1223123099"
+                        data-testid="input-phone"
                         className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                         invalid={errors.phone}
                         onChange={(event) => {
@@ -616,6 +622,7 @@ const UserModal = ({
                           options={roleOptions}
                           id="user_role"
                           invalid={errors.user_role}
+                          data-testid="select-role"
                           styles={getReactSelectDarkModeStyles()}
                           onChange={(event) => {
                             field.onChange(event);
@@ -645,6 +652,7 @@ const UserModal = ({
                           <Select
                             isClearable={false}
                             id={`key-${i}`}
+                            data-testid={`select-type-${i}`}
                             className="react-select"
                             classNamePrefix="select"
                             options={types}
@@ -665,6 +673,7 @@ const UserModal = ({
                             Auto Generate
                           </label>
                           <Checkbox
+                            data-testid={`checkbox-auto-generate-${i}`}
                             className={`customCheck ${(inputFields[i].source === "" || inputFields[i].id !== "") && "customColor"}`}
                             style={{ width: "36px", height: "36px" }}
                             type="checkbox"
@@ -690,6 +699,7 @@ const UserModal = ({
                             name="value"
                             value={inputFields[i].id}
                             onChange={(val) => handleInputFieldValue(i, val)}
+                            data-testid={`input-agent-id-${i}`}
                             className="w-full rounded-md border border-gray-300 bg-white text-gray-900 focus:border-transparent focus:ring-2 focus:ring-[#0a2463] focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100"
                             disabled={
                               inputFields[i].auto_generate ||
@@ -703,6 +713,7 @@ const UserModal = ({
                             type="button"
                             className="mt-6 w-full rounded border border-red-500 px-2 py-1 text-red-500"
                             onClick={(e) => deleteForm(e, i)}
+                            data-testid={`btn-delete-${i}`}
                           >
                             <TrashIcon className="inline-block h-6 w-6" />
                           </button>
@@ -718,6 +729,7 @@ const UserModal = ({
                       // color='pri'
                       type="button"
                       style={{ backgroundColor: "var(--fern)" }}
+                      data-testid='btn-add-new-type'
                       className="flex items-center gap-2 rounded px-4 py-2 text-white hover:bg-blue-900"
                       onClick={increaseCount}
                     >
@@ -734,6 +746,7 @@ const UserModal = ({
                     color="primary"
                     style={{ backgroundColor: "var(--atoll)" }}
                     type="submit"
+                    data-testid='btn-submit'
                     className="mr-4 rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
                     disabled={loading}
                   >
@@ -742,6 +755,7 @@ const UserModal = ({
                   </Button>
                   <Button
                     type="reset"
+                    data-testid="btn-cancel-user-modal"
                     className="rounded border border-gray-400 px-6 py-2 text-gray-700 hover:bg-gray-100"
                     onClick={() => {
                       close();
