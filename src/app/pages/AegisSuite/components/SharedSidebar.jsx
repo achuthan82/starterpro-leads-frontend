@@ -16,6 +16,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   EnvelopeIcon,
+  ComputerDesktopIcon,
   BanknotesIcon,
   DocumentIcon,
   Bars3Icon,
@@ -148,7 +149,7 @@ const SharedSidebar = ({ currentPath = "" }) => {
       label: "Platform Subscriptions",
       description: "Manage your platform subscriptions",
       href: "/platform-subscriptions",
-      icon: BanknotesIcon,
+      icon: ComputerDesktopIcon,
     },
     {
       id: "twilio-expense-reports",

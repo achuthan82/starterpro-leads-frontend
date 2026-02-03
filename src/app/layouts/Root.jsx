@@ -9,6 +9,8 @@ import { Loadable } from "components/shared/Loadable";
 const Toaster = Loadable(lazy(() => import("components/template/Toaster")));
 const Tooltip = Loadable(lazy(() => import("components/template/Tooltip")));
 const StickyCallBar = Loadable(lazy(() => import("components/shared/StickyCallBar")));
+const RenewalAlert = Loadable(lazy(() => import("components/shared/RenewalAlert")));
+const LeadCountReminderAlert = Loadable(lazy(() => import("components/shared/LeadCountReminderAlert")));
 
 // ----------------------------------------------------------------------
 
@@ -17,6 +19,8 @@ function Root() {
     <>
       <Progress />
       <ScrollRestoration />
+      <RenewalAlert />
+      <LeadCountReminderAlert />
       <Outlet />
       <Tooltip />
       <Toaster />
