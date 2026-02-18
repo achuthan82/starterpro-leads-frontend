@@ -6,9 +6,8 @@ import {
     TransitionChild,
     DialogTitle
 } from "@headlessui/react";
-import { Button, Textarea, Spinner } from "components/ui";
+import { Button, Spinner } from "components/ui";
 import { XCircleIcon } from '@heroicons/react/24/outline';
-import { useForm, Controller } from "react-hook-form";
 import platformSubscriptionService from "utils/platformSubscriptionService";
 import { toast } from 'sonner';
 // import { useAuthContext } from 'app/contexts/auth/context';
@@ -17,27 +16,37 @@ import { toast } from 'sonner';
 const CancelSubscription = ({ isOpen, close, subscriptionId, fetchSubscription }) => {
     // const { logout } = useAuthContext();
     // console.log(logout)
-    const [loading, setLoading] = useState(false)
-    const { control, handleSubmit, formState: { errors } } = useForm({
-        mode: "onChange"
-    });
-    const submitData = (data) => {
-        setLoading(true)
-        platformSubscriptionService.cancelSubscription(subscriptionId, data.reason).then((response) => {
+    const [loading, setLoading] = useState(false);
+
+    const submitData = () => {
+        setLoading(true);
+        // platformSubscriptionService.cancelSubscription(subscriptionId, data.reason).then((response) => {
+        //     if (response.data.status === 200) {
+        //         fetchSubscription();
+        //         close();
+        //         toast.success(response?.data?.message || 'Subscription cancellation request has been submitted please wait for a while');
+        //     } else {
+        //         toast.error(response?.data?.message || 'Please try again later');
+        //     }
+        // }).catch(() => {
+        //     toast.error('Please try again later');
+        // }).finally(() => {
+        //     setLoading(false);
+        // });
+
+        platformSubscriptionService.temporaryCancelSubscription(subscriptionId).then((response) => {
             if (response.data.status === 200) {
-                fetchSubscription()
-                close()
-                toast.success(response?.data?.message || 'Subscription cancellation request has been submitted please wait for a while')
+                fetchSubscription();
+                close();
+                toast.success(response?.data?.message || 'Subscription cancellation request has been submitted please wait for a while');
             } else {
-                toast.error(response?.data?.message || 'Please try again later')
+                toast.error(response?.data?.message || 'Please try again later');
             }
         }).catch(() => {
-            toast.error('Please try again later') 
-
+            toast.error('Please try again later');
         }).finally(() => {
-            setLoading(false)
-        })
-
+            setLoading(false);
+        });
     }
     return (
         <>
@@ -91,45 +100,32 @@ const CancelSubscription = ({ isOpen, close, subscriptionId, fetchSubscription }
                                 as="h3"
                                 className="text-2xl font-semibold text-gray-800 dark:text-gray-100"
                             >
-                                Reason for Cancellation
+                                Cancel Subscription
                             </DialogTitle>
-                            <form onSubmit={handleSubmit(submitData)}>
-                                {/* Subtitle */}
-                                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                                    Help us improve by letting us know why you&apos;re cancelling.
-                                </p>
 
-                                {/* Textarea */}
-                                <Controller
-                                    name="reason"
-                                    control={control}
-                                    rules={{
-                                        required: true,
-                                    }}
-                                    render={({ field }) => (
-                                        <Textarea
-                                            {...field}
-                                            placeholder="Enter your reason here..."
-                                            rows={5}
-                                            data-testid="textarea-reason"
-                                            className="mt-6 w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-dark-600 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-red-400 focus:outline-none transition"
-                                        />
-                                    )}
-                                />
-                                {errors.reason && <span className="text-red-500 mt-4 text-md">Reason is required</span>}
+                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                Are you sure you want to cancel your current subscription? This will submit a cancellation request
+                                in line with the Cancellation &amp; Renewal Terms.
+                            </p>
 
-                                {/* Cancel Button */}
+                            <div className="mt-6 flex flex-col sm:flex-row gap-3">
                                 <Button
-                                    // onClick={close}
-                                    color="error"
-                                    type='submit'
-                                    data-testid="btn-cancel-subscription"
-                                    className="mt-6 w-full rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 transition"
+                                    variant="outline"
+                                    onClick={close}
+                                    className="w-full sm:w-1/2"
+                                    data-testid="btn-cancel-close-modal"
                                 >
-                                    {!loading ? 'Cancel Subscription' : <Spinner />}
-
+                                    Keep Subscription
                                 </Button>
-                            </form>
+                                <Button
+                                    color="error"
+                                    onClick={submitData}
+                                    data-testid="btn-cancel-subscription"
+                                    className="w-full sm:w-1/2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 transition"
+                                >
+                                    {!loading ? 'Yes, Cancel Subscription' : <Spinner />}
+                                </Button>
+                            </div>
                         </DialogPanel>
                     </TransitionChild>
                 </Dialog>

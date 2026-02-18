@@ -135,15 +135,23 @@ const PlatformCurrentSubscription = ({ subscription, fetchSubscription, noData }
                 )}
 
                 {subscription?.status === null && (
-                <div className="rounded-lg bg-yellow-50 border border-yellow-200 p-4 space-y-3">
+                <div className="rounded-lg bg-yellow-50 border border-yellow-200 p-4 space-y-4">
                     <p className="text-sm text-yellow-700 leading-relaxed">
-                    Your subscription is pending. If your payment is successful, your
-                    first billing date will be this coming Wednesday,
-                    after which your subscription will be activated.
-                    <br />
-                    <br />
-                    If payment fails, please cancel this subscription and subscribe again.
+                    Your subscription is pending. If payment fails, please cancel this subscription and subscribe again.
                     </p>
+
+                    <div className="text-sm text-gray-700">
+                    <p className="font-semibold">Cancellation &amp; Renewal Terms:</p>
+                    <p className="mt-1">
+                        Pursuant to the Terms and Conditions, subscriptions automatically renew unless cancelled at least seven (7) days prior to the scheduled renewal date.
+                    </p>
+                    <p className="mt-1">
+                        All cancellation requests must be submitted in writing via email to support@starterproleads.com.
+                    </p>
+                    <p className="mt-1">
+                        No other form of notice shall be deemed valid. Requests received less than seven (7) days prior to renewal will not prevent the upcoming charge, and refunds will not be issued.
+                    </p>
+                    </div>
 
                     <Button
                     variant="outline"
@@ -158,15 +166,29 @@ const PlatformCurrentSubscription = ({ subscription, fetchSubscription, noData }
 
                 {/* Actions */}
                 {subscription?.status === 'active' && (
-                <div className="flex justify-end">
+                <div className="space-y-4">
+                    <div className="text-sm text-gray-700 dark:text-gray-300">
+                    <p className="font-semibold">Cancellation &amp; Renewal Terms:</p>
+                    <p className="mt-1">
+                        Pursuant to the Terms and Conditions, subscriptions automatically renew unless cancelled at least seven (7) days prior to the scheduled renewal date.
+                    </p>
+                    <p className="mt-1">
+                        All cancellation requests must be submitted in writing via email to support@starterproleads.com.
+                    </p>
+                    <p className="mt-1">
+                        No other form of notice shall be deemed valid. Requests received less than seven (7) days prior to renewal will not prevent the upcoming charge, and refunds will not be issued.
+                    </p>
+                    </div>
+                    <div className="flex justify-end">
                     <Button
-                    variant="outline"
-                    onClick={open}
-                    data-testid="btn-cancel-subscription"
-                    className="bg-red-500 hover:bg-red-600 text-white"
+                        variant="outline"
+                        onClick={open}
+                        data-testid="btn-cancel-subscription"
+                        className="bg-red-500 hover:bg-red-600 text-white"
                     >
-                    Cancel Subscription
+                        Cancel Subscription
                     </Button>
+                    </div>
                 </div>
                 )}
             </div>
